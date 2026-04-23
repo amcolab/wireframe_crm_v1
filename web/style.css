@@ -1,0 +1,180 @@
+:root {
+    --bg-color: #f0f0f0;
+    --card-bg: #fff;
+    --border-color: #a0a0a0;
+    --title-bar-bg: #f3f3f3;
+    --accent-color: #0078d7; /* Windows style blue for the button in img 1 */
+    --login-btn-bg: #333;
+    --text-primary: #000;
+    --text-secondary: #555;
+    --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.screen {
+    position: absolute;
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.screen.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.window-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    overflow: hidden;
+}
+
+.title-bar {
+    background-color: var(--title-bar-bg);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.title-bar-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+}
+
+.title-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.title-bar-controls {
+    display: flex;
+    gap: 0;
+}
+
+/* We only show x as per screenshot */
+.control-btn {
+    width: 32px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+}
+
+.control-btn.close:hover {
+    background-color: #e81123;
+    color: #fff;
+}
+
+.content {
+    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.logo-img {
+    width: 100px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.logo-text {
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: 4px;
+}
+
+.main-title {
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    color: #2b579a; /* Blueish tone from screenshot 1 */
+    margin-bottom: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    font-size: 14px;
+}
+
+input {
+    width: 100%;
+    border: 1px solid var(--border-color);
+    padding: 8px 10px;
+    font-size: 14px;
+    outline: none;
+}
+
+input:focus {
+    border-color: var(--accent-color);
+}
+
+.btn-primary {
+    background-color: var(--accent-color);
+    color: #fff;
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 150px;
+    align-self: center;
+}
+
+#btn-login {
+    background-color: #444; /* Darker as in img 2 */
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+}
+
+.center-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}

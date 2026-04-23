@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMOS Auth - Premium Wireframe</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Screen 1: Access Code -->
+        <section id="access-code-screen" class="screen active">
+            <div class="window-card">
+                <div class="content center-content">
+                    <h2 class="main-title">承認コードを入力してください</h2>
+                    <div class="input-group">
+                        <input type="text" id="access-code">
+                    </div>
+                    <button id="btn-submit-code" class="btn-primary">送信</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Screen 2: Login -->
+        <section id="login-screen" class="screen">
+            <div class="window-card">
+                <div class="content">
+                    <div class="logo-container">
+                        <svg class="logo-img" viewBox="0 0 100 100" style="width: 80px; color: #000;">
+                            <path d="M50 5 L90 25 L90 75 L50 95 L10 75 L10 25 Z" fill="none" stroke="currentColor"
+                                stroke-width="2" />
+                            <path d="M50 5 L50 95 M90 25 L10 75 M10 25 L90 75" fill="none" stroke="currentColor"
+                                stroke-width="1" opacity="0.3" />
+                        </svg>
+                        <h1 class="logo-text">SMOS</h1>
+                    </div>
+                    <div class="input-group">
+                        <label for="username">ログイン名</label>
+                        <input type="text" id="username">
+                    </div>
+                    <div class="input-group">
+                        <label for="password">パスワード</label>
+                        <input type="password" id="password">
+                    </div>
+                    <button id="btn-login" class="btn-primary">ログイン</button>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script src="main.js"></script>
+</body>
+
+</html>
