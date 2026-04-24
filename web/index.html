@@ -51,6 +51,95 @@
                 </div>
             </div>
         </section>
+        <!-- Dashboard Section (shown after login) -->
+        <section id="dashboard-container">
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <svg class="sidebar-logo-icon" viewBox="0 0 100 100">
+                        <path d="M50 5 L90 25 L90 75 L50 95 L10 75 L10 25 Z" fill="none" stroke="currentColor"
+                            stroke-width="8" />
+                    </svg>
+                    <div class="sidebar-logo-text">SMOS</div>
+                </div>
+                <nav class="sidebar-menu">
+                    <div class="sidebar-item active" data-section="company">
+                        <div class="icon-box">
+                            <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M3 21h18M3 7h18M3 7v14M21 7v14M9 21V11h6v10M9 7V4h6v3" />
+                            </svg>
+                        </div>
+                        <span class="sidebar-label">会社</span>
+                    </div>
+                    <div class="sidebar-item" data-section="contact">
+                        <div class="icon-box">
+                            <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                        </div>
+                        <span class="sidebar-label">担当</span>
+                    </div>
+                    <div class="sidebar-item" data-section="activity">
+                        <div class="icon-box">
+                            <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="3" y="11" width="18" height="10" rx="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                <path d="M12 18v-3" />
+                            </svg>
+                        </div>
+                        <span class="sidebar-label">活動</span>
+                    </div>
+                    <div class="sidebar-item" data-section="project">
+                        <div class="icon-box">
+                            <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="8.5" cy="7" r="4" />
+                                <polyline points="17 11 19 13 23 9" />
+                            </svg>
+                        </div>
+                        <span class="sidebar-label">案件</span>
+                    </div>
+                </nav>
+            </aside>
+            <main class="main-content">
+                <section id="company" class="section active">
+                    <div class="section-header">
+                        <h2 class="section-title">会社 (Company)</h2>
+                    </div>
+                    <div class="placeholder-content">
+                        Company management screen content
+                    </div>
+                </section>
+                <section id="contact" class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">担当 (Contact)</h2>
+                    </div>
+                    <div class="placeholder-content">
+                        Contact management screen content
+                    </div>
+                </section>
+                <section id="activity" class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">活動 (Activity)</h2>
+                    </div>
+                    <div class="placeholder-content">
+                        Activity tracking screen content
+                    </div>
+                </section>
+                <section id="project" class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">案件 (Project)</h2>
+                    </div>
+                    <div class="placeholder-content">
+                        Project tracking screen content
+                    </div>
+                </section>
+            </main>
+        </section>
     </div>
     <script src="main.js"></script>
 </body>

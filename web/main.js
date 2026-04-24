@@ -48,13 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
             btnLogin.style.opacity = '0.7';
 
             setTimeout(() => {
-                alert('Login Successful! (Demo)');
-                btnLogin.textContent = 'ログイン';
-                btnLogin.style.opacity = '1';
-            }, 1200);
+                transitionToDashboard();
+            }, 800);
         } else {
             // Simple shake effect on error
-            const card = loginScreen.querySelector('.glass-card');
+            const card = loginScreen.querySelector('.window-card');
             card.animate([
                 { transform: 'translateX(0)' },
                 { transform: 'translateX(-10px)' },
@@ -68,4 +66,46 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+
+    function transitionToDashboard() {
+        loginScreen.classList.remove('active');
+        const dashboard = document.getElementById('dashboard-container');
+
+        setTimeout(() => {
+            dashboard.classList.add('active');
+            // Ensure first section is visible
+            switchSection('company');
+        }, 400);
+    }
+
+    // Sidebar Navigation logic
+    const sidebarItems = document.querySelectorAll('.sidebar-item');
+    const sections = document.querySelectorAll('.section');
+
+    sidebarItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const sectionId = item.getAttribute('data-section');
+            switchSection(sectionId);
+        });
+    });
+
+    function switchSection(sectionId) {
+        // Update sidebar active state
+        sidebarItems.forEach(i => {
+            if (i.getAttribute('data-section') === sectionId) {
+                i.classList.add('active');
+            } else {
+                i.classList.remove('active');
+            }
+        });
+
+        // Update sections active state
+        sections.forEach(s => {
+            if (s.id === sectionId) {
+                s.classList.add('active');
+            } else {
+                s.classList.remove('active');
+            }
+        });
+    }
 });
