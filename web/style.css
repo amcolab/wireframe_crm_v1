@@ -24,6 +24,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow-x: hidden;
 }
 
 .app-container {
@@ -32,6 +33,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow-x: hidden;
 }
 
 .screen {
@@ -188,6 +190,7 @@ input:focus {
     background-color: #fff;
     opacity: 0;
     transition: opacity 0.5s ease;
+    overflow-x: hidden;
 }
 
 #dashboard-container.active {
@@ -334,4 +337,144 @@ input:focus {
     font-size: 20px;
     border: 2px dashed #ccc;
     border-radius: 10px;
+}
+
+.section-body {
+    flex: 1;
+    min-height: 0;
+}
+
+
+
+.btn {
+    border: 1px solid #bdbdbd;
+    background: #fff;
+    color: #111;
+    padding: 7px 10px;
+    font-size: 13px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 4px;
+    user-select: none;
+}
+
+.btn:hover {
+    background: #f0f0f0;
+}
+
+.btn-primary {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    filter: brightness(0.95);
+}
+
+.btn-secondary {
+    background: #fff;
+}
+
+.btn-icon {
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+.icon-btn {
+    border: 1px solid #bdbdbd;
+    background: #fff;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn:hover {
+    background: #f0f0f0;
+}
+
+
+
+/* Dialogs */
+.dlg::backdrop {
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.dlg {
+    border: 1px solid #bdbdbd;
+    border-radius: 8px;
+    padding: 0;
+    width: min(920px, calc(100vw - 32px));
+    margin: auto; /* Ensure centering by showModal() */
+}
+
+.dlg-wide {
+    width: min(1080px, calc(100vw - 32px));
+}
+
+.dlg-body {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.dlg-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #e5e5e5;
+    background: #f7f7f7;
+}
+
+.dlg-title {
+    font-weight: 700;
+}
+
+.dlg-content {
+    padding: 12px;
+    max-height: min(70vh, 680px);
+    overflow: auto;
+}
+
+.dlg-note {
+    color: #555;
+    font-size: 12px;
+    padding: 0 12px 6px;
+}
+
+.dlg-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 10px 12px;
+    border-top: 1px solid #e5e5e5;
+    background: #fafafa;
+}
+
+.dlg-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.dlg-grid.two-col {
+    grid-template-columns: 1fr 1fr;
+}
+
+.dlg-grid.four-col {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 980px) {
+    .company-search input {
+        width: 200px;
+    }
 }
