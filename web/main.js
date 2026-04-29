@@ -293,6 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const formAdv = q('formCompanyAdvancedSearch');
         const btnAdvClear = q('btnAdvancedClear');
         const btnAdvApply = q('btnAdvancedApply');
+        const btnAdvHistory = q('btnAdvancedHistory');
 
         const dlgCreate = q('dlgCompanyCreate');
         const formCreate = q('formCompanyCreate');
@@ -343,6 +344,11 @@ document.addEventListener('DOMContentLoaded', () => {
             state.selectedId = state.filtered[0]?.id ?? null;
             dlgAdv?.close();
             renderCompany(state);
+        });
+
+        btnAdvHistory?.addEventListener('click', () => {
+            renderSearchHistory();
+            if (dlgHistory?.showModal) dlgHistory.showModal();
         });
 
         btnCreate?.addEventListener('click', () => {
@@ -723,28 +729,70 @@ document.addEventListener('DOMContentLoaded', () => {
 
         tabs.forEach(t => {
             t.addEventListener('click', () => {
-                const next = t.getAttribute('data-company-tab');
+                const tab = t.getAttribute('data-company-tab');
                 tabs.forEach(x => x.classList.toggle('active', x === t));
                 tabs.forEach(x => x.setAttribute('aria-selected', x === t ? 'true' : 'false'));
-                panels.forEach(p => p.classList.toggle('active', p.getAttribute('data-company-panel') === next));
+                panels.forEach(p => p.classList.toggle('active', p.getAttribute('data-company-panel') === tab));
 
-                // Sync action buttons
-                q('btnNewContact').style.display = (next === 'contacts') ? 'block' : 'none';
-                q('btnNewActivity').style.display = (next === 'activities') ? 'block' : 'none';
-                q('btnNewProject').style.display = (next === 'projects') ? 'block' : 'none';
+                // Toggle "New" buttons
+                const btnNewContact = q('btnNewContact');
+                const btnNewActivity = q('btnNewActivity');
+                const btnNewProject = q('btnNewProject');
+
+                if (btnNewContact) btnNewContact.style.display = tab === 'contacts' ? 'block' : 'none';
+                if (btnNewActivity) btnNewActivity.style.display = tab === 'activities' ? 'block' : 'none';
+                if (btnNewProject) btnNewProject.style.display = tab === 'projects' ? 'block' : 'none';
             });
         });
 
-        // q('btnNewContact')?.addEventListener('click', () => {
-        //     // Wireframe: show copy note
-        //     alert('新規担当：選択中の会社情報をコピーして作成画面へ（ワイヤーフレーム）');
-        // });
-        // q('btnNewActivity')?.addEventListener('click', () => {
-        //     alert('新規活動：選択中の活動をコピーして作成画面へ（ワイヤーフレーム）');
-        // });
-        // q('btnNewProject')?.addEventListener('click', () => {
-        //     alert('新規案件：選択中の案件をコピーして作成画面へ（ワイヤーフレーム）');
-        // });
+        q('btnNewContact')?.addEventListener('click', () => {
+            q('dlgContactDetailNew')?.showModal();
+        });
+        q('btnNewActivity')?.addEventListener('click', () => {
+            const dlg = q('dlgActivityDetail');
+            if (dlg) {
+                dlg.showModal();
+                const form = q('formActivityDetail');
+                if (form) form.reset();
+            }
+        });
+
+        q('btnActivityContactLookup')?.addEventListener('click', () => {
+            q('dlgContactLookup')?.showModal();
+        });
+
+        // Contact Lookup "Select" button logic (Placeholder)
+        q('dlgContactLookup .dlg-actions button:last-child')?.addEventListener('click', () => {
+            const contactInput = document.querySelector('#formActivityDetail [name="contactName"]');
+            if (contactInput) {
+                contactInput.value = '山田 太郎'; // Mock selection
+            }
+            q('dlgContactLookup')?.close();
+        });
+
+        q('btnActivityContactNew')?.addEventListener('click', () => {
+            q('dlgContactDetailNew')?.showModal();
+        });
+
+        q('btnActivityProjectLookup')?.addEventListener('click', () => {
+            q('dlgProjectLookup')?.showModal();
+        });
+
+        q('btnActivityProjectNew')?.addEventListener('click', () => {
+            q('dlgProjectDetail')?.showModal();
+        });
+
+        // Project Lookup "Select" button logic (Placeholder)
+        q('btnProjectSelect')?.addEventListener('click', () => {
+            const projectInput = document.querySelector('#formActivityDetail [name="projectName"]');
+            if (projectInput) {
+                projectInput.value = 'サーバー導入案件'; // Mock selection
+            }
+            q('dlgProjectLookup')?.close();
+        });
+        q('btnNewProject')?.addEventListener('click', () => {
+            q('dlgProjectDetail')?.showModal();
+        });
 
         q('btnCompanySave')?.addEventListener('click', () => {
             const selected = state.companies.find(c => c.id === state.selectedId);
@@ -1133,7 +1181,47 @@ document.addEventListener('DOMContentLoaded', () => {
         contactsHtml += `</tbody></table>`;
 
         set('companyContactsList', contactsHtml);
-        set('companyActivitiesList', `選択中：<b>${escapeHtml(c.name)}</b> の活動一覧（ワイヤーフレーム）`);
+        const mockActivities = [
+            { date: '26/02/24', rep: '中谷 太輔', contact: '佐藤', type: 'TEL', typeClass: 'type-tel', comment: '見積の件', purpose: '', project: '' },
+            { date: '24/10/25', rep: '鈴木 一郎', contact: '佐藤', type: '訪問', typeClass: 'type-visit', comment: '顧客の中期経営計画に関連づけて、自社サービスの活用メリットを長期的な視点から解説。特に生産性向上と人材活用の両面で効果を強調した。議論を...', purpose: '売り後フォロー', project: '' },
+            { date: '24/10/25', rep: '鈴木 一郎', contact: '佐藤', type: '訪問', typeClass: 'type-visit', comment: '顧客の中期経営計画に関連づけて、自社サービスの活用メリットを長期的な視点から解説。特に生産性向上と人材活用の両面で効果を強調した。議論を...', purpose: '売り後フォロー', project: '品質検査装置更新' },
+            { date: '24/03/14', rep: '鈴木 一郎', contact: '佐藤', type: '訪問', typeClass: 'type-visit', comment: '次回の提案資料を期待。競合比較への関心が高い。意思決定者不在で宿題が残った。現場レベルで導入意欲を確認', purpose: 'クレーム対応', project: '品質検査装置更新' },
+            { date: '23/11/08', rep: '鈴木 一郎', contact: '佐藤', type: 'メール', typeClass: 'type-email', comment: '現場担当者とのディスカッションを通じて、日々の業務で発生している細かな課題を具体的に洗い出した。それらを解決する手段として、導入後のプロセス改善...', purpose: '売り後フォロー', project: '品質検査装置更新' },
+            { date: '23/09/14', rep: '鈴木 一郎', contact: '佐藤', type: 'メール', typeClass: 'type-email', comment: '顧客の中期経営計画に関連づけて、自社サービスの活用メリットを長期的な視点から解説。特に生産性向上と人材活用の両面で効果を強調した。議論を...', purpose: '売り前フォロー', project: '金型更新プロジェクト' },
+            { date: '23/01/10', rep: '鈴木 一郎', contact: '佐藤', type: 'TEL', typeClass: 'type-tel', comment: '現場担当者とのディスカッションを通じて、日々の業務で発生している細かな課題を具体的に洗い出した。それらを解決する手段として、導入後のプロセス改善...', purpose: 'クレーム対応', project: '金型更新プロジェクト' }
+        ];
+
+        let activitiesHtml = `
+            <table class="mini-grid-table">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">活動日</th>
+                        <th style="width: 100px;">営業担当</th>
+                        <th style="width: 100px;">担当(姓)</th>
+                        <th style="width: 80px;">タイプ</th>
+                        <th>コメント</th>
+                        <th style="width: 120px;">目的</th>
+                        <th style="width: 150px;">案件名</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        activitiesHtml += mockActivities.map(a => `
+            <tr>
+                <td>${escapeHtml(a.date)}</td>
+                <td>${escapeHtml(a.rep)}</td>
+                <td><a class="blue-link">${escapeHtml(a.contact)}</a></td>
+                <td><span class="${a.typeClass}">${escapeHtml(a.type)}</span></td>
+                <td class="comment-cell" title="${escapeHtml(a.comment)}">${escapeHtml(a.comment)}</td>
+                <td>${escapeHtml(a.purpose)}</td>
+                <td><a class="blue-link">${escapeHtml(a.project)}</a></td>
+            </tr>
+        `).join('');
+
+        activitiesHtml += `</tbody></table>`;
+
+        set('companyActivitiesList', activitiesHtml);
         set('companyProjectsList', `選択中：<b>${escapeHtml(c.name)}</b> の案件一覧（ワイヤーフレーム）`);
     }
 
