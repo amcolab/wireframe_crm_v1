@@ -47,6 +47,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (hash === 'company') {
                 initCompanySection();
+            } else if (hash === 'contact') {
+                initContactSection();
+            } else if (hash === 'activity') {
+                initActivitySection();
+            } else if (hash === 'project') {
+                initProjectSection();
             }
         }
     }
@@ -149,12 +155,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initCompanySection() {
         const root = document.getElementById('company-root');
-        if (!root || root.dataset.ready === '1') return;
+        if (!root) return;
 
-        root.dataset.ready = '1';
+        let state;
+        if (root.dataset.ready === '1') {
+            state = root._state;
+        } else {
+            root.dataset.ready = '1';
+            state = createCompanyState();
+            root._state = state;
+            bindCompanyUi(state);
+        }
 
-        const state = createCompanyState();
-        bindCompanyUi(state);
+        // Check for pending jump from other sections
+        if (window._pendingCompanyJump) {
+            state.selectedId = window._pendingCompanyJump;
+            window._pendingCompanyJump = null;
+        }
+
         renderCompany(state);
     }
 
@@ -587,6 +605,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const c = tempLookupSelection;
             if (q('contactDetailCompanyName')) q('contactDetailCompanyName').value = c.name;
+            if (q('mainContactCompanyName')) q('mainContactCompanyName').value = c.name;
             if (q('contactDetailCompanyType')) q('contactDetailCompanyType').value = c.type || '';
             if (q('contactDetailCompanyTel')) q('contactDetailCompanyTel').value = c.tel || '';
             if (q('contactDetailCompanyIndustry')) q('contactDetailCompanyIndustry').value = c.industry || '';
@@ -745,9 +764,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        q('btnNewContact')?.addEventListener('click', () => {
-            q('dlgContactDetailNew')?.showModal();
-        });
         q('btnNewActivity')?.addEventListener('click', () => {
             const dlg = q('dlgActivityDetail');
             if (dlg) {
@@ -1222,7 +1238,50 @@ document.addEventListener('DOMContentLoaded', () => {
         activitiesHtml += `</tbody></table>`;
 
         set('companyActivitiesList', activitiesHtml);
-        set('companyProjectsList', `選択中：<b>${escapeHtml(c.name)}</b> の案件一覧（ワイヤーフレーム）`);
+        const mockProjects = [
+            { date: '2024/04/01', saleDate: '2024/05/10', follow: '2024/06/01', status: '進行中', rep: '鈴木 一郎', name: 'サーバー導入案件', contact: '山田', summary: '新規サーバーの導入検討', initial: 'A', motivation: 'HP', method: '電話' },
+            { date: '2024/03/15', saleDate: '-', follow: '2024/04/20', status: '保留', rep: '中谷 太輔', name: 'PC入替', contact: '佐藤', summary: '老朽化に伴う入替', initial: 'B', motivation: '紹介', method: '来社' }
+        ];
+
+        let projectsHtml = `
+            <table class="mini-grid-table">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">話題日</th>
+                        <th style="width: 80px;">売上日</th>
+                        <th style="width: 100px;">フォロー予定</th>
+                        <th style="width: 100px;">案件ステータス</th>
+                        <th style="width: 100px;">営業担当</th>
+                        <th style="width: 150px;">案件名</th>
+                        <th style="width: 80px;">担当(姓)</th>
+                        <th>案件概要</th>
+                        <th style="width: 80px;">当初確度</th>
+                        <th style="width: 80px;">発生動機</th>
+                        <th style="width: 80px;">引合手段</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        projectsHtml += mockProjects.map(p => `
+            <tr>
+                <td>${escapeHtml(p.date)}</td>
+                <td>${escapeHtml(p.saleDate)}</td>
+                <td>${escapeHtml(p.follow)}</td>
+                <td>${escapeHtml(p.status)}</td>
+                <td>${escapeHtml(p.rep)}</td>
+                <td><a class="blue-link">${escapeHtml(p.name)}</a></td>
+                <td>${escapeHtml(p.contact)}</td>
+                <td title="${escapeHtml(p.summary)}">${escapeHtml(p.summary)}</td>
+                <td>${escapeHtml(p.initial)}</td>
+                <td>${escapeHtml(p.motivation)}</td>
+                <td>${escapeHtml(p.method)}</td>
+            </tr>
+        `).join('');
+
+        projectsHtml += `</tbody></table>`;
+
+        set('companyProjectsList', projectsHtml);
     }
 
     function includesPartial(haystack, needle) {
@@ -1243,5 +1302,397 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!t) return null;
         const n = Number(t);
         return Number.isFinite(n) ? n : null;
+    }
+
+    function initActivitySection() {
+        const root = document.getElementById('activity-root');
+        if (!root || root.dataset.ready === '1') return;
+        root.dataset.ready = '1';
+
+        const mockData = [
+            { id: '29193', date: '2026/04/29', time: '10:15', rep: '中谷 太輔', type: 'TEL', purpose: '売り後フォロー', company: '旭川エレクトロニクスサービス株式会社', contact: '佐藤', comment: 'wwww' },
+            { id: '29192', date: '2026/04/29', time: '10:29', rep: '金谷 裕美子', type: 'TEL', purpose: '売り後フォロー', company: '旭川エレクトロニクスサービス株式会社', contact: '佐藤', comment: '' },
+            { id: '29191', date: '2026/04/29', time: '16:12', rep: '中谷 太輔', type: 'TEL', purpose: '売り後フォロー', company: '旭川エレクトロニクスサービス株式会社', contact: '佐藤', comment: '' },
+            { id: '29190', date: '2026/04/29', time: '16:12', rep: '中谷 太輔', type: 'TEL', purpose: '売り後フォロー', company: '旭川エレクトロニクスサービス株式会社', contact: '佐藤', comment: '' },
+            { id: '29189', date: '2026/04/29', time: '16:12', rep: '中谷 太輔', type: 'TEL', purpose: '売り後フォロー', company: '旭川エレクトロニクスサービス株式会社', contact: '佐藤', comment: '' },
+            { id: '29188', date: '2026/04/28', time: '17:01', rep: '中谷 太輔', type: 'TEL', purpose: '売り後フォロー', company: '丸紅食品株式会社', contact: '渡辺', comment: '' },
+            { id: '29187', date: '2026/04/28', time: '17:01', rep: '中谷 太輔', type: 'TEL', purpose: '売り後フォロー', company: '丸紅食品株式会社', contact: '渡辺', comment: '' },
+            { id: '29186', date: '2026/04/28', time: '17:01', rep: '中谷 太輔', type: 'TEL', purpose: '売り後フォロー', company: '丸紅食品株式会社', contact: '渡辺', comment: '' },
+            { id: '29185', date: '2026/04/28', time: '17:02', rep: '中谷 太輔', type: 'TEL', purpose: '売り後フォロー', company: '丸紅食品株式会社', contact: '渡辺', comment: '' },
+            { id: '29184', date: '2026/04/28', time: '17:02', rep: '中谷 太輔', type: 'TEL', purpose: '売り後フォロー', company: '丸紅食品株式会社', contact: '渡辺', comment: '' },
+        ];
+
+        function renderTable(data) {
+            const tbody = document.getElementById('activityTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = data.map(item => `
+                <tr data-id="${item.id}">
+                    <td>${item.date}</td>
+                    <td>${item.time}</td>
+                    <td>${item.rep}</td>
+                    <td>${item.type}</td>
+                    <td><a class="blue-link">${item.company}</a></td>
+                    <td>${item.contact}</td>
+                    <td class="comment-cell">${item.comment}</td>
+                </tr>
+            `).join('');
+
+            tbody.querySelectorAll('tr').forEach(tr => {
+                tr.addEventListener('click', () => {
+                    tbody.querySelectorAll('tr').forEach(r => r.classList.remove('selected'));
+                    tr.classList.add('selected');
+                    const id = tr.dataset.id;
+                    const selected = mockData.find(d => d.id === id);
+                    if (selected) {
+                        fillDetail(selected);
+                    }
+                });
+            });
+        }
+
+        function fillDetail(item) {
+            const setVal = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.value = val || '';
+            };
+            setVal('atDetailId', item.id);
+            setVal('atDetailType', item.type);
+            setVal('atDetailPurpose', item.purpose);
+            setVal('atDetailSalesRep', item.rep + ' [企画部]');
+            setVal('atDetailCompanyName', item.company);
+            setVal('atDetailContact', item.contact + ' 瑞葵 [' + item.company + ']');
+            setVal('atDetailDate', item.date.replaceAll('/', '-'));
+            setVal('atDetailStartTime', item.time);
+            setVal('atDetailComment', item.comment);
+        }
+
+        renderTable(mockData);
+
+        // Selection of first row by default
+        if (mockData.length > 0) {
+            const firstRow = document.getElementById('activityTableBody')?.querySelector('tr');
+            if (firstRow) firstRow.click();
+        }
+
+        document.getElementById('btnActivityAdvancedSearch')?.addEventListener('click', () => {
+            document.getElementById('dlgActivityAdvancedSearch')?.showModal();
+        });
+
+        document.getElementById('btnActivityNewMain')?.addEventListener('click', () => {
+            const dlg = document.getElementById('dlgActivityDetail');
+            if (dlg) {
+                dlg.showModal();
+                const form = document.getElementById('formActivityDetail');
+                if (form) form.reset();
+            }
+        });
+
+        // CP07 Contact Lookup
+        document.getElementById('btnAtDetailContactLookup')?.addEventListener('click', () => {
+            document.getElementById('dlgContactLookup')?.showModal();
+        });
+        // CP08 Contact New
+        document.getElementById('btnAtDetailContactNew')?.addEventListener('click', () => {
+            document.getElementById('dlgContactDetailNew')?.showModal();
+        });
+        // CP09 Project Lookup
+        document.getElementById('btnAtDetailProjectLookup')?.addEventListener('click', () => {
+            document.getElementById('dlgProjectLookup')?.showModal();
+        });
+        // CP10 Project New
+        document.getElementById('btnAtDetailProjectNew')?.addEventListener('click', () => {
+            document.getElementById('dlgProjectDetail')?.showModal();
+        });
+    }
+
+    function initProjectSection() {
+        const root = document.getElementById('project-root');
+        if (!root || root.dataset.ready) return;
+        root.dataset.ready = '1';
+
+        const mockProjects = [
+            {
+                id: '3042',
+                issueDate: '2022/12/15',
+                followDate: '2021/10/21',
+                status: '失注',
+                rep: '鈴木 一郎',
+                company: '旭川エレクトロニクスサービス株式会社',
+                contact: '佐藤',
+                name: '金型更新プロジェクト',
+                summary: '金型更新プロジェクトの導入是非を評価中。短納期対応と全体体制重視し、運用負荷の低減を狙う。現場ヒアリングを踏まえた要件定義を行い、段階的実装プランを提案。'
+            }
+        ];
+
+        function renderTable(data) {
+            const tbody = document.getElementById('projectTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = data.map(item => `
+                <tr data-id="${item.id}">
+                    <td>${item.issueDate}</td>
+                    <td>${item.followDate}</td>
+                    <td>${item.status}</td>
+                    <td>${item.rep}</td>
+                    <td><a class="blue-link">${item.company}</a></td>
+                    <td>${item.contact}</td>
+                    <td>${item.name}</td>
+                    <td class="comment-cell">${item.summary}</td>
+                </tr>
+            `).join('');
+
+            tbody.querySelectorAll('tr').forEach(tr => {
+                tr.addEventListener('click', () => {
+                    tbody.querySelectorAll('tr').forEach(r => r.classList.remove('selected'));
+                    tr.classList.add('selected');
+                    const id = tr.dataset.id;
+                    const selected = mockProjects.find(d => d.id === id);
+                    if (selected) fillDetail(selected);
+                });
+            });
+        }
+
+        function fillDetail(item) {
+            const setVal = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.value = val || '';
+            };
+            setVal('prDetailId', item.id);
+            setVal('prDetailName', item.name);
+            setVal('prDetailSummary', item.summary);
+            setVal('prDetailStatus', item.status);
+            setVal('prDetailSalesRep', item.rep + ' [営業部]');
+            setVal('prDetailCompanyName', item.company);
+            setVal('prDetailContact', item.contact + ' 瑞葵 [' + item.company + ']');
+            setVal('prDetailIssueDate', item.issueDate.replaceAll('/', '-'));
+            setVal('prDetailFollowUp', item.followDate.replaceAll('/', '-'));
+
+            // Fill activities table
+            const activitiesTbody = document.getElementById('projectActivitiesTableBody');
+            if (activitiesTbody) {
+                const mockActivities = [
+                    { date: '2022/12/15', rep: '鈴木 一郎', type: '訪問', purpose: '定期', motive: '引合', contactName: '佐藤', comment: '金型更新プロジェクトの導入是非を評価中。' }
+                ];
+                activitiesTbody.innerHTML = mockActivities.map(act => `
+                    <tr>
+                        <td>${act.date}</td>
+                        <td>${act.rep}</td>
+                        <td>${act.type}</td>
+                        <td>${act.purpose}</td>
+                        <td>${act.motive}</td>
+                        <td>${act.contactName}</td>
+                        <td class="comment-cell">${act.comment}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // Tab Switching
+        const tabs = root.querySelectorAll('[data-pr-tab]');
+        const panels = root.querySelectorAll('[data-pr-panel]');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                const target = tab.dataset.prTab;
+                panels.forEach(p => {
+                    p.style.display = p.dataset.prPanel === target ? 'block' : 'none';
+                });
+            });
+        });
+
+        renderTable(mockProjects);
+        if (mockProjects.length > 0) {
+            const firstRow = document.getElementById('projectTableBody')?.querySelector('tr');
+            if (firstRow) firstRow.click();
+        }
+
+        // Hook up dialog buttons
+        document.getElementById('btnProjectAdvancedSearch')?.addEventListener('click', () => {
+            document.getElementById('dlgProjectAdvancedSearch')?.showModal();
+        });
+        document.getElementById('btnProjectNewMain')?.addEventListener('click', () => {
+            document.getElementById('dlgProjectDetail')?.showModal();
+        });
+        document.getElementById('btnPrTabNewActivity')?.addEventListener('click', () => {
+            document.getElementById('dlgActivityDetail')?.showModal();
+        });
+        document.getElementById('btnPrTabNewProject')?.addEventListener('click', () => {
+            document.getElementById('dlgProjectDetail')?.showModal();
+        });
+    }
+
+    function initContactSection() {
+        const root = document.getElementById('contact-root');
+        if (!root || root.dataset.ready === '1') return;
+        
+        root.dataset.ready = '1';
+
+        const tabs = root.querySelectorAll('[data-contact-tab]');
+        const panels = root.querySelectorAll('[data-contact-panel]');
+
+        const btnNewActivity = document.getElementById('btnContactNewActivity');
+        const btnNewProject = document.getElementById('btnContactNewProject');
+
+        tabs.forEach(t => {
+            t.addEventListener('click', () => {
+                const tab = t.getAttribute('data-contact-tab');
+                tabs.forEach(x => x.classList.toggle('active', x === t));
+                tabs.forEach(x => x.setAttribute('aria-selected', x === t ? 'true' : 'false'));
+                panels.forEach(p => p.classList.toggle('active', p.getAttribute('data-contact-panel') === tab));
+
+                if (btnNewActivity) {
+                    btnNewActivity.style.display = tab === 'activities' ? 'block' : 'none';
+                }
+                if (btnNewProject) {
+                    btnNewProject.style.display = tab === 'projects' ? 'block' : 'none';
+                }
+                if (tab === 'activities') {
+                    renderContactActivities();
+                }
+                if (tab === 'projects') {
+                    renderContactProjects();
+                }
+            });
+        });
+
+        if (btnNewProject) {
+            btnNewProject.addEventListener('click', () => {
+                const dlg = document.getElementById('dlgProjectDetail');
+                if (dlg) dlg.showModal();
+            });
+        }
+
+        if (btnNewActivity) {
+            btnNewActivity.addEventListener('click', () => {
+                const body = document.getElementById('contactActivitiesBody');
+                if (!body) return;
+                
+                const tr = document.createElement('tr');
+                const today = new Date().toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' });
+                tr.innerHTML = `
+                    <td>${today}</td>
+                    <td>中谷 太輔</td>
+                    <td class="type-tel">TEL</td>
+                    <td></td>
+                    <td></td>
+                `;
+                body.insertBefore(tr, body.firstChild);
+            });
+        }
+
+        const tbody = document.getElementById('contactTableBody');
+        if (tbody) {
+            tbody.addEventListener('click', (e) => {
+                // Handle jump to company link
+                const jump = e.target.closest('[data-jump-company]');
+                if (jump) {
+                    window._pendingCompanyJump = jump.dataset.jumpCompany;
+                    // Hash change will trigger handleRouting -> initCompanySection
+                    window.location.hash = '#company';
+                    return;
+                }
+
+                const tr = e.target.closest('tr');
+                if (!tr || !tr.parentElement) return;
+                
+                // Remove selected class from all sibling rows
+                Array.from(tr.parentElement.children).forEach(row => {
+                    row.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked row
+                tr.classList.add('selected');
+            });
+        }
+
+        const btnAdv = document.getElementById('btnContactAdvancedSearch');
+        const dlgAdv = document.getElementById('dlgContactAdvancedSearch');
+        if (btnAdv && dlgAdv) {
+            btnAdv.addEventListener('click', () => {
+                dlgAdv.showModal();
+            });
+        }
+
+        const btnCreateMain = document.getElementById('btnContactCreateMain');
+        const dlgContact = document.getElementById('dlgContactDetail');
+        if (btnCreateMain && dlgContact) {
+            btnCreateMain.addEventListener('click', () => {
+                const form = document.getElementById('formContactDetail');
+                if (form) form.reset();
+                dlgContact.showModal();
+            });
+        }
+
+        const btnSave = document.getElementById('btnContactDetailSave');
+        if (btnSave) {
+            btnSave.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert('担当者情報を保存しました (CP04)');
+                dlgContact?.close();
+            });
+        }
+
+        const btnMainLookup = document.getElementById('btnMainContactLookupCompany');
+        const btnMainCreate = document.getElementById('btnMainContactCreateCompany');
+        const dlgCompanyLookup = document.getElementById('dlgCompanyLookup');
+        const dlgCompanyCreate = document.getElementById('dlgCompanyCreate');
+
+        if (btnMainLookup && dlgCompanyLookup) {
+            btnMainLookup.addEventListener('click', () => {
+                dlgCompanyLookup.showModal();
+            });
+        }
+
+        if (btnMainCreate && dlgCompanyCreate) {
+            btnMainCreate.addEventListener('click', () => {
+                dlgCompanyCreate.showModal();
+            });
+        }
+
+        function renderContactActivities() {
+            const body = document.getElementById('contactActivitiesBody');
+            if (!body) return;
+
+            const data = [
+                { date: '2026/04/29', rep: '中谷 太輔', type: 'TEL', typeClass: 'type-tel', comment: 'wwww', purpose: '売り後フォロー' },
+                { date: '2026/04/29', rep: '金谷 裕美子', type: 'TEL', typeClass: 'type-tel', comment: '', purpose: '売り後フォロー' },
+                { date: '2026/04/29', rep: '中谷 太輔', type: 'TEL', typeClass: 'type-tel', comment: '', purpose: '' },
+                { date: '2026/04/29', rep: '中谷 太輔', type: 'TEL', typeClass: 'type-tel', comment: '', purpose: '' },
+                { date: '2026/02/24', rep: '中谷 太輔', type: 'TEL', typeClass: 'type-tel', comment: '見積の件', purpose: '' },
+            ];
+
+            body.innerHTML = data.map(item => `
+                <tr>
+                    <td>${item.date}</td>
+                    <td>${item.rep}</td>
+                    <td class="${item.typeClass}">${item.type}</td>
+                    <td>${item.comment}</td>
+                    <td>${item.purpose}</td>
+                </tr>
+            `).join('');
+        }
+        function renderContactProjects() {
+            const body = document.getElementById('contactProjectsBody');
+            if (!body) return;
+
+            const data = [
+                { topicDate: '12/15/2022', salesDate: '', status: '失注', rep: '鈴木 一郎', projectName: '金型更新プロジェクト', contactSurname: '佐藤', summary: '金型更新プロジェクトの導入是非を...', initialAccuracy: '', motivation: '引合', method: 'SNS' }
+            ];
+
+            body.innerHTML = data.map(item => `
+                <tr>
+                    <td>${item.topicDate}</td>
+                    <td>${item.salesDate}</td>
+                    <td>${item.status}</td>
+                    <td>${item.rep}</td>
+                    <td><a href="#" style="color: #2563eb; text-decoration: underline;">${item.projectName}</a></td>
+                    <td>${item.contactSurname}</td>
+                    <td title="${item.summary}">${item.summary}</td>
+                    <td>${item.initialAccuracy}</td>
+                    <td>${item.motivation}</td>
+                    <td>${item.method}</td>
+                </tr>
+            `).join('');
+        }
     }
 });
