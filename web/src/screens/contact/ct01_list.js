@@ -13,6 +13,12 @@ export function init() {
       const tab = t.getAttribute('data-contact-tab');
       tabs.forEach(x => x.classList.toggle('active', x === t));
       panels.forEach(p => p.classList.toggle('active', p.getAttribute('data-contact-panel') === tab));
+
+      // Toggle action buttons
+      const btnNewActivity = q('btnContactNewActivity');
+      const btnNewProject = q('btnContactNewProject');
+      if (btnNewActivity) btnNewActivity.style.display = tab === 'activities' ? 'block' : 'none';
+      if (btnNewProject) btnNewProject.style.display = tab === 'projects' ? 'block' : 'none';
     });
   });
 
