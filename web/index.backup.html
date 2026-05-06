@@ -1,0 +1,3121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMOS Auth - Premium Wireframe</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="company.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="app-container">
+    <!-- Screen 1: Access Code -->
+    <section id="access-code-screen" class="screen active">
+      <div class="window-card">
+        <div class="content center-content">
+          <h2 class="main-title">承認コードを入力してください (LG01)</h2>
+          <div class="input-group">
+            <input type="text" id="access-code">
+          </div>
+          <button id="btn-submit-code" class="btn-primary">送信</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 2: Login -->
+    <section id="login-screen" class="screen">
+      <div class="window-card">
+        <div class="content">
+          <div class="logo-container">
+            <svg class="logo-img" viewBox="0 0 100 100" style="width: 80px; color: #000;">
+              <path d="M50 5 L90 25 L90 75 L50 95 L10 75 L10 25 Z" fill="none" stroke="currentColor" stroke-width="2" />
+              <path d="M50 5 L50 95 M90 25 L10 75 M10 25 L90 75" fill="none" stroke="currentColor" stroke-width="1"
+                opacity="0.3" />
+            </svg>
+            <h1 class="logo-text">SMOS (LG02)</h1>
+          </div>
+          <div class="input-group">
+            <label for="username">ログイン名</label>
+            <input type="text" id="username">
+          </div>
+          <div class="input-group">
+            <label for="password">パスワード</label>
+            <input type="password" id="password">
+          </div>
+          <button id="btn-login" class="btn-primary">ログイン</button>
+        </div>
+      </div>
+    </section>
+    <!-- Dashboard Section (shown after login) -->
+    <section id="dashboard-container">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <svg class="sidebar-logo-icon" viewBox="0 0 100 100">
+            <path d="M50 5 L90 25 L90 75 L50 95 L10 75 L10 25 Z" fill="none" stroke="currentColor" stroke-width="8" />
+          </svg>
+          <div class="sidebar-logo-text">SMOS</div>
+        </div>
+        <nav class="sidebar-menu">
+          <div class="sidebar-item active" data-section="company">
+            <div class="icon-box">
+              <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 21h18M3 7h18M3 7v14M21 7v14M9 21V11h6v10M9 7V4h6v3" />
+              </svg>
+            </div>
+            <span class="sidebar-label">会社</span>
+          </div>
+          <div class="sidebar-item" data-section="contact">
+            <div class="icon-box">
+              <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </div>
+            <span class="sidebar-label">担当</span>
+          </div>
+          <div class="sidebar-item" data-section="activity">
+            <div class="icon-box">
+              <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="10" rx="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                <path d="M12 18v-3" />
+              </svg>
+            </div>
+            <span class="sidebar-label">活動</span>
+          </div>
+          <div class="sidebar-item" data-section="project">
+            <div class="icon-box">
+              <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="8.5" cy="7" r="4" />
+                <polyline points="17 11 19 13 23 9" />
+              </svg>
+            </div>
+            <span class="sidebar-label">案件</span>
+          </div>
+        </nav>
+      </aside>
+      <main class="main-content">
+        <section id="company" class="section active">
+          <div class="section-header">
+            <h2 class="section-title">会社 (CP01)</h2>
+          </div>
+          <div id="company-root" class="section-body">
+            <div class="company-screen">
+              <div class="company-topbar">
+                <div class="company-topbar-left">
+                  <div class="company-title">会社</div>
+                  <div class="company-search">
+                    <label class="company-search-label" for="companySearchName">会社名</label>
+                    <input id="companySearchName" type="text" placeholder="会社名（部分一致）" />
+                    <button class="btn btn-secondary" id="btnCompanySearch">
+                      <span class="btn-icon">🔍</span>
+                      検索
+                    </button>
+                    <button class="btn btn-secondary" id="btnCompanyAdvancedSearch">
+                      <span class="btn-icon">⏷</span>
+                      詳細検索
+                    </button>
+                    <button class="btn btn-secondary" id="btnCompanyClear">
+                      <span class="btn-icon">✕</span>
+                      クリア
+                    </button>
+                  </div>
+                </div>
+
+                <div class="company-topbar-right">
+                  <button class="btn btn-orange" id="btnCompanyCreate">
+                    <span class="btn-icon">＋</span>
+                    新規会社
+                  </button>
+                </div>
+              </div>
+
+              <div class="company-main">
+                <div class="company-grid">
+                  <!-- <div class="company-grid-header">
+                    <div class="company-grid-header-left">
+                      <div class="company-grid-meta" id="companyResultMeta">全 0 件</div>
+                    </div>
+                  </div> -->
+
+                  <div class="company-table-wrap">
+                    <table class="company-table" aria-label="company list">
+                      <thead>
+                        <tr>
+                          <th style="width: 72px;">会社ID</th>
+                          <th style="width: 300px;">会社名</th>
+                          <th style="width: 130px;">代表TEL</th>
+                          <th style="width: 130px;">代表FAX</th>
+                          <th style="width: 86px;">地区</th>
+                          <th style="width: 86px;">郵便番号</th>
+                          <th style="width: 110px;">都道府県</th>
+                          <th>住所</th>
+                          <th style="width: 110px;">業界</th>
+                          <th style="width: 110px;">業種</th>
+                          <th style="width: 110px;">規模ランク</th>
+                          <th style="width: 86px;">種別</th>
+                          <th style="width: 120px;">法人番号</th>
+                          <th style="width: 120px;">資本金(百万円)</th>
+                          <th style="width: 86px;">従業員数</th>
+                          <th style="width: 72px;">決算月</th>
+                          <th style="width: 110px;">売上高</th>
+                          <th style="width: 86px;">資料禁止</th>
+                          <th style="width: 86px;">TEL禁止</th>
+                          <th style="width: 130px;">会社自由使用欄1</th>
+                          <th style="width: 130px;">会社自由使用欄2</th>
+                          <th style="width: 130px;">会社自由使用欄3</th>
+                          <th style="width: 130px;">会社備考</th>
+                        </tr>
+                      </thead>
+                      <tbody id="companyTableBody"></tbody>
+                    </table>
+                  </div>
+
+                  <div class="company-grid-footer">
+                    <div class="footer-left">
+                      <div class="company-grid-pager">
+                        <button class="icon-btn" id="btnCompanyFirstPage" title="First Page">«</button>
+                        <button class="icon-btn" id="btnCompanyPrevPage" title="Previous Page">‹</button>
+                        <div id="companyPageNumbers" class="page-numbers"></div>
+                        <button class="icon-btn" id="btnCompanyNextPage" title="Next Page">›</button>
+                        <button class="icon-btn" id="btnCompanyLastPage" title="Last Page">»</button>
+
+                        <div class="pager-jump">
+                          Page
+                          <select id="companyPageSelect" class="mini-select" aria-label="page select"></select>
+                          <span id="companyPageTotal">/ 1</span>
+                        </div>
+
+                        <select id="companyPageSize" class="mini-select" aria-label="page size">
+                          <option value="10">10件</option>
+                          <option value="25">25件</option>
+                          <option value="50">50件</option>
+                          <option value="100" selected>100件</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="footer-right">
+                      <div class="company-grid-meta">
+                        全 <span id="companyTotalCount">0</span> 件
+                        <span class="range-info"><span id="companyRangeStart">0</span> - <span
+                            id="companyRangeEnd">0</span></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="company-detail">
+                  <nav class="company-detail-tabs" role="tablist">
+                    <div class="tabs-list">
+                      <button class="tab-btn active" data-company-tab="detail" role="tab"
+                        aria-selected="true">会社詳細</button>
+                      <button class="tab-btn" data-company-tab="contacts" role="tab" aria-selected="false">担当者</button>
+                      <button class="tab-btn" data-company-tab="activities" role="tab" aria-selected="false">活動</button>
+                      <button class="tab-btn" data-company-tab="projects" role="tab" aria-selected="false">案件</button>
+                    </div>
+                    <div class="tab-actions">
+                      <button class="btn btn-orange" id="btnNewContact" style="display:none">新規担当</button>
+                      <button class="btn btn-orange" id="btnNewActivity" style="display:none">＋ 新規活動</button>
+                      <button class="btn btn-orange" id="btnNewProject" style="display:none">＋ 新規案件</button>
+                    </div>
+                  </nav>
+
+                  <div class="company-tabpanels">
+                    <section class="company-panel active" data-company-panel="detail" role="tabpanel">
+                      <div class="detail-form">
+                        <!-- Column 1 -->
+                        <div class="form-col">
+                          <div class="form-row">
+                            <label>会社ID</label>
+                            <input id="companyDetailId" type="text" disabled />
+                          </div>
+                          <div class="form-row">
+                            <label>会社名 <span class="req">*</span></label>
+                            <input id="companyDetailName" type="text" />
+                          </div>
+                          <div class="form-row">
+                            <label>代表TEL</label>
+                            <input id="companyDetailTel" type="text" />
+                          </div>
+                          <div class="form-row">
+                            <label>代表FAX</label>
+                            <input id="companyDetailFax" type="text" />
+                          </div>
+                          <div class="form-row two">
+                            <div>
+                              <label>地区</label>
+                              <select id="companyDetailArea">
+                                <option value="">-</option>
+                                <option>関東</option>
+                                <option>関西</option>
+                                <option>中部</option>
+                                <option>東北</option>
+                                <option>九州</option>
+                              </select>
+                            </div>
+                            <div></div>
+                          </div>
+                          <div class="form-row two">
+                            <div>
+                              <label>郵便番号</label>
+                              <input id="companyDetailPostal" type="text" />
+                            </div>
+                            <div>
+                              <label>都道府県</label>
+                              <select id="companyDetailPref">
+                                <option value="">-</option>
+                                <option>北海道</option>
+                                <option>東京都</option>
+                                <option>大阪府</option>
+                                <option>愛知県</option>
+                                <option>福岡県</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="form-row">
+                            <label>住所</label>
+                            <input id="companyDetailAddr" type="text" />
+                          </div>
+                          <div class="form-row check-row" style="grid-template-columns: 1fr;">
+                            <div class="check-group" style="padding-top:10px;">
+                              <label class="check"><input id="companyDetailNoDoc" type="checkbox" /> 資料禁止</label>
+                              <label class="check"><input id="companyDetailNoTel" type="checkbox" /> TEL禁止</label>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Column 2 -->
+                        <div class="form-col">
+                          <div class="form-row">
+                            <label>業界</label>
+                            <select id="companyDetailIndustry">
+                              <option value="">-</option>
+                              <option>製造業</option>
+                              <option>卸売業</option>
+                              <option>小売業</option>
+                              <option>金融業</option>
+                            </select>
+                          </div>
+                          <div class="form-row">
+                            <label>業種</label>
+                            <select id="companyDetailBiz">
+                              <option value="">-</option>
+                              <option>金属製品</option>
+                              <option>化学・素材</option>
+                              <option>自動車・輸送用機械</option>
+                              <option>木工・家具</option>
+                            </select>
+                          </div>
+                          <div class="form-row">
+                            <label>規模ランク</label>
+                            <select id="companyDetailScale">
+                              <option value="">-</option>
+                              <option>1～30人</option>
+                              <option>31～100人</option>
+                              <option>101～300人</option>
+                              <option>301人以上</option>
+                            </select>
+                          </div>
+                          <div class="form-row">
+                            <label>会社種別</label>
+                            <select id="companyDetailType">
+                              <option value="">-</option>
+                              <option>メーカー</option>
+                              <option>その他</option>
+                            </select>
+                          </div>
+                          <div class="form-row">
+                            <label>法人番号</label>
+                            <input id="companyDetailCorpNo" type="text" />
+                          </div>
+                          <div class="form-row">
+                            <label>従業員数</label>
+                            <input id="companyDetailEmployees" type="text" />
+                          </div>
+                          <div class="form-row two">
+                            <div>
+                              <label>決算月</label>
+                              <input id="companyDetailClosingMonth" type="text" placeholder="例：9" />
+                            </div>
+                            <div>
+                              <label>売上高</label>
+                              <input id="companyDetailRevenue" type="text" />
+                            </div>
+                          </div>
+                          <div class="form-row">
+                            <label>資本金（百万円）</label>
+                            <input id="companyDetailCapital" type="text" />
+                          </div>
+                        </div>
+
+                        <!-- Column 3 -->
+                        <div class="form-col">
+                          <div class="form-row" style="flex:1;">
+                            <label>備考</label>
+                            <textarea id="companyDetailRemark" style="height: 100%; min-height: 220px;"></textarea>
+                          </div>
+                          <div class="form-row two">
+                            <div>
+                              <label>作成日</label>
+                              <input id="companyDetailCreatedAt" type="text" disabled />
+                            </div>
+                            <div>
+                              <label>作成者</label>
+                              <input id="companyDetailCreatedBy" type="text" disabled />
+                            </div>
+                          </div>
+                          <div class="form-row two">
+                            <div>
+                              <label>更新日</label>
+                              <input id="companyDetailUpdatedAt" type="text" disabled />
+                            </div>
+                            <div>
+                              <label>更新者</label>
+                              <input id="companyDetailUpdatedBy" type="text" disabled />
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Column 4 -->
+                        <div class="form-col">
+                          <div class="form-row"><label>会社自由使用欄1</label><input id="companyDetailFree1" type="text" />
+                          </div>
+                          <div class="form-row"><label>会社自由使用欄2</label><input id="companyDetailFree2" type="text" />
+                          </div>
+                          <div class="form-row"><label>会社自由使用欄3</label><input id="companyDetailFree3" type="text" />
+                          </div>
+                          <div class="form-row"><label>会社自由使用欄4</label><input id="companyDetailFree4" type="text" />
+                          </div>
+                          <div class="form-row"><label>会社自由使用欄5</label><input id="companyDetailFree5" type="text" />
+                          </div>
+                          <div class="form-row"><label>会社自由使用欄6</label><input id="companyDetailFree6" type="text" />
+                          </div>
+                          <div class="form-row"><label>会社自由使用欄7</label><input id="companyDetailFree7" type="text" />
+                          </div>
+                          <div class="form-row" style="flex:1; min-height:80px; display:flex; flex-direction:column;">
+                            <label style="margin-top:6px;">添付資料</label>
+                            <div
+                              style="border: 1px solid #d9d9d9; display:flex; align-items:center; justify-content:center; color:#999; flex:1; border-radius:4px; font-size:12px; background:#fafafa; margin-bottom:8px;">
+                              ここにドラッグ＆ドロップ</div>
+                          </div>
+                          <div class="form-actions"
+                            style="justify-content: space-between; margin-top: auto; padding-top:0;">
+                            <button class="btn btn-secondary" id="btnCompanyDelete"
+                              style="background:#f9f9f9;">削除</button>
+                            <button class="btn btn-primary" id="btnCompanySave">保存</button>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+
+                    <section class="company-panel" data-company-panel="contacts" role="tabpanel">
+                      <div class="panel-body">
+                        <div class="mini-table" id="companyContactsList"></div>
+                      </div>
+                    </section>
+
+                    <section class="company-panel" data-company-panel="activities" role="tabpanel">
+                      <div class="panel-body">
+                        <div class="mini-table" id="companyActivitiesList"></div>
+                      </div>
+                    </section>
+
+                    <section class="company-panel" data-company-panel="projects" role="tabpanel">
+                      <div class="panel-body">
+                        <div class="mini-table" id="companyProjectsList"></div>
+                      </div>
+                    </section>
+                  </div>
+                </div>
+        </section>
+        <section id="contact" class="section">
+          <div class="section-header">
+            <h2 class="section-title">担当者 (CT01)</h2>
+          </div>
+          <div id="contact-root" class="section-body">
+            <div class="company-screen">
+              <div class="company-topbar">
+                <div class="company-topbar-left">
+                  <div class="company-title">担当者</div>
+                  <div class="company-search">
+                    <label class="company-search-label" for="contactSearchCompany">会社名</label>
+                    <input id="contactSearchCompany" type="text" />
+
+                    <label class="company-search-label" for="contactSearchName" style="margin-left: 10px;">担当者名</label>
+                    <input id="contactSearchName" type="text" />
+
+                    <button class="btn btn-secondary" id="btnContactSearch">
+                      <span class="btn-icon">🔍</span>
+                      検索
+                    </button>
+                    <button class="btn btn-secondary" id="btnContactAdvancedSearch">
+                      <span class="btn-icon">⏷</span>
+                      詳細検索
+                    </button>
+                    <button class="btn btn-secondary" id="btnContactClear">
+                      <span class="btn-icon">✕</span>
+                      クリア
+                    </button>
+                  </div>
+                </div>
+
+                <div class="company-topbar-right">
+                  <button class="btn btn-orange" id="btnContactCreateMain">
+                    <span class="btn-icon">＋</span>
+                    新規担当
+                  </button>
+                </div>
+              </div>
+
+              <div class="company-main">
+                <div class="company-grid">
+                  <div class="company-table-wrap">
+                    <table class="company-table" aria-label="contact list">
+                      <thead>
+                        <tr>
+                          <th style="width: 72px;">会社ID</th>
+                          <th style="width: 250px;">会社名</th>
+                          <th style="width: 150px;">部署名</th>
+                          <th style="width: 100px;">担当(姓)</th>
+                          <th style="width: 100px;">担当(名)</th>
+                          <th style="width: 120px;">フリガナ</th>
+                          <th style="width: 130px;">TEL</th>
+                          <th style="width: 130px;">携帯電話</th>
+                          <th style="width: 200px;">Email</th>
+                          <th style="width: 110px;">職種</th>
+                          <th style="width: 110px;">職位</th>
+                          <th style="width: 110px;">役職名</th>
+                          <th>住所</th>
+                        </tr>
+                      </thead>
+                      <tbody id="contactTableBody">
+                        <!-- JS filled -->
+                        <tr class="selected">
+                          <td>1141</td>
+                          <td><a href="#company" class="blue-link" data-jump-company="1141">旭川エレクトロニクスサービス株式会社</a></td>
+                          <td>生産技術開発部</td>
+                          <td>石井</td>
+                          <td>智也</td>
+                          <td>イシイトモヤ</td>
+                          <td>077-589-2592</td>
+                          <td>070-5532-1608</td>
+                          <td>ishii.tomoya@c10...</td>
+                          <td>生技開発</td>
+                          <td>次長・部長代理</td>
+                          <td>生産技術開発部次長</td>
+                          <td>北海道旭川市東区4丁目18-30</td>
+                        </tr>
+                        <tr>
+                          <td>1141</td>
+                          <td><a href="#company" class="blue-link" data-jump-company="1141">旭川エレクトロニクスサービス株式会社</a></td>
+                          <td>クオリティ保証部</td>
+                          <td>佐藤</td>
+                          <td>留美</td>
+                          <td>サトウルミ</td>
+                          <td>077-589-2645</td>
+                          <td>070-1147-1070</td>
+                          <td>satou.rumi@c1014...</td>
+                          <td>品管・品証</td>
+                          <td>係長</td>
+                          <td>クオリティ保証部係長</td>
+                          <td>北海道旭川市東区4丁目18-30</td>
+                        </tr>
+                        <tr>
+                          <td>1141</td>
+                          <td><a href="#company" class="blue-link" data-jump-company="1141">旭川エレクトロニクスサービス株式会社</a></td>
+                          <td>設備エンジニア部</td>
+                          <td>田中</td>
+                          <td>大輔</td>
+                          <td>タナカダイスケ</td>
+                          <td>077-589-2626</td>
+                          <td>070-3137-8629</td>
+                          <td>tanaka.daisuke@c...</td>
+                          <td>設備・エンジ</td>
+                          <td>係長</td>
+                          <td>設備エンジ部係長</td>
+                          <td>北海道旭川市東区4丁目18-30</td>
+                        </tr>
+                        <tr>
+                          <td>1068</td>
+                          <td><a href="#company" class="blue-link" data-jump-company="1068">旭川システム株式会社</a></td>
+                          <td>生産技術開発部</td>
+                          <td>松本</td>
+                          <td>悠斗</td>
+                          <td>マツモトユウト</td>
+                          <td>097-9539-3129</td>
+                          <td>070-4307-3285</td>
+                          <td>matsumoto.yuuto...</td>
+                          <td>生技開発</td>
+                          <td>次長・部長代理</td>
+                          <td>生産技術開発部次長</td>
+                          <td>滋賀県市南区1丁目20-18</td>
+                        </tr>
+                        <tr>
+                          <td>1068</td>
+                          <td><a href="#company" class="blue-link" data-jump-company="1068">旭川システム株式会社</a></td>
+                          <td>研究開発部</td>
+                          <td>近藤</td>
+                          <td>智也</td>
+                          <td>コンドウ トモヤ</td>
+                          <td>097-9539-3106</td>
+                          <td>090-4819-7115</td>
+                          <td>kondou.tomoya@c...</td>
+                          <td>研究開発</td>
+                          <td>次長・部長代理</td>
+                          <td>研究開発部次長</td>
+                          <td>滋賀県市南区1丁目20-18</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div class="company-grid-footer">
+                    <div class="footer-left">
+                      <div class="company-grid-pager">
+                        <button class="icon-btn" title="First Page">«</button>
+                        <button class="icon-btn" title="Previous Page">‹</button>
+                        <div class="page-numbers"><span class="page-number active">1</span><span
+                            class="page-number">2</span><span class="page-number">3</span><span
+                            class="page-number">4</span><span class="page-number">5</span><span
+                            style="padding: 0 4px;">..</span><span class="page-number">26</span></div>
+                        <button class="icon-btn" title="Next Page">›</button>
+                        <button class="icon-btn" title="Last Page">»</button>
+
+                        <div class="pager-jump">
+                          Page
+                          <select class="mini-select" aria-label="page select">
+                            <option>1</option>
+                          </select>
+                          <span>/ 26</span>
+                        </div>
+
+                        <select class="mini-select" aria-label="page size">
+                          <option value="100" selected>100件</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="footer-right">
+                      <div class="company-grid-meta">
+                        全 <span>2557</span> 件
+                        <span class="range-info"><span>1</span> - <span>100</span></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="company-detail">
+                  <nav class="company-detail-tabs" role="tablist">
+                    <div class="tabs-list">
+                      <button class="tab-btn active" data-contact-tab="detail" role="tab"
+                        aria-selected="true">担当者詳細</button>
+                      <button class="tab-btn" data-contact-tab="activities" role="tab" aria-selected="false">活動</button>
+                      <button class="tab-btn" data-contact-tab="projects" role="tab" aria-selected="false">案件</button>
+                    </div>
+                    <div class="tab-actions">
+                      <button type="button" class="btn btn-orange" id="btnContactNewActivity" style="display: none;">+
+                        新規活動</button>
+                      <button type="button" class="btn btn-orange" id="btnContactNewProject" style="display: none;">+
+                        新規案件</button>
+                    </div>
+                  </nav>
+
+                  <div class="company-tabpanels">
+                    <section class="company-panel active" data-contact-panel="detail" role="tabpanel">
+                      <div class="detail-form">
+                        <!-- Left Column: Name & Contact Info -->
+                        <div class="form-col" style="flex: 1.2;">
+                          <div class="form-row">
+                            <label>担当者ID</label>
+                            <input type="text" value="2386" disabled />
+                          </div>
+                          <div class="form-row two">
+                            <div>
+                              <label>姓 <span class="req">*</span></label>
+                              <input type="text" value="石井" />
+                            </div>
+                            <div>
+                              <label>名</label>
+                              <input type="text" value="智也" />
+                            </div>
+                          </div>
+                          <div class="form-row two">
+                            <div>
+                              <label>セイ</label>
+                              <input type="text" value="イシイ" />
+                            </div>
+                            <div>
+                              <label>メイ</label>
+                              <input type="text" value="トモヤ" />
+                            </div>
+                          </div>
+                          <div class="form-row">
+                            <label>会社名 <span class="req">*</span></label>
+                            <div class="search-input-group">
+                              <input type="text" id="mainContactCompanyName" value="旭川エレクトロニクスサービス株式会社" />
+                              <button type="button" id="btnMainContactLookupCompany"
+                                class="icon-btn-inline">🔍(CP05)</button>
+                              <button type="button" id="btnMainContactCreateCompany" class="btn btn-secondary"
+                                style="padding: 0 10px; color: #ff6600; border-color: #ff6600;">新規(CP03)</button>
+                            </div>
+                          </div>
+                          <div class="form-row">
+                            <label>部署名</label>
+                            <input type="text" value="生産技術開発部" />
+                          </div>
+                          <div class="form-row two">
+                            <div>
+                              <label>TEL</label>
+                              <input type="text" value="077-589-2592" />
+                            </div>
+                            <div>
+                              <label>内線</label>
+                              <input type="text" value="077-589-2569" />
+                            </div>
+                          </div>
+                          <div class="form-row two">
+                            <div>
+                              <label>FAX</label>
+                              <input type="text" value="089-5996-4084" />
+                            </div>
+                            <div>
+                              <label>携帯電話</label>
+                              <input type="text" value="070-5532-1608" />
+                            </div>
+                          </div>
+                          <div class="form-row">
+                            <label>Email</label>
+                            <input type="text" value="ishii.tomoya@c10141.co.jp" />
+                          </div>
+                          <div class="form-row">
+                            <label>職種</label>
+                            <select>
+                              <option>生技開発</option>
+                            </select>
+                          </div>
+                          <div class="form-row two">
+                            <div>
+                              <label>職位</label>
+                              <select>
+                                <option>次長・部長代理</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label>役職名</label>
+                              <input type="text" value="生産技術開発部次長" />
+                            </div>
+                          </div>
+                          <div class="form-row check-row" style="grid-template-columns: 1fr;">
+                            <div class="check-group" style="padding-top:10px;">
+                              <label class="check"><input type="checkbox" /> 資料禁止</label>
+                              <label class="check"><input type="checkbox" /> TEL禁止</label>
+                              <label class="check"><input type="checkbox" /> TEL注意</label>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Middle Column: Remarks & Company Info -->
+                        <div class="form-row" style="flex:1;">
+                          <label>備考</label>
+                          <textarea style="height: 100%; min-height: 150px;">社内でのシステム導入プロジェクトに参画中。</textarea>
+                        </div>
+                        <div class="form-col" style="flex: 1.5;">
+                          <div class="form-row" style="margin-top: 15px;">
+                            <label>フォロー予定</label>
+                            <input type="date" />
+                          </div>
+
+                          <div class="form-row two">
+                            <div>
+                              <label>会社種別</label>
+                              <input type="text" value="その他" disabled />
+                            </div>
+                            <div>
+                              <label>代表TEL</label>
+                              <input type="text" value="077-589-2589" disabled />
+                            </div>
+                          </div>
+
+                          <div class="form-row two">
+                            <div>
+                              <label>業界</label>
+                              <input type="text" value="製造業" disabled />
+                            </div>
+                            <div>
+                              <label>規模ランク</label>
+                              <input type="text" value="1人～30人" disabled />
+                            </div>
+                          </div>
+
+                          <div class="form-row two">
+                            <div>
+                              <label>郵便番号</label>
+                              <input type="text" value="7059306" disabled />
+                            </div>
+                            <div>
+                              <label>都道府県</label>
+                              <input type="text" value="北海道" disabled />
+                            </div>
+                          </div>
+
+                          <div class="form-row">
+                            <label>住所</label>
+                            <input type="text" value="北海道旭川市東区4丁目18-30" disabled />
+                          </div>
+
+                          <div class="form-row two" style="margin-top: 15px;">
+                            <div>
+                              <label>作成日時</label>
+                              <input type="text" disabled />
+                            </div>
+                            <div>
+                              <label>作成者</label>
+                              <input type="text" disabled />
+                            </div>
+                          </div>
+                          <div class="form-row two">
+                            <div>
+                              <label>更新日時</label>
+                              <input type="text" disabled />
+                            </div>
+                            <div>
+                              <label>更新者</label>
+                              <input type="text" disabled />
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Right Column: Free fields -->
+                        <div class="form-col" style="flex: 0.8;">
+                          <div class="form-row"><label>担当者自由使用欄1</label><input type="text" /></div>
+                          <div class="form-row"><label>担当者自由使用欄2</label><input type="text" /></div>
+                          <div class="form-row"><label>担当者自由使用欄3</label><input type="text" /></div>
+                          <div class="form-row"><label>担当者自由使用欄4</label><input type="text" /></div>
+                          <div class="form-row"><label>担当者自由使用欄5</label><input type="text" /></div>
+                          <div class="form-row"><label>担当者自由使用欄6</label><input type="text" /></div>
+                          <div class="form-row"><label>担当者自由使用欄7</label><input type="text" /></div>
+                        </div>
+                      </div>
+                    </section>
+
+                    <section class="company-panel" data-contact-panel="activities" role="tabpanel">
+                      <div class="panel-body" style="padding: 0;">
+                        <div class="company-table-wrap" style="height: 100%;">
+                          <table class="mini-grid-table" id="contactActivitiesTable">
+                            <thead>
+                              <tr>
+                                <th style="width: 100px;">活動日</th>
+                                <th style="width: 120px;">営業担当</th>
+                                <th style="width: 80px;">タイプ</th>
+                                <th>コメント</th>
+                                <th style="width: 120px;">目的</th>
+                              </tr>
+                            </thead>
+                            <tbody id="contactActivitiesBody">
+                              <!-- Filled by JS -->
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </section>
+                    <section class="company-panel" data-contact-panel="projects" role="tabpanel">
+                      <div class="panel-body" style="padding: 0;">
+                        <div class="company-table-wrap" style="height: 100%;">
+                          <table class="mini-grid-table" id="contactProjectsTable">
+                            <thead>
+                              <tr>
+                                <th style="width: 100px;">話題日</th>
+                                <th style="width: 100px;">売上日</th>
+                                <th style="width: 100px;">案件ステータス</th>
+                                <th style="width: 100px;">営業担当</th>
+                                <th style="width: 150px;">案件名</th>
+                                <th style="width: 100px;">担当 (姓)</th>
+                                <th>案件概要</th>
+                                <th style="width: 80px;">当初確度</th>
+                                <th style="width: 100px;">発生動機</th>
+                                <th style="width: 100px;">引合手段</th>
+                              </tr>
+                            </thead>
+                            <tbody id="contactProjectsBody">
+                              <!-- Filled by JS -->
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </section>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="activity" class="section">
+          <div id="activity-root" class="section-body">
+            <div class="company-screen">
+              <div class="company-topbar"
+                style="border-bottom: 1px solid #ddd; flex-wrap: wrap; height: auto; padding: 10px 12px; gap: 10px;">
+                <div class="company-topbar-left" style="gap: 10px; flex-wrap: wrap; flex: 1 1 auto; min-width: 300px;">
+                  <div class="company-title">活動 (AT01)</div>
+                  <div class="company-search" style="flex-wrap: wrap; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                      <label class="company-search-label">活動タイプ</label>
+                      <select id="activitySearchType" style="width: 100px;">
+                        <option value="">-</option>
+                        <option>TEL</option>
+                        <option>訪問</option>
+                        <option>メール</option>
+                      </select>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                      <label class="company-search-label">営業担当</label>
+                      <input id="activitySearchSalesRep" type="text" style="width: 120px;" />
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                      <label class="company-search-label">会社名</label>
+                      <input id="activitySearchCompany" type="text" style="width: 120px;" />
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                      <label class="company-search-label">活動日</label>
+                      <input id="activitySearchDateFrom" type="date" style="width: 130px;" />
+                      <span>～</span>
+                      <input id="activitySearchDateTo" type="date" style="width: 130px;" />
+                    </div>
+                  </div>
+                </div>
+                <div class="company-topbar-right"
+                  style="gap: 10px; display: flex; flex-wrap: wrap; justify-content: flex-end;">
+                  <button class="btn btn-secondary" id="btnActivitySearch">🔍 検索</button>
+                  <button class="btn btn-secondary" id="btnActivityAdvancedSearch">詳細検索</button>
+                  <button class="btn btn-secondary" id="btnActivityClear">✕ クリア</button>
+                  <button class="btn btn-secondary" id="btnActivityExport">📥 エクスポート</button>
+                  <button class="btn btn-orange" id="btnActivityNewMain">+ 新規活動</button>
+                </div>
+              </div>
+
+              <div class="company-main" style="grid-template-rows: 1fr 450px;">
+                <!-- List Area -->
+                <div class="company-grid">
+                  <div class="company-table-wrap">
+                    <table class="company-table">
+                      <thead>
+                        <tr>
+                          <th style="width: 100px;">活動日</th>
+                          <th style="width: 80px;">開始時刻</th>
+                          <th style="width: 120px;">営業担当</th>
+                          <th style="width: 80px;">タイプ</th>
+                          <th style="width: 250px;">会社名</th>
+                          <th style="width: 100px;">担当(姓)</th>
+                          <th>コメント</th>
+                        </tr>
+                      </thead>
+                      <tbody id="activityTableBody">
+                        <!-- Filled by JS -->
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="company-grid-footer">
+                    <div class="footer-left">
+                      <div class="company-grid-pager">
+                        <button class="page-num-btn">«</button>
+                        <button class="page-num-btn">‹</button>
+                        <div class="page-numbers">
+                          <button class="page-num-btn active">1</button>
+                          <button class="page-num-btn">2</button>
+                          <button class="page-num-btn">3</button>
+                        </div>
+                        <button class="page-num-btn">›</button>
+                        <button class="page-num-btn">»</button>
+                      </div>
+                      <div class="pager-jump">
+                        Page <input type="text" value="1" style="width: 40px; text-align: center;" /> / <span
+                          id="activityTotalPages">282</span>
+                      </div>
+                      <select class="mini-select">
+                        <option>100件</option>
+                      </select>
+                    </div>
+                    <div class="footer-right">
+                      <div class="company-grid-meta">
+                        全 <span id="activityTotalCount">28196</span> 件 &nbsp; 1 - 100
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Detail Area -->
+                <div class="company-detail">
+                  <div class="company-tabpanels">
+                    <div class="detail-form" style="grid-template-columns: 420px 1fr 420px 180px; gap: 20px;">
+                      <!-- Col 1 -->
+                      <div class="form-col">
+                        <div class="form-row-inline"><label>活動ID</label><input type="text" id="atDetailId" disabled
+                            style="width: 120px;" value="29193" /></div>
+                        <div class="form-row-inline" style="grid-template-columns: 100px 1fr 40px 1fr;">
+                          <label>活動タイプ <span class="req">*</span></label>
+                          <select id="atDetailType" class="req-field-bg">
+                            <option>TEL</option>
+                          </select>
+                          <label style="text-align: right;">目的</label>
+                          <select id="atDetailPurpose">
+                            <option>売り後フォロー</option>
+                          </select>
+                        </div>
+                        <div class="form-row-inline"><label>動機</label><select id="atDetailMotivation">
+                            <option>-</option>
+                          </select></div>
+                        <div class="form-row-inline"><label>担当者<span class="req">*</span></label>
+                          <div class="search-input-group">
+                            <input type="text" id="atDetailContact" class="req-field-bg" style="flex: 1;"
+                              value="佐藤 瑞葵 [旭川エレクトロニクスサービス株式会社]" />
+                            <button type="button" class="icon-btn-inline" id="btnAtDetailContactLookup">🔍 CP07</button>
+                            <button type="button" class="btn btn-orange" id="btnAtDetailContactNew"
+                              style="padding: 2px 8px; font-size: 11px;">新規 CP08</button>
+                          </div>
+                        </div>
+                        <div class="form-row-inline"><label>営業担当 <span class="req">*</span></label>
+                          <select id="atDetailSalesRep" class="req-field-bg">
+                            <option>中谷 太輔 [企画部]</option>
+                          </select>
+                        </div>
+                        <div class="form-row-inline"><label>案件ID</label><input type="text" id="atDetailProjectId"
+                            style="width: 120px;" /></div>
+                        <div class="form-row-inline"><label>案件名</label>
+                          <div class="search-input-group">
+                            <input type="text" id="atDetailProjectName" style="flex: 1;" />
+                            <button type="button" class="icon-btn-inline" id="btnAtDetailProjectLookup">🔍 CP09</button>
+                            <button type="button" class="btn btn-orange" id="btnAtDetailProjectNew"
+                              style="padding: 2px 8px; font-size: 11px;">新規 CP10</button>
+                          </div>
+                        </div>
+                        <div class="form-row-inline"><label>リードID</label><input type="text" id="atDetailLeadId"
+                            style="width: 120px;" /></div>
+                        <div class="form-row-inline"><label>活動日</label><input type="date" id="atDetailDate"
+                            value="2026-04-29" /></div>
+                        <div class="form-row-inline" style="grid-template-columns: 100px 1fr 80px 1fr;">
+                          <label>開始時刻</label><select id="atDetailStartTime">
+                            <option>10:15</option>
+                          </select>
+                          <label style="text-align: right;">終了時刻</label><select id="atDetailEndTime">
+                            <option>-</option>
+                          </select>
+                        </div>
+                        <div class="form-row-inline" style="grid-template-columns: 100px 1fr 80px 1fr;">
+                          <label>活動時間</label><input type="text" id="atDetailDuration" disabled />
+                          <label style="text-align: right;">面談人数</label><input type="number" id="atDetailAttendees" />
+                        </div>
+                        <div class="check-group" style="margin-left: 10px; padding-top: 5px; gap: 15px;">
+                          <label class="chk-label"><input type="checkbox" id="atDetailFollowCompleted" />
+                            フォロー完了</label>
+                          <label class="chk-label"><input type="checkbox" id="atDetailHasAppt" /> アポ有</label>
+                          <label class="chk-label"><input type="checkbox" id="atDetailIsClaim" /> クレーム</label>
+                        </div>
+                      </div>
+                      <!-- Col 2 -->
+                      <div class="form-col">
+                        <div class="form-row" style="height: 100%;">
+                          <label>コメント</label>
+                          <textarea id="atDetailComment" style="flex: 1; min-height: 300px;">wwww</textarea>
+                        </div>
+                      </div>
+                      <!-- Col 3 -->
+                      <div class="form-col" style="border-left: 1px solid #eee; padding-left: 15px;">
+                        <div class="form-row-inline"><label>会社名</label>
+                          <div style="display:flex; gap:5px; flex:1">
+                            <input type="text" id="atDetailCompanyId" value="1141" style="width: 150px;" disabled />
+                            <input type="text" id="atDetailCompanyName" value="旭川エレクトロニクスサービス株式会社" disabled
+                              style="flex:1" />
+                          </div>
+                        </div>
+                        <div class="form-row-inline" style="grid-template-columns: 100px 1fr 80px 1fr;">
+                          <label>会社種別</label><select disabled id="atDetailCompanyType">
+                            <option>その他</option>
+                          </select>
+                          <label style="text-align: right;">代表TEL</label><input type="text" disabled
+                            id="atDetailCompanyTel" value="077-589-2569" />
+                        </div>
+                        <div class="form-row-inline" style="grid-template-columns: 100px 1fr 80px 1fr;">
+                          <label>業界</label><select disabled id="atDetailIndustry">
+                            <option>製造業</option>
+                          </select>
+                          <label style="text-align: right;">規模ランク</label><select disabled id="atDetailScale">
+                            <option>1人～30人</option>
+                          </select>
+                        </div>
+                        <div class="form-row-inline"><label>部署名</label><input type="text" id="atDetailDept"
+                            value="クオリティアシュアランス部" disabled /></div>
+                        <div class="form-row-inline" style="grid-template-columns: 100px 1fr 80px 1fr;">
+                          <label>郵便番号</label><input type="text" id="atDetailPostal" value="7059306" disabled />
+                          <label style="text-align: right;">都道府県</label><select disabled id="atDetailPref">
+                            <option>北海道</option>
+                          </select>
+                        </div>
+                        <div class="form-row-inline"><label>住所</label><input type="text" id="atDetailAddress"
+                            value="北海道市東区4丁目18-30" disabled /></div>
+
+                        <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
+                          <div class="form-row-inline"><label>作成日時</label><input type="text" id="atDetailCreatedAt"
+                              value="2026/04/29" disabled /></div>
+                          <div class="form-row-inline"><label>作成者</label><input type="text" id="atDetailCreatedBy"
+                              value="中谷 太輔 [企画部]" disabled /></div>
+                          <div class="form-row-inline"><label>更新日時</label><input type="text" id="atDetailUpdatedAt"
+                              disabled /></div>
+                          <div class="form-row-inline"><label>更新者</label><input type="text" id="atDetailUpdatedBy"
+                              disabled /></div>
+                        </div>
+                      </div>
+                      <!-- Col 4 -->
+                      <div class="form-col">
+                        <div class="form-row-inline"><label>活動自由使用欄1</label><input type="text" id="atDetailFree1" />
+                        </div>
+                        <div class="form-row-inline"><label>活動自由使用欄2</label><input type="text" id="atDetailFree2" />
+                        </div>
+                        <div class="form-row-inline"><label>活動自由使用欄3</label><input type="text" id="atDetailFree3" />
+                        </div>
+                        <div class="form-row-inline"><label>活動自由使用欄4</label><input type="text" id="atDetailFree4" />
+                        </div>
+                        <div class="form-row-inline"><label>活動自由使用欄5</label><input type="text" id="atDetailFree5" />
+                        </div>
+                        <div class="form-row-inline"><label>活動自由使用欄6</label><input type="text" id="atDetailFree6" />
+                        </div>
+                        <div class="form-row-inline"><label>活動自由使用欄7</label><input type="text" id="atDetailFree7" />
+                        </div>
+                        <div class="form-row">
+                          <label>添付資料</label>
+                          <div class="attach-box"
+                            style="height: 100px; border: 2px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#999; font-size:12px;">
+                            ここにドラッグ＆ドロップ</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="project" class="section">
+          <div id="project-root" class="section-body">
+            <div class="company-screen">
+              <div class="company-topbar"
+                style="border-bottom: 1px solid #ddd; flex-wrap: wrap; height: auto; padding: 10px 12px; gap: 10px;">
+                <div class="company-topbar-left" style="gap: 10px; flex-wrap: wrap; flex: 1 1 auto; min-width: 300px;">
+                  <div class="company-title">案件 (PR01)</div>
+                  <div class="company-search" style="flex-wrap: wrap; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                      <label class="company-search-label">ステータス</label>
+                      <select id="projectSearchStatus" style="width: 100px;">
+                        <option value="">-</option>
+                      </select>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                      <label class="company-search-label">営業担当</label>
+                      <input id="projectSearchSalesRep" type="text" style="width: 120px;" />
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                      <label class="company-search-label">会社名</label>
+                      <input id="projectSearchCompany" type="text" style="width: 150px;" />
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                      <label class="company-search-label">話題日</label>
+                      <input id="projectSearchDateFrom" type="date" style="width: 130px;" />
+                      <span>～</span>
+                      <input id="projectSearchDateTo" type="date" style="width: 130px;" />
+                    </div>
+                  </div>
+                </div>
+                <div class="company-topbar-right"
+                  style="gap: 10px; display: flex; flex-wrap: wrap; justify-content: flex-end;">
+                  <button class="btn btn-secondary" id="btnProjectSearch">🔍 検索</button>
+                  <button class="btn btn-secondary" id="btnProjectAdvancedSearch">詳細検索</button>
+                  <button class="btn btn-secondary" id="btnProjectClear">✕ クリア</button>
+                  <button class="btn btn-secondary" id="btnProjectExport">📥 エクスポート</button>
+                  <button class="btn btn-orange" id="btnProjectNewMain">+ 新規案件</button>
+                </div>
+              </div>
+
+              <div class="company-main" style="grid-template-rows: 1fr 520px;">
+                <!-- List Area -->
+                <div class="company-grid">
+                  <div class="company-table-wrap">
+                    <table class="company-table">
+                      <thead>
+                        <tr>
+                          <th style="width: 100px;">話題日</th>
+                          <th style="width: 100px;">フォロー予定</th>
+                          <th style="width: 100px;">案件ステータス</th>
+                          <th style="width: 120px;">営業担当</th>
+                          <th style="width: 250px;">会社名</th>
+                          <th style="width: 100px;">担当(姓)</th>
+                          <th style="width: 200px;">案件名</th>
+                          <th>案件概要</th>
+                        </tr>
+                      </thead>
+                      <tbody id="projectTableBody">
+                        <!-- Filled by JS -->
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="company-grid-footer">
+                    <div class="footer-left">
+                      <div class="company-grid-pager">
+                        <button class="page-num-btn">«</button>
+                        <button class="page-num-btn">‹</button>
+                        <div class="page-numbers">
+                          <button class="page-num-btn active">1</button>
+                        </div>
+                        <button class="page-num-btn">›</button>
+                        <button class="page-num-btn">»</button>
+                      </div>
+                      <div class="pager-jump">
+                        Page <input type="text" value="1" style="width: 40px; text-align: center;" /> / <span
+                          id="projectTotalPages">1</span>
+                      </div>
+                      <select class="mini-select">
+                        <option>100件</option>
+                      </select>
+                    </div>
+                    <div class="footer-right">
+                      <div class="company-grid-meta">
+                        全 <span id="projectTotalCount">1</span> 件 &nbsp; 1 - 1
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Detail Area -->
+                <div class="company-detail">
+                  <div class="company-tabs">
+                    <div class="tabs-list">
+                      <button class="tab-btn active" data-pr-tab="detail">案件詳細</button>
+                      <button class="tab-btn" data-pr-tab="activities">活動</button>
+                    </div>
+                  </div>
+                  <div class="company-tabpanels">
+                    <div class="project-panel active" data-pr-panel="detail" style="padding: 15px;">
+                      <div class="detail-form" style="grid-template-columns: 450px 480px 1fr 220px; gap: 20px;">
+                        <!-- Col 1 -->
+                        <div class="form-col">
+                          <div class="form-row-inline"><label>案件ID</label><input type="text" id="prDetailId" disabled
+                              value="3042" style="width: 120px;" /></div>
+                          <div class="form-row-inline" style="grid-template-columns: 100px 1fr 80px 1.2fr;">
+                            <label>ステータス</label>
+                            <select id="prDetailStatus">
+                              <option>失注</option>
+                            </select>
+                            <label style="text-align: right; padding-right: 5px;">フォロー予</label>
+                            <input type="date" id="prDetailFollowUp" value="2025-10-21" />
+                          </div>
+                          <div class="form-row-inline" style="grid-template-columns: 100px 1fr 80px 1.2fr;">
+                            <label>当初確度</label>
+                            <select id="prDetailInitialProb">
+                              <option>-</option>
+                            </select>
+                            <label style="text-align: right; padding-right: 5px;">見通確度</label>
+                            <select id="prDetailForecastProb">
+                              <option>見込高</option>
+                            </select>
+                          </div>
+                          <div class="form-row-inline" style="grid-template-columns: 100px 1fr 80px 1.2fr;">
+                            <label>営業担当者 <span class="req">*</span></label>
+                            <select id="prDetailSalesRep" class="req-field-bg">
+                              <option>鈴木 一郎 [営業部]</option>
+                            </select>
+                            <label style="text-align: right; padding-right: 5px;">発生動機</label>
+                            <select id="prDetailSource">
+                              <option>引合</option>
+                            </select>
+                          </div>
+                          <div class="form-row-inline"><label>案件名 <span class="req">*</span></label>
+                            <input type="text" id="prDetailName" class="req-field-bg" value="金型更新プロジェクト" />
+                          </div>
+                          <div class="form-row-inline"><label>担当者名 <span class="req">*</span></label>
+                            <div class="search-input-group">
+                              <input type="text" id="prDetailContact" class="req-field-bg" style="flex: 1;"
+                                value="佐藤 瑞葵 [旭川エレクトロニクスサービス株式会社]" />
+                              <button type="button" class="icon-btn-inline">🔍</button>
+                              <button type="button" class="btn btn-orange"
+                                style="padding: 2px 8px; font-size: 11px;">新規</button>
+                            </div>
+                          </div>
+                          <div class="form-row" style="flex: 1;">
+                            <label>案件概要</label>
+                            <textarea id="prDetailSummary"
+                              style="flex: 1; min-height: 250px;">金型更新プロジェクトの導入是非を評価中。短納期対応と全体体制重視し、運用負荷の低減を狙う。現場ヒアリングを踏まえた要件定義を行い、段階的実装プランを提案。</textarea>
+                          </div>
+                        </div>
+
+                        <!-- Col 2 -->
+                        <div class="form-col">
+                          <div class="form-row-inline" style="grid-template-columns: 100px 1fr 80px 1fr;">
+                            <label>話題発生日</label><input type="date" id="prDetailIssueDate" value="2022-12-15" />
+                            <label style="text-align: right; padding-right: 5px;">案件化日</label><input type="date"
+                              id="prDetailProjectizedDate" value="2022-12-15" />
+                          </div>
+                          <div class="form-row-inline" style="grid-template-columns: 100px 1fr 80px 1fr;">
+                            <label>受注日</label><input type="date" id="prDetailOrderDate" />
+                            <label style="text-align: right; padding-right: 5px;">売上日</label><input type="date"
+                              id="prDetailSalesDate" />
+                          </div>
+                          <div class="form-row-inline"><label>失注日</label><input type="date" id="prDetailLossDate"
+                              value="2022-12-15" style="width: 150px;" /></div>
+                          <div class="form-row-inline" style="grid-template-columns: 100px 1fr 100px 1fr;">
+                            <label>リードID</label><input type="text" id="prDetailLeadId" value="3067" />
+                            <label style="text-align: right; padding-right: 5px;">引合手段</label>
+                            <select id="prDetailInquiryMethod">
+                              <option>SNS</option>
+                            </select>
+                          </div>
+                          <div class="form-row-inline"><label>競合会社</label><input type="text" id="prDetailCompetitor"
+                              value="デバイス" /></div>
+
+                          <div style="margin-top: 10px; border: 1px solid #eee; padding: 10px; border-radius: 4px;">
+                            <div style="font-weight: bold; margin-bottom: 8px; font-size: 12px; color: #555;">予定</div>
+                            <div class="form-row-inline" style="grid-template-columns: 80px 1fr;">
+                              <label>機種</label><input type="text" id="prDetailPlanModel" value="測定器" />
+                            </div>
+                            <div class="form-row-inline" style="grid-template-columns: 80px 1fr 80px 1fr;">
+                              <label>台数</label><input type="number" id="prDetailPlanQuantity" value="5"
+                                style="width: 120px;" />
+                              <label style="text-align: right; padding-right: 5px;">予定売上</label><input type="text"
+                                id="prDetailPlanSales" value="800" />
+                            </div>
+                            <div class="form-row-inline" style="grid-template-columns: 80px 1fr;">
+                              <label>予定時期</label><input type="date" id="prDetailPlanDate" value="2026-12-28" />
+                            </div>
+                          </div>
+
+                          <div style="margin-top: 10px; border: 1px solid #eee; padding: 10px; border-radius: 4px;">
+                            <div style="font-weight: bold; margin-bottom: 8px; font-size: 12px; color: #555;">実績</div>
+                            <div class="form-row-inline" style="grid-template-columns: 80px 1fr;">
+                              <label>機種</label><input type="text" id="prDetailActualModel" />
+                            </div>
+                            <div class="form-row-inline" style="grid-template-columns: 80px 1fr 80px 1fr;">
+                              <label>台数</label><input type="number" id="prDetailActualQuantity" style="width: 120px;" />
+                              <label style="text-align: right; padding-right: 5px;">売上</label><input type="text"
+                                id="prDetailActualSales" />
+                            </div>
+                            <div class="form-row-inline" style="grid-template-columns: 80px 1fr 80px 1fr;">
+                              <label>売上時期</label>
+                              <select id="prDetailActualDate">
+                                <option>-</option>
+                              </select>
+                              <label style="text-align: right; padding-right: 5px;">売上</label><input type="text"
+                                id="prDetailActualSales2" />
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Col 3 -->
+                        <div class="form-col">
+                          <div class="checkbox-row"
+                            style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 10px;">
+                            <label class="chk-label"><input type="checkbox" id="prStage1" checked /> ステージ1:
+                              見積書提出</label>
+                            <label class="chk-label"><input type="checkbox" id="prStage2" checked /> ステージ2:
+                              仕様打合せ</label>
+                            <label class="chk-label"><input type="checkbox" id="prStage3" /> ステージ3: 現場確認</label>
+                            <label class="chk-label"><input type="checkbox" id="prStage4" /> ステージ4: 上長確認</label>
+                          </div>
+
+                          <div style="border-top: 1px solid #eee; padding-top: 10px;">
+                            <div class="form-row-inline"><label>会社名</label>
+                              <div style="display:flex; gap:5px; flex:1">
+                                <input type="text" id="prDetailCompanyId" value="1141" style="width: 150px;" disabled />
+                                <input type="text" id="prDetailCompanyName" value="旭川エレクトロニクスサービス株式会社" disabled
+                                  style="flex:1" />
+                              </div>
+                            </div>
+                            <div class="form-row-inline" style="grid-template-columns: 100px 1fr 80px 1fr;">
+                              <label>会社種別</label><select disabled id="prDetailCompanyType">
+                                <option>その他</option>
+                              </select>
+                              <label style="text-align: right;">代表TEL</label><input type="text" disabled
+                                id="prDetailCompanyTel" value="077-589-2569" />
+                            </div>
+                            <div class="form-row-inline" style="grid-template-columns: 100px 1fr 80px 1fr;">
+                              <label>業界</label><select disabled id="prDetailIndustry">
+                                <option>製造業</option>
+                              </select>
+                              <label style="text-align: right;">規模ランク</label><select disabled id="prDetailScale">
+                                <option>1人～30人</option>
+                              </select>
+                            </div>
+                            <div class="form-row-inline"><label>部署名</label><input type="text" id="prDetailDept"
+                                value="クオリティアシュアランス部" disabled /></div>
+                            <div class="form-row-inline" style="grid-template-columns: 100px 1fr 80px 1fr;">
+                              <label>郵便番号</label><input type="text" id="prDetailPostal" value="7059306" disabled />
+                              <label style="text-align: right;">都道府県</label><select disabled id="prDetailPref">
+                                <option>北海道</option>
+                              </select>
+                            </div>
+                            <div class="form-row-inline"><label>住所</label><input type="text" id="prDetailAddress"
+                                value="北海道市東区4丁目18-30" disabled /></div>
+
+                            <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
+                              <div class="form-row-inline"><label>作成日時</label><input type="text" id="prDetailCreatedAt"
+                                  value="2026/04/29" disabled /></div>
+                              <div class="form-row-inline"><label>作成者</label><input type="text" id="prDetailCreatedBy"
+                                  value="鈴木 一郎 [営業部]" disabled /></div>
+                              <div class="form-row-inline"><label>更新日時</label><input type="text" id="prDetailUpdatedAt"
+                                  disabled /></div>
+                              <div class="form-row-inline"><label>更新者</label><input type="text" id="prDetailUpdatedBy"
+                                  disabled /></div>
+                            </div>
+                          </div>
+                          <div class="form-actions" style="margin-top: auto;">
+                            <button class="btn btn-primary" id="btnProjectSave" style="width: 150px;">保存</button>
+                          </div>
+                        </div>
+
+                        <!-- Col 4 -->
+                        <div class="form-col">
+                          <div class="form-row-inline"><label>案件自由使用欄1</label><input type="text" id="prDetailFree1" />
+                          </div>
+                          <div class="form-row-inline"><label>案件自由使用欄2</label><input type="text" id="prDetailFree2" />
+                          </div>
+                          <div class="form-row-inline"><label>案件自由使用欄3</label><input type="text" id="prDetailFree3" />
+                          </div>
+                          <div class="form-row-inline"><label>案件自由使用欄4</label><input type="text" id="prDetailFree4" />
+                          </div>
+                          <div class="form-row-inline"><label>案件自由使用欄5</label><input type="text" id="prDetailFree5" />
+                          </div>
+                          <div class="form-row-inline"><label>案件自由使用欄6</label><input type="text" id="prDetailFree6" />
+                          </div>
+                          <div class="form-row-inline"><label>案件自由使用欄7</label><input type="text" id="prDetailFree7" />
+                          </div>
+                          <div class="form-row">
+                            <label>添付資料</label>
+                            <div class="attach-box"
+                              style="height: 100px; border: 2px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#999; font-size:12px;">
+                              ここにドラッグ＆ドロップ</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="project-panel" data-pr-panel="activities" style="display:none; padding: 10px;">
+                      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 10px;">
+                        <button class="btn btn-orange" id="btnPrTabNewActivity" style="font-size: 12px; padding: 4px 12px;">+ 新規活動</button>
+                        <button class="btn btn-orange" id="btnPrTabNewProject" style="font-size: 12px; padding: 4px 12px;">+ 新規案件</button>
+                      </div>
+                      <div class="company-table-wrap" style="height: 400px; border: 1px solid #ddd;">
+                        <table class="company-table">
+                          <thead>
+                            <tr>
+                              <th style="width: 100px;">活動日</th>
+                              <th style="width: 120px;">営業担当</th>
+                              <th style="width: 80px;">タイプ</th>
+                              <th style="width: 100px;">目的</th>
+                              <th style="width: 100px;">動機</th>
+                              <th style="width: 100px;">担当(姓)</th>
+                              <th>コメント</th>
+                            </tr>
+                          </thead>
+                          <tbody id="projectActivitiesTableBody">
+                            <!-- Injected by JS -->
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </section>
+  </div>
+
+  <dialog id="dlgCompanyAdvancedSearch" class="dlg dlg-wide">
+    <form method="dialog" class="dlg-body" id="formCompanyAdvancedSearch">
+      <div class="dlg-header">
+        <div class="dlg-title">会社詳細検索(CP02)</div>
+        <button class="icon-btn" value="cancel" aria-label="close">✕</button>
+      </div>
+
+      <div class="dlg-content">
+        <div class="dlg-advanced-grid">
+          <!-- Column 1 -->
+          <div class="form-col">
+            <div class="form-row-inline">
+              <label>検索ワード</label>
+              <input name="keyword" type="text" />
+            </div>
+            <div class="form-row-inline">
+              <label>会社名</label>
+              <input name="name" type="text" />
+            </div>
+            <div class="form-row-inline">
+              <label>業界</label>
+              <select name="industry" multiple size="1">
+                <option>製造業</option>
+                <option>卸売業</option>
+                <option>小売業</option>
+                <option>金融業</option>
+              </select>
+            </div>
+            <div class="form-row-inline">
+              <label>業種</label>
+              <select name="biz" multiple size="1">
+                <option>金属製品</option>
+                <option>化学・素材</option>
+                <option>自動車・輸送用機械</option>
+                <option>木工・家具</option>
+              </select>
+            </div>
+            <div class="form-row-inline">
+              <label>規模ランク</label>
+              <select name="scale" multiple size="1">
+                <option>1～30人</option>
+                <option>31～100人</option>
+                <option>101～300人</option>
+                <option>301人以上</option>
+              </select>
+            </div>
+            <div class="form-row-inline">
+              <label>会社種別</label>
+              <select name="type" multiple size="1">
+                <option>メーカー</option>
+                <option>その他</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Column 2 -->
+          <div class="form-col">
+            <div class="form-row-inline">
+              <label>地区</label>
+              <select name="area" multiple size="1">
+                <option>関東</option>
+                <option>関西</option>
+                <option>中部</option>
+                <option>東北</option>
+                <option>九州</option>
+              </select>
+            </div>
+            <div class="form-row-inline">
+              <label>郵便番号</label>
+              <div class="form-inner-flex">
+                <input name="postal" type="text" style="width: 80px;" />
+                <label>都道府県</label>
+                <select name="pref" multiple size="1" style="flex: 1;">
+                  <option>北海道</option>
+                  <option>東京都</option>
+                  <option>大阪府</option>
+                  <option>愛知県</option>
+                  <option>福岡県</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row-inline">
+              <label>住所</label>
+              <input name="addr" type="text" />
+            </div>
+            <div class="form-row-inline">
+              <label>代表TEL</label>
+              <div class="form-inner-flex">
+                <input name="tel" type="text" style="flex: 1;" />
+                <label>代表FAX</label>
+                <input name="fax" type="text" style="flex: 1;" />
+              </div>
+            </div>
+            <div class="form-row-inline">
+              <label>決算月</label>
+              <div class="range-group">
+                <input name="closingMonthFrom" type="text" />
+                <span>～</span>
+                <input name="closingMonthTo" type="text" />
+                <span class="range-unit">(月)</span>
+              </div>
+            </div>
+            <div class="form-row-inline">
+              <label>資本金額</label>
+              <div class="range-group">
+                <input name="capitalFrom" type="text" />
+                <span>～</span>
+                <input name="capitalTo" type="text" />
+                <span class="range-unit">(百万円)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 3 -->
+          <div class="form-col">
+            <div class="form-row-inline"><label>会社自由使用欄1</label><input name="free1" type="text" /></div>
+            <div class="form-row-inline"><label>会社自由使用欄2</label><input name="free2" type="text" /></div>
+            <div class="form-row-inline"><label>会社自由使用欄3</label><input name="free3" type="text" /></div>
+            <div class="form-row-inline"><label>会社自由使用欄4</label><input name="free4" type="text" /></div>
+            <div class="form-row-inline"><label>会社自由使用欄5</label><input name="free5" type="text" /></div>
+            <div class="form-row-inline"><label>会社自由使用欄6</label><input name="free6" type="text" /></div>
+            <div class="form-row-inline"><label>会社自由使用欄7</label><input name="free7" type="text" /></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dlg-actions" style="justify-content: flex-start;">
+        <button class="btn btn-secondary btn-dark" type="button" id="btnAdvancedClear"
+          style="background:#001f3f; color:white; width: 100px;">クリア</button>
+        <button class="btn btn-secondary btn-dark" type="button" id="btnAdvancedHistory"
+          style="background:#001f3f; color:white;">検索条件リストを表示</button>
+        <button class="btn btn-primary btn-dark" value="default" id="btnAdvancedApply"
+          style="background:#001f3f; color:white; margin-left: auto; width: 100px;">検索</button>
+      </div>
+    </form>
+  </dialog>
+
+
+  <dialog id="dlgCompanyCreate" class="dlg dlg-wide">
+    <form method="dialog" class="dlg-body" id="formCompanyCreate">
+      <div class="dlg-header">
+        <div class="dlg-title">会社登録(CP03)</div>
+        <button class="icon-btn" value="cancel" aria-label="close">✕</button>
+      </div>
+      <div class="dlg-content">
+        <!-- <div class="dlg-note">選択中の会社をコピーして新規作成できます（IDは空になります）。</div> -->
+        <div class="dlg-grid four-col">
+          <!-- Column 1 -->
+          <div class="form-col">
+            <div class="form-row">
+              <label>会社ID</label>
+              <input name="id" id="companyCreateId" type="text" disabled placeholder="(登録後に採番)" />
+            </div>
+            <div class="form-row">
+              <label>会社名 <span class="req">*</span></label>
+              <input name="name" id="companyCreateName" type="text" />
+            </div>
+            <div class="form-row">
+              <label>代表TEL</label>
+              <input name="tel" id="companyCreateTel" type="text" />
+            </div>
+            <div class="form-row">
+              <label>代表FAX</label>
+              <input name="fax" id="companyCreateFax" type="text" />
+            </div>
+            <div class="form-row two">
+              <div>
+                <label>地区</label>
+                <select name="area" id="companyCreateArea">
+                  <option value="">-</option>
+                  <option>関東</option>
+                  <option>関西</option>
+                  <option>中部</option>
+                  <option>東北</option>
+                  <option>九州</option>
+                </select>
+              </div>
+              <div></div>
+            </div>
+            <div class="form-row two">
+              <div>
+                <label>郵便番号</label>
+                <input name="postal" id="companyCreatePostal" type="text" />
+              </div>
+              <div>
+                <label>都道府県</label>
+                <select style="width: 120px;" name="pref" id="companyCreatePref">
+                  <option value="">-</option>
+                  <option>北海道</option>
+                  <option>東京都</option>
+                  <option>大阪府</option>
+                  <option>愛知県</option>
+                  <option>福岡県</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <label>住所</label>
+              <input name="addr" id="companyCreateAddr" type="text" />
+            </div>
+            <div class="form-row check-row" style="grid-template-columns: 1fr;">
+              <div class="check-group" style="padding-top:10px;">
+                <label class="check"><input name="noDoc" id="companyCreateNoDoc" type="checkbox" />
+                  資料禁止</label>
+                <label class="check"><input name="noTel" id="companyCreateNoTel" type="checkbox" />
+                  TEL禁止</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2 -->
+          <div class="form-col">
+            <div class="form-row">
+              <label>業界</label>
+              <select name="industry" id="companyCreateIndustry">
+                <option value="">-</option>
+                <option>製造業</option>
+                <option>卸売業</option>
+                <option>小売業</option>
+                <option>金融業</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>業種</label>
+              <select name="biz" id="companyCreateBiz">
+                <option value="">-</option>
+                <option>金属製品</option>
+                <option>化学・素材</option>
+                <option>自動車・輸送用機械</option>
+                <option>木工・家具</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>規模ランク</label>
+              <select name="scale" id="companyCreateScale">
+                <option value="">-</option>
+                <option>1～30人</option>
+                <option>31～100人</option>
+                <option>101～300人</option>
+                <option>301人以上</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>会社種別</label>
+              <select name="type" id="companyCreateType">
+                <option value="">-</option>
+                <option>メーカー</option>
+                <option>その他</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>法人番号</label>
+              <input name="corpNo" id="companyCreateCorpNo" type="text" />
+            </div>
+            <div class="form-row">
+              <label>従業員数</label>
+              <input name="employees" id="companyCreateEmployees" type="text" />
+            </div>
+            <div class="form-row two">
+              <div>
+                <label>決算月</label>
+                <input name="closingMonth" id="companyCreateClosingMonth" type="text" placeholder="例：9" />
+              </div>
+              <div>
+                <label>売上高</label>
+                <input name="revenue" id="companyCreateRevenue" type="text" />
+              </div>
+            </div>
+            <div class="form-row">
+              <label>資本金（百万円）</label>
+              <input name="capital" id="companyCreateCapital" type="text" />
+            </div>
+          </div>
+
+          <!-- Column 3 -->
+          <div class="form-col">
+            <div class="form-row" style="flex:1;">
+              <label>備考</label>
+              <textarea name="remark" id="companyCreateRemark" style="height: 100%; min-height: 220px;"></textarea>
+            </div>
+            <div class="form-row two">
+              <div>
+                <label>作成日</label>
+                <input name="createdAt" id="companyCreateCreatedAt" type="text" disabled />
+              </div>
+              <div>
+                <label>作成者</label>
+                <input name="createdBy" id="companyCreateCreatedBy" type="text" disabled />
+              </div>
+            </div>
+            <div class="form-row two">
+              <div>
+                <label>更新日</label>
+                <input name="updatedAt" id="companyCreateUpdatedAt" type="text" disabled />
+              </div>
+              <div>
+                <label>更新者</label>
+                <input name="updatedBy" id="companyCreateUpdatedBy" type="text" disabled />
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 4 -->
+          <div class="form-col">
+            <div class="form-row"><label>会社自由使用欄1</label><input name="free1" id="companyCreateFree1" type="text" />
+            </div>
+            <div class="form-row"><label>会社自由使用欄2</label><input name="free2" id="companyCreateFree2" type="text" />
+            </div>
+            <div class="form-row"><label>会社自由使用欄3</label><input name="free3" id="companyCreateFree3" type="text" />
+            </div>
+            <div class="form-row"><label>会社自由使用欄4</label><input name="free4" id="companyCreateFree4" type="text" />
+            </div>
+            <div class="form-row"><label>会社自由使用欄5</label><input name="free5" id="companyCreateFree5" type="text" />
+            </div>
+            <div class="form-row"><label>会社自由使用欄6</label><input name="free6" id="companyCreateFree6" type="text" />
+            </div>
+            <div class="form-row"><label>会社自由使用欄7</label><input name="free7" id="companyCreateFree7" type="text" />
+            </div>
+            <div class="form-row" style="flex:1; min-height:80px; display:flex; flex-direction:column;">
+              <label style="margin-top:6px;">添付資料</label>
+              <div
+                style="border: 2px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#999; flex:1; border-radius:4px; font-size:12px; background:#fafafa; margin-bottom:8px;">
+                ここにドラッグ＆ドロップ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dlg-actions">
+        <button class="btn btn-secondary" value="cancel">キャンセル</button>
+        <button class="btn btn-primary" value="default" id="btnCreateCompanyOk">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+
+  <dialog id="dlgCompanyLookup" class="dlg dlg-hero">
+    <form method="dialog" class="dlg-body" id="formCompanyLookup">
+      <div class="dlg-header">
+        <div class="dlg-title">会社検索(CP05)</div>
+        <div class="dlg-header-actions" style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
+          <button type="button" class="btn btn-secondary btn-dark"
+            style="background:#001f3f; color:white;">検索条件リストを表示</button>
+          <button type="button" class="btn btn-secondary btn-dark" style="background:#001f3f; color:white;"
+            id="btnLookupSearch">検索</button>
+          <button class="icon-btn" value="cancel" aria-label="close" style="margin-left: 10px;">✕</button>
+        </div>
+      </div>
+      <div class="dlg-content" style="background: #fff; padding: 15px;">
+        <div class="lookup-filters-grid">
+          <!-- Row 1 -->
+          <div class="form-row"><label>検索ワード</label><input type="text" name="keyword" /></div>
+          <div class="form-row"><label>地区</label><select name="area" multiple size="2">
+              <option>関東</option>
+              <option>関西</option>
+              <option>中部</option>
+            </select></div>
+          <div class="form-row"><label>会社自由使用欄1</label><input type="text" name="free1" /></div>
+
+          <!-- Row 2 -->
+          <div class="form-row"><label>会社名</label><input type="text" name="name" /></div>
+          <div class="form-row two">
+            <div><label>郵便番号</label><input type="text" name="postal" /></div>
+            <div><label>都道府県</label><select name="pref" multiple size="2">
+                <option>東京都</option>
+                <option>大阪府</option>
+              </select></div>
+          </div>
+          <div class="form-row"><label>会社自由使用欄2</label><input type="text" name="free2" /></div>
+
+          <!-- Row 3 -->
+          <div class="form-row"><label>業界</label><select name="industry" multiple size="2">
+              <option>製造業</option>
+              <option>卸売業</option>
+            </select></div>
+          <div class="form-row"><label>住所</label><input type="text" name="addr" /></div>
+          <div class="form-row"><label>会社自由使用欄3</label><input type="text" name="free3" /></div>
+
+          <!-- Row 4 -->
+          <div class="form-row"><label>業種</label><select name="biz" multiple size="2">
+              <option>金属製品</option>
+              <option>化学</option>
+            </select></div>
+          <div class="form-row two">
+            <div><label>代表TEL</label><input type="text" name="tel" /></div>
+            <div><label>代表FAX</label><input type="text" name="fax" /></div>
+          </div>
+          <div class="form-row"><label>会社自由使用欄4</label><input type="text" name="free4" /></div>
+
+          <!-- Row 5 -->
+          <div class="form-row"><label>規模ランク</label><select name="scale" multiple size="2">
+              <option>1～30人</option>
+              <option>31～100人</option>
+            </select></div>
+          <div class="form-row two">
+            <div><label>決算月</label><input type="text" placeholder="From" style="width:60px" /> ～ <input type="text"
+                placeholder="To" style="width:60px" /> (月)</div>
+          </div>
+          <div class="form-row"><label>会社自由使用欄5</label><input type="text" name="free5" /></div>
+
+          <!-- Row 6 -->
+          <div class="form-row"><label>会社種別</label><select name="type" multiple size="2">
+              <option>メーカー</option>
+              <option>その他</option>
+            </select></div>
+          <div class="form-row two">
+            <div><label>資本金額</label><input type="text" placeholder="From" style="width:60px" /> ～ <input type="text"
+                placeholder="To" style="width:60px" /> (百万円)</div>
+          </div>
+          <div class="form-row"><label>会社自由使用欄6</label><input type="text" name="free6" /></div>
+
+          <div class="form-row"></div>
+          <div class="form-row"></div>
+          <div class="form-row"><label>会社自由使用欄7</label><input type="text" name="free7" /></div>
+        </div>
+
+        <div class="lookup-results-section" style="margin-top: 20px; border-top: 2px solid #eee; padding-top: 15px;">
+          <div class="lookup-pager"
+            style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 10px;">
+            <button type="button" class="icon-btn">«</button>
+            <button type="button" class="icon-btn">‹</button>
+            <span style="text-decoration: underline; color: blue; cursor: pointer;">1</span>
+            <button type="button" class="icon-btn">›</button>
+            <button type="button" class="icon-btn">»</button>
+            <div class="pager-jump">
+              Page <select class="mini-select">
+                <option>1</option>
+              </select> / 1
+            </div>
+            <select class="mini-select">
+              <option>100件</option>
+            </select>
+          </div>
+
+          <div class="company-table-wrap" style="height: 300px; border: 1px solid #ddd;">
+            <table class="company-table">
+              <thead>
+                <tr>
+                  <th style="width: 72px;">会社ID</th>
+                  <th>会社名</th>
+                  <th style="width: 130px;">代表TEL</th>
+                  <th>住所</th>
+                  <th style="width: 86px;">業界</th>
+                  <th style="width: 86px;">業種</th>
+                  <th style="width: 86px;">規模ランク</th>
+                  <th style="width: 72px;">種別</th>
+                </tr>
+              </thead>
+              <tbody id="lookupTableBody">
+                <!-- Filled by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="dlg-actions" style="display: flex; justify-content: space-between; padding: 10px 15px;">
+        <button type="button" class="btn btn-secondary btn-dark" style="background:#001f3f; color:white;"
+          id="btnLookupClear">クリア</button>
+        <button type="button" class="btn btn-secondary btn-dark" style="background:#001f3f; color:white; width: 120px;"
+          id="btnLookupSelect">選択</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dlgSearchHistory" class="dlg" style="width: fit-content; max-width: 95vw;">
+    <form method="dialog" class="dlg-body" style="width: 500px;">
+      <div class="dlg-header">
+        <div class="dlg-title">検索条件</div>
+        <div class="dlg-header-actions" style="margin-left: auto;">
+          <button class="icon-btn" value="cancel" aria-label="close">✕</button>
+        </div>
+      </div>
+      <div class="dlg-content" style="background: #ccc; padding: 20px;">
+        <div style="background: #fff; border: 1px solid #999; height: 300px; overflow-y: auto;">
+          <table class="history-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background: #f0f0f0;">
+                <th style="width: 40px; border: 1px solid #999;"></th>
+                <th style="border: 1px solid #999; text-align: center;">名称</th>
+                <th style="width: 60px; border: 1px solid #999;">編集</th>
+              </tr>
+            </thead>
+            <tbody id="searchHistoryBody">
+              <!-- Filled by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="dlg-actions"
+        style="display: flex; justify-content: space-between; padding: 10px 15px; background: #fff; border-top: 2px solid #001f3f;">
+        <button type="button" class="btn btn-secondary btn-dark" style="background:#001f3f; color:white; width: 100px;"
+          id="btnHistorySelect">選択</button>
+        <button type="button" class="btn btn-secondary btn-dark" style="background:#001f3f; color:white; width: 100px;"
+          id="btnHistoryDelete">削除</button>
+        <button type="button" class="btn btn-secondary btn-dark" style="background:#001f3f; color:white;"
+          id="btnHistorySaveCurrent">現在の条件を追加</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dlgActivityDetail" class="dlg dlg-hero">
+    <form method="dialog" class="dlg-body" id="formActivityDetail">
+      <div class="dlg-header">
+        <div class="dlg-title">活動詳細・活動登録(CP06)</div>
+        <button class="icon-btn" value="cancel" aria-label="close">✕</button>
+      </div>
+      <div class="dlg-content">
+        <div class="activity-modal-grid">
+          <!-- Column 1 -->
+          <div class="form-col">
+            <div class="form-row">
+              <label>活動ID</label>
+              <input type="text" name="id" disabled placeholder="" />
+            </div>
+            <div class="form-row multi-2">
+              <label>活動タイプ <span class="req">*</span></label>
+              <select name="type" class="req-field-bg">
+                <option value="">-</option>
+                <option selected>電話</option>
+                <option>メール</option>
+                <option>訪問</option>
+                <option>WEB商談</option>
+              </select>
+              <label>目的</label>
+              <select name="purpose" class="req-field-bg">
+                <option value="">-</option>
+                <option>売り前フォロー</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>動機</label>
+              <select name="motivation">
+                <option value="">-</option>
+                <option>展示会</option>
+                <option>HP問い合わせ</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>担当者 <span class="req">*</span></label>
+              <div class="search-input-group">
+                <input type="text" name="contactName" class="req-field-bg" style="flex:1" />
+                <button type="button" id="btnActivityContactLookup" class="icon-btn-inline">🔍</button>
+                <button type="button" id="btnActivityContactNew" class="btn btn-secondary">新規</button>
+              </div>
+            </div>
+            <div class="form-row">
+              <label>営業担当 <span class="req">*</span></label>
+              <select name="salesRep" class="req-field-bg">
+                <option value="">-</option>
+                <option>鈴木 一郎</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>案件ID</label>
+              <input type="text" name="projectId" disabled />
+            </div>
+            <div class="form-row">
+              <label>案件名</label>
+              <div class="search-input-group">
+                <input type="text" name="projectName" style="flex:1" />
+                <button type="button" id="btnActivityProjectLookup" class="icon-btn-inline">🔍</button>
+                <button type="button" id="btnActivityProjectNew" class="btn btn-secondary">新規</button>
+              </div>
+            </div>
+            <div class="form-row" style="grid-template-columns: 100px 150px;">
+              <label>リードID</label>
+              <input type="text" name="leadId" />
+            </div>
+            <div class="form-row" style="grid-template-columns: 100px 150px;">
+              <label>活動日</label>
+              <select name="date">
+                <option>-</option>
+              </select>
+            </div>
+            <div class="form-row multi-2">
+              <label>開始時刻 <span class="req">*</span></label>
+              <select name="startTime">
+                <option>-</option>
+              </select>
+              <label>終了時刻</label>
+              <select name="endTime">
+                <option>-</option>
+              </select>
+            </div>
+            <div class="form-row multi-2">
+              <label>活動時間</label>
+              <input type="text" name="duration" disabled />
+              <label>面談人数</label>
+              <input type="number" name="attendees" />
+            </div>
+            <div class="checkbox-row" style="margin-top: 10px;">
+              <label><input type="checkbox" /> フォロー完了</label>
+              <label><input type="checkbox" /> アポ有</label>
+              <label><input type="checkbox" /> クレーム</label>
+            </div>
+          </div>
+
+          <!-- Column 2 -->
+          <div class="form-col">
+            <div class="form-row vertical" style="height: 100%;">
+              <label>コメント</label>
+              <textarea name="comment" style="flex: 1; height: 100%; min-height: 400px; resize: none;"></textarea>
+            </div>
+          </div>
+
+          <!-- Column 3 -->
+          <div class="form-col">
+            <div class="form-row multi-2">
+              <label>会社名</label>
+              <input type="text" disabled />
+              <label></label>
+              <input type="text" disabled />
+            </div>
+            <div class="form-row multi-2">
+              <label>会社種別</label>
+              <select disabled>
+                <option>-</option>
+              </select>
+              <label>代表TEL</label>
+              <input type="text" disabled />
+            </div>
+            <div class="form-row multi-2">
+              <label>業界</label>
+              <select disabled>
+                <option>-</option>
+              </select>
+              <label>規模ランク</label>
+              <select disabled>
+                <option>-</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>部署名</label>
+              <input type="text" disabled />
+            </div>
+            <div class="form-row multi-2">
+              <label>郵便番号</label>
+              <input type="text" disabled />
+              <label>都道府県</label>
+              <select disabled>
+                <option>-</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>住所</label>
+              <input type="text" disabled />
+            </div>
+
+            <div style="margin-top: 20px;">
+              <div class="form-row multi-2">
+                <label>作成日時</label>
+                <input type="text" disabled />
+                <label>作成者</label>
+                <select disabled>
+                  <option>-</option>
+                </select>
+              </div>
+              <div class="form-row multi-2">
+                <label>更新日時</label>
+                <input type="text" disabled />
+                <label>更新者</label>
+                <select disabled>
+                  <option>-</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 4 -->
+          <div class="form-col">
+            <div class="form-row"><label>活動自由使用欄1</label><input type="text" /></div>
+            <div class="form-row"><label>活動自由使用欄2</label><input type="text" /></div>
+            <div class="form-row"><label>活動自由使用欄3</label><input type="text" /></div>
+            <div class="form-row"><label>活動自由使用欄4</label><input type="text" /></div>
+            <div class="form-row"><label>活動自由使用欄5</label><input type="text" /></div>
+            <div class="form-row"><label>活動自由使用欄6</label><input type="text" /></div>
+            <div class="form-row"><label>活動自由使用欄7</label><input type="text" /></div>
+            <div class="form-row">
+              <label>添付資料</label>
+              <div class="attach-box">ここにドラッグ＆ドロップ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dlg-actions" style="justify-content: center; position: relative;">
+        <button class="btn btn-primary" id="btnActivitySave">保存</button>
+        <button class="btn btn-secondary" id="btnActivityDelete"
+          style="position: absolute; right: 20px; bottom: 15px; color: #777;">🗑 削除</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Activity Advanced Search (AT02) -->
+  <dialog id="dlgActivityAdvancedSearch" class="dlg dlg-wide">
+    <form method="dialog" class="dlg-body" id="formActivityAdvancedSearch">
+      <div class="dlg-header">
+        <div class="dlg-title">【詳細条件】活動検索 (AT02)</div>
+        <button type="button" class="control-btn close" onclick="this.closest('dialog').close()">✕</button>
+      </div>
+      <div class="dlg-content">
+        <div class="dlg-advanced-grid">
+          <!-- Col 1 -->
+          <div class="form-col">
+            <div class="form-row-inline"><label>検索ワード</label><input type="text" /></div>
+            <div class="form-row-inline"><label>会社名</label><input type="text" /></div>
+            <div class="form-row-inline"><label>担当者名</label><input type="text" /></div>
+            <div class="form-row-inline"><label>活動タイプ</label><input type="text" /></div>
+            <div class="form-row-inline"><label>動機</label><input type="text" /></div>
+          </div>
+          <!-- Col 2 -->
+          <div class="form-col">
+            <div class="form-row-inline"><label>活動日</label>
+              <div class="range-group"><input type="date" /> ～ <input type="date" /></div>
+            </div>
+            <div class="form-row-inline"><label>フォロー予</label>
+              <div class="range-group"><input type="date" /> ～ <input type="date" /></div>
+            </div>
+            <div class="form-row-inline"><label>営業担当</label><input type="text" /></div>
+            <div class="form-row-inline"><label>目的</label><input type="text" /></div>
+            <div class="checkbox-row" style="margin-left: 100px; display: flex; gap: 15px; margin-top: 10px;">
+              <label class="chk-label"><input type="checkbox" /> アポ有無</label>
+              <label class="chk-label"><input type="checkbox" /> クレーム</label>
+            </div>
+          </div>
+          <!-- Col 3 -->
+          <div class="form-col">
+            <div class="form-row-inline"><label>活動自由使用欄1</label><input type="text" /></div>
+            <div class="form-row-inline"><label>活動自由使用欄2</label><input type="text" /></div>
+            <div class="form-row-inline"><label>活動自由使用欄3</label><input type="text" /></div>
+            <div class="form-row-inline"><label>活動自由使用欄4</label><input type="text" /></div>
+            <div class="form-row-inline"><label>活動自由使用欄5</label><input type="text" /></div>
+            <div class="form-row-inline"><label>活動自由使用欄6</label><input type="text" /></div>
+            <div class="form-row-inline"><label>活動自由使用欄7</label><input type="text" /></div>
+          </div>
+        </div>
+      </div>
+      <div class="dlg-actions" style="justify-content: space-between;">
+        <div style="display:flex; gap:10px;">
+          <button type="button" class="btn btn-dark"
+            style="background:#001f4d !important; color:white !important; width: 120px;">クリア</button>
+          <button type="button" class="btn btn-dark"
+            style="background:#001f4d !important; color:white !important; width: 180px;">検索条件リストを表示</button>
+        </div>
+        <button type="submit" class="btn btn-dark"
+          style="background:#001f4d !important; color:white !important; width: 120px;">検索</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Project Advanced Search (PR02) -->
+  <dialog id="dlgProjectAdvancedSearch" class="dlg dlg-wide">
+    <form method="dialog" class="dlg-body" id="formProjectAdvancedSearch">
+      <div class="dlg-header">
+        <div class="dlg-title">【詳細条件】案件検索 (PR02)</div>
+        <button type="button" class="control-btn close" onclick="this.closest('dialog').close()">✕</button>
+      </div>
+      <div class="dlg-content">
+        <div class="dlg-advanced-grid">
+          <!-- Col 1 -->
+          <div class="form-col">
+            <div class="form-row-inline"><label>検索ワード</label><input type="text" /></div>
+            <div class="form-row-inline"><label>案件名</label><input type="text" /></div>
+            <div class="form-row-inline"><label>担当者名</label><input type="text" /></div>
+            <div class="form-row-inline"><label>当初確度</label><input type="text" /></div>
+            <div class="form-row-inline"><label>引合手段</label><input type="text" /></div>
+            <div class="form-row-inline"><label>見直確度</label><input type="text" /></div>
+          </div>
+          <!-- Col 2 -->
+          <div class="form-col">
+            <div class="form-row-inline"><label>話題日</label>
+              <div class="range-group"><input type="date" /> ～ <input type="date" /></div>
+            </div>
+            <div class="form-row-inline"><label>会社名</label><input type="text" /></div>
+            <div class="form-row-inline"><label>営業担当者名</label><input type="text" /></div>
+            <div class="form-row-inline"><label>ステータス</label><input type="text" /></div>
+            <div class="form-row-inline"><label>発生動機</label><input type="text" /></div>
+            <div class="checkbox-list-vertical" style="margin-top: 10px; margin-left: 100px;">
+              <label class="chk-label"><input type="checkbox" /> ステージ1: 見積書提出</label>
+              <label class="chk-label" style="margin-top: 10px;"><input type="checkbox" /> ステージ2: 仕様打合せ</label>
+              <label class="chk-label" style="margin-top: 10px;"><input type="checkbox" /> ステージ3: 現場確認</label>
+              <label class="chk-label" style="margin-top: 10px;"><input type="checkbox" /> ステージ4: 上長確認</label>
+            </div>
+          </div>
+          <!-- Col 3 -->
+          <div class="form-col">
+            <div class="form-row-inline"><label>案件自由使用欄1</label><input type="text" /></div>
+            <div class="form-row-inline"><label>案件自由使用欄2</label><input type="text" /></div>
+            <div class="form-row-inline"><label>案件自由使用欄3</label><input type="text" /></div>
+            <div class="form-row-inline"><label>案件自由使用欄4</label><input type="text" /></div>
+            <div class="form-row-inline"><label>案件自由使用欄5</label><input type="text" /></div>
+            <div class="form-row-inline"><label>案件自由使用欄6</label><input type="text" /></div>
+            <div class="form-row-inline"><label>案件自由使用欄7</label><input type="text" /></div>
+          </div>
+        </div>
+      </div>
+      <div class="dlg-actions" style="justify-content: space-between;">
+        <div style="display:flex; gap:10px;">
+          <button type="button" class="btn btn-dark"
+            style="background:#001f4d !important; color:white !important; width: 120px;">クリア</button>
+          <button type="button" class="btn btn-dark"
+            style="background:#001f4d !important; color:white !important; width: 180px;">検索条件リストを表示</button>
+        </div>
+        <button type="submit" class="btn btn-dark"
+          style="background:#001f4d !important; color:white !important; width: 120px;">検索</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Contact Lookup Modal -->
+  <dialog id="dlgContactLookup" class="dlg dlg-hero">
+    <form method="dialog" class="dlg-body">
+      <div class="dlg-header">
+        <div class="dlg-title">担当者検索(CP07)</div>
+        <button class="icon-btn" value="cancel" aria-label="close">✕</button>
+      </div>
+      <div class="dlg-content">
+        <div class="lookup-filters-box"
+          style="border: 1px solid #eee; padding: 15px; margin-bottom: 15px; background: #fff;">
+          <div class="activity-modal-grid" style="grid-template-columns: repeat(3, 1fr); gap: 10px;">
+            <!-- Col 1 -->
+            <div class="form-col">
+              <div class="form-row"><label>検索ワード</label><input type="text" /></div>
+              <div class="form-row"><label>担当者名</label><input type="text" /></div>
+              <div class="form-row"><label>フリガナ</label><input type="text" /></div>
+              <div class="form-row"><label>役職名</label><input type="text" /></div>
+              <div class="form-row"><label>TEL/内線</label><input type="text" /></div>
+              <div class="form-row"><label>携帯番号</label><input type="text" /></div>
+            </div>
+            <!-- Col 2 -->
+            <div class="form-col">
+              <div class="form-row"><label>会社名</label><input type="text" /></div>
+              <div class="form-row"><label>Email</label><input type="text" /></div>
+              <div class="form-row"><label>FAX</label><input type="text" /></div>
+              <div class="form-row multi-2">
+                <label>フォロー予</label>
+                <select>
+                  <option>-</option>
+                </select>
+                <label style="text-align: center;">～</label>
+                <select>
+                  <option>-</option>
+                </select>
+              </div>
+              <div class="form-row" style="margin-top: 10px; grid-template-columns: 20px 1fr;">
+                <input type="checkbox" id="chkLongTimeNoSee" style="width: 16px;" />
+                <label for="chkLongTimeNoSee" style="font-size: 11px;">ご無沙汰検索 <span
+                    style="color: #666; margin-left: 10px;">過去6ヶ月以内に活動のなかった担当者を検索</span></label>
+              </div>
+            </div>
+            <!-- Col 3 (Free fields) -->
+            <div class="form-col">
+              <div class="form-row"><label>担当者自由使用欄1</label><input type="text" /></div>
+              <div class="form-row"><label>担当者自由使用欄2</label><input type="text" /></div>
+              <div class="form-row"><label>担当者自由使用欄3</label><input type="text" /></div>
+              <div class="form-row"><label>担当者自由使用欄4</label><input type="text" /></div>
+              <div class="form-row"><label>担当者自由使用欄5</label><input type="text" /></div>
+              <div class="form-row"><label>担当者自由使用欄6</label><input type="text" /></div>
+            </div>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
+            <button type="button" class="btn btn-primary"
+              style="background: #003366; padding: 5px 30px;">検索条件リストを表示</button>
+            <button type="button" class="btn btn-primary" style="background: #003366; padding: 5px 50px;">検索</button>
+          </div>
+        </div>
+
+        <div class="lookup-results-area">
+          <div class="pagination-bar"
+            style="display: flex; justify-content: center; gap: 20px; align-items: center; margin-bottom: 10px; font-size: 12px;">
+            <div class="pager-btns">
+              <button type="button">«</button> <button type="button">‹</button>
+              <span style="margin: 0 10px; border-bottom: 1px solid #003366; color: #003366;">1</span>
+              <button type="button">›</button> <button type="button">»</button>
+            </div>
+            <div>Page <select>
+                <option>1</option>
+              </select> / 1</div>
+            <div><select>
+                <option>100件</option>
+              </select></div>
+          </div>
+          <div class="table-container" style="height: 300px; overflow: auto; border: 1px solid #ccc; background: #fff;">
+            <table class="mini-grid-table contact-table" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th style="width: 100px;">会社 ID</th>
+                  <th style="width: 150px;">会社名</th>
+                  <th style="width: 120px;">部署名</th>
+                  <th style="width: 100px;">担当(姓)</th>
+                  <th style="width: 100px;">担当(名)</th>
+                  <th style="width: 120px;">フリガナ</th>
+                  <th style="width: 120px;">TEL</th>
+                  <th>携帯電話</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>10001</td>
+                  <td>株式会社サンプル商事</td>
+                  <td>営業第一部</td>
+                  <td>山田</td>
+                  <td>太郎</td>
+                  <td>ヤマダ タロウ</td>
+                  <td>03-1234-5678</td>
+                  <td>090-1111-2222</td>
+                </tr>
+                <tr>
+                  <td>10002</td>
+                  <td>テストテクノロジー</td>
+                  <td>開発本部</td>
+                  <td>佐藤</td>
+                  <td>和子</td>
+                  <td>サトウ カズコ</td>
+                  <td>03-9876-5432</td>
+                  <td>080-3333-4444</td>
+                </tr>
+                <tr class="selected">
+                  <td>10003</td>
+                  <td>グローバルIT</td>
+                  <td>管理部</td>
+                  <td>鈴木</td>
+                  <td>一郎</td>
+                  <td>スズキ イチロウ</td>
+                  <td>06-5555-6666</td>
+                  <td>070-5555-6666</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="dlg-actions"
+        style="display: flex; justify-content: space-between; background: #f5f5f5; border-top: 1px solid #ccc; padding: 10px 20px;">
+        <button type="button" class="btn btn-primary" style="background: #003366;">クリア</button>
+        <button type="button" class="btn btn-primary" style="background: #003366; padding: 5px 40px;">選択</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Contact Advanced Search Modal (CT02_CP07) -->
+  <dialog id="dlgContactAdvancedSearch" class="dlg dlg-hero">
+    <form method="dialog" class="dlg-body">
+      <div class="dlg-header">
+        <div class="dlg-title">【詳細条件】担当者検索 (CT02_CP07)</div>
+        <button class="icon-btn" value="cancel" aria-label="close">✕</button>
+      </div>
+      <div class="dlg-content">
+        <div class="lookup-filters-box" style="border: 1px solid #eee; padding: 25px; background: #fff;">
+          <div class="activity-modal-grid" style="grid-template-columns: repeat(3, 1fr); gap: 20px;">
+            <!-- Col 1 -->
+            <div class="form-col">
+              <div class="form-row"><label>検索ワード</label><input type="text" /></div>
+              <div class="form-row"><label>担当者名</label><input type="text" /></div>
+              <div class="form-row"><label>フリガナ</label><input type="text" /></div>
+              <div class="form-row"><label>役職名</label><input type="text" /></div>
+              <div class="form-row"><label>TEL/内線</label><input type="text" /></div>
+              <div class="form-row"><label>携帯番号</label><input type="text" /></div>
+            </div>
+            <!-- Col 2 -->
+            <div class="form-col">
+              <div class="form-row"><label>会社名</label><input type="text" /></div>
+              <div class="form-row"><label>Email</label><input type="text" /></div>
+              <div class="form-row"><label>FAX</label><input type="text" /></div>
+              <div class="form-row multi-2">
+                <label>フォロー予</label>
+                <select>
+                  <option>-</option>
+                </select>
+                <label style="text-align: center;">～</label>
+                <select>
+                  <option>-</option>
+                </select>
+              </div>
+              <div class="form-row" style="margin-top: 15px; grid-template-columns: 20px 1fr;">
+                <input type="checkbox" id="chkLongTimeNoSeeCT02" style="width: 16px;" />
+                <label for="chkLongTimeNoSeeCT02" style="font-size: 11px;">ご無沙汰検索 <span
+                    style="color: #666; margin-left: 10px;">過去6ヶ月以内に活動のなかった担当者を検索</span></label>
+              </div>
+            </div>
+            <!-- Col 3 (Free fields) -->
+            <div class="form-col">
+              <div class="form-row"><label>担当者自由使用欄1</label><input type="text" /></div>
+              <div class="form-row"><label>担当者自由使用欄2</label><input type="text" /></div>
+              <div class="form-row"><label>担当者自由使用欄3</label><input type="text" /></div>
+              <div class="form-row"><label>担当者自由使用欄4</label><input type="text" /></div>
+              <div class="form-row"><label>担当者自由使用欄5</label><input type="text" /></div>
+              <div class="form-row"><label>担当者自由使用欄6</label><input type="text" /></div>
+              <div class="form-row"><label>担当者自由使用欄7</label><input type="text" /></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dlg-actions" style="display: flex; justify-content: space-between; padding: 10px 20px;">
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="btn btn-primary" style="background: #001f3f;">クリア</button>
+          <button type="button" class="btn btn-primary" style="background: #001f3f;">検索条件リストを表示</button>
+        </div>
+        <button type="button" class="btn btn-primary" style="background: #001f3f; padding: 5px 40px;">検索</button>
+      </div>
+    </form>
+  </dialog>
+  <!-- Contact Detail / Registration Modal -->
+  <dialog id="dlgContactDetailNew" class="dlg dlg-hero">
+    <form method="dialog" class="dlg-body" id="formContactDetail">
+      <div class="dlg-header">
+        <div class="dlg-title">担当登録(CP08)</div>
+        <button class="icon-btn" value="cancel" aria-label="close">✕</button>
+      </div>
+      <div class="dlg-content">
+        <div class="activity-modal-grid">
+          <!-- Column 1 -->
+          <div class="form-col">
+            <div class="form-row">
+              <label>担当者ID</label>
+              <input type="text" disabled placeholder="(自動採番)" />
+            </div>
+            <div class="form-row multi-2">
+              <label>姓 <span class="req">*</span></label>
+              <input type="text" name="lastName" class="req-field-bg" />
+              <label>名</label>
+              <input type="text" name="firstName" />
+            </div>
+            <div class="form-row multi-2">
+              <label>セイ</label>
+              <input type="text" name="lastNameKana" />
+              <label>メイ</label>
+              <input type="text" name="firstNameKana" />
+            </div>
+            <div class="form-row">
+              <label>会社名 <span class="req">*</span></label>
+              <div class="search-input-group">
+                <input type="text" name="companyName" class="req-field-bg" style="flex:1" />
+                <button type="button" class="icon-btn-inline">🔍 (click CP05)</button>
+                <button type="button" class="btn btn-secondary">新規(click CP03)</button>
+              </div>
+            </div>
+            <div class="form-row">
+              <label>部署名</label>
+              <input type="text" name="deptName" />
+            </div>
+            <div class="form-row multi-2">
+              <label>TEL</label>
+              <input type="text" name="tel" />
+              <label>内線</label>
+              <input type="text" name="ext" />
+            </div>
+            <div class="form-row multi-2">
+              <label>FAX</label>
+              <input type="text" name="fax" />
+              <label>携帯電話</label>
+              <input type="text" name="mobile" />
+            </div>
+            <div class="form-row">
+              <label>Email</label>
+              <input type="text" name="email" />
+            </div>
+            <div class="form-row">
+              <label>職種</label>
+              <select name="jobCategory">
+                <option>-</option>
+              </select>
+            </div>
+            <div class="form-row multi-2">
+              <label>職位</label>
+              <select name="jobLevel">
+                <option>-</option>
+              </select>
+              <label>役職名</label>
+              <input type="text" name="jobTitle" />
+            </div>
+            <div class="checkbox-row" style="margin-left: 110px;">
+              <label><input type="checkbox" /> 資料禁止</label>
+              <label><input type="checkbox" /> TEL禁止</label>
+              <label><input type="checkbox" /> TEL注意</label>
+            </div>
+          </div>
+
+          <!-- Column 2 -->
+          <div class="form-col">
+            <div class="form-row vertical" style="height: 100%;">
+              <label>備考</label>
+              <textarea name="remarks" style="flex: 1; height: 100%; min-height: 400px; resize: none;"></textarea>
+            </div>
+          </div>
+
+          <!-- Column 3 -->
+          <div class="form-col">
+            <div class="form-row">
+              <label>フォロー予定</label>
+              <select name="followUpDate">
+                <option>-</option>
+              </select>
+            </div>
+            <div class="form-row multi-2">
+              <label>会社種別</label>
+              <input type="text" disabled />
+              <label>代表TEL</label>
+              <input type="text" disabled />
+            </div>
+            <div class="form-row multi-2">
+              <label>業界</label>
+              <select disabled>
+                <option>-</option>
+              </select>
+              <label>規模ランク</label>
+              <select disabled>
+                <option>-</option>
+              </select>
+            </div>
+            <div class="form-row multi-2">
+              <label>郵便番号</label>
+              <input type="text" disabled />
+              <label>都道府県</label>
+              <select disabled>
+                <option>-</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>住所</label>
+              <input type="text" disabled />
+            </div>
+
+            <div style="margin-top: 20px;">
+              <div class="form-row multi-2">
+                <label>作成日時</label>
+                <input type="text" disabled />
+                <label>作成者</label>
+                <select disabled>
+                  <option>-</option>
+                </select>
+              </div>
+              <div class="form-row multi-2">
+                <label>更新日時</label>
+                <input type="text" disabled />
+                <label>更新者</label>
+                <select disabled>
+                  <option>-</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 4 -->
+          <div class="form-col">
+            <div class="form-row"><label>担当者自由使用欄1</label><input type="text" /></div>
+            <div class="form-row"><label>担当者自由使用欄2</label><input type="text" /></div>
+            <div class="form-row"><label>担当者自由使用欄3</label><input type="text" /></div>
+            <div class="form-row"><label>担当者自由使用欄4</label><input type="text" /></div>
+            <div class="form-row"><label>担当者自由使用欄5</label><input type="text" /></div>
+            <div class="form-row"><label>担当者自由使用欄6</label><input type="text" /></div>
+            <div class="form-row"><label>担当者自由使用欄7</label><input type="text" /></div>
+          </div>
+        </div>
+      </div>
+      <div class="dlg-actions" style="justify-content: center; position: relative;">
+        <button class="btn btn-primary" id="btnContactSave">保存</button>
+        <button class="btn btn-secondary" id="btnContactDelete"
+          style="position: absolute; right: 20px; bottom: 15px; color: #777;">🗑 削除</button>
+      </div>
+    </form>
+  </dialog>
+  <!-- Project Lookup Modal -->
+  <dialog id="dlgProjectLookup" class="dlg dlg-hero">
+    <form method="dialog" class="dlg-body">
+      <div class="dlg-header">
+        <div class="dlg-title">案件検索(CP09)</div>
+        <button class="icon-btn" value="cancel" aria-label="close">✕</button>
+      </div>
+      <div class="dlg-content">
+        <div class="lookup-filters-box"
+          style="border: 1px solid #eee; padding: 15px; margin-bottom: 15px; background: #fff;">
+          <div class="activity-modal-grid" style="grid-template-columns: repeat(3, 1fr); gap: 10px;">
+            <!-- Col 1 -->
+            <div class="form-col">
+              <div class="form-row"><label>検索ワード</label><input type="text" /></div>
+              <div class="form-row"><label>案件名</label><input type="text" /></div>
+              <div class="form-row"><label>担当者名</label><input type="text" /></div>
+              <div class="form-row"><label>当初確度</label><select multiple style="height: 60px;">
+                  <option>A</option>
+                  <option>B</option>
+                  <option>C</option>
+                </select></div>
+              <div class="form-row"><label>引合手段</label><select multiple style="height: 60px;">
+                  <option>電話</option>
+                  <option>メール</option>
+                  <option>来社</option>
+                </select></div>
+              <div class="form-row"><label>見直確度</label><select multiple style="height: 60px;">
+                  <option>A</option>
+                  <option>B</option>
+                  <option>C</option>
+                </select></div>
+            </div>
+            <!-- Col 2 -->
+            <div class="form-col">
+              <div class="form-row multi-2">
+                <select style="width: 80px;">
+                  <option>話題日</option>
+                </select>
+                <input type="text" style="width: 100px;" />
+                <span>～</span>
+                <input type="text" style="width: 100px;" />
+              </div>
+              <div class="form-row"><label>会社名</label><input type="text" /></div>
+              <div class="form-row"><label>営業担当者</label><input type="text" /></div>
+              <div class="form-row"><label>ステータス</label><select multiple style="height: 60px;">
+                  <option>進行中</option>
+                  <option>受注</option>
+                  <option>失注</option>
+                </select></div>
+              <div class="form-row"><label>発生動機</label> <select multiple style="height: 60px;">
+                  <option>HP</option>
+                  <option>紹介</option>
+                </select></div>
+              <div class="form-row vertical" style="margin-top: 10px; gap: 5px;">
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 11px;">
+                  <input type="checkbox" style="width: 14px;" /> ステージ1： 見積書提出
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 11px;">
+                  <input type="checkbox" style="width: 14px;" /> ステージ2： 仕様打合せ
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 11px;">
+                  <input type="checkbox" style="width: 14px;" /> ステージ3： 現場確認
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; font-weight: normal; font-size: 11px;">
+                  <input type="checkbox" style="width: 14px;" /> ステージ4： 上長確認
+                </label>
+              </div>
+            </div>
+            <!-- Col 3 -->
+            <div class="form-col">
+              <div class="form-row"><label>案件自由使用欄1</label><input type="text" /></div>
+              <div class="form-row"><label>案件自由使用欄2</label><input type="text" /></div>
+              <div class="form-row"><label>案件自由使用欄3</label><input type="text" /></div>
+              <div class="form-row"><label>案件自由使用欄4</label><input type="text" /></div>
+              <div class="form-row"><label>案件自由使用欄5</label><input type="text" /></div>
+              <div class="form-row"><label>案件自由使用欄6</label><input type="text" /></div>
+              <div class="form-row"><label>案件自由使用欄7</label><input type="text" /></div>
+            </div>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
+            <button type="button" class="btn btn-primary"
+              style="background: #003366; padding: 5px 30px;">検索条件リストを表示</button>
+            <button type="button" class="btn btn-primary" style="background: #003366; padding: 5px 50px;">検索</button>
+          </div>
+        </div>
+
+        <div class="lookup-results-area">
+          <div class="pagination-bar"
+            style="display: flex; justify-content: center; gap: 20px; align-items: center; margin-bottom: 10px; font-size: 12px;">
+            <div class="pager-btns">
+              <button type="button">«</button> <button type="button">‹</button>
+              <span style="margin: 0 10px; border-bottom: 1px solid #003366; color: #003366;">1</span>
+              <button type="button">›</button> <button type="button">»</button>
+            </div>
+            <div>Page <select>
+                <option>1</option>
+              </select> / 1</div>
+            <div><select>
+                <option>100件</option>
+              </select></div>
+          </div>
+          <div class="table-container" style="height: 300px; overflow: auto; border: 1px solid #ccc; background: #fff;">
+            <table class="mini-grid-table project-table" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th style="width: 100px;">話題日</th>
+                  <th style="width: 100px;">フォロー予定</th>
+                  <th style="width: 100px;">案件ステータス</th>
+                  <th style="width: 100px;">営業担当</th>
+                  <th style="width: 150px;">会社名</th>
+                  <th style="width: 100px;">担当(姓)</th>
+                  <th style="width: 150px;">案件名</th>
+                  <th>案件概要</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>2024/04/01</td>
+                  <td>2024/05/01</td>
+                  <td>進行中</td>
+                  <td>鈴木 一郎</td>
+                  <td>サンプル商事</td>
+                  <td>山田</td>
+                  <td>サーバー導入案件</td>
+                  <td>新規サーバーの導入検討</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="dlg-actions"
+        style="display: flex; justify-content: space-between; background: #f5f5f5; border-top: 1px solid #ccc; padding: 10px 20px;">
+        <button type="button" class="btn btn-primary" style="background: #003366;">クリア</button>
+        <button type="button" class="btn btn-primary" id="btnProjectSelect"
+          style="background: #003366; padding: 5px 40px;">選択</button>
+      </div>
+    </form>
+  </dialog>
+  <!-- Project Detail / Registration Modal -->
+  <dialog id="dlgProjectDetail" class="dlg dlg-hero">
+    <form method="dialog" class="dlg-body" id="formProjectDetail">
+      <div class="dlg-header">
+        <div class="dlg-title">案件登録 (CP10)</div>
+        <button class="icon-btn" value="cancel" aria-label="close">✕</button>
+      </div>
+      <div class="dlg-content">
+        <div class="activity-modal-grid">
+          <!-- Column 1 -->
+          <div class="form-col">
+            <div class="form-row">
+              <label>案件ID</label>
+              <input type="text" disabled placeholder="(自動採番)" />
+            </div>
+            <div class="form-row multi-2">
+              <label>ステータス</label>
+              <select name="status">
+                <option>-</option>
+              </select>
+              <label>ﾌｫﾛｰ予定</label>
+              <select name="followUp">
+                <option>-</option>
+              </select>
+            </div>
+            <div class="form-row multi-2">
+              <label>当初確度</label>
+              <select name="initialAccuracy">
+                <option>-</option>
+              </select>
+              <label>見直確度</label>
+              <select name="reviewAccuracy">
+                <option>-</option>
+              </select>
+            </div>
+            <div class="form-row multi-2">
+              <label>営業担当 <span class="req">*</span></label>
+              <select name="salesRep" class="req-field-bg">
+                <option>-</option>
+              </select>
+              <label>発生動機</label>
+              <select name="motivation">
+                <option>-</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>案件名 <span class="req">*</span></label>
+              <input type="text" name="projectName" class="req-field-bg" />
+            </div>
+            <div class="form-row">
+              <label>担当者名 <span class="req">*</span></label>
+              <div class="search-input-group">
+                <input type="text" name="contactName" class="req-field-bg" style="flex:1" />
+                <button type="button" class="icon-btn-inline">🔍(Click CP07)</button>
+                <button type="button" class="btn btn-secondary">新規(Click CP08)</button>
+              </div>
+            </div>
+            <div class="form-row vertical" style="flex: 1;">
+              <label>案件概要</label>
+              <textarea name="summary" style="flex: 1; min-height: 200px; resize: none;"></textarea>
+            </div>
+          </div>
+
+          <!-- Column 2 -->
+          <div class="form-col">
+            <div class="form-row multi-2">
+              <label>話題発生日</label><input type="text" />
+              <label>案件化日</label><input type="text" />
+            </div>
+            <div class="form-row multi-2">
+              <label>受注日</label><input type="text" />
+              <label>売上日</label><input type="text" />
+            </div>
+            <div class="form-row"><label>失注日</label><input type="text" style="width: 100px;" /></div>
+            <div class="form-row multi-2">
+              <label>リードID</label><input type="text" />
+              <label>引合手段</label><select>
+                <option>-</option>
+              </select>
+            </div>
+            <div class="form-row"><label>競合会社</label><input type="text" /></div>
+
+            <!-- Planned Block -->
+            <div style="border: 1px solid #eee; padding: 10px; margin-top: 10px;">
+              <div style="font-size: 11px; font-weight: bold; margin-bottom: 5px;">予定</div>
+              <div class="form-row"><label>機種</label><input type="text" /></div>
+              <div class="form-row multi-2">
+                <label>台数</label><input type="text" />
+                <label>予定時期</label><select>
+                  <option>-</option>
+                </select>
+              </div>
+              <div class="form-row"><label>予定売上</label><input type="text" /></div>
+            </div>
+
+            <!-- Actual Block -->
+            <div style="border: 1px solid #eee; padding: 10px; margin-top: 10px;">
+              <div style="font-size: 11px; font-weight: bold; margin-bottom: 5px;">実績</div>
+              <div class="form-row"><label>機種</label><input type="text" /></div>
+              <div class="form-row multi-2">
+                <label>台数</label><input type="text" />
+                <label>売上時期</label><select>
+                  <option>-</option>
+                </select>
+              </div>
+              <div class="form-row"><label>売上</label><input type="text" /></div>
+            </div>
+          </div>
+
+          <!-- Column 3 -->
+          <div class="form-col">
+            <div class="checkbox-row" style="margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
+              <label><input type="checkbox" /> ｽﾃｰｼﾞ1: 見積書提出</label>
+              <label><input type="checkbox" /> ｽﾃｰｼﾞ2: 仕様打合せ</label>
+              <label><input type="checkbox" /> ｽﾃｰｼﾞ3: 現場確認</label>
+              <label><input type="checkbox" /> ｽﾃｰｼﾞ4: 上長確認</label>
+            </div>
+            <div class="form-row multi-2">
+              <label>会社名</label><input type="text" disabled style="flex: 2;" /><input type="text" disabled
+                style="flex: 2;" />
+            </div>
+            <div class="form-row multi-2">
+              <label>会社種別</label><input type="text" disabled />
+              <label>代表TEL</label><input type="text" disabled />
+            </div>
+            <div class="form-row multi-2">
+              <label>業界</label><select disabled>
+                <option>-</option>
+              </select>
+              <label>規模ランク</label><select disabled>
+                <option>-</option>
+              </select>
+            </div>
+            <div class="form-row"><label>部署名</label><input type="text" disabled /></div>
+            <div class="form-row multi-2">
+              <label>郵便番号</label><input type="text" disabled />
+              <label>都道府県</label><select disabled>
+                <option>-</option>
+              </select>
+            </div>
+            <div class="form-row"><label>住所</label><input type="text" disabled /></div>
+
+            <div style="margin-top: 20px;">
+              <div class="form-row multi-2">
+                <label>作成日時</label><input type="text" disabled />
+                <label>作成者</label><select disabled>
+                  <option>-</option>
+                </select>
+              </div>
+              <div class="form-row multi-2">
+                <label>更新日時</label><input type="text" disabled />
+                <label>更新者</label><select disabled>
+                  <option>-</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 4 -->
+          <div class="form-col">
+            <div class="form-row"><label>案件自由使用欄1</label><input type="text" /></div>
+            <div class="form-row"><label>案件自由使用欄2</label><input type="text" /></div>
+            <div class="form-row"><label>案件自由使用欄3</label><input type="text" /></div>
+            <div class="form-row"><label>案件自由使用欄4</label><input type="text" /></div>
+            <div class="form-row"><label>案件自由使用欄5</label><input type="text" /></div>
+            <div class="form-row"><label>案件自由使用欄6</label><input type="text" /></div>
+            <div class="form-row"><label>案件自由使用欄7</label><input type="text" /></div>
+            <div class="form-row vertical" style="margin-top: 10px;">
+              <label>添付資料</label>
+              <div class="attach-box"
+                style="height: 150px; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px; background: #fafafa;">
+                ここにドラッグ＆ドロップ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dlg-actions" style="justify-content: center; position: relative;">
+        <button class="btn btn-primary" id="btnProjectSave">保存</button>
+        <button class="btn btn-secondary" id="btnProjectDelete"
+          style="position: absolute; right: 20px; bottom: 15px; color: #777;">🗑 削除</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog id="dlgContactDetail" class="dlg dlg-hero">
+    <form method="dialog" class="dlg-body" id="formContactDetail">
+      <div class="dlg-header">
+        <div class="dlg-title">担当登録(CP04)</div>
+        <button class="icon-btn" value="cancel" aria-label="close">✕</button>
+      </div>
+      <div class="dlg-content">
+        <div class="contact-modal-grid">
+          <!-- Column 1: Basic Info -->
+          <div class="contact-meta-col">
+            <div class="form-row">
+              <label>担当者ID</label>
+              <input name="id" id="contactDetailId" type="text" disabled placeholder="(登録後に採番)" />
+            </div>
+            <div class="form-row two">
+              <div>
+                <label>姓 <span class="req">*</span></label>
+                <input name="lastName" id="contactDetailLastName" type="text" />
+              </div>
+              <div>
+                <label>名</label>
+                <input name="firstName" id="contactDetailFirstName" type="text" />
+              </div>
+            </div>
+            <div class="form-row two">
+              <div>
+                <label>セイ</label>
+                <input name="lastNameKana" id="contactDetailLastNameKana" type="text" />
+              </div>
+              <div>
+                <label>メイ</label>
+                <input name="firstNameKana" id="contactDetailFirstNameKana" type="text" />
+              </div>
+            </div>
+            <div class="form-row">
+              <label>会社名 <span class="req">*</span></label>
+              <div class="search-input-group">
+                <input name="companyName" id="contactDetailCompanyName" type="text" />
+                <button type="button" class="icon-btn-inline" id="btnContactCompanyLookup">🔍</button>
+                <button type="button" class="badge badge-orange" id="btnContactNewCompany"
+                  style="cursor: pointer; border: none; font-family: inherit;">新規</button>
+              </div>
+            </div>
+            <div class="form-row">
+              <label>部署名</label>
+              <input name="dept" id="contactDetailDept" type="text" />
+            </div>
+            <div class="form-row two">
+              <div>
+                <label>TEL</label>
+                <input name="tel" id="contactDetailTel" type="text" />
+              </div>
+              <div>
+                <label>内線</label>
+                <input name="ext" id="contactDetailExt" type="text" />
+              </div>
+            </div>
+            <div class="form-row two">
+              <div>
+                <label>FAX</label>
+                <input name="fax" id="contactDetailFax" type="text" />
+              </div>
+              <div>
+                <label>携帯電話</label>
+                <input name="mobile" id="contactDetailMobile" type="text" />
+              </div>
+            </div>
+            <div class="form-row">
+              <label>Email</label>
+              <input name="email" id="contactDetailEmail" type="text" />
+            </div>
+            <div class="form-row">
+              <label>職種</label>
+              <select name="jobType" id="contactDetailJobType">
+                <option value="">-</option>
+                <option>営業</option>
+                <option>技術</option>
+                <option>事務</option>
+                <option>その他</option>
+              </select>
+            </div>
+            <div class="form-row two">
+              <div>
+                <label>職位</label>
+                <select name="rank" id="contactDetailRank">
+                  <option value="">-</option>
+                  <option>役員</option>
+                  <option>部長</option>
+                  <option>課長</option>
+                  <option>主任</option>
+                  <option>一般</option>
+                </select>
+              </div>
+              <div>
+                <label>役職名</label>
+                <input name="position" id="contactDetailPosition" type="text" />
+              </div>
+            </div>
+            <div class="form-row flags" style="flex-direction: row; gap: 15px; margin-top: 10px;">
+              <label class="chk-label"><input type="checkbox" name="noDoc" id="contactDetailNoDoc" />
+                資料禁止</label>
+              <label class="chk-label"><input type="checkbox" name="noTel" id="contactDetailNoTel" /> TEL
+                禁止</label>
+              <label class="chk-label"><input type="checkbox" name="warnTel" id="contactDetailWarnTel" /> TEL
+                注意</label>
+            </div>
+          </div>
+
+          <!-- Column 2: Remarks & Company Info -->
+          <div class="contact-remarks-col">
+            <div class="form-row" style="flex: 1; display: flex; flex-direction: column;">
+              <label>備考</label>
+              <textarea name="remark" id="contactDetailRemark"
+                style="flex: 1; min-height: 200px; resize: none;"></textarea>
+            </div>
+
+            <div class="form-grid-inner two-col" style="margin-top: 10px;">
+              <div class="form-row">
+                <label>フォロー予定</label>
+                <input type="date" name="followDate" id="contactDetailFollowDate" />
+              </div>
+              <div class="form-row"></div> <!-- spacer -->
+
+              <div class="form-row">
+                <label>会社種別</label>
+                <input type="text" id="contactDetailCompanyType" disabled />
+              </div>
+              <div class="form-row">
+                <label>代表TEL</label>
+                <input type="text" id="contactDetailCompanyTel" disabled />
+              </div>
+
+              <div class="form-row">
+                <label>業界</label>
+                <input type="text" id="contactDetailCompanyIndustry" disabled />
+              </div>
+              <div class="form-row">
+                <label>規模ランク</label>
+                <input type="text" id="contactDetailCompanyScale" disabled />
+              </div>
+
+              <div class="form-row">
+                <label>郵便番号</label>
+                <input type="text" id="contactDetailCompanyPostal" disabled />
+              </div>
+              <div class="form-row">
+                <label>都道府県</label>
+                <input type="text" id="contactDetailCompanyPref" disabled />
+              </div>
+            </div>
+            <div class="form-row">
+              <label>住所</label>
+              <input type="text" id="contactDetailCompanyAddr" disabled style="width: 100%;" />
+            </div>
+
+            <div class="form-grid-inner two-col" style="margin-top: 20px;">
+              <div class="form-row">
+                <label>作成日時</label>
+                <input type="text" id="contactDetailCreatedAt" disabled />
+              </div>
+              <div class="form-row">
+                <label>作成者</label>
+                <input type="text" id="contactDetailCreatedBy" disabled />
+              </div>
+              <div class="form-row">
+                <label>更新日時</label>
+                <input type="text" id="contactDetailUpdatedAt" disabled />
+              </div>
+              <div class="form-row">
+                <label>更新者</label>
+                <input type="text" id="contactDetailUpdatedBy" disabled />
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 3: Free Fields -->
+          <div class="contact-free-col">
+            <div class="form-row"><label>担当者自由使用欄1</label><input name="free1" id="contactDetailFree1" type="text" />
+            </div>
+            <div class="form-row"><label>担当者自由使用欄2</label><input name="free2" id="contactDetailFree2" type="text" />
+            </div>
+            <div class="form-row"><label>担当者自由使用欄3</label><input name="free3" id="contactDetailFree3" type="text" />
+            </div>
+            <div class="form-row"><label>担当者自由使用欄4</label><input name="free4" id="contactDetailFree4" type="text" />
+            </div>
+            <div class="form-row"><label>担当者自由使用欄5</label><input name="free5" id="contactDetailFree5" type="text" />
+            </div>
+            <div class="form-row"><label>担当者自由使用欄6</label><input name="free6" id="contactDetailFree6" type="text" />
+            </div>
+            <div class="form-row"><label>担当者自由使用欄7</label><input name="free7" id="contactDetailFree7" type="text" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dlg-actions" style="justify-content: center; position: relative;">
+        <button class="btn btn-primary" id="btnContactDetailSave" style="padding: 10px 60px;">保存</button>
+        <button class="btn btn-secondary" id="btnContactDetailDelete"
+          style="position: absolute; right: 20px; bottom: 15px; color: #777;">🗑 削除</button>
+      </div>
+    </form>
+  </dialog>
+  <script src="main.js"></script>
+</body>
+
+</html>
