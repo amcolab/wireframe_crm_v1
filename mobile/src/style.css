@@ -1,15 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 :root {
     --primary-color: #002d62;
-    /* Navy from mockup */
     --accent-color: #0078d7;
-    --bg-color: #f5f7fa;
+    --bg-color: #f8f9fa; /* Modern light background */
     --card-bg: #ffffff;
-    --text-primary: #1a202c;
+    --text-primary: #2d3748; /* Softer dark gray */
     --text-secondary: #718096;
-    --border-color: #e2e8f0;
-    --header-height: 56px;
+    --border-color: #ededed; /* Subtler borders */
+    --header-height: 60px; /* Slightly taller for breathability */
     --nav-height: 64px;
-    --font-main: 'Outfit', 'Noto Sans JP', sans-serif;
+    --font-main: 'Inter', sans-serif;
+    --radius-main: 8px; /* Softer bo góc */
+    --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --transition-smooth: all 0.3s ease;
 }
 
 * {
@@ -144,7 +148,7 @@ body {
 
 /* Common Components */
 .search-container {
-    padding: 12px 16px;
+    padding: 16px; /* Increased from 12px for better spacing */
     background-color: white;
     display: flex;
     gap: 12px;
@@ -153,6 +157,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 5;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02); /* Very subtle shadow */
 }
 
 .search-input-wrapper {
@@ -172,13 +177,13 @@ body {
 
 .search-input {
     width: 100%;
-    padding: 10px 12px 10px 36px;
-    border-radius: 20px;
+    padding: 12px 12px 12px 40px; /* Slightly more padding */
+    border-radius: var(--radius-main);
     border: 1px solid var(--border-color);
-    background-color: #f1f3f5;
+    background-color: #f8f9fa; /* Lighter background */
     font-size: 14px;
     outline: none;
-    transition: all 0.2s;
+    transition: var(--transition-smooth);
 }
 
 .search-input:focus {
@@ -203,13 +208,13 @@ body {
 }
 
 .activity-item {
-    padding: 16px;
+    padding: 20px 16px; /* Increased vertical padding for 'breathability' */
     background-color: white;
     border-bottom: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    transition: background-color 0.1s;
+    gap: 12px;
+    transition: var(--transition-smooth);
 }
 
 .activity-item:active {
@@ -281,8 +286,12 @@ body {
 
 .detail-section {
     background-color: white;
-    margin-bottom: 8px;
-    padding: 16px;
+    margin-bottom: 12px; /* Increased margin */
+    padding: 20px 16px; /* Increased padding */
+    box-shadow: var(--shadow-light); /* Added light shadow */
+    border-radius: var(--radius-main);
+    margin-left: 8px;
+    margin-right: 8px;
 }
 
 .detail-header {
@@ -350,9 +359,9 @@ body {
 .memo-textarea {
     width: 100%;
     min-height: 120px;
-    padding: 12px;
+    padding: 16px;
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: var(--radius-main);
     font-family: inherit;
     font-size: 14px;
     line-height: 1.6;
@@ -360,7 +369,7 @@ body {
     background-color: #fff;
     resize: vertical;
     outline: none;
-    transition: border-color 0.2s;
+    transition: var(--transition-smooth);
 }
 
 .memo-textarea:focus {
@@ -423,28 +432,36 @@ body {
 }
 
 .form-input {
-    padding: 12px 16px;
+    padding: 14px 16px; /* Slightly taller */
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: var(--radius-main);
     font-size: 16px;
     outline: none;
-    transition: border-color 0.2s;
+    background-color: #fff;
+    transition: var(--transition-smooth);
 }
 
 .form-input:focus {
     border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(0, 120, 215, 0.1);
 }
 
 .login-btn {
     margin-top: 12px;
-    padding: 14px;
+    padding: 16px; /* Taller */
     background-color: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-main);
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
+    transition: var(--transition-smooth);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.login-btn:active {
+    transform: scale(0.98);
 }
 
 .login-btn:active {
@@ -648,6 +665,43 @@ body {
 .recent-meta {
     font-size: 12px;
     color: var(--text-secondary);
+}
+/* Quick Tiles (Home) */
+.quick-tile {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-main);
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    box-shadow: var(--shadow-light);
+    border: 1px solid var(--border-color);
+    transition: var(--transition-smooth);
+    cursor: pointer;
+}
+
+.quick-tile:active {
+    transform: scale(0.95);
+    background-color: #f8f9fa;
+}
+
+.quick-tile i {
+    width: 32px;
+    height: 32px;
+    color: var(--primary-color);
+    stroke-width: 1.5;
+}
+
+.quick-tile span {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.logout-tile i {
+    color: #e53e3e; /* Red for logout */
 }
 
 .logout-btn-premium {

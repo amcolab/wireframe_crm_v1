@@ -1,71 +1,29 @@
-<div class="home-container">
-    <header class="home-hero">
-        <div class="hero-content">
-            <h1>SMOS Mobile</h1>
-            <p>こんにちは、管理者さん</p>
+<div class="home-container" style="padding: 24px 16px; background-color: var(--bg-color); min-height: 100%;">
+    <div class="quick-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="quick-tile" onclick="window.location.hash='company'">
+            <i data-lucide="building-2"></i>
+            <span>会社</span>
         </div>
-        <div class="hero-stats">
-            <div class="stat-item">
-                <span class="stat-value">12</span>
-                <span class="stat-label">本日の活動</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-value">5</span>
-                <span class="stat-label">進行中の案件</span>
-            </div>
+        <div class="quick-tile" onclick="window.location.hash='contact'">
+            <i data-lucide="user"></i>
+            <span>担当者</span>
         </div>
-    </header>
-
-    <div class="home-sections">
-        <h3 class="section-title">クイックメニュー</h3>
-        <div class="quick-grid">
-            <div class="quick-card" onclick="window.location.hash='activity'">
-                <div class="icon-box activity"><i data-lucide="briefcase"></i></div>
-                <span>活動</span>
-            </div>
-            <div class="quick-card" onclick="window.location.hash='company'">
-                <div class="icon-box company"><i data-lucide="building-2"></i></div>
-                <span>会社</span>
-            </div>
-            <div class="quick-card" onclick="window.location.hash='contact'">
-                <div class="icon-box contact"><i data-lucide="users"></i></div>
-                <span>担当者</span>
-            </div>
-            <div class="quick-card" onclick="window.location.hash='project'">
-                <div class="icon-box project"><i data-lucide="handshake"></i></div>
-                <span>案件</span>
-            </div>
+        <div class="quick-tile" onclick="window.location.hash='activity'">
+            <i data-lucide="briefcase"></i>
+            <span>活動</span>
         </div>
-
-        <h3 class="section-title" style="margin-top: 24px;">最近の更新</h3>
-        <div class="recent-list">
-            <div class="recent-item">
-                <div class="recent-info">
-                    <div class="recent-title">イオンリテール株式会社</div>
-                    <div class="recent-meta">活動更新 · 10分前</div>
-                </div>
-                <i data-lucide="chevron-right"></i>
-            </div>
-            <div class="recent-item">
-                <div class="recent-info">
-                    <div class="recent-title">金型更新プロジェクト</div>
-                    <div class="recent-meta">ステータス変更 · 1時間前</div>
-                </div>
-                <i data-lucide="chevron-right"></i>
-            </div>
+        <div class="quick-tile" onclick="window.location.hash='project'">
+            <i data-lucide="handshake"></i>
+            <span>案件</span>
         </div>
-
-        <button id="logout-btn" class="logout-btn-premium">
+        <div class="quick-tile" onclick="alert('名刺スキャン機能は開発中です')">
+            <i data-lucide="camera"></i>
+            <span>名刺スキャン</span>
+        </div>
+        <div class="quick-tile logout-tile" id="logout-tile">
             <i data-lucide="log-out"></i>
             <span>ログアウト</span>
-        </button>
+        </div>
     </div>
 </div>
 
-<script type="module">
-    if (window.lucide) window.lucide.createIcons();
-    document.getElementById('logout-btn')?.addEventListener('click', () => {
-        localStorage.removeItem('smos_auth');
-        window.location.hash = 'login';
-    });
-</script>

@@ -2,7 +2,7 @@ import { mockProjects } from '../../utils/mockData.js';
 
 export function init() {
     renderProjects(mockProjects);
-    
+
     const searchInput = document.getElementById('project-search');
     const filterBtn = document.querySelector('.filter-btn');
     const modal = document.getElementById('advanced-search-modal');
@@ -47,11 +47,11 @@ export function init() {
             const matchesAdvCompany = !advCompany || item.company.toLowerCase().includes(advCompany);
             const matchesAdvStatus = !advStatus || item.status === advStatus;
             const matchesAdvSalesRep = !advSalesRep || (item.salesRep || '').toLowerCase().includes(advSalesRep);
-            
+
             const itemDate = item.topicDate || '';
             const matchesDateFrom = !advDateFrom || itemDate >= advDateFrom;
             const matchesDateTo = !advDateTo || itemDate <= advDateTo;
-            
+
             return matchesBasic && matchesAdvCompany && matchesAdvStatus && matchesAdvSalesRep && matchesDateFrom && matchesDateTo;
         });
         renderProjects(filtered);
@@ -66,7 +66,7 @@ function renderProjects(data) {
         <div class="activity-item" onclick="window.location.hash='project-detail/${item.id}'">
             <div class="activity-item-header" style="margin-bottom: 8px;">
                 <div class="activity-company" style="font-size: 16px; color: var(--text-primary); font-weight: 700;">${item.company}</div>
-                <div class="activity-date" style="font-size: 12px; color: var(--accent-color); font-weight: 600;">${item.status}</div>
+                <div class="activity-date" style="font-size: 12px;">${item.status}</div>
             </div>
             <div style="display: flex; gap: 12px; margin-bottom: 4px; font-size: 12px; color: var(--text-secondary);">
                 <div>話題日 <span style="color: var(--text-primary); margin-left: 4px;">${item.topicDate || '-'}</span></div>
@@ -81,7 +81,7 @@ function renderProjects(data) {
             </div>
         </div>
     `).join('');
-    
+
     if (window.lucide) {
         window.lucide.createIcons();
     }

@@ -14,6 +14,8 @@ const routes = {
         beforeEnter: ensureLayout,
         init: async () => {
             updateHeader('ホーム');
+            const module = await import('./screens/home/home.js');
+            module.init();
         }
     },
     'company': {
