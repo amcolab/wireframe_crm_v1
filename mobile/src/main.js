@@ -1,11 +1,19 @@
 import { Router } from './router.js';
 
 const routes = {
-    'login': {
-        template: '/src/screens/auth/login.html',
-        container: '#app', // Login screen takes over the whole app area
+    'access': {
+        template: '/src/screens/auth/lg01_access.html',
+        container: '#app',
         init: async () => {
-            const module = await import('./screens/auth/login.js');
+            const module = await import('./screens/auth/lg01_access.js');
+            module.init();
+        }
+    },
+    'login': {
+        template: '/src/screens/auth/lg02_login.html',
+        container: '#app',
+        init: async () => {
+            const module = await import('./screens/auth/lg02_login.js');
             module.init();
         }
     },
@@ -89,6 +97,15 @@ const routes = {
             const module = await import('./screens/project/project_detail.js');
             module.init(params[0]);
         }
+    },
+    'scan-result': {
+        template: '/src/screens/scan/scan_result.html',
+        beforeEnter: ensureLayout,
+        init: async () => {
+            updateHeader('スキャン結果', true);
+            const module = await import('./screens/scan/scan_result.js');
+            module.init();
+        }
     }
 };
 
@@ -123,7 +140,7 @@ function updateHeader(title, showBack = false) {
 
 document.addEventListener('DOMContentLoaded', () => {
     const isAuth = localStorage.getItem('smos_auth') === 'true';
-    const defaultRoute = isAuth ? 'home' : 'login';
+    const defaultRoute = isAuth ? 'home' : 'access';
     
     const router = new Router(routes, defaultRoute);
     router.init();
