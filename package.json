@@ -1,0 +1,12 @@
+{
+  "name": "wireframe-smos",
+  "private": true,
+  "description": "Web + mobile UI variants; same stack (Vite), deploy each dist separately.",
+  "scripts": {
+    "dev:web": "npm run dev --prefix web",
+    "dev:mobile": "npm run dev --prefix mobile",
+    "build:web": "npm run build --prefix web",
+    "build:mobile": "npm run build --prefix mobile",
+    "build:all": "npm run build:web && npm run build:mobile"
+  }
+}
