@@ -1,0 +1,56 @@
+<div class="search-container">
+    <div class="search-input-wrapper">
+        <i data-lucide="search"></i>
+        <input type="text" class="search-input" placeholder="担当者を探す" id="activity-search">
+    </div>
+    <div class="filter-btn">
+        <i data-lucide="sliders-horizontal"></i>
+    </div>
+</div>
+
+<div class="activity-list" id="activity-items-container">
+    <!-- Activity items will be injected here -->
+</div>
+
+<!-- Advanced Search Modal -->
+<div id="advanced-search-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>活動詳細検索</h3>
+            <button class="close-modal-btn" id="close-advanced-search">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>会社名</label>
+                <input type="text" id="adv-activity-company" class="form-input" placeholder="会社名を入力">
+            </div>
+            <div class="form-group">
+                <label>活動タイプ</label>
+                <select id="adv-activity-type" class="form-input">
+                    <option value="">すべて</option>
+                    <option>電話</option>
+                    <option>メール</option>
+                    <option>訪問</option>
+                    <option>WEB商談</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>営業担当</label>
+                <input type="text" id="adv-activity-salesrep" class="form-input" placeholder="営業担当者名を入力">
+            </div>
+            <div class="form-group">
+                <label>活動日 (開始)</label>
+                <input type="date" id="adv-activity-date-from" class="form-input">
+            </div>
+            <div class="form-group">
+                <label>活動日 (終了)</label>
+                <input type="date" id="adv-activity-date-to" class="form-input">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="apply-advanced-search" class="login-btn" style="margin-top: 0;">検索する</button>
+        </div>
+    </div>
+</div>

@@ -115,8 +115,11 @@
 
 .mini-grid-table td {
     border: 1px solid #e2e8f0;
-    padding: 8px;
+    padding: 8px 12px;
     font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .comment-cell {
@@ -424,8 +427,8 @@
     width: 100%;
     border-collapse: collapse;
     font-size: 12px;
-    table-layout: fixed;
-    /* Optional: forces respect of width */
+    table-layout: auto; /* Use auto layout to allow columns to expand to fit content */
+    min-width: 2000px;  /* Increased min-width to prevent squashing */
 }
 
 .company-table thead th {
@@ -433,8 +436,9 @@
     top: 0;
     background: #f2f6ff;
     border-bottom: 1px solid #cfd7ea;
+    border-right: 1px solid #cfd7ea; /* Added vertical borders */
     text-align: left;
-    padding: 8px 8px;
+    padding: 10px 12px; /* Increased padding */
     font-weight: 700;
     white-space: nowrap;
     z-index: 10;
@@ -442,8 +446,12 @@
 
 .company-table tbody td {
     border-bottom: 1px solid #ececec;
-    padding: 7px 8px;
+    border-right: 1px solid #f0f0f0; /* Added vertical borders */
+    padding: 10px 12px;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Remove max-width to allow auto-layout to work better, or set it higher */
 }
 
 .company-table tbody tr:hover {

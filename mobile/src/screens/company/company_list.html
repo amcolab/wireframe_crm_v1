@@ -1,0 +1,80 @@
+<div class="search-container">
+    <div class="search-input-wrapper">
+        <i data-lucide="search"></i>
+        <input type="text" class="search-input" placeholder="会社を探す" id="company-search">
+    </div>
+    <div class="filter-btn">
+        <i data-lucide="sliders-horizontal"></i>
+    </div>
+</div>
+
+<div class="activity-list" id="company-items-container">
+    <!-- Company items will be injected here -->
+</div>
+
+<!-- Advanced Search Modal -->
+<div id="advanced-search-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>詳細検索</h3>
+            <button class="close-modal-btn" id="close-advanced-search">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>会社名</label>
+                <input type="text" id="adv-company-name" class="form-input" placeholder="会社名を入力">
+            </div>
+            <div class="form-group">
+                <label>都道府県</label>
+                <select id="adv-company-pref" class="form-input">
+                    <option value="">すべて</option>
+                    <option>北海道</option>
+                    <option>東京都</option>
+                    <option>大阪府</option>
+                    <option>愛知県</option>
+                    <option>福岡県</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>業界</label>
+                <select id="adv-company-industry" class="form-input">
+                    <option value="">すべて</option>
+                    <option>製造業</option>
+                    <option>卸売業</option>
+                    <option>小売業</option>
+                    <option>金融業</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>業種</label>
+                <select id="adv-company-biz" class="form-input">
+                    <option value="">すべて</option>
+                    <option>金属製品</option>
+                    <option>化学・素材</option>
+                    <option>自動車・輸送用機械</option>
+                    <option>木工・家具</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>地区</label>
+                <select id="adv-company-area" class="form-input">
+                    <option value="">すべて</option>
+                    <option>関東</option>
+                    <option>関西</option>
+                    <option>中部</option>
+                    <option>東北</option>
+                    <option>九州</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>住所</label>
+                <input type="text" id="adv-company-addr" class="form-input" placeholder="住所を入力">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="apply-advanced-search" class="login-btn" style="margin-top: 0;">検索する</button>
+        </div>
+    </div>
+</div>

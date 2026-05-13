@@ -1,0 +1,397 @@
+<section class="section active" id="contact">
+<div class="section-header">
+<h2 class="section-title">担当者 (CT01)</h2>
+</div>
+<div class="section-body" id="contact-root">
+<div class="company-screen">
+<div class="company-topbar">
+<div class="company-topbar-left">
+<div class="company-title">担当者</div>
+<div class="company-search">
+<label class="company-search-label" for="contactSearchCompany">会社名</label>
+<input id="contactSearchCompany" type="text"/>
+<label class="company-search-label" for="contactSearchName" style="margin-left: 10px;">担当者名</label>
+<input id="contactSearchName" type="text"/>
+<button class="btn btn-secondary" id="btnContactSearch">
+<span class="btn-icon">🔍</span>
+                      検索
+                    </button>
+<button class="btn btn-secondary" id="btnContactAdvancedSearch">
+<span class="btn-icon">⏷</span>
+                      詳細検索
+                    </button>
+<button class="btn btn-secondary" id="btnContactClear">
+<span class="btn-icon">✕</span>
+                      クリア
+                    </button>
+</div>
+</div>
+<div class="company-topbar-right">
+<button class="btn btn-orange" id="btnContactCreateMain">
+<span class="btn-icon">＋</span>
+                    新規担当
+                  </button>
+</div>
+</div>
+<div class="company-main">
+<div class="company-grid">
+<div class="company-table-wrap">
+<table aria-label="contact list" class="company-table">
+<thead>
+<tr>
+<th style="width: 72px;">会社ID</th>
+<th style="width: 250px;">会社名</th>
+<th style="width: 150px;">部署名</th>
+<th style="width: 100px;">担当(姓)</th>
+<th style="width: 100px;">担当(名)</th>
+<th style="width: 120px;">フリガナ</th>
+<th style="width: 130px;">TEL</th>
+<th style="width: 130px;">携帯電話</th>
+<th style="width: 200px;">Email</th>
+<th style="width: 110px;">職種</th>
+<th style="width: 110px;">職位</th>
+<th style="width: 110px;">役職名</th>
+<th>住所</th>
+</tr>
+</thead>
+<tbody id="contactTableBody">
+<!-- JS filled -->
+<tr class="selected">
+<td>1141</td>
+<td><a class="blue-link" data-jump-company="1141" href="#company">旭川エレクトロニクスサービス株式会社</a></td>
+<td>生産技術開発部</td>
+<td>石井</td>
+<td>智也</td>
+<td>イシイトモヤ</td>
+<td>077-589-2592</td>
+<td>070-5532-1608</td>
+<td>ishii.tomoya@c10...</td>
+<td>生技開発</td>
+<td>次長・部長代理</td>
+<td>生産技術開発部次長</td>
+<td>北海道旭川市東区4丁目18-30</td>
+</tr>
+<tr>
+<td>1141</td>
+<td><a class="blue-link" data-jump-company="1141" href="#company">旭川エレクトロニクスサービス株式会社</a></td>
+<td>クオリティ保証部</td>
+<td>佐藤</td>
+<td>留美</td>
+<td>サトウルミ</td>
+<td>077-589-2645</td>
+<td>070-1147-1070</td>
+<td>satou.rumi@c1014...</td>
+<td>品管・品証</td>
+<td>係長</td>
+<td>クオリティ保証部係長</td>
+<td>北海道旭川市東区4丁目18-30</td>
+</tr>
+<tr>
+<td>1141</td>
+<td><a class="blue-link" data-jump-company="1141" href="#company">旭川エレクトロニクスサービス株式会社</a></td>
+<td>設備エンジニア部</td>
+<td>田中</td>
+<td>大輔</td>
+<td>タナカダイスケ</td>
+<td>077-589-2626</td>
+<td>070-3137-8629</td>
+<td>tanaka.daisuke@c...</td>
+<td>設備・エンジ</td>
+<td>係長</td>
+<td>設備エンジ部係長</td>
+<td>北海道旭川市東区4丁目18-30</td>
+</tr>
+<tr>
+<td>1068</td>
+<td><a class="blue-link" data-jump-company="1068" href="#company">旭川システム株式会社</a></td>
+<td>生産技術開発部</td>
+<td>松本</td>
+<td>悠斗</td>
+<td>マツモトユウト</td>
+<td>097-9539-3129</td>
+<td>070-4307-3285</td>
+<td>matsumoto.yuuto...</td>
+<td>生技開発</td>
+<td>次長・部長代理</td>
+<td>生産技術開発部次長</td>
+<td>滋賀県市南区1丁目20-18</td>
+</tr>
+<tr>
+<td>1068</td>
+<td><a class="blue-link" data-jump-company="1068" href="#company">旭川システム株式会社</a></td>
+<td>研究開発部</td>
+<td>近藤</td>
+<td>智也</td>
+<td>コンドウ トモヤ</td>
+<td>097-9539-3106</td>
+<td>090-4819-7115</td>
+<td>kondou.tomoya@c...</td>
+<td>研究開発</td>
+<td>次長・部長代理</td>
+<td>研究開発部次長</td>
+<td>滋賀県市南区1丁目20-18</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="company-grid-footer">
+<div class="footer-left">
+<div class="company-grid-pager">
+<button class="icon-btn" title="First Page">«</button>
+<button class="icon-btn" title="Previous Page">‹</button>
+<div class="page-numbers"><span class="page-number active">1</span><span class="page-number">2</span><span class="page-number">3</span><span class="page-number">4</span><span class="page-number">5</span><span style="padding: 0 4px;">..</span><span class="page-number">26</span></div>
+<button class="icon-btn" title="Next Page">›</button>
+<button class="icon-btn" title="Last Page">»</button>
+<div class="pager-jump">
+                          Page
+                          <select aria-label="page select" class="mini-select">
+<option>1</option>
+</select>
+<span>/ 26</span>
+</div>
+<select aria-label="page size" class="mini-select">
+<option selected="" value="100">100件</option>
+</select>
+</div>
+</div>
+<div class="footer-right">
+<div class="company-grid-meta">
+                        全 <span>2557</span> 件
+                        <span class="range-info"><span>1</span> - <span>100</span></span>
+</div>
+</div>
+</div>
+</div>
+<div class="company-detail">
+<nav class="company-detail-tabs" role="tablist">
+<div class="tabs-list">
+<button aria-selected="true" class="tab-btn active" data-contact-tab="detail" role="tab">担当者詳細</button>
+<button aria-selected="false" class="tab-btn" data-contact-tab="activities" role="tab">活動</button>
+<button aria-selected="false" class="tab-btn" data-contact-tab="projects" role="tab">案件</button>
+</div>
+<div class="tab-actions">
+<button class="btn btn-orange" id="btnContactNewActivity" style="display: none;" type="button">+
+                        新規活動</button>
+<button class="btn btn-orange" id="btnContactNewProject" style="display: none;" type="button">+
+                        新規案件</button>
+</div>
+</nav>
+<div class="company-tabpanels">
+<section class="company-panel active" data-contact-panel="detail" role="tabpanel">
+<div class="detail-form">
+<!-- Left Column: Name & Contact Info -->
+<div class="form-col" style="flex: 1.2;">
+<div class="form-row">
+<label>担当者ID</label>
+<input disabled="" type="text" value="2386"/>
+</div>
+<div class="form-row two">
+<div>
+<label>姓 <span class="req">*</span></label>
+<input type="text" value="石井"/>
+</div>
+<div>
+<label>名</label>
+<input type="text" value="智也"/>
+</div>
+</div>
+<div class="form-row two">
+<div>
+<label>セイ</label>
+<input type="text" value="イシイ"/>
+</div>
+<div>
+<label>メイ</label>
+<input type="text" value="トモヤ"/>
+</div>
+</div>
+<div class="form-row">
+<label>会社名 <span class="req">*</span></label>
+<div class="search-input-group">
+<input id="mainContactCompanyName" type="text" value="旭川エレクトロニクスサービス株式会社"/>
+<button class="icon-btn-inline" id="btnMainContactLookupCompany" type="button">🔍(CP05)</button>
+<button class="btn btn-secondary" id="btnMainContactCreateCompany" style="padding: 0 10px; color: #ff6600; border-color: #ff6600;" type="button">新規(CP03)</button>
+</div>
+</div>
+<div class="form-row">
+<label>部署名</label>
+<input type="text" value="生産技術開発部"/>
+</div>
+<div class="form-row two">
+<div>
+<label>TEL</label>
+<input type="text" value="077-589-2592"/>
+</div>
+<div>
+<label>内線</label>
+<input type="text" value="077-589-2569"/>
+</div>
+</div>
+<div class="form-row two">
+<div>
+<label>FAX</label>
+<input type="text" value="089-5996-4084"/>
+</div>
+<div>
+<label>携帯電話</label>
+<input type="text" value="070-5532-1608"/>
+</div>
+</div>
+<div class="form-row">
+<label>Email</label>
+<input type="text" value="ishii.tomoya@c10141.co.jp"/>
+</div>
+<div class="form-row">
+<label>職種</label>
+<select>
+<option>生技開発</option>
+</select>
+</div>
+<div class="form-row two">
+<div>
+<label>職位</label>
+<select>
+<option>次長・部長代理</option>
+</select>
+</div>
+<div>
+<label>役職名</label>
+<input type="text" value="生産技術開発部次長"/>
+</div>
+</div>
+<div class="form-row check-row" style="grid-template-columns: 1fr;">
+<div class="check-group" style="padding-top:10px;">
+<label class="check"><input type="checkbox"/> 資料禁止</label>
+<label class="check"><input type="checkbox"/> TEL禁止</label>
+<label class="check"><input type="checkbox"/> TEL注意</label>
+</div>
+</div>
+</div>
+<!-- Middle Column: Remarks & Company Info -->
+<div class="form-row" style="flex:1;">
+<label>備考</label>
+<textarea style="height: 100%; min-height: 150px;">社内でのシステム導入プロジェクトに参画中。</textarea>
+</div>
+<div class="form-col" style="flex: 1.5;">
+<div class="form-row" style="margin-top: 15px;">
+<label>フォロー予定</label>
+<input type="date"/>
+</div>
+<div class="form-row two">
+<div>
+<label>会社種別</label>
+<input disabled="" type="text" value="その他"/>
+</div>
+<div>
+<label>代表TEL</label>
+<input disabled="" type="text" value="077-589-2589"/>
+</div>
+</div>
+<div class="form-row two">
+<div>
+<label>業界</label>
+<input disabled="" type="text" value="製造業"/>
+</div>
+<div>
+<label>規模ランク</label>
+<input disabled="" type="text" value="1人～30人"/>
+</div>
+</div>
+<div class="form-row two">
+<div>
+<label>郵便番号</label>
+<input disabled="" type="text" value="7059306"/>
+</div>
+<div>
+<label>都道府県</label>
+<input disabled="" type="text" value="北海道"/>
+</div>
+</div>
+<div class="form-row">
+<label>住所</label>
+<input disabled="" type="text" value="北海道旭川市東区4丁目18-30"/>
+</div>
+<div class="form-row two" style="margin-top: 15px;">
+<div>
+<label>作成日時</label>
+<input disabled="" type="text"/>
+</div>
+<div>
+<label>作成者</label>
+<input disabled="" type="text"/>
+</div>
+</div>
+<div class="form-row two">
+<div>
+<label>更新日時</label>
+<input disabled="" type="text"/>
+</div>
+<div>
+<label>更新者</label>
+<input disabled="" type="text"/>
+</div>
+</div>
+</div>
+<!-- Right Column: Free fields -->
+<div class="form-col" style="flex: 0.8;">
+<div class="form-row"><label>担当者自由使用欄1</label><input type="text"/></div>
+<div class="form-row"><label>担当者自由使用欄2</label><input type="text"/></div>
+<div class="form-row"><label>担当者自由使用欄3</label><input type="text"/></div>
+<div class="form-row"><label>担当者自由使用欄4</label><input type="text"/></div>
+<div class="form-row"><label>担当者自由使用欄5</label><input type="text"/></div>
+<div class="form-row"><label>担当者自由使用欄6</label><input type="text"/></div>
+<div class="form-row"><label>担当者自由使用欄7</label><input type="text"/></div>
+</div>
+</div>
+</section>
+<section class="company-panel" data-contact-panel="activities" role="tabpanel">
+<div class="panel-body" style="padding: 0;">
+<div class="company-table-wrap" style="height: 100%;">
+<table class="mini-grid-table" id="contactActivitiesTable">
+<thead>
+<tr>
+<th style="width: 100px;">活動日</th>
+<th style="width: 120px;">営業担当</th>
+<th style="width: 80px;">タイプ</th>
+<th>コメント</th>
+<th style="width: 120px;">目的</th>
+</tr>
+</thead>
+<tbody id="contactActivitiesBody">
+<!-- Filled by JS -->
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section class="company-panel" data-contact-panel="projects" role="tabpanel">
+<div class="panel-body" style="padding: 0;">
+<div class="company-table-wrap" style="height: 100%;">
+<table class="mini-grid-table" id="contactProjectsTable">
+<thead>
+<tr>
+<th style="width: 100px;">話題日</th>
+<th style="width: 100px;">売上日</th>
+<th style="width: 100px;">案件ステータス</th>
+<th style="width: 100px;">営業担当</th>
+<th style="width: 150px;">案件名</th>
+<th style="width: 100px;">担当 (姓)</th>
+<th>案件概要</th>
+<th style="width: 80px;">当初確度</th>
+<th style="width: 100px;">発生動機</th>
+<th style="width: 100px;">引合手段</th>
+</tr>
+</thead>
+<tbody id="contactProjectsBody">
+<!-- Filled by JS -->
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
