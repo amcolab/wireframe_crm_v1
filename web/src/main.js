@@ -4,7 +4,7 @@ import { initGlobalLookups } from './utils/lookups.js';
 // Setup routes
 const routes = {
   'access': {
-    template: '/src/screens/auth/lg01_access.html',
+    template: '/screens/auth/lg01_access.html',
     container: '#app',
     init: async () => {
       const module = await import('./screens/auth/lg01_access.js');
@@ -12,7 +12,7 @@ const routes = {
     }
   },
   'login': {
-    template: '/src/screens/auth/lg02_login.html',
+    template: '/screens/auth/lg02_login.html',
     container: '#app',
     init: async () => {
       const module = await import('./screens/auth/lg02_login.js');
@@ -20,7 +20,7 @@ const routes = {
     }
   },
   'company': {
-    template: '/src/screens/company/cp01_list.html',
+    template: '/screens/company/cp01_list.html',
     container: '#router-view',
     beforeEnter: async () => {
       await setupDashboardLayout();
@@ -31,7 +31,7 @@ const routes = {
     }
   },
   'contact': {
-    template: '/src/screens/contact/ct01_list.html',
+    template: '/screens/contact/ct01_list.html',
     container: '#router-view',
     beforeEnter: async () => {
       await setupDashboardLayout();
@@ -42,7 +42,7 @@ const routes = {
     }
   },
   'activity': {
-    template: '/src/screens/activity/at01_list.html',
+    template: '/screens/activity/at01_list.html',
     container: '#router-view',
     beforeEnter: async () => {
       await setupDashboardLayout();
@@ -53,7 +53,7 @@ const routes = {
     }
   },
   'project': {
-    template: '/src/screens/project/pr01_list.html',
+    template: '/screens/project/pr01_list.html',
     container: '#router-view',
     beforeEnter: async () => {
       await setupDashboardLayout();
@@ -69,7 +69,7 @@ async function setupDashboardLayout() {
   const appContainer = document.querySelector('#app');
   // Only inject layout if it's not already there
   if (!document.querySelector('#dashboard-container')) {
-    const response = await fetch('/src/components/layout.html');
+    const response = await fetch('/components/layout.html');
     const layoutHtml = await response.text();
     appContainer.innerHTML = layoutHtml;
 
