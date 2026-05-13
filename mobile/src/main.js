@@ -2,7 +2,7 @@ import { Router } from './router.js';
 
 const routes = {
     'access': {
-        template: '/src/screens/auth/lg01_access.html',
+        template: '/screens/auth/lg01_access.html',
         container: '#app',
         init: async () => {
             const module = await import('./screens/auth/lg01_access.js');
@@ -10,7 +10,7 @@ const routes = {
         }
     },
     'login': {
-        template: '/src/screens/auth/lg02_login.html',
+        template: '/screens/auth/lg02_login.html',
         container: '#app',
         init: async () => {
             const module = await import('./screens/auth/lg02_login.js');
@@ -18,7 +18,7 @@ const routes = {
         }
     },
     'home': {
-        template: '/src/screens/home/home.html',
+        template: '/screens/home/home.html',
         beforeEnter: ensureLayout,
         init: async () => {
             updateHeader('ホーム');
@@ -27,7 +27,7 @@ const routes = {
         }
     },
     'company': {
-        template: '/src/screens/company/company_list.html',
+        template: '/screens/company/company_list.html',
         beforeEnter: ensureLayout,
         init: async () => {
             updateHeader('会社');
@@ -36,7 +36,7 @@ const routes = {
         }
     },
     'company-detail': {
-        template: '/src/screens/company/company_detail.html',
+        template: '/screens/company/company_detail.html',
         beforeEnter: ensureLayout,
         init: async (params) => {
             updateHeader('会社詳細', true);
@@ -45,7 +45,7 @@ const routes = {
         }
     },
     'contact': {
-        template: '/src/screens/contact/contact_list.html',
+        template: '/screens/contact/contact_list.html',
         beforeEnter: ensureLayout,
         init: async () => {
             updateHeader('担当者');
@@ -54,7 +54,7 @@ const routes = {
         }
     },
     'contact-detail': {
-        template: '/src/screens/contact/contact_detail.html',
+        template: '/screens/contact/contact_detail.html',
         beforeEnter: ensureLayout,
         init: async (params) => {
             updateHeader('担当者詳細', true);
@@ -63,7 +63,7 @@ const routes = {
         }
     },
     'activity': {
-        template: '/src/screens/activity/activity_list.html',
+        template: '/screens/activity/activity_list.html',
         beforeEnter: ensureLayout,
         init: async () => {
             updateHeader('活動');
@@ -72,7 +72,7 @@ const routes = {
         }
     },
     'activity-detail': {
-        template: '/src/screens/activity/activity_detail.html',
+        template: '/screens/activity/activity_detail.html',
         beforeEnter: ensureLayout,
         init: async (params) => {
             updateHeader('活動詳細', true);
@@ -81,7 +81,7 @@ const routes = {
         }
     },
     'project': {
-        template: '/src/screens/project/project_list.html',
+        template: '/screens/project/project_list.html',
         beforeEnter: ensureLayout,
         init: async () => {
             updateHeader('案件');
@@ -90,7 +90,7 @@ const routes = {
         }
     },
     'project-detail': {
-        template: '/src/screens/project/project_detail.html',
+        template: '/screens/project/project_detail.html',
         beforeEnter: ensureLayout,
         init: async (params) => {
             updateHeader('案件詳細', true);
@@ -99,7 +99,7 @@ const routes = {
         }
     },
     'scan-result': {
-        template: '/src/screens/scan/scan_result.html',
+        template: '/screens/scan/scan_result.html',
         beforeEnter: ensureLayout,
         init: async () => {
             updateHeader('スキャン結果', true);
@@ -112,7 +112,7 @@ const routes = {
 async function ensureLayout() {
     const app = document.querySelector('#app');
     if (!document.querySelector('.mobile-layout')) {
-        const response = await fetch('/src/components/layout.html');
+        const response = await fetch('/components/layout.html');
         const html = await response.text();
         app.innerHTML = html;
         

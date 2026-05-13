@@ -15,6 +15,6 @@ def extract_section(section_id, filename):
     else:
         print(f"Section {section_id} not found")
 
-extract_section('contact', 'src/screens/contact/ct01_list.html')
-extract_section('activity', 'src/screens/activity/at01_list.html')
-extract_section('project', 'src/screens/project/pr01_list.html')
+extract_section('contact', 'public/screens/contact/ct01_list.html')
+extract_section('activity', 'public/screens/activity/at01_list.html')
+extract_section('project', 'public/screens/project/pr01_list.html')
