@@ -1,29 +1,29 @@
 # wireframe_smos
 
-Hai phiên bản **web** và **mobile** (cùng logic, khác giao diện) trong **một kho Git**. Mỗi thư mục là một ứng dụng Vite riêng.
+Two versions, **web** and **mobile** (shared logic, different interfaces), contained within **a single Git repository**. Each directory represents a separate Vite application.
 
-## Chạy khi phát triển
+## Development
 
 ```bash
 npm run dev:web
 npm run dev:mobile
 ```
 
-## Build bản chạy thật
+## Production Build
 
 ```bash
 npm run build:web
 npm run build:mobile
 ```
 
-Thư mục build: `web/dist`, `mobile/dist`.
+Build outputs: `web/dist`, `mobile/dist`.
 
-## Đưa lên host (một Git, hai địa chỉ nếu cần)
+## Hosting (Single Repo, Multiple Deployments)
 
-1. **Vercel / Netlify / Cloudflare Pages:** tạo **hai dự án** (hoặc một dự án nếu chỉ cần bản web), cùng một kho Git.
-2. Trong phần cấu hình build của từng dự án:
-   - Bản web: **thư mục gốc** = `web`, lệnh build = `npm run build`, thư mục publish = `dist`.
-   - Bản mobile: **thư mục gốc** = `mobile`, lệnh build = `npm run build`, thư mục publish = `dist`.
-3. Gán tên miền khác nhau (ví dụ `app...` và `m...`) nếu muốn hai URL.
+1. **Vercel / Netlify / Cloudflare Pages:** Create **two separate projects** (or one if only web is needed) from the same Git repository.
+2. In the build settings for each project:
+   - **Web version:** Root directory = `web`, Build command = `npm run build`, Publish directory = `dist`.
+   - **Mobile version:** Root directory = `mobile`, Build command = `npm run build`, Publish directory = `dist`.
+3. Assign different domains (e.g., `app...` and `m...`) if you want distinct URLs.
 
-Không cần tách thành hai kho Git trừ khi team hoặc quy trình release bắt buộc tách.
+There is no need to split this into two separate repositories unless required by specific team workflows or release procedures.
