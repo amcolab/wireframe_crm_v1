@@ -1,9 +1,11 @@
 import { q, escapeHtml } from '../../utils/helpers.js';
-import { mockContacts } from '../../utils/mockData.js';
+import { mockContacts, mockActivities, mockProjects } from '../../utils/mockData.js';
 
 export function init() {
   console.log('Contact screen (CT01) initialized');
   renderTable(mockContacts);
+  renderActivities(mockActivities);
+  renderProjects(mockProjects);
 
   const tabs = document.querySelectorAll('[data-contact-tab]');
   const panels = document.querySelectorAll('[data-contact-panel]');
@@ -36,6 +38,14 @@ export function init() {
 
   q('btnContactAdvancedSearch')?.addEventListener('click', () => {
     q('dlgContactAdvancedSearch')?.showModal();
+  });
+
+  q('btnMainContactLookupCompany')?.addEventListener('click', () => {
+    q('dlgCompanyLookup')?.showModal();
+  });
+
+  q('btnMainContactCreateCompany')?.addEventListener('click', () => {
+    q('dlgCompanyCreate')?.showModal();
   });
 
   q('btnContactSearch')?.addEventListener('click', () => {
@@ -95,4 +105,37 @@ function renderTable(data) {
     const firstRow = tbody.querySelector('tr');
     if (firstRow) firstRow.classList.add('selected');
   }
+}
+
+function renderActivities(data) {
+  const tbody = q('contactActivitiesBody');
+  if (!tbody) return;
+  tbody.innerHTML = data.map(a => `
+    <tr>
+      <td>${escapeHtml(a.date || '-')}</td>
+      <td>${escapeHtml(a.rep || '-')}</td>
+      <td><span class="type-badge ${a.typeClass || ''}">${escapeHtml(a.type || '-')}</span></td>
+      <td>${escapeHtml(a.comment || '-')}</td>
+      <td>${escapeHtml(a.purpose || '-')}</td>
+    </tr>
+  `).join('');
+}
+
+function renderProjects(data) {
+  const tbody = q('contactProjectsBody');
+  if (!tbody) return;
+  tbody.innerHTML = data.map(p => `
+    <tr>
+      <td>${escapeHtml(p.issueDate || '-')}</td>
+      <td>${escapeHtml(p.saleDate || '-')}</td>
+      <td><span class="status-badge ${p.status === '受注' ? 'status-won' : 'status-lost'}">${escapeHtml(p.status || '-')}</span></td>
+      <td>${escapeHtml(p.rep || '-')}</td>
+      <td>${escapeHtml(p.name || '-')}</td>
+      <td>${escapeHtml(p.contact || '-')}</td>
+      <td>${escapeHtml(p.summary || '-')}</td>
+      <td>${escapeHtml(p.initial || '-')}</td>
+      <td>${escapeHtml(p.motivation || '-')}</td>
+      <td>${escapeHtml(p.method || '-')}</td>
+    </tr>
+  `).join('');
 }

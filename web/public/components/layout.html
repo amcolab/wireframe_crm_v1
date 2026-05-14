@@ -60,9 +60,10 @@
         <div class="settings-dropdown">
           <!-- <div class="dropdown-item">列の設定</div>
           <div class="dropdown-item">各種マスター</div> -->
-          <div class="dropdown-item">社員マスター</div>
-          <div class="dropdown-item">グループマスター</div>
-          <div class="dropdown-item">パスワード設定</div>
+          <div class="dropdown-item" id="menuTenantCompany">テナント・会社マスタ</div>
+          <div class="dropdown-item" id="menuEmployeeMaster">社員マスター</div>
+          <!-- <div class="dropdown-item">グループマスター</div> -->
+          <div class="dropdown-item" id="menuPasswordChange">パスワード設定</div>
           <div class="dropdown-divider"></div>
           <div class="dropdown-item logout">終了</div>
         </div>
@@ -73,6 +74,280 @@
     <!-- Nơi chứa nội dung các màn hình (CP01, CT01, AT01, PR01) sẽ được inject vào đây -->
   </main>
 </section>
+
+<!-- 社員マスター Modal -->
+<dialog id="dlgEmployeeMaster" class="dlg dlg-wide">
+  <div class="dlg-body">
+    <div class="dlg-header">
+      <div class="dlg-title">社員マスター</div>
+      <button class="icon-btn" onclick="this.closest('dialog').close()" aria-label="close">✕</button>
+    </div>
+    <div class="dlg-content" style="background: #f8f9fa; padding: 15px;">
+      <div style="background: #fff; border: 1px solid #ddd; padding: 20px; border-radius: 4px; margin-bottom: 15px;">
+        <div style="display: flex; align-items: center; gap: 20px;">
+          <label style="font-size: 14px; font-weight: 600; color: #004080;">氏名</label>
+          <input type="text" id="employeeSearchName"
+            style="width: 300px; height: 32px; border: 1px solid #ccc; border-radius: 2px;">
+        </div>
+      </div>
+
+      <div class="company-table-wrap" style="height: 350px;">
+        <div class="company-table-scroll">
+          <table class="company-table" id="employeeMasterTable" style="min-width: 1000px;">
+            <thead>
+              <tr style="background: #eee;">
+                <th style="width: 40px; text-align: center;"></th>
+                <th style="width: 70px;">コード</th>
+                <th style="width: 150px;">社員名</th>
+                <th style="width: 150px;">フリガナ</th>
+                <th style="width: 120px;">部署</th>
+                <th style="width: 120px;">所属グループ</th>
+                <th style="width: 120px;">ログイン</th>
+                <th style="width: 120px;">パスワード</th>
+              </tr>
+            </thead>
+            <tbody id="employeeMasterBody">
+              <!-- JS data injection -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="margin-top: 15px; display: flex; align-items: center; justify-content: flex-start; gap: 8px;">
+        <input type="checkbox" id="showDeletedEmployees" style="width: 16px; height: 16px; margin: 0;">
+        <label for="showDeletedEmployees" style="font-size: 13px; color: #333; cursor: pointer;">削除済みのデータを表示</label>
+      </div>
+    </div>
+    <div class="dlg-actions" style="justify-content: space-between; background: #fff; padding: 10px 15px;">
+      <div style="display: flex; gap: 10px;">
+        <button class="btn" style="background: #001f4d; color: #fff; border: none; min-width: 100px;"
+          id="btnEmployeeSearch">検索</button>
+        <button class="btn btn-orange" style="min-width: 100px;" id="btnEmployeeNew">+ 新規作成</button>
+      </div>
+      <div style="display: flex; gap: 10px; margin-right: auto; margin-left: 200px;">
+        <button class="btn" style="background: #001f4d; color: #fff; border: none; min-width: 100px;"
+          id="btnEmployeeDeleteRow">行削除</button>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn" style="background: #001f4d; color: #fff; border: none; min-width: 100px;"
+          id="btnEmployeeGroup">所属グループ</button>
+        <button class="btn btn-primary" style="background: #0078d7; min-width: 100px;" id="btnEmployeeSave">登録</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- 社員詳細 Modal -->
+<dialog id="dlgEmployeeDetail" class="dlg" style="width: 600px;">
+  <div class="dlg-body">
+    <div class="dlg-header">
+      <div class="dlg-title">社員詳細設定</div>
+      <button class="icon-btn" onclick="this.closest('dialog').close()" aria-label="close">✕</button>
+    </div>
+    <div class="dlg-content" style="padding: 20px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="form-row">
+          <label>社員コード <span class="req">*</span></label>
+          <input type="text" id="empDetailCode" placeholder="例: 1028">
+        </div>
+        <div class="form-row">
+          <label>社員名 <span class="req">*</span></label>
+          <input type="text" id="empDetailName" placeholder="例: 山田 太郎">
+        </div>
+        <div class="form-row">
+          <label>フリガナ</label>
+          <input type="text" id="empDetailKana" placeholder="例: ヤマダ タロウ">
+        </div>
+        <div class="form-row">
+          <label>部署</label>
+          <select id="empDetailDept">
+            <option value="">(未選択)</option>
+            <option value="企画部">企画部</option>
+            <option value="営業部">営業部</option>
+            <option value="技術部">技術部</option>
+            <option value="管理部">管理部</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>所属グループ</label>
+          <select id="empDetailGroup">
+            <option value="一般ユーザー">一般ユーザー</option>
+            <option value="管理者">管理者</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>ログインID <span class="req">*</span></label>
+          <input type="text" id="empDetailLogin" placeholder="例: user123">
+        </div>
+        <div class="form-row">
+          <label>パスワード <span class="req">*</span></label>
+          <input type="password" id="empDetailPassword">
+        </div>
+      </div>
+      <div style="margin-top: 20px; color: #d11; font-size: 12px;">* は必須項目です</div>
+    </div>
+    <div class="dlg-actions">
+      <button class="btn" onclick="this.closest('dialog').close()">キャンセル</button>
+      <button class="btn btn-primary" id="btnSaveEmployeeDetail" style="background: #0078d7;">保存する</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- テナント・会社マスタ Modal (System Admin Only) -->
+<dialog id="dlgTenantCompany" class="dlg dlg-wide">
+  <div class="dlg-body">
+    <div class="dlg-header" style="background: #0078d7; color: #fff;">
+      <div class="dlg-title">
+        テナント・会社マスタ
+        <span
+          style="font-size: 11px; background: #d32f2f; color: #fff; padding: 2px 8px; border-radius: 10px; margin-left: 10px;">システム管理者専用</span>
+      </div>
+      <button class="icon-btn" onclick="this.closest('dialog').close()" aria-label="close">✕</button>
+    </div>
+    <div class="dlg-content" style="background: #f8f9fa; padding: 15px;">
+      <div class="company-table-wrap" style="height: 400px;">
+        <div class="company-table-scroll">
+          <table class="company-table" id="tenantCompanyTable" style="min-width: 900px;">
+            <thead>
+              <tr style="background: #eee;">
+                <th style="width: 80px;">テナントID</th>
+                <th style="width: 250px;">会社名</th>
+                <th style="width: 150px;">承認コード</th>
+                <th style="width: 100px; text-align: center;">状態</th>
+                <th style="width: 150px;">作成日時</th>
+                <th style="width: 120px; text-align: center;">操作</th>
+              </tr>
+            </thead>
+            <tbody id="tenantCompanyBody">
+              <!-- JS data injection -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="dlg-actions" style="justify-content: space-between; background: #fff; padding: 10px 15px;">
+      <div style="font-size: 12px; color: #666; display: flex; align-items: center;">
+        ※ ここで登録した会社に対して、最初の管理ユーザーを発行してください。
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-orange" id="btnTenantNew">+ 新規テナント登録</button>
+        <button class="btn" onclick="this.closest('dialog').close()">閉じる</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- テナント詳細 Modal -->
+<dialog id="dlgTenantDetail" class="dlg" style="width: 500px;">
+  <div class="dlg-body">
+    <div class="dlg-header">
+      <div class="dlg-title">テナント登録・編集</div>
+      <button class="icon-btn" onclick="this.closest('dialog').close()" aria-label="close">✕</button>
+    </div>
+    <div class="dlg-content" style="padding: 20px;">
+      <div style="display: flex; flex-direction: column; gap: 15px;">
+        <div class="form-row">
+          <label>テナント名 (会社名) <span class="req">*</span></label>
+          <input type="text" id="tenantDetailName" placeholder="例: 株式会社 〇〇">
+        </div>
+        <div class="form-row">
+          <label>承認コード (ログインコード) <span class="req">*</span></label>
+          <input type="text" id="tenantDetailCode" placeholder="例: AB-1234-X">
+        </div>
+        <div class="form-row" style="flex-direction: row; align-items: center; gap: 10px;">
+          <input type="checkbox" id="tenantDetailActive" checked>
+          <label for="tenantDetailActive" style="margin: 0;">有効なテナントとして登録する</label>
+        </div>
+      </div>
+    </div>
+    <div class="dlg-actions">
+      <button class="btn" onclick="this.closest('dialog').close()">キャンセル</button>
+      <button class="btn btn-primary" id="btnSaveTenantDetail" style="background: #0078d7;">システムを有効化する</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- セキュリティマスター Modal -->
+<dialog id="dlgSecurityMaster" class="dlg" style="width: 450px;">
+  <div class="dlg-body">
+    <div class="dlg-header">
+      <div class="dlg-title">セキュリティマスター</div>
+      <button class="icon-btn" onclick="this.closest('dialog').close()" aria-label="close">✕</button>
+    </div>
+    <div class="dlg-content" style="background: #f8f9fa; padding: 15px;">
+      <div style="background: #fff; border: 1px solid #ddd; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
+        <div style="display: flex; align-items: center; gap: 20px;">
+          <label style="font-size: 14px; font-weight: 600; color: #004080; width: 60px;">ログイン</label>
+          <input type="text" id="secLoginId" readonly
+            style="flex: 1; height: 32px; border: 1px solid #ccc; border-radius: 2px; background: #eee; padding: 0 10px;">
+        </div>
+      </div>
+
+      <div class="company-table-wrap">
+        <table class="company-table" style="min-width: auto; width: 100%;">
+          <thead>
+            <tr style="background: #eee;">
+              <th style="width: 40px; text-align: center;"></th>
+              <th style="text-align: center;">グループ</th>
+              <th style="width: 50px; text-align: center;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align: center; color: #64748b; font-weight: 600;">1</td>
+              <td>管理者</td>
+              <td style="text-align: center;"><input type="checkbox" id="chkGroupAdmin"></td>
+            </tr>
+            <tr>
+              <td style="text-align: center; color: #64748b; font-weight: 600;">2</td>
+              <td>一般ユーザー</td>
+              <td style="text-align: center;"><input type="checkbox" id="chkGroupUser" checked></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="dlg-actions" style="background: #fff; padding: 10px 15px; justify-content: flex-end;">
+      <button class="btn btn-primary" style="background: #0078d7; min-width: 100px;"
+        onclick="alert('登録が完了しました'); this.closest('dialog').close();">登録</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- パスワード変更 Modal -->
+<dialog id="dlgPasswordChange" class="dlg" style="width: 400px;">
+  <div class="dlg-body">
+    <div class="dlg-header">
+      <div class="dlg-title">パスワード変更</div>
+      <button class="icon-btn" onclick="this.closest('dialog').close()" aria-label="close">✕</button>
+    </div>
+    <div class="dlg-content" style="background: #fff; padding: 25px 20px;">
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <label style="width: 140px; font-size: 14px; color: #004080; font-weight: 500;">現在のパスワード</label>
+          <input type="password" style="flex: 1; height: 28px; border: 1px solid #999;">
+        </div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <label style="width: 140px; font-size: 14px; color: #004080; font-weight: 500;">新しいパスワード</label>
+          <input type="password" style="flex: 1; height: 28px; border: 1px solid #999;">
+        </div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <label style="width: 140px; font-size: 14px; color: #004080; font-weight: 500;">新しいパスワード(確認用)</label>
+          <input type="password" style="flex: 1; height: 28px; border: 1px solid #999;">
+        </div>
+      </div>
+    </div>
+    <div class="dlg-actions" style="background: #fff; padding: 15px; justify-content: center; gap: 30px;">
+      <button class="btn btn-primary"
+        style="background: #001f4d; border-radius: 2px; min-width: 120px; height: 36px; font-size: 15px;"
+        onclick="alert('パスワードを変更しました'); this.closest('dialog').close();">OK</button>
+      <button class="btn"
+        style="background: #001f4d; color: #fff; border-radius: 2px; min-width: 120px; height: 36px; font-size: 15px;"
+        onclick="this.closest('dialog').close()">キャンセル</button>
+    </div>
+  </div>
+</dialog>
+
 <dialog id="dlgCompanyAdvancedSearch" class="dlg dlg-wide">
   <form method="dialog" class="dlg-body" id="formCompanyAdvancedSearch">
     <div class="dlg-header">
@@ -883,31 +1158,74 @@
   <form method="dialog" class="dlg-body" id="formActivityAdvancedSearch">
     <div class="dlg-header">
       <div class="dlg-title">【詳細条件】活動検索 (AT02)</div>
-      <button type="button" class="control-btn close" onclick="this.closest('dialog').close()">✕</button>
+      <button class="icon-btn" value="cancel" aria-label="close">✕</button>
     </div>
     <div class="dlg-content">
       <div class="dlg-advanced-grid">
         <!-- Col 1 -->
         <div class="form-col">
-          <div class="form-row-inline"><label>検索ワード</label><input type="text" /></div>
-          <div class="form-row-inline"><label>会社名</label><input type="text" /></div>
-          <div class="form-row-inline"><label>担当者名</label><input type="text" /></div>
-          <div class="form-row-inline"><label>活動タイプ</label><input type="text" /></div>
-          <div class="form-row-inline"><label>動機</label><input type="text" /></div>
+          <div class="form-row-inline"><label>検索ワード</label><input type="text" placeholder="全項目から部分一致" /></div>
+          <div class="form-row-inline"><label>会社名</label><input type="text" placeholder="部分一致" /></div>
+          <div class="form-row-inline"><label>担当者名</label><input type="text" placeholder="部分一致" /></div>
+          <div class="form-row-inline">
+            <label>活動タイプ</label>
+            <div class="multi-select-dropdown" data-name="activityType" data-placeholder="タイプを選択">
+              <div class="multi-select-trigger">タイプを選択</div>
+              <div class="multi-select-content">
+                <label class="multi-select-option"><input type="checkbox" value="電話"> 電話</label>
+                <label class="multi-select-option"><input type="checkbox" value="メール"> メール</label>
+                <label class="multi-select-option"><input type="checkbox" value="訪問"> 訪問</label>
+                <label class="multi-select-option"><input type="checkbox" value="WEB商談"> WEB商談</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row-inline">
+            <label>動機</label>
+            <div class="multi-select-dropdown" data-name="motivation" data-placeholder="動機を選択">
+              <div class="multi-select-trigger">動機を選択</div>
+              <div class="multi-select-content">
+                <label class="multi-select-option"><input type="checkbox" value="展示会"> 展示会</label>
+                <label class="multi-select-option"><input type="checkbox" value="HP問い合わせ"> HP問い合わせ</label>
+                <label class="multi-select-option"><input type="checkbox" value="紹介"> 紹介</label>
+                <label class="multi-select-option"><input type="checkbox" value="その他"> その他</label>
+              </div>
+            </div>
+          </div>
         </div>
         <!-- Col 2 -->
         <div class="form-col">
           <div class="form-row-inline"><label>活動日</label>
-            <div class="range-group"><input type="date" /> ～ <input type="date" /></div>
+            <div class="range-group" style="display: flex; align-items: center; gap: 8px;">
+              <input type="date" style="flex: 1;" /> <span>～</span> <input type="date" style="flex: 1;" />
+            </div>
           </div>
-          <div class="form-row-inline"><label>フォロー予</label>
-            <div class="range-group"><input type="date" /> ～ <input type="date" /></div>
+          <div class="form-row-inline"><label>フォロー予定</label>
+            <div class="range-group" style="display: flex; align-items: center; gap: 8px;">
+              <input type="date" style="flex: 1;" /> <span>～</span> <input type="date" style="flex: 1;" />
+            </div>
           </div>
-          <div class="form-row-inline"><label>営業担当</label><input type="text" /></div>
-          <div class="form-row-inline"><label>目的</label><input type="text" /></div>
-          <div class="checkbox-row" style="margin-left: 100px; display: flex; gap: 15px; margin-top: 10px;">
-            <label class="chk-label"><input type="checkbox" /> アポ有無</label>
-            <label class="chk-label"><input type="checkbox" /> クレーム</label>
+          <div class="form-row-inline"><label>営業担当</label><input type="text" placeholder="担当者名" /></div>
+          <div class="form-row-inline">
+            <label>目的</label>
+            <div class="multi-select-dropdown" data-name="purpose" data-placeholder="目的を選択">
+              <div class="multi-select-trigger">目的を選択</div>
+              <div class="multi-select-content">
+                <label class="multi-select-option"><input type="checkbox" value="売り前フォロー"> 売り前フォロー</label>
+                <label class="multi-select-option"><input type="checkbox" value="売り後フォロー"> 売り後フォロー</label>
+                <label class="multi-select-option"><input type="checkbox" value="クレーム対応"> クレーム対応</label>
+                <label class="multi-select-option"><input type="checkbox" value="定期訪問"> 定期訪問</label>
+              </div>
+            </div>
+          </div>
+          <div class="checkbox-row" style="margin-left: 110px; display: flex; gap: 32px; margin-top: 10px;">
+            <label class="chk-label"
+              style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; white-space: nowrap; color: #475569; font-weight: 500;">
+              <input type="checkbox" style="width: 18px; height: 18px; margin: 0; cursor: pointer;" /> アポ有無
+            </label>
+            <label class="chk-label"
+              style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; white-space: nowrap; color: #475569; font-weight: 500;">
+              <input type="checkbox" style="width: 18px; height: 18px; margin: 0; cursor: pointer;" /> クレーム
+            </label>
           </div>
         </div>
         <!-- Col 3 -->
@@ -940,33 +1258,99 @@
   <form method="dialog" class="dlg-body" id="formProjectAdvancedSearch">
     <div class="dlg-header">
       <div class="dlg-title">【詳細条件】案件検索 (PR02)</div>
-      <button type="button" class="control-btn close" onclick="this.closest('dialog').close()">✕</button>
+      <button class="icon-btn" value="cancel" aria-label="close">✕</button>
     </div>
     <div class="dlg-content">
       <div class="dlg-advanced-grid">
         <!-- Col 1 -->
         <div class="form-col">
-          <div class="form-row-inline"><label>検索ワード</label><input type="text" /></div>
-          <div class="form-row-inline"><label>案件名</label><input type="text" /></div>
-          <div class="form-row-inline"><label>担当者名</label><input type="text" /></div>
-          <div class="form-row-inline"><label>当初確度</label><input type="text" /></div>
-          <div class="form-row-inline"><label>引合手段</label><input type="text" /></div>
-          <div class="form-row-inline"><label>見直確度</label><input type="text" /></div>
+          <div class="form-row-inline"><label>検索ワード</label><input type="text" placeholder="全項目から部分一致" /></div>
+          <div class="form-row-inline"><label>案件名</label><input type="text" placeholder="部分一致" /></div>
+          <div class="form-row-inline"><label>担当者名</label><input type="text" placeholder="部分一致" /></div>
+          <div class="form-row-inline">
+            <label>当初確度</label>
+            <div class="multi-select-dropdown" data-placeholder="確度を選択">
+              <div class="multi-select-trigger">確度を選択</div>
+              <div class="multi-select-content">
+                <label class="multi-select-option"><input type="checkbox" value="A"> A</label>
+                <label class="multi-select-option"><input type="checkbox" value="B"> B</label>
+                <label class="multi-select-option"><input type="checkbox" value="C"> C</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row-inline">
+            <label>引合手段</label>
+            <div class="multi-select-dropdown" data-placeholder="手段を選択">
+              <div class="multi-select-trigger">手段を選択</div>
+              <div class="multi-select-content">
+                <label class="multi-select-option"><input type="checkbox" value="電話"> 電話</label>
+                <label class="multi-select-option"><input type="checkbox" value="メール"> メール</label>
+                <label class="multi-select-option"><input type="checkbox" value="来社"> 来社</label>
+                <label class="multi-select-option"><input type="checkbox" value="展示会"> 展示会</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row-inline">
+            <label>見直確度</label>
+            <div class="multi-select-dropdown" data-placeholder="確度を選択">
+              <div class="multi-select-trigger">確度を選択</div>
+              <div class="multi-select-content">
+                <label class="multi-select-option"><input type="checkbox" value="A"> A</label>
+                <label class="multi-select-option"><input type="checkbox" value="B"> B</label>
+                <label class="multi-select-option"><input type="checkbox" value="C"> C</label>
+              </div>
+            </div>
+          </div>
         </div>
         <!-- Col 2 -->
         <div class="form-col">
           <div class="form-row-inline"><label>話題日</label>
-            <div class="range-group"><input type="date" /> ～ <input type="date" /></div>
+            <div class="range-group" style="display: flex; align-items: center; gap: 8px;">
+              <input type="date" style="flex: 1;" /> <span>～</span> <input type="date" style="flex: 1;" />
+            </div>
           </div>
-          <div class="form-row-inline"><label>会社名</label><input type="text" /></div>
-          <div class="form-row-inline"><label>営業担当者名</label><input type="text" /></div>
-          <div class="form-row-inline"><label>ステータス</label><input type="text" /></div>
-          <div class="form-row-inline"><label>発生動機</label><input type="text" /></div>
-          <div class="checkbox-list-vertical" style="margin-top: 10px; margin-left: 100px;">
-            <label class="chk-label"><input type="checkbox" /> ステージ1: 見積書提出</label>
-            <label class="chk-label" style="margin-top: 10px;"><input type="checkbox" /> ステージ2: 仕様打合せ</label>
-            <label class="chk-label" style="margin-top: 10px;"><input type="checkbox" /> ステージ3: 現場確認</label>
-            <label class="chk-label" style="margin-top: 10px;"><input type="checkbox" /> ステージ4: 上長確認</label>
+          <div class="form-row-inline"><label>会社名</label><input type="text" placeholder="会社名で検索" /></div>
+          <div class="form-row-inline"><label>営業担当者名</label><input type="text" placeholder="担当者名" /></div>
+          <div class="form-row-inline">
+            <label>ステータス</label>
+            <div class="multi-select-dropdown" data-placeholder="状態を選択">
+              <div class="multi-select-trigger">状態を選択</div>
+              <div class="multi-select-content">
+                <label class="multi-select-option"><input type="checkbox" value="進行中"> 進行中</label>
+                <label class="multi-select-option"><input type="checkbox" value="受注"> 受注</label>
+                <label class="multi-select-option"><input type="checkbox" value="失注"> 失注</label>
+                <label class="multi-select-option"><input type="checkbox" value="保留"> 保留</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-row-inline">
+            <label>発生動機</label>
+            <div class="multi-select-dropdown" data-placeholder="動機を選択">
+              <div class="multi-select-trigger">動機を選択</div>
+              <div class="multi-select-content">
+                <label class="multi-select-option"><input type="checkbox" value="紹介"> 紹介</label>
+                <label class="multi-select-option"><input type="checkbox" value="HP"> HP</label>
+                <label class="multi-select-option"><input type="checkbox" value="展示会"> 展示会</label>
+              </div>
+            </div>
+          </div>
+          <div class="checkbox-list-vertical" style="margin-top: 15px; margin-left: 110px;">
+            <label class="chk-label"
+              style="display: flex; align-items: center; gap: 10px; font-size: 14px; cursor: pointer; white-space: nowrap; color: #475569; font-weight: 500; margin-bottom: 12px;">
+              <input type="checkbox" style="width: 18px; height: 18px; margin: 0; cursor: pointer;" /> ステージ1: 見積書提出
+            </label>
+            <label class="chk-label"
+              style="display: flex; align-items: center; gap: 10px; font-size: 14px; cursor: pointer; white-space: nowrap; color: #475569; font-weight: 500; margin-bottom: 12px;">
+              <input type="checkbox" style="width: 18px; height: 18px; margin: 0; cursor: pointer;" /> ステージ2: 仕様打合せ
+            </label>
+            <label class="chk-label"
+              style="display: flex; align-items: center; gap: 10px; font-size: 14px; cursor: pointer; white-space: nowrap; color: #475569; font-weight: 500; margin-bottom: 12px;">
+              <input type="checkbox" style="width: 18px; height: 18px; margin: 0; cursor: pointer;" /> ステージ3: 現場確認
+            </label>
+            <label class="chk-label"
+              style="display: flex; align-items: center; gap: 10px; font-size: 14px; cursor: pointer; white-space: nowrap; color: #475569; font-weight: 500;">
+              <input type="checkbox" style="width: 18px; height: 18px; margin: 0; cursor: pointer;" /> ステージ4: 上長確認
+            </label>
           </div>
         </div>
         <!-- Col 3 -->
