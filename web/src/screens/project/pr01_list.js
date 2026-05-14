@@ -64,8 +64,26 @@ function renderTable(data) {
       <td>${item.contact}</td>
       <td>${item.name}</td>
       <td class="comment-cell">${item.summary}</td>
+      <td style="text-align: center;"><input type="checkbox" ${item.stage1 ? 'checked' : ''} disabled></td>
+      <td style="text-align: center;"><input type="checkbox" ${item.stage2 ? 'checked' : ''} disabled></td>
+      <td style="text-align: center;"><input type="checkbox" ${item.stage3 ? 'checked' : ''} disabled></td>
+      <td style="text-align: center;"><input type="checkbox" ${item.stage4 ? 'checked' : ''} disabled></td>
+      <td>${item.motivation || ''}</td>
+      <td>${item.method || ''}</td>
+      <td>${item.competitor || ''}</td>
+      <td>${item.initial || ''}</td>
+      <td>${item.revised || ''}</td>
+      <td>${item.free1 || ''}</td>
+      <td>${item.free2 || ''}</td>
+      <td>${item.free3 || ''}</td>
     </tr>
   `).join('');
+
+  const totalCount = q('projectTotalCount');
+  if (totalCount) totalCount.textContent = data.length;
+  // Update footer text "1 - 1" to "1 - N"
+  const meta = document.querySelector('.company-grid-meta');
+  if (meta) meta.innerHTML = `全 <span id="projectTotalCount">${data.length}</span> 件 &nbsp; 1 - ${data.length}`;
 
   tbody.querySelectorAll('tr').forEach(tr => {
     tr.addEventListener('click', () => {

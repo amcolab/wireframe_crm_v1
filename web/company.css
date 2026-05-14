@@ -12,27 +12,42 @@
 
 .form-row-inline {
     display: grid;
-    grid-template-columns: 100px 1fr;
-    /* Adjusted for better balance */
+    grid-template-columns: 110px 1fr;
     align-items: center;
     gap: 12px;
     margin-bottom: 12px;
 }
 
 .form-row-inline label {
-    font-size: 13px;
-    color: #003366;
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
     white-space: nowrap;
-    text-align: left;
 }
 
 .form-row-inline input,
-.form-row-inline select {
+.form-row-inline select,
+.form-row-inline .multi-select-trigger {
     width: 100%;
-    min-height: 32px;
-    border: 1px solid #ccc;
-    border-radius: 2px;
-    padding: 4px 8px;
+    height: 32px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 0 10px;
+    font-size: 13px;
+    background-color: #ffffff;
+    color: #1e293b;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+}
+
+.form-row-inline input:focus,
+.form-row-inline select:focus,
+.form-row-inline .multi-select-trigger:hover {
+    border-color: var(--accent-color);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(0, 120, 215, 0.1);
+    outline: none;
 }
 
 .form-inner-flex {
@@ -1040,8 +1055,8 @@
 }
 
 .multi-select-trigger {
-    border: 1px solid #cbd5e1;
-    padding: 8px 32px 8px 12px;
+    border: 1px solid #e2e8f0;
+    padding: 0 32px 0 10px;
     font-size: 13px;
     background: #fff;
     cursor: pointer;
@@ -1049,13 +1064,13 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    min-height: 33px;
-    max-height: 33px;
+    min-height: 32px;
+    max-height: 32px;
     display: flex;
     align-items: center;
-    border-radius: 6px;
+    border-radius: 4px;
     transition: all 0.2s ease;
-    color: #334155;
+    color: #1e293b;
 }
 
 .multi-select-trigger:hover {

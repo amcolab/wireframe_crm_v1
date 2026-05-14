@@ -1,7 +1,155 @@
 import { q, escapeHtml } from './helpers.js';
-import { mockCompanies } from './mockData.js';
+import { mockCompanies, mockEmployees, mockProjects, mockTenants } from './mockData.js';
 
 export function initGlobalLookups() {
+  
+  
+  // Employee Master Logic
+  const dlgEmployee = q('dlgEmployeeMaster');
+  const employeeTbody = q('employeeMasterBody');
+  
+  const renderEmployeeMaster = (data = mockEmployees) => {
+    if (!employeeTbody) return;
+    employeeTbody.innerHTML = data.map((emp, index) => `
+      <tr data-id="${emp.id}">
+        <td style="text-align: center; color: #64748b; font-weight: 600;">${index + 1}</td>
+        <td>${emp.id}</td>
+        <td>${emp.name}</td>
+        <td>${emp.kana}</td>
+        <td>${emp.dept}</td>
+        <td>${emp.group}</td>
+        <td>${emp.login}</td>
+        <td>${emp.password}</td>
+      </tr>
+    `).join('');
+
+    employeeTbody.querySelectorAll('tr').forEach(tr => {
+      tr.addEventListener('click', () => {
+        employeeTbody.querySelectorAll('tr').forEach(r => r.classList.remove('selected'));
+        tr.classList.add('selected');
+      });
+    });
+  };
+
+  q('menuEmployeeMaster')?.addEventListener('click', () => {
+    dlgEmployee?.showModal();
+    renderEmployeeMaster();
+  });
+
+  q('btnEmployeeSearch')?.addEventListener('click', () => {
+    const name = q('employeeSearchName')?.value.toLowerCase();
+    const filtered = mockEmployees.filter(emp => emp.name.toLowerCase().includes(name));
+    renderEmployeeMaster(filtered);
+  });
+
+  q('btnEmployeeDeleteRow')?.addEventListener('click', () => {
+    const selected = employeeTbody.querySelector('tr.selected');
+    if (selected) {
+      if (confirm('選択した行を削除しますか？')) {
+        selected.remove();
+      }
+    } else {
+      alert('削除する行を選択してください');
+    }
+  });
+
+  q('btnEmployeeSave')?.addEventListener('click', () => {
+    alert('登録が完了しました');
+    dlgEmployee?.close();
+  });
+
+  q('btnEmployeeGroup')?.addEventListener('click', () => {
+    const selected = employeeTbody.querySelector('tr.selected');
+    if (selected) {
+      const loginId = selected.querySelectorAll('td')[6].textContent;
+      const secLogin = q('secLoginId');
+      if (secLogin) secLogin.value = loginId;
+      
+      // Update checkboxes based on group
+      const group = selected.querySelectorAll('td')[5].textContent;
+      q('chkGroupAdmin').checked = group === '管理者';
+      q('chkGroupUser').checked = group === '一般ユーザー';
+
+      q('dlgSecurityMaster')?.showModal();
+    } else {
+      alert('社員を選択してください');
+    }
+  });
+
+  q('menuPasswordChange')?.addEventListener('click', () => {
+    q('dlgPasswordChange')?.showModal();
+  });
+
+  q('btnEmployeeNew')?.addEventListener('click', () => {
+    q('dlgEmployeeDetail')?.showModal();
+  });
+
+  q('btnSaveEmployeeDetail')?.addEventListener('click', () => {
+    alert('保存しました');
+    q('dlgEmployeeDetail')?.close();
+  });
+
+  // Tenant Master Logic (System Admin Only)
+  const renderTenants = () => {
+    const tbody = q('tenantCompanyBody');
+    if (!tbody) return;
+    tbody.innerHTML = mockTenants.map(t => `
+      <tr>
+        <td style="font-weight: 600; color: #004080;">${t.id}</td>
+        <td>${t.name}</td>
+        <td><code>${t.loginCode}</code></td>
+        <td style="text-align: center;">
+          <select class="status-select" data-id="${t.id}" style="font-size: 11px; padding: 2px 4px; border-radius: 4px; border: 1px solid #ccc; background: ${t.isActive ? '#e8f5e9' : '#ffebee'}; color: ${t.isActive ? '#2e7d32' : '#c62828'};">
+            <option value="true" ${t.isActive ? 'selected' : ''}>有効</option>
+            <option value="false" ${!t.isActive ? 'selected' : ''}>無効</option>
+          </select>
+        </td>
+        <td style="color: #666; font-size: 11px;">${t.createdAt}</td>
+        <td style="text-align: center;">
+          <button class="btn btn-primary btn-sm btnCreateTenantUser" data-id="${t.id}" style="font-size: 10px; padding: 4px 8px; background: #001f4d; color: #fff; border: none;">+ ユーザー作成</button>
+        </td>
+      </tr>
+    `).join('');
+
+    // Bind click events to status change
+    tbody.querySelectorAll('.status-select').forEach(sel => {
+      sel.addEventListener('change', (e) => {
+        const val = sel.value === 'true';
+        sel.style.background = val ? '#e8f5e9' : '#ffebee';
+        sel.style.color = val ? '#2e7d32' : '#c62828';
+        // In real app, update mockData here
+      });
+    });
+
+    // Bind click events to new buttons
+    tbody.querySelectorAll('.btnCreateTenantUser').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const tenantId = btn.dataset.id;
+        const tenantName = mockTenants.find(t => t.id === tenantId)?.name;
+        
+        // Show detail modal and maybe pre-fill some info
+        q('dlgEmployeeDetail')?.showModal();
+        
+        // Optional: Pre-fill some context if needed
+        const title = q('dlgEmployeeDetail').querySelector('.dlg-title');
+        if (title) title.textContent = `${tenantName} - 管理ユーザー作成`;
+      });
+    });
+  };
+
+  q('menuTenantCompany')?.addEventListener('click', () => {
+    renderTenants();
+    q('dlgTenantCompany')?.showModal();
+  });
+
+  q('btnTenantNew')?.addEventListener('click', () => {
+    q('dlgTenantDetail')?.showModal();
+  });
+
+  q('btnSaveTenantDetail')?.addEventListener('click', () => {
+    alert('新しいテナントを有効化しました。');
+    q('dlgTenantDetail')?.close();
+  });
   // Initialize Multi-select dropdowns globally
   const initMultiSelects = () => {
     document.querySelectorAll('.multi-select-dropdown').forEach(dropdown => {
@@ -474,19 +622,41 @@ export function initGlobalLookups() {
     renderProjectLookupResults();
   });
 
-  if (dlgProjectLookup) {
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.attributeName === 'open' && dlgProjectLookup.open) {
-          renderProjectLookupResults();
-          initMultiSelects();
-        }
-      });
-    });
-    observer.observe(dlgProjectLookup, { attributes: true });
-  }
+    if (dlgProjectLookup) {
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'open' && dlgProjectLookup.open) {
+                    renderProjectLookupResults();
+                    initMultiSelects();
+                }
+            });
+        });
+        observer.observe(dlgProjectLookup, { attributes: true });
+    }
 
-  q('btnLookupSearch')?.addEventListener('click', (e) => {
+    // Helper to bind modal triggers
+    const bindModalTrigger = (btnId, dlgId) => {
+        q(btnId)?.addEventListener('click', () => {
+            q(dlgId)?.showModal();
+        });
+    };
+
+    // Bind lookup/new buttons inside other modals or screens
+    const modalTriggers = [
+        ['btnContactCompanyLookup', 'dlgCompanyLookup'],
+        ['btnContactCompanyNew', 'dlgCompanyCreate'],
+        ['btnActivityContactLookup', 'dlgContactLookup'],
+        ['btnActivityContactNew', 'dlgContactDetailNew'],
+        ['btnProjectContactLookup', 'dlgContactLookup'],
+        ['btnProjectContactNew', 'dlgContactDetailNew'],
+        ['btnActivityProjectLookup', 'dlgProjectLookup'],
+        ['btnMainContactLookupCompany', 'dlgCompanyLookup'], // For main screen
+        ['btnMainContactCreateCompany', 'dlgCompanyCreate']  // For main screen
+    ];
+
+    modalTriggers.forEach(([btn, dlg]) => bindModalTrigger(btn, dlg));
+
+    q('btnLookupSearch')?.addEventListener('click', (e) => {
     e.preventDefault();
     const form = q('formCompanyLookup');
     if (!form) return;
