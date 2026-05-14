@@ -10,9 +10,14 @@ let state = {
   advanced: null
 };
 
+let isReady = false;
+
 export function init() {
   console.log('Company screen initialized');
-  bindUi();
+  if (!isReady) {
+    bindUi();
+    isReady = true;
+  }
   render();
 }
 
@@ -32,6 +37,50 @@ function bindUi() {
   const formCreate = q('formCompanyCreate');
 
   const tabs = document.querySelectorAll('[data-company-tab]');
+
+  // Multi-select dropdown logic
+  document.querySelectorAll('.multi-select-dropdown').forEach(dropdown => {
+    const trigger = dropdown.querySelector('.multi-select-trigger');
+    const content = dropdown.querySelector('.multi-select-content');
+    const placeholder = dropdown.dataset.placeholder || '選択..';
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // Close other dropdowns
+      document.querySelectorAll('.multi-select-dropdown').forEach(d => {
+        if (d !== dropdown) d.classList.remove('active');
+      });
+      dropdown.classList.toggle('active');
+    });
+
+    dropdown.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+
+    const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(cb => {
+      cb.addEventListener('change', () => {
+        const selected = Array.from(checkboxes)
+          .filter(c => c.checked)
+          .map(c => c.parentElement.textContent.trim());
+        
+        if (selected.length === 0) {
+          trigger.textContent = placeholder;
+        } else if (selected.length <= 2) {
+          trigger.textContent = selected.join(', ');
+        } else {
+          trigger.textContent = `${selected.length}項目選択中`;
+        }
+      });
+    });
+  });
+
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.multi-select-dropdown').forEach(d => {
+      d.classList.remove('active');
+    });
+  });
 
   function applyBasicSearch() {
     const name = (inputName?.value ?? '').trim();
@@ -65,6 +114,10 @@ function bindUi() {
 
   btnAdvClear?.addEventListener('click', () => {
     formAdv?.reset();
+    document.querySelectorAll('.multi-select-trigger').forEach(trigger => {
+      const dropdown = trigger.closest('.multi-select-dropdown');
+      trigger.textContent = dropdown.dataset.placeholder || '選択..';
+    });
   });
 
   btnAdvApply?.addEventListener('click', () => {
@@ -167,6 +220,52 @@ function bindUi() {
     q('dlgProjectDetail')?.showModal();
   });
 
+  // Modal triggers inside detail modals
+  const bindModalTrigger = (btnId, dlgId) => {
+    const btn = q(btnId);
+    const dlg = q(dlgId);
+    if (btn && dlg) {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log(`Opening modal: ${dlgId} from ${btnId}`);
+        if (dlg.showModal) dlg.showModal();
+      });
+    } else {
+      console.warn(`Missing element for binding: btn=${btnId}, dlg=${dlgId}`);
+    }
+  };
+
+  bindModalTrigger('btnActivityContactLookup', 'dlgContactLookup');
+  bindModalTrigger('btnActivityContactNew', 'dlgContactDetailNew');
+  bindModalTrigger('btnActivityProjectLookup', 'dlgProjectLookup');
+  bindModalTrigger('btnActivityProjectNew', 'dlgProjectDetail');
+
+  bindModalTrigger('btnContactCompanyLookup', 'dlgCompanyLookup');
+  bindModalTrigger('btnContactCompanyNew', 'dlgCompanyCreate');
+
+  bindModalTrigger('btnProjectContactLookup', 'dlgContactLookup');
+  bindModalTrigger('btnProjectContactNew', 'dlgContactDetailNew');
+
+  // Save/Delete inside new modals
+  const closeDialogOnAction = (btnId, dlgId, confirmMsg) => {
+    const btn = q(btnId);
+    if (btn) {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!confirmMsg || confirm(confirmMsg)) {
+          console.log(`Closing modal: ${dlgId} via ${btnId}`);
+          q(dlgId)?.close();
+        }
+      });
+    }
+  };
+
+  closeDialogOnAction('btnContactSave', 'dlgContactDetailNew');
+
+  closeDialogOnAction('btnActivitySave', 'dlgActivityDetail');
+
+  closeDialogOnAction('btnProjectSave', 'dlgProjectDetail');
+
   q('btnCompanySave')?.addEventListener('click', () => {
     const selected = state.companies.find(c => c.id === state.selectedId);
     if (!selected) return;
@@ -195,17 +294,104 @@ function bindUi() {
     state.selectedId = state.filtered[0]?.id ?? null;
     render();
   });
+
+  q('btnCompanyFirstPage')?.addEventListener('click', () => {
+    state.page = 1;
+    render();
+  });
+  q('btnCompanyPrevPage')?.addEventListener('click', () => {
+    if (state.page > 1) {
+      state.page--;
+      render();
+    }
+  });
+  q('btnCompanyNextPage')?.addEventListener('click', () => {
+    const totalPages = Math.ceil(state.filtered.length / state.pageSize);
+    if (state.page < totalPages) {
+      state.page++;
+      render();
+    }
+  });
+  q('btnCompanyLastPage')?.addEventListener('click', () => {
+    const totalPages = Math.ceil(state.filtered.length / state.pageSize);
+    state.page = totalPages;
+    render();
+  });
+
+  q('companyPageSelect')?.addEventListener('change', (e) => {
+    state.page = parseInt(e.target.value) || 1;
+    render();
+  });
+
+  q('companyPageSize')?.addEventListener('change', (e) => {
+    state.pageSize = parseInt(e.target.value) || 100;
+    state.page = 1;
+    render();
+  });
 }
 
 function render() {
   const tbody = q('companyTableBody');
   const meta = q('companyResultMeta');
   const totalCount = q('companyTotalCount');
+  const pageNumbers = q('companyPageNumbers');
+  const pageSelect = q('companyPageSelect');
+  const pageTotal = q('companyPageTotal');
+  const rangeStart = q('companyRangeStart');
+  const rangeEnd = q('companyRangeEnd');
 
-  if (meta) meta.textContent = `全 ${state.filtered.length} 件`;
-  if (totalCount) totalCount.textContent = state.filtered.length;
+  const total = state.filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
+  
+  if (state.page > totalPages) state.page = totalPages;
+  if (state.page < 1) state.page = 1;
 
-  const rows = state.filtered.slice(0, state.pageSize); // simplified for now
+  if (meta) meta.textContent = `全 ${total} 件`;
+  if (totalCount) totalCount.textContent = total;
+  if (pageTotal) pageTotal.textContent = `/ ${totalPages}`;
+
+  const start = (state.page - 1) * state.pageSize;
+  const actualEndIdx = Math.min(start + state.pageSize, total);
+  
+  if (rangeStart) rangeStart.textContent = total > 0 ? (start + 1) : 0;
+  if (rangeEnd) rangeEnd.textContent = actualEndIdx;
+
+  // Render Pager Buttons
+  if (pageNumbers) {
+    pageNumbers.innerHTML = '';
+    const maxVisible = 5;
+    let startPage = Math.max(1, state.page - Math.floor(maxVisible / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+    
+    if (endPage - startPage + 1 < maxVisible) {
+      startPage = Math.max(1, endPage - maxVisible + 1);
+    }
+
+    for (let p = startPage; p <= endPage; p++) {
+      const btn = document.createElement('button');
+      btn.className = `page-num-btn ${p === state.page ? 'active' : ''}`;
+      btn.textContent = p;
+      btn.onclick = () => {
+        state.page = p;
+        render();
+      };
+      pageNumbers.appendChild(btn);
+    }
+  }
+
+  // Sync Page Select
+  if (pageSelect) {
+    pageSelect.innerHTML = '';
+    for (let p = 1; p <= totalPages; p++) {
+      const opt = document.createElement('option');
+      opt.value = String(p);
+      opt.textContent = String(p);
+      if (p === state.page) opt.selected = true;
+      pageSelect.appendChild(opt);
+    }
+  }
+
+  const rows = state.filtered.slice(start, actualEndIdx);
 
   if (tbody) {
     tbody.innerHTML = rows.map(c => `
@@ -213,25 +399,14 @@ function render() {
         <td>${escapeHtml(c.id)}</td>
         <td>${escapeHtml(c.name)}</td>
         <td>${escapeHtml(c.tel || '')}</td>
-        <td>${escapeHtml(c.fax || '')}</td>
-        <td>${escapeHtml(c.area || '')}</td>
-        <td>${escapeHtml(c.postal || '')}</td>
-        <td>${escapeHtml(c.pref || '')}</td>
         <td>${escapeHtml(c.addr || '')}</td>
         <td>${escapeHtml(c.industry || '')}</td>
         <td>${escapeHtml(c.biz || '')}</td>
         <td>${escapeHtml(c.scale || '')}</td>
         <td>${escapeHtml(c.type || '')}</td>
-        <td>${escapeHtml(c.corpNo || '')}</td>
-        <td>${escapeHtml(c.capital || '')}</td>
         <td>${escapeHtml(c.employees || '')}</td>
-        <td>${escapeHtml(c.closingMonth || '')}</td>
-        <td>${escapeHtml(c.revenue || '')}</td>
-        <td>${c.noDoc ? '禁止' : ''}</td>
-        <td>${c.noTel ? '禁止' : ''}</td>
-        <td>${escapeHtml(c.free1 || '')}</td>
-        <td>${escapeHtml(c.free2 || '')}</td>
-        <td>${escapeHtml(c.free3 || '')}</td>
+        <td>${escapeHtml(c.area || '')}</td>
+        <td>${escapeHtml(c.pref || '')}</td>
         <td>${escapeHtml(c.remark || '')}</td>
       </tr>
     `).join('');
@@ -346,37 +521,108 @@ function renderChildLists(c) {
 
   // Render Contacts
   let contactsHtml = `
-    <table class="mini-grid-table">
-      <thead><tr><th>担当(姓)</th><th>部署名</th><th>TEL</th><th>役職名</th></tr></thead>
-      <tbody>
+    <div class="mini-table-wrapper">
+      <table class="mini-grid-table">
+        <thead>
+          <tr>
+            <th>担当(姓)</th>
+            <th>担当(名)</th>
+            <th>フリガナ</th>
+            <th>部署名</th>
+            <th>TEL</th>
+            <th>携帯電話</th>
+            <th>Email</th>
+            <th>役職名</th>
+            <th>職位</th>
+            <th>担当者備考</th>
+          </tr>
+        </thead>
+        <tbody>
   `;
   contactsHtml += mockContacts.map(m => `
-    <tr><td>${escapeHtml(m.last)}</td><td>${escapeHtml(m.dept)}</td><td>${escapeHtml(m.tel)}</td><td>${escapeHtml(m.pos)}</td></tr>
+    <tr>
+      <td class="blue-link">${escapeHtml(m.last)}</td>
+      <td>${escapeHtml(m.first)}</td>
+      <td>${escapeHtml(m.kana)}</td>
+      <td>${escapeHtml(m.dept)}</td>
+      <td>${escapeHtml(m.tel)}</td>
+      <td>${escapeHtml(m.mobile)}</td>
+      <td>${escapeHtml(m.email)}</td>
+      <td>${escapeHtml(m.pos)}</td>
+      <td>${escapeHtml(m.rank)}</td>
+      <td title="${escapeHtml(m.remark)}">${escapeHtml(m.remark)}</td>
+    </tr>
   `).join('');
-  contactsHtml += `</tbody></table>`;
+  contactsHtml += `</tbody></table></div>`;
   set('companyContactsList', contactsHtml);
 
   // Render Activities
   let activitiesHtml = `
-    <table class="mini-grid-table">
-      <thead><tr><th>活動日</th><th>タイプ</th><th>コメント</th></tr></thead>
-      <tbody>
+    <div class="mini-table-wrapper">
+      <table class="mini-grid-table">
+        <thead>
+          <tr>
+            <th>活動日</th>
+            <th>営業担当</th>
+            <th>担当(姓)</th>
+            <th>タイプ</th>
+            <th style="min-width: 250px;">コメント</th>
+            <th>目的</th>
+            <th>案件名</th>
+          </tr>
+        </thead>
+        <tbody>
   `;
   activitiesHtml += mockActivities.map(a => `
-    <tr><td>${escapeHtml(a.date)}</td><td><span class="${a.typeClass}">${escapeHtml(a.type)}</span></td><td>${escapeHtml(a.comment)}</td></tr>
+    <tr>
+      <td>${escapeHtml(a.date)}</td>
+      <td>${escapeHtml(a.rep)}</td>
+      <td class="blue-link">${escapeHtml(a.contact)}</td>
+      <td><span class="${a.typeClass}">${escapeHtml(a.type)}</span></td>
+      <td title="${escapeHtml(a.comment)}">${escapeHtml(a.comment)}</td>
+      <td>${escapeHtml(a.purpose || '')}</td>
+      <td>${escapeHtml(a.projectName || '')}</td>
+    </tr>
   `).join('');
-  activitiesHtml += `</tbody></table>`;
+  activitiesHtml += `</tbody></table></div>`;
   set('companyActivitiesList', activitiesHtml);
 
   // Render Projects
   let projectsHtml = `
-    <table class="mini-grid-table">
-      <thead><tr><th>話題日</th><th>案件名</th><th>ステータス</th></tr></thead>
-      <tbody>
+    <div class="mini-table-wrapper">
+      <table class="mini-grid-table">
+        <thead>
+          <tr>
+            <th>話題日</th>
+            <th>売上日</th>
+            <th>フォロー予定</th>
+            <th>案件ステータス</th>
+            <th>営業担当</th>
+            <th>案件名</th>
+            <th>担当(姓)</th>
+            <th style="min-width: 250px;">案件概要</th>
+            <th>当初確度</th>
+            <th>発生動機</th>
+            <th>引合手段</th>
+          </tr>
+        </thead>
+        <tbody>
   `;
   projectsHtml += mockProjects.map(p => `
-    <tr><td>${escapeHtml(p.issueDate)}</td><td>${escapeHtml(p.name)}</td><td>${escapeHtml(p.status)}</td></tr>
+    <tr>
+      <td>${escapeHtml(p.issueDate)}</td>
+      <td>${escapeHtml(p.saleDate || '')}</td>
+      <td>${escapeHtml(p.followDate || '')}</td>
+      <td>${escapeHtml(p.status)}</td>
+      <td>${escapeHtml(p.rep)}</td>
+      <td class="blue-link">${escapeHtml(p.name)}</td>
+      <td class="blue-link">${escapeHtml(p.contact)}</td>
+      <td title="${escapeHtml(p.summary)}">${escapeHtml(p.summary)}</td>
+      <td>${escapeHtml(p.initial || '')}</td>
+      <td>${escapeHtml(p.motivation || '')}</td>
+      <td>${escapeHtml(p.method || '')}</td>
+    </tr>
   `).join('');
-  projectsHtml += `</tbody></table>`;
+  projectsHtml += `</tbody></table></div>`;
   set('companyProjectsList', projectsHtml);
 }

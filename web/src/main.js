@@ -81,10 +81,25 @@ async function setupDashboardLayout() {
     sidebarItems.forEach(item => {
       item.addEventListener('click', () => {
         const section = item.dataset.section;
-        window.location.hash = section;
+        if (section) {
+          window.location.hash = section;
+        }
       });
     });
     
+    // Settings menu toggle
+    const settingsTrigger = document.querySelector('.settings-menu-trigger');
+    if (settingsTrigger) {
+      settingsTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        settingsTrigger.classList.toggle('show-menu');
+      });
+      // Close menu when clicking outside
+      document.addEventListener('click', () => {
+        settingsTrigger.classList.remove('show-menu');
+      });
+    }
+
     // Initialize global lookups for shared dialogs
     initGlobalLookups();
   }
