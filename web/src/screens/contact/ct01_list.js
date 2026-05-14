@@ -61,12 +61,19 @@ function renderTable(data) {
   if (!tbody) return;
   tbody.innerHTML = data.map((m, idx) => `
     <tr data-id="${10000 + idx}">
-      <td>${escapeHtml(m.last)} ${escapeHtml(m.first)}</td>
-      <td>${escapeHtml(m.dept)}</td>
-      <td><a class="blue-link" data-jump-company="${escapeHtml(m.company || '')}">${escapeHtml(m.company || '旭川エレクトロニクス...')}</a></td>
-      <td>${escapeHtml(m.tel)}</td>
-      <td>${escapeHtml(m.email)}</td>
-      <td>${escapeHtml(m.pos)}</td>
+      <td>${escapeHtml(m.companyId || '-')}</td>
+      <td><a class="blue-link" data-jump-company="${escapeHtml(m.company || '')}">${escapeHtml(m.company || '-')}</a></td>
+      <td>${escapeHtml(m.dept || '-')}</td>
+      <td>${escapeHtml(m.last || '-')}</td>
+      <td>${escapeHtml(m.first || '-')}</td>
+      <td>${escapeHtml(m.kana || '-')}</td>
+      <td>${escapeHtml(m.tel || '-')}</td>
+      <td>${escapeHtml(m.mobile || '-')}</td>
+      <td>${escapeHtml(m.email || '-')}</td>
+      <td>${escapeHtml(m.role || '-')}</td>
+      <td>${escapeHtml(m.rank || '-')}</td>
+      <td>${escapeHtml(m.pos || '-')}</td>
+      <td>${escapeHtml(m.addr || '-')}</td>
     </tr>
   `).join('');
 
