@@ -1,0 +1,37 @@
+<section class="section active" id="project">
+  <div class="section-body" id="project-root">
+    <div class="company-screen">
+      <div class="company-topbar">
+        <div class="company-topbar-left">
+          <div class="company-title">案件 (PR01)</div>
+          <div class="company-search">
+            <div style="display: flex; align-items: center; gap: 5px;">
+              <label class="company-search-label">ステータス</label>
+              <select id="projectSearchStatus" style="width: 100px;">
+                <option value="">-</option>
+              </select>
+            </div>
+            <div style="display: flex; align-items: center; gap: 5px;">
+              <label class="company-search-label">営業担当</label>
+              <input id="projectSearchSalesRep" style="width: 120px;" type="text" />
+            </div>
+            <div style="display: flex; align-items: center; gap: 5px;">
+              <label class="company-search-label">会社名</label>
+              <input id="projectSearchCompany" style="width: 150px;" type="text" />
+            </div>
+            <div style="display: flex; align-items: center; gap: 5px;">
+              <label class="company-search-label">話題日</label>
+              <input id="projectSearchDateFrom" style="width: 130px;" type="date" />
+              <span>～</span>
+              <input id="projectSearchDateTo" style="width: 130px;" type="date" />
+            </div>
+          </div>
+        </div>
+        <div class="company-topbar-right">
+          <button class="btn btn-secondary" id="btnProjectSearch">🔍 検索</button>
+          <button class="btn btn-secondary" id="btnProjectAdvancedSearch">詳細検索</button>
+          <button class="btn btn-secondary" id="btnProjectClear">✕ クリア</button>
+          <button class="btn btn-secondary" id="btnProjectExport">📥 エクスポート</button>
+          <button class="btn btn-orange" id="btnProjectNewMain">+ 新規案件</button>
+        </div>
+      </div>

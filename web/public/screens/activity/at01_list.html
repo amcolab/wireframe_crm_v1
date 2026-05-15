@@ -1,10 +1,10 @@
 <section class="section active" id="activity">
 <div class="section-body" id="activity-root">
 <div class="company-screen">
-<div class="company-topbar" style="border-bottom: 1px solid #ddd; flex-wrap: wrap; height: auto; padding: 10px 12px; gap: 10px;">
-<div class="company-topbar-left" style="gap: 10px; flex-wrap: wrap; flex: 1 1 auto; min-width: 300px;">
-<div class="company-title">活動 (AT01)</div>
-<div class="company-search" style="flex-wrap: wrap; gap: 8px;">
+    <div class="company-topbar">
+      <div class="company-topbar-left">
+        <div class="company-title">活動 (AT01)</div>
+        <div class="company-search">
 <div style="display: flex; align-items: center; gap: 5px;">
 <label class="company-search-label">活動タイプ</label>
 <select id="activitySearchType" style="width: 100px;">
@@ -28,61 +28,49 @@
 <span>～</span>
 <input id="activitySearchDateTo" style="width: 130px;" type="date"/>
 </div>
-</div>
-</div>
-<div class="company-topbar-right" style="gap: 10px; display: flex; flex-wrap: wrap; justify-content: flex-end;">
-<button class="btn btn-secondary" id="btnActivitySearch">🔍 検索</button>
-<button class="btn btn-secondary" id="btnActivityAdvancedSearch">詳細検索</button>
-<button class="btn btn-secondary" id="btnActivityClear">✕ クリア</button>
-<button class="btn btn-secondary" id="btnActivityExport">📥 エクスポート</button>
-<button class="btn btn-orange" id="btnActivityNewMain">+ 新規活動</button>
-</div>
-</div>
+      </div>
+    </div>
+    <div class="company-topbar-right">
+        <button class="btn btn-secondary" id="btnActivitySearch">🔍 検索</button>
+        <button class="btn btn-secondary" id="btnActivityAdvancedSearch">詳細検索</button>
+        <button class="btn btn-secondary" id="btnActivityClear">✕ クリア</button>
+        <button class="btn btn-secondary" id="btnActivityExport">📥 エクスポート</button>
+        <button class="btn btn-orange" id="btnActivityNewMain">+ 新規活動</button>
+      </div>
+    </div>
       <div class="company-main">
         <!-- List Area -->
         <div class="company-grid">
           <div class="company-table-wrap">
-            <table class="company-table">
-              <thead>
-                <tr>
-                  <th style="width: 100px;">活動日</th>
-                  <th style="width: 80px;">開始時刻</th>
-                  <th style="width: 120px;">営業担当</th>
-                  <th style="width: 80px;">タイプ</th>
-                  <th style="width: 250px;">会社名</th>
-                  <th style="width: 100px;">担当(姓)</th>
-                  <th>コメント</th>
-                </tr>
-              </thead>
-              <tbody id="activityTableBody">
-                <!-- Filled by JS -->
-              </tbody>
-            </table>
+            <div id="activityTable"></div>
           </div>
           <div class="company-grid-footer">
             <div class="footer-left">
               <div class="company-grid-pager">
-                <button class="page-num-btn">«</button>
-                <button class="page-num-btn">‹</button>
-                <div class="page-numbers">
-                  <button class="page-num-btn active">1</button>
-                  <button class="page-num-btn">2</button>
-                  <button class="page-num-btn">3</button>
+                <button class="icon-btn" id="btnActivityFirstPage" title="First Page">«</button>
+                <button class="icon-btn" id="btnActivityPrevPage" title="Previous Page">‹</button>
+                <div id="activityPageNumbers" class="page-numbers"></div>
+                <button class="icon-btn" id="btnActivityNextPage" title="Next Page">›</button>
+                <button class="icon-btn" id="btnActivityLastPage" title="Last Page">»</button>
+
+                <div class="pager-jump">
+                  Page
+                  <select id="activityPageSelect" class="mini-select" aria-label="page select"></select>
+                  <span id="activityPageTotal" style="width: 50px;">/ 1</span>
                 </div>
-                <button class="page-num-btn">›</button>
-                <button class="page-num-btn">»</button>
+
+                <select id="activityPageSize" class="mini-select" aria-label="page size">
+                  <option value="10">10件</option>
+                  <option value="25" selected>25件</option>
+                  <option value="50">50件</option>
+                  <option value="100">100件</option>
+                </select>
               </div>
-              <div class="pager-jump">
-                Page <input style="width: 40px; text-align: center;" type="text" value="1" /> / <span
-                  id="activityTotalPages">282</span>
-              </div>
-              <select class="mini-select">
-                <option>100件</option>
-              </select>
             </div>
             <div class="footer-right">
               <div class="company-grid-meta">
-                全 <span id="activityTotalCount">28196</span> 件 &nbsp; 1 - 100
+                全 <span id="activityTotalCount">0</span> 件
+                <span class="range-info"><span id="activityRangeStart">0</span> - <span id="activityRangeEnd">0</span></span>
               </div>
             </div>
           </div>
@@ -90,67 +78,106 @@
 
         <div class="resizer-horizontal" id="activity-resizer"></div>
 
-        <!-- Detail Area -->
         <div class="company-detail">
-<div class="company-tabpanels">
-<div class="detail-form" style="grid-template-columns: 420px 1fr 420px 180px; gap: 20px;">
-<!-- Col 1 -->
-<div class="form-col">
-<div class="form-row-inline"><label>活動ID</label><input disabled="" id="atDetailId" style="width: 120px;" type="text" value="29193"/></div>
-<div class="form-row-inline" style="grid-template-columns: 100px 1fr 40px 1fr;">
-<label>活動タイプ <span class="req">*</span></label>
-<select class="req-field-bg" id="atDetailType">
-<option>TEL</option>
-</select>
-<label style="text-align: right;">目的</label>
-<select id="atDetailPurpose">
-<option>売り後フォロー</option>
-</select>
-</div>
-<div class="form-row-inline"><label>動機</label><select id="atDetailMotivation">
-<option>-</option>
-</select></div>
-<div class="form-row-inline"><label>担当者<span class="req">*</span></label>
-<div class="search-input-group">
-<input class="req-field-bg" id="atDetailContact" style="flex: 1;" type="text" value="佐藤 瑞葵 [旭川エレクトロニクスサービス株式会社]"/>
-<button class="icon-btn-inline" id="btnAtDetailContactLookup" type="button">🔍 CP07</button>
-<button class="btn btn-orange" id="btnAtDetailContactNew" style="padding: 2px 8px; font-size: 11px;" type="button">新規 CP08</button>
-</div>
-</div>
-<div class="form-row-inline"><label>営業担当 <span class="req">*</span></label>
-<select class="req-field-bg" id="atDetailSalesRep">
-<option>中谷 太輔 [企画部]</option>
-</select>
-</div>
-<div class="form-row-inline"><label>案件ID</label><input id="atDetailProjectId" style="width: 120px;" type="text"/></div>
-<div class="form-row-inline"><label>案件名</label>
-<div class="search-input-group">
-<input id="atDetailProjectName" style="flex: 1;" type="text"/>
-<button class="icon-btn-inline" id="btnAtDetailProjectLookup" type="button">🔍 CP09</button>
-<button class="btn btn-orange" id="btnAtDetailProjectNew" style="padding: 2px 8px; font-size: 11px;" type="button">新規 CP10</button>
-</div>
-</div>
-<div class="form-row-inline"><label>リードID</label><input id="atDetailLeadId" style="width: 120px;" type="text"/></div>
-<div class="form-row-inline"><label>活動日</label><input id="atDetailDate" type="date" value="2026-04-29"/></div>
-<div class="form-row-inline" style="grid-template-columns: 100px 1fr 80px 1fr;">
-<label>開始時刻</label><select id="atDetailStartTime">
-<option>10:15</option>
-</select>
-<label style="text-align: right;">終了時刻</label><select id="atDetailEndTime">
-<option>-</option>
-</select>
-</div>
-<div class="form-row-inline" style="grid-template-columns: 100px 1fr 80px 1fr;">
-<label>活動時間</label><input disabled="" id="atDetailDuration" type="text"/>
-<label style="text-align: right;">面談人数</label><input id="atDetailAttendees" type="number"/>
-</div>
-<div class="check-group" style="margin-left: 10px; padding-top: 5px; gap: 15px;">
-<label class="chk-label"><input id="atDetailFollowCompleted" type="checkbox"/>
-                            フォロー完了</label>
-<label class="chk-label"><input id="atDetailHasAppt" type="checkbox"/> アポ有</label>
-<label class="chk-label"><input id="atDetailIsClaim" type="checkbox"/> クレーム</label>
-</div>
-</div>
+          <div class="company-tabpanels">
+            <div class="detail-form" style="grid-template-columns: repeat(4, 1fr); gap: 24px; padding: 20px;">
+              <!-- Col 1 -->
+              <div class="form-col">
+                <div class="form-row">
+                  <label>活動ID</label>
+                  <input disabled id="atDetailId" type="text" value="29193" />
+                </div>
+                <div class="form-row two">
+                  <div>
+                    <label>活動タイプ <span class="req">*</span></label>
+                    <select class="req-field-bg" id="atDetailType">
+                      <option>TEL</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label>目的</label>
+                    <select id="atDetailPurpose">
+                      <option>売り後フォロー</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <label>動機</label>
+                  <select id="atDetailMotivation">
+                    <option>-</option>
+                  </select>
+                </div>
+                <div class="form-row">
+                  <label>担当者 <span class="req">*</span></label>
+                  <div class="search-input-group">
+                    <input class="req-field-bg" id="atDetailContact" style="flex: 1;" type="text"
+                      value="佐藤 瑞葵 [旭川エレクトロニクスサービス株式会社]" />
+                    <button class="icon-btn-inline" id="btnAtDetailContactLookup" type="button">🔍</button>
+                    <button class="btn btn-secondary" id="btnAtDetailContactNew"
+                      style="padding: 0 10px; color: #ff6600; border-color: #ff6600; width: 60px;"
+                      type="button">新規</button>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <label>営業担当 <span class="req">*</span></label>
+                  <select class="req-field-bg" id="atDetailSalesRep">
+                    <option>中谷 太輔 [企画部]</option>
+                  </select>
+                </div>
+                <div class="form-row two">
+                  <div>
+                    <label>案件ID</label>
+                    <input id="atDetailProjectId" type="text" />
+                  </div>
+                  <div>
+                    <label>リードID</label>
+                    <input id="atDetailLeadId" type="text" />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <label>案件名</label>
+                  <div class="search-input-group">
+                    <input id="atDetailProjectName" style="flex: 1;" type="text" />
+                    <button class="icon-btn-inline" id="btnAtDetailProjectLookup" type="button">🔍</button>
+                    <button class="btn btn-secondary" id="btnAtDetailProjectNew"
+                      style="padding: 0 10px; color: #ff6600; border-color: #ff6600; width: 60px;"
+                      type="button">新規</button>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <label>活動日</label>
+                  <input id="atDetailDate" type="date" value="2026-04-29" />
+                </div>
+                <div class="form-row two">
+                  <div>
+                    <label>開始時刻</label>
+                    <select id="atDetailStartTime">
+                      <option>10:15</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label>終了時刻</label>
+                    <select id="atDetailEndTime">
+                      <option>-</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-row two">
+                  <div>
+                    <label>活動時間</label>
+                    <input disabled id="atDetailDuration" type="text" />
+                  </div>
+                  <div>
+                    <label>面談人数</label>
+                    <input id="atDetailAttendees" type="number" />
+                  </div>
+                </div>
+                <div class="check-group" style="padding-top: 10px; gap: 15px;">
+                  <label class="check"><input id="atDetailFollowCompleted" type="checkbox" /> フォロー完了</label>
+                  <label class="check"><input id="atDetailHasAppt" type="checkbox" /> アポ有</label>
+                  <label class="check"><input id="atDetailIsClaim" type="checkbox" /> クレーム</label>
+                </div>
+              </div>
 <!-- Col 2 -->
 <div class="form-col">
 <div class="form-row" style="height: 100%;">
@@ -158,69 +185,130 @@
 <textarea id="atDetailComment" style="flex: 1; min-height: 300px;">wwww</textarea>
 </div>
 </div>
-<!-- Col 3 -->
-<div class="form-col" style="border-left: 1px solid #eee; padding-left: 15px;">
-<div class="form-row-inline"><label>会社名</label>
-<div style="display:flex; gap:5px; flex:1">
-<input disabled="" id="atDetailCompanyId" style="width: 150px;" type="text" value="1141"/>
-<input disabled="" id="atDetailCompanyName" style="flex:1" type="text" value="旭川エレクトロニクスサービス株式会社"/>
-</div>
-</div>
-<div class="form-row-inline" style="grid-template-columns: 100px 1fr 80px 1fr;">
-<label>会社種別</label><select disabled="" id="atDetailCompanyType">
-<option>その他</option>
-</select>
-<label style="text-align: right;">代表TEL</label><input disabled="" id="atDetailCompanyTel" type="text" value="077-589-2569"/>
-</div>
-<div class="form-row-inline" style="grid-template-columns: 100px 1fr 80px 1fr;">
-<label>業界</label><select disabled="" id="atDetailIndustry">
-<option>製造業</option>
-</select>
-<label style="text-align: right;">規模ランク</label><select disabled="" id="atDetailScale">
-<option>1人～30人</option>
-</select>
-</div>
-<div class="form-row-inline"><label>部署名</label><input disabled="" id="atDetailDept" type="text" value="クオリティアシュアランス部"/></div>
-<div class="form-row-inline" style="grid-template-columns: 100px 1fr 80px 1fr;">
-<label>郵便番号</label><input disabled="" id="atDetailPostal" type="text" value="7059306"/>
-<label style="text-align: right;">都道府県</label><select disabled="" id="atDetailPref">
-<option>北海道</option>
-</select>
-</div>
-<div class="form-row-inline"><label>住所</label><input disabled="" id="atDetailAddress" type="text" value="北海道市東区4丁目18-30"/></div>
-<div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
-<div class="form-row-inline"><label>作成日時</label><input disabled="" id="atDetailCreatedAt" type="text" value="2026/04/29"/></div>
-<div class="form-row-inline"><label>作成者</label><input disabled="" id="atDetailCreatedBy" type="text" value="中谷 太輔 [企画部]"/></div>
-<div class="form-row-inline"><label>更新日時</label><input disabled="" id="atDetailUpdatedAt" type="text"/></div>
-<div class="form-row-inline"><label>更新者</label><input disabled="" id="atDetailUpdatedBy" type="text"/></div>
-</div>
-</div>
-<!-- Col 4 -->
-<div class="form-col">
-<div class="form-row-inline"><label>活動自由使用欄1</label><input id="atDetailFree1" type="text"/>
-</div>
-<div class="form-row-inline"><label>活動自由使用欄2</label><input id="atDetailFree2" type="text"/>
-</div>
-<div class="form-row-inline"><label>活動自由使用欄3</label><input id="atDetailFree3" type="text"/>
-</div>
-<div class="form-row-inline"><label>活動自由使用欄4</label><input id="atDetailFree4" type="text"/>
-</div>
-<div class="form-row-inline"><label>活動自由使用欄5</label><input id="atDetailFree5" type="text"/>
-</div>
-<div class="form-row-inline"><label>活動自由使用欄6</label><input id="atDetailFree6" type="text"/>
-</div>
-<div class="form-row-inline"><label>活動自由使用欄7</label><input id="atDetailFree7" type="text"/>
-</div>
-<div class="form-row">
-<label>添付資料</label>
-<div class="attach-box" style="height: 100px; border: 2px dashed #ccc; display:flex; align-items:center; justify-content:center; color:#999; font-size:12px;">
-                            ここにドラッグ＆ドロップ</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
+              <!-- Col 3 -->
+              <div class="form-col">
+                <div class="form-row">
+                  <label>会社名</label>
+                  <div style="display:flex; gap:8px;">
+                    <input disabled id="atDetailCompanyId" style="width: 80px;" type="text" value="1141" />
+                    <input disabled id="atDetailCompanyName" style="flex:1" type="text"
+                      value="旭川エレクトロニクスサービス株式会社" />
+                  </div>
+                </div>
+                <div class="form-row two">
+                  <div>
+                    <label>会社種別</label>
+                    <select disabled id="atDetailCompanyType">
+                      <option>その他</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label>代表TEL</label>
+                    <input disabled id="atDetailCompanyTel" type="text" value="077-589-2569" />
+                  </div>
+                </div>
+                <div class="form-row two">
+                  <div>
+                    <label>業界</label>
+                    <select disabled id="atDetailIndustry">
+                      <option>製造業</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label>規模ランク</label>
+                    <select disabled id="atDetailScale">
+                      <option>1人～30人</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <label>部署名</label>
+                  <input disabled id="atDetailDept" type="text" value="クオリティアシュアランス部" />
+                </div>
+                <div class="form-row two">
+                  <div>
+                    <label>郵便番号</label>
+                    <input disabled id="atDetailPostal" type="text" value="7059306" />
+                  </div>
+                  <div>
+                    <label>都道府県</label>
+                    <select disabled id="atDetailPref">
+                      <option>北海道</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <label>住所</label>
+                  <input disabled id="atDetailAddress" type="text" value="北海道市東区4丁目18-30" />
+                </div>
+                <div style="margin-top: auto; border-top: 1px solid #eee; padding-top: 15px;">
+                  <div class="form-row two">
+                    <div>
+                      <label>作成日時</label>
+                      <input disabled id="atDetailCreatedAt" type="text" value="2026/04/29" />
+                    </div>
+                    <div>
+                      <label>作成者</label>
+                      <input disabled id="atDetailCreatedBy" type="text" value="中谷 太輔" />
+                    </div>
+                  </div>
+                  <div class="form-row two">
+                    <div>
+                      <label>更新日時</label>
+                      <input disabled id="atDetailUpdatedAt" type="text" />
+                    </div>
+                    <div>
+                      <label>更新者</label>
+                      <input disabled id="atDetailUpdatedBy" type="text" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Col 4 -->
+              <div class="form-col">
+                <div class="form-row">
+                  <label>活動自由使用欄1</label>
+                  <input id="atDetailFree1" type="text" />
+                </div>
+                <div class="form-row">
+                  <label>活動自由使用欄2</label>
+                  <input id="atDetailFree2" type="text" />
+                </div>
+                <div class="form-row">
+                  <label>活動自由使用欄3</label>
+                  <input id="atDetailFree3" type="text" />
+                </div>
+                <div class="form-row">
+                  <label>活動自由使用欄4</label>
+                  <input id="atDetailFree4" type="text" />
+                </div>
+                <div class="form-row">
+                  <label>活動自由使用欄5</label>
+                  <input id="atDetailFree5" type="text" />
+                </div>
+                <div class="form-row">
+                  <label>活動自由使用欄6</label>
+                  <input id="atDetailFree6" type="text" />
+                </div>
+                <div class="form-row">
+                  <label>活動自由使用欄7</label>
+                  <input id="atDetailFree7" type="text" />
+                </div>
+                <div class="form-row" style="margin-top: auto;">
+                  <label>添付資料</label>
+                  <div class="attach-box"
+                    style="height: 120px; border: 2px dashed #e2e8f0; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:12px; border-radius: 8px; background: #f8fafc;">
+                    ここにドラッグ＆ドロップ</div>
+                </div>
+                <div class="form-actions" style="justify-content: space-between; margin-top: 15px; padding-top:0;">
+                  <button class="btn btn-secondary" id="btnAtDetailDelete" style="background:#f9f9f9;">削除</button>
+                  <button class="btn btn-primary" id="btnAtDetailSave">保存</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>

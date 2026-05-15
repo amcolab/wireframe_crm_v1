@@ -33,62 +33,34 @@
       <div class="company-main">
         <div class="company-grid">
           <div class="company-table-wrap">
-            <table aria-label="contact list" class="company-table">
-              <thead>
-                <tr>
-                  <th style="width: 72px;">会社ID</th>
-                  <th style="width: 250px;">会社名</th>
-                  <th style="width: 150px;">部署名</th>
-                  <th style="width: 100px;">担当(姓)</th>
-                  <th style="width: 100px;">担当(名)</th>
-                  <th style="width: 120px;">フリガナ</th>
-                  <th style="width: 130px;">TEL</th>
-                  <th style="width: 130px;">携帯電話</th>
-                  <th style="width: 200px;">Email</th>
-                  <th style="width: 110px;">職種</th>
-                  <th style="width: 110px;">職位</th>
-                  <th style="width: 110px;">役職名</th>
-                  <th>住所</th>
-                </tr>
-              </thead>
-              <tbody id="contactTableBody">
-              </tbody>
-            </table>
+            <div id="contactTable"></div>
           </div>
           <div class="company-grid-footer">
             <div class="footer-left">
               <div class="company-grid-pager">
-                <button class="page-num-btn" title="First Page">«</button>
-                <button class="page-num-btn" title="Previous Page">‹</button>
-                <div class="page-numbers">
-                  <button class="page-num-btn active">1</button>
-                  <button class="page-num-btn">2</button>
-                  <button class="page-num-btn">3</button>
-                  <button class="page-num-btn">4</button>
-                  <button class="page-num-btn">5</button>
-                  <span class="page-sep">..</span>
-                  <button class="page-num-btn">26</button>
+                <button class="icon-btn" id="btnContactFirstPage" title="First Page">«</button>
+                <button class="icon-btn" id="btnContactPrevPage" title="Previous Page">‹</button>
+                <div id="contactPageNumbers" class="page-numbers"></div>
+                <button class="icon-btn" id="btnContactNextPage" title="Next Page">›</button>
+                <button class="icon-btn" id="btnContactLastPage" title="Last Page">»</button>
+                <div class="pager-jump">
+                  Page
+                  <select id="contactPageSelect" class="mini-select" aria-label="page select"></select>
+                  <span id="contactPageTotal" style="width: 50px;">/ 1</span>
                 </div>
-                <button class="page-num-btn" title="Next Page">›</button>
-                <button class="page-num-btn" title="Last Page">»</button>
-                <div class="pager-jump" style="width: 200px;">
-                  <span>Page</span>
-                  <select aria-label="page select" class="mini-select">
-                    <option>1</option>
-                  </select>
-                  <span style="min-width: 200px;">/ 26</span>
-                </div>
-                <div class="pager-size">
-                  <select aria-label="page size" class="mini-select">
-                    <option selected="" value="100">100件</option>
-                  </select>
-                </div>
+                <select id="contactPageSize" class="mini-select" aria-label="page size">
+                  <option value="10">10件</option>
+                  <option value="25" selected>25件</option>
+                  <option value="50">50件</option>
+                  <option value="100">100件</option>
+                </select>
               </div>
             </div>
             <div class="footer-right">
               <div class="company-grid-meta">
-                全 <span>2557</span> 件
-                <span class="range-info"><span>1</span> - <span>100</span></span>
+                全 <span id="contactTotalCount">0</span> 件
+                <span class="range-info"><span id="contactRangeStart">0</span> - <span
+                    id="contactRangeEnd">0</span></span>
               </div>
             </div>
           </div>
@@ -143,9 +115,12 @@
                     <label>会社名 <span class="req">*</span></label>
                     <div class="search-input-group">
                       <input id="mainContactCompanyName" type="text" value="旭川エレクトロニクスサービス株式会社" />
-                      <button class="icon-btn-inline" id="btnMainContactLookupCompany" type="button">🔍(CP05)</button>
+                      <button class="icon-btn-inline" id="btnMainContactLookupCompany" type="button">🔍</button>
+                      <!-- (CP05) -->
                       <button class="btn btn-secondary" id="btnMainContactCreateCompany"
-                        style="padding: 0 10px; color: #ff6600; border-color: #ff6600;" type="button">新規(CP03)</button>
+                        style="padding: 0 10px; color: #ff6600; border-color: #ff6600; width: 80px;"
+                        type="button">新規</button>
+                      <!-- (CP03) -->
                     </div>
                   </div>
                   <div class="form-row">
@@ -276,6 +251,10 @@
                   <div class="form-row"><label>担当者自由使用欄5</label><input type="text" /></div>
                   <div class="form-row"><label>担当者自由使用欄6</label><input type="text" /></div>
                   <div class="form-row"><label>担当者自由使用欄7</label><input type="text" /></div>
+                  <div class="form-actions" style="justify-content: space-between; margin-top: auto; padding-top:15px;">
+                    <button class="btn btn-secondary" id="btnContactDelete" style="background:#f9f9f9;">削除</button>
+                    <button class="btn btn-primary" id="btnContactSave">保存</button>
+                  </div>
                 </div>
               </div>
             </section>

@@ -6,29 +6,37 @@ let state = {
   filtered: [...mockCompanies],
   selectedId: mockCompanies[0]?.id ?? null,
   page: 1,
-  pageSize: 100,
+  pageSize: 25,
   advanced: null
 };
 
 let isReady = false;
+let table = null;
 
 export function init() {
   console.log('Company screen initialized');
-  if (!isReady) {
-    bindUi();
-    initResizer();
-    isReady = true;
-  }
-  render();
+  bindUi();
+  initTabulator();
+  initResizer();
+
+  // Force an initial render after a small delay to ensure everything is ready
+  setTimeout(() => {
+    render();
+  }, 200);
 }
 
 function bindUi() {
+  // Prevent duplicate bindings if possible, though in this SPA the DOM is fresh
+  const root = q('company-root');
+  if (root?.dataset.bound) return;
+  root.dataset.bound = "true";
+
   const inputName = q('companySearchName');
   const btnSearch = q('btnCompanySearch');
   const btnClear = q('btnCompanyClear');
   const btnAdv = q('btnCompanyAdvancedSearch');
   const btnCreate = q('btnCompanyCreate');
-  
+
   const dlgAdv = q('dlgCompanyAdvancedSearch');
   const formAdv = q('formCompanyAdvancedSearch');
   const btnAdvClear = q('btnAdvancedClear');
@@ -64,7 +72,7 @@ function bindUi() {
         const selected = Array.from(checkboxes)
           .filter(c => c.checked)
           .map(c => c.parentElement.textContent.trim());
-        
+
         if (selected.length === 0) {
           trigger.textContent = placeholder;
         } else if (selected.length <= 2) {
@@ -184,12 +192,15 @@ function bindUi() {
     render();
   });
 
+  // Tabulator handles row clicks now
+  /*
   q('companyTableBody')?.addEventListener('click', (e) => {
     const tr = e.target.closest('tr[data-id]');
     if (!tr) return;
     state.selectedId = tr.getAttribute('data-id');
     render();
   });
+  */
 
   tabs.forEach(t => {
     t.addEventListener('click', () => {
@@ -343,7 +354,7 @@ function render() {
 
   const total = state.filtered.length;
   const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
-  
+
   if (state.page > totalPages) state.page = totalPages;
   if (state.page < 1) state.page = 1;
 
@@ -353,7 +364,7 @@ function render() {
 
   const start = (state.page - 1) * state.pageSize;
   const actualEndIdx = Math.min(start + state.pageSize, total);
-  
+
   if (rangeStart) rangeStart.textContent = total > 0 ? (start + 1) : 0;
   if (rangeEnd) rangeEnd.textContent = actualEndIdx;
 
@@ -363,7 +374,7 @@ function render() {
     const maxVisible = 5;
     let startPage = Math.max(1, state.page - Math.floor(maxVisible / 2));
     let endPage = Math.min(totalPages, startPage + maxVisible - 1);
-    
+
     if (endPage - startPage + 1 < maxVisible) {
       startPage = Math.max(1, endPage - maxVisible + 1);
     }
@@ -394,29 +405,23 @@ function render() {
 
   const rows = state.filtered.slice(start, actualEndIdx);
 
-  if (tbody) {
-    tbody.innerHTML = rows.map(c => `
-      <tr data-id="${escapeHtml(c.id)}" class="${c.id === state.selectedId ? 'selected' : ''}">
-        <td>${escapeHtml(c.id)}</td>
-        <td>${escapeHtml(c.name)}</td>
-        <td>${escapeHtml(c.tel || '')}</td>
-        <td>${escapeHtml(c.addr || '')}</td>
-        <td>${escapeHtml(c.industry || '')}</td>
-        <td>${escapeHtml(c.biz || '')}</td>
-        <td>${escapeHtml(c.scale || '')}</td>
-        <td>${escapeHtml(c.type || '')}</td>
-        <td>${escapeHtml(c.employees || '')}</td>
-        <td>${escapeHtml(c.area || '')}</td>
-        <td>${escapeHtml(c.pref || '')}</td>
-        <td>${escapeHtml(c.remark || '')}</td>
-      </tr>
-    `).join('');
+  if (table) {
+    table.setData(rows).then(() => {
+      if (state.selectedId) {
+        table.deselectRow();
+        table.selectRow(state.selectedId);
+      }
+      table.redraw();
+    });
   }
 
-  const selected = state.companies.find(c => c.id === state.selectedId) || state.filtered[0] || null;
-  state.selectedId = selected?.id ?? null;
-  fillDetailForm(selected);
-  renderChildLists(selected);
+  // CRITICAL: Always use String for ID comparison to avoid mismatches
+  const selected = state.companies.find(c => String(c.id) === String(state.selectedId)) || state.filtered[0] || null;
+  if (selected) {
+    state.selectedId = String(selected.id);
+    fillDetailForm(selected);
+    renderChildLists(selected);
+  }
 }
 
 function filterCompanies(companies, cond) {
@@ -628,39 +633,97 @@ function renderChildLists(c) {
   set('companyProjectsList', projectsHtml);
 }
 
+function initTabulator() {
+  const container = q('companyTable');
+  if (!container) return;
+
+  if (table) {
+    try { table.destroy(); } catch (e) { }
+  }
+
+  // Calculate initial rows to show data immediately
+  const start = (state.page - 1) * state.pageSize;
+  const initialRows = state.filtered.slice(start, start + state.pageSize);
+
+  table = new Tabulator("#companyTable", {
+    data: initialRows, // Pass data directly here
+    layout: "fitColumns",
+    movableColumns: true,
+    selectableRows: 1,
+    headerSort: false,
+    clipboard: true,
+    clipboardCopyConfig: {
+      columnHeaders: false,
+      formatCells: false,
+    },
+    clipboardCopyStyled: false,
+    tableBuilt: function () {
+      // Data will be handled by the delayed render in init()
+    },
+    rowClick: function (e, row) {
+      const data = row.getData();
+      state.selectedId = String(data.id); // Ensure string
+
+      // Update Detail UI
+      fillDetailForm(data);
+      renderChildLists(data);
+
+      // Sync selection
+      table.deselectRow();
+      row.select();
+    },
+    columns: [
+      { title: "会社ID", field: "id", width: 80, headerSort: false },
+      { title: "会社名", field: "name", width: 250, headerSort: false },
+      { title: "代表TEL", field: "tel", width: 130, headerSort: false },
+      { title: "住所", field: "addr", width: 300, headerSort: false },
+      { title: "業界", field: "industry", width: 120, headerSort: false },
+      { title: "業種", field: "biz", width: 120, headerSort: false },
+      { title: "規模ランク", field: "scale", width: 120, headerSort: false },
+      { title: "種別", field: "type", width: 100, headerSort: false },
+      { title: "従業員数", field: "employees", width: 100, headerSort: false },
+      { title: "地区", field: "area", width: 80, headerSort: false },
+      { title: "都道府県", field: "pref", width: 110, headerSort: false },
+      { title: "会社備考", field: "remark", minWidth: 300, headerSort: false },
+    ],
+  });
+}
+
 function initResizer() {
   const resizer = q('company-resizer');
   const container = document.querySelector('.company-main');
-  
+
   if (!resizer || !container) return;
-  
+
   let isResizing = false;
-  
+
   resizer.addEventListener('mousedown', (e) => {
     isResizing = true;
     document.body.style.cursor = 'row-resize';
     document.body.style.userSelect = 'none'; // Prevent text selection during drag
     resizer.classList.add('active');
   });
-  
+
   document.addEventListener('mousemove', (e) => {
     if (!isResizing) return;
-    
+
     const containerRect = container.getBoundingClientRect();
     const relativeY = e.clientY - containerRect.top;
-    
+
     // Constraints: min height for grid and detail
     const minGridHeight = 150;
     const minDetailHeight = 200;
     const maxHeight = containerRect.height - minDetailHeight;
-    
+
     let newHeight = relativeY - 6; // Center the resizer (12px / 2)
     if (newHeight < minGridHeight) newHeight = minGridHeight;
     if (newHeight > maxHeight) newHeight = maxHeight;
-    
+
     container.style.setProperty('--grid-height', `${newHeight}px`);
+    // Notify tabulator to redraw
+    if (table) table.redraw();
   });
-  
+
   document.addEventListener('mouseup', () => {
     if (isResizing) {
       isResizing = false;

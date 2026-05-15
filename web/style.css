@@ -111,6 +111,21 @@ body {
     margin-left: 4px;
 }
 
+input[type="checkbox"],
+input[type="radio"] {
+    width: auto;
+    cursor: pointer;
+}
+
+.check {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-weight: normal;
+    user-select: none;
+}
+
 input {
     width: 100%;
     border: 1px solid var(--border-color);

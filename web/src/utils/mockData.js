@@ -61,40 +61,41 @@ export const mockCompanies = [
 ];
 
 export const mockContacts = [
-  { companyId: '1141', company: '旭川エレクトロニクスサービス株式会社', dept: 'ロジスティクス部', last: '渡辺', first: '沙織', kana: 'ワタナベ サオリ', tel: '012-4294-2357', mobile: '070-7122-8116', email: 'watanabe.saori@c10250.co.jp', role: '管理', rank: '次長', pos: 'ロジスティクス部次長', addr: '北海道旭川市東区4丁目18-30', remark: '展示会での名刺交換による登録。' },
-  { companyId: '1141', company: '旭川エレクトロニクスサービス株式会社', dept: '設備エンジ部', last: '高橋', first: '翔太', kana: 'タカハシ ショウタ', tel: '012-4294-2441', mobile: '070-7358-3862', email: 'takahashi.shouta@c10250.co.jp', role: '技術', rank: '係員', pos: '設備エンジ部員', addr: '北海道旭川市東区4丁目18-30', remark: 'オンラインセミナー参加者。' },
-  { companyId: '1141', company: '旭川エレクトロニクスサービス株式会社', dept: '製造部', last: '松本', first: '彩', kana: 'マツモト アヤ', tel: '012-4294-2420', mobile: '090-2738-8654', email: 'matsumoto.aya@c10250.co.jp', role: '製造', rank: '本部長', pos: '製造部本部長', addr: '北海道旭川市東区4丁目18-30', remark: '訪問にて名刺交換。' },
-  { companyId: '1068', company: '旭川システム株式会社', dept: '生産管理部', last: '井上', first: '智也', kana: 'イノウエ トモヤ', tel: '012-4294-2441', mobile: '080-4521-6195', email: 'inoue.tomoya@c10250.co.jp', role: '生産管理', rank: '主任', pos: '生産管理部主任', addr: '滋賀県市東区1丁目18-20', remark: '若手社員。' },
-  { companyId: '1219', company: '旭川電気エレクトロニクス株式会社', dept: '研究開発部', last: '井上', first: '淳', kana: 'イノウエ ジュン', tel: '012-4294-2363', mobile: '070-4602-3745', email: 'inoue.jun@c10250.co.jp', role: 'R&D', rank: '課長', pos: '研究開発部長', addr: '東京都新宿区西2丁目3-14', remark: '技術キーマン。' },
-  { companyId: '1220', company: '中村エレクトロニクス株式会社', dept: 'QA部', last: '近藤', first: '恵', kana: 'コンドウ メグミ', kanaFirst: 'メグミ', tel: '012-4294-2394', mobile: '080-2713-5599', email: 'kondou.megumi@c10250.co.jp', role: '品質', rank: '一般', pos: 'QA部員', addr: '沖縄県那覇市泉崎1-1-1', remark: 'プロジェクト窓口。' },
-  { companyId: '1221', company: '中村システム株式会社', dept: '生産技術部', last: '吉田', first: '茜', kana: 'ヨシダ アカネ', tel: '012-4294-2368', mobile: '080-2495-2298', email: 'yoshida.akane@c10250.co.jp', role: '技術', rank: '部長', pos: '生産技術部長', addr: '栃木県宇都宮市本町1-1', remark: '意思決定者。' },
-  { companyId: '1222', company: '佐藤製作所', dept: '製造部', last: '斉藤', first: '結衣', kana: 'サイトウ ユイ', tel: '03-1234-5678', mobile: '070-1481-7371', email: 'saitou.yui@sato.co.jp', role: '製造', rank: '係長', pos: '製造部係長', addr: '東京都大田区蒲田1-2-3', remark: '' },
-  { companyId: '1223', company: '田中商事', dept: '生産管理部', last: '山本', first: '和也', kana: 'ヤマモト カズヤ', tel: '06-9876-5432', mobile: '080-4490-6679', email: 'yamamoto.kazuya@tanaka.co.jp', role: '営業', rank: '係長', pos: '生産管理部係長', addr: '大阪府大阪市中央区2-3-4', remark: '' },
-  { companyId: '1224', company: '伊藤通信', dept: 'デザイン部', last: '井上', first: '大輔', kana: 'イノウエ ダイスケ', tel: '052-111-2222', mobile: '090-7240-6650', email: 'inoue.daisuke@ito.co.jp', role: 'デザイン', rank: '部長', pos: 'デザイン部長', addr: '愛知県名古屋市中区3-4-5', remark: '' }
+  { id: '10001', companyId: '1141', company: '旭川エレクトロニクスサービス株式会社', dept: 'ロジスティクス部', last: '渡辺', first: '沙織', kana: 'ワタナベ サオリ', tel: '012-4294-2357', mobile: '070-7122-8116', email: 'watanabe.saori@c10250.co.jp', role: '管理', rank: '次長', pos: 'ロジスティクス部次長', addr: '北海道旭川市東区4丁目18-30', remark: '展示会での名刺交換による登録。' },
+  { id: '10002', companyId: '1141', company: '旭川エレクトロニクスサービス株式会社', dept: '設備エンジ部', last: '高橋', first: '翔太', kana: 'タカハシ ショウタ', tel: '012-4294-2441', mobile: '070-7358-3862', email: 'takahashi.shouta@c10250.co.jp', role: '技術', rank: '係員', pos: '設備エンジ部員', addr: '北海道旭川市東区4丁目18-30', remark: 'オンラインセミナー参加者。' },
+  { id: '10003', companyId: '1141', company: '旭川エレクトロニクスサービス株式会社', dept: '製造部', last: '松本', first: '彩', kana: 'マツモト アヤ', tel: '012-4294-2420', mobile: '090-2738-8654', email: 'matsumoto.aya@c10250.co.jp', role: '製造', rank: '本部長', pos: '製造部本部長', addr: '北海道旭川市東区4丁目18-30', remark: '訪問にて名刺交換。' },
+  { id: '10004', companyId: '1068', company: '旭川システム株式会社', dept: '生産管理部', last: '井上', first: '智也', kana: 'イノウエ トモヤ', tel: '012-4294-2441', mobile: '080-4521-6195', email: 'inoue.tomoya@c10250.co.jp', role: '生産管理', rank: '主任', pos: '生産管理部主任', addr: '滋賀県市東区1丁目18-20', remark: '若手社員。' },
+  { id: '10005', companyId: '1219', company: '旭川電気エレクトロニクス株式会社', dept: '研究開発部', last: '井上', first: '淳', kana: 'イノウエ ジュン', tel: '012-4294-2363', mobile: '070-4602-3745', email: 'inoue.jun@c10250.co.jp', role: 'R&D', rank: '課長', pos: '研究開発部長', addr: '東京都新宿区西2丁目3-14', remark: '技術キーマン。' },
+  { id: '10006', companyId: '1220', company: '中村エレクトロニクス株式会社', dept: 'QA部', last: '近藤', first: '恵', kana: 'コンドウ メグミ', kanaFirst: 'メグミ', tel: '012-4294-2394', mobile: '080-2713-5599', email: 'kondou.megumi@c10250.co.jp', role: '品質', rank: '一般', pos: 'QA部員', addr: '沖縄県那覇市泉崎1-1-1', remark: 'プロジェクト窓口。' },
+  { id: '10007', companyId: '1221', company: '中村システム株式会社', dept: '生産技術部', last: '吉田', first: '茜', kana: 'ヨシダ アカネ', tel: '012-4294-2368', mobile: '080-2495-2298', email: 'yoshida.akane@c10250.co.jp', role: '技術', rank: '部長', pos: '生産技術部長', addr: '栃木県宇都宮市本町1-1', remark: '意思決定者。' },
+  { id: '10008', companyId: '1222', company: '佐藤製作所', dept: '製造部', last: '斉藤', first: '結衣', kana: 'サイトウ ユイ', tel: '03-1234-5678', mobile: '070-1481-7371', email: 'saitou.yui@sato.co.jp', role: '製造', rank: '係長', pos: '製造部係長', addr: '東京都大田区蒲田1-2-3', remark: '' },
+  { id: '10009', companyId: '1223', company: '田中商事', dept: '生産管理部', last: '山本', first: '和也', kana: 'ヤマモト カズヤ', tel: '06-9876-5432', mobile: '080-4490-6679', email: 'yamamoto.kazuya@tanaka.co.jp', role: '営業', rank: '係長', pos: '生産管理部係長', addr: '大阪府大阪市中央区2-3-4', remark: '' },
+  { id: '10010', companyId: '1224', company: '伊藤通信', dept: 'デザイン部', last: '井上', first: '大輔', kana: 'イノウエ ダイスケ', tel: '052-111-2222', mobile: '090-7240-6650', email: 'inoue.daisuke@ito.co.jp', role: 'デザイン', rank: '部長', pos: 'デザイン部長', addr: '愛知県名古屋市中区3-4-5', remark: '' }
 ];
 
 export const mockActivities = [
-  { id: '29193', date: '2026/04/29', time: '10:15', rep: '中谷 太輔', type: 'TEL', typeClass: 'type-tel', purpose: '売り後フォロー', company: '旭川エレクトロニクスサービス株式会社', contact: '佐藤', comment: '見積の件', projectName: '金型更新プロジェクト' },
-  { id: '29192', date: '2026/04/29', time: '10:29', rep: '金谷 裕美子', type: 'TEL', typeClass: 'type-tel', purpose: '売り後フォロー', company: '旭川エレクトロニクスサービス株式会社', contact: '佐藤', comment: '納品の確認', projectName: '' },
-  { id: '29191', date: '2026/04/29', time: '16:12', rep: '中谷 太輔', type: 'TEL', typeClass: 'type-tel', purpose: '売り後フォロー', company: '旭川エレクトロニクスサービス株式会社', contact: '佐藤', comment: '次回アポイント調整', projectName: '品質検査装置更新' },
-  { id: '29190', date: '2026/04/29', time: '16:12', rep: '中谷 太輔', type: 'TEL', typeClass: 'type-tel', purpose: '売り後フォロー', company: '旭川エレクトロニクスサービス株式会社', contact: '佐藤', comment: '', projectName: '' },
-  { id: '29189', date: '2026/04/29', time: '16:12', rep: '中谷 太輔', type: 'TEL', typeClass: 'type-tel', purpose: '売り後フォロー', company: '旭川エレクトロニクスサービス株式会社', contact: '佐藤', comment: '', projectName: '' },
-  { id: '29188', date: '2026/04/28', time: '17:01', rep: '中谷 太輔', type: '訪問', typeClass: 'type-visit', purpose: '売り前フォロー', company: '丸紅食品株式会社', contact: '渡辺', comment: '要件定義のヒアリング', projectName: '全社基盤刷新' },
-  { id: '29187', date: '2026/04/28', time: '17:01', rep: '中谷 太輔', type: 'メール', typeClass: 'type-email', purpose: 'クレーム対応', company: '丸紅食品株式会社', contact: '渡辺', comment: '遅延のお詫び', projectName: '' },
-  { id: '29186', date: '2026/04/28', time: '17:01', rep: '中谷 太輔', type: 'TEL', typeClass: 'type-tel', purpose: '売り後フォロー', company: '丸紅食品株式会社', contact: '渡辺', comment: '', projectName: '' },
-  { id: '29185', date: '2026/04/28', time: '17:02', rep: '中谷 太輔', type: 'TEL', typeClass: 'type-tel', purpose: '売り後フォロー', company: '丸紅食品株式会社', contact: '渡辺', comment: '', projectName: '' },
-  { id: '29184', date: '2026/04/28', time: '17:02', rep: '中谷 太輔', type: 'TEL', typeClass: 'type-tel', purpose: '売り後フォロー', company: '丸紅食品株式会社', contact: '渡辺', comment: '', projectName: '' },
+  { id: '29193', contactId: '10001', projectId: '3042', date: '2026/04/29', time: '10:15', rep: '中谷 太輔', type: 'TEL', typeClass: 'type-tel', purpose: '売り後フォロー', company: '旭川エレクトロニクスサービス株式会社', contact: '渡辺', comment: '見積の件', projectName: '金型更新プロジェクト' },
+  { id: '29192', contactId: '10001', projectId: '', date: '2026/04/29', time: '10:29', rep: '金谷 裕美子', type: 'TEL', typeClass: 'type-tel', purpose: '売り後フォロー', company: '旭川エレクトロニクスサービス株式会社', contact: '渡辺', comment: '納品の確認', projectName: '' },
+  { id: '29191', contactId: '10002', projectId: '', date: '2026/04/29', time: '16:12', rep: '中谷 太輔', type: 'TEL', typeClass: 'type-tel', purpose: '売り後フォロー', company: '旭川エレクトロニクスサービス株式会社', contact: '高橋', comment: '次回アポイント調整', projectName: '品質検査装置更新' },
+  { id: '29190', contactId: '10003', projectId: '', date: '2026/04/29', time: '16:12', rep: '中谷 太輔', type: 'TEL', typeClass: 'type-tel', purpose: '売り後フォロー', company: '旭川エレクトロニクスサービス株式会社', contact: '松本', comment: '', projectName: '' },
+  { id: '29189', contactId: '10001', projectId: '', date: '2026/04/29', time: '16:12', rep: '中谷 太輔', type: 'TEL', typeClass: 'type-tel', purpose: '売り後フォロー', company: '旭川エレクトロニクスサービス株式会社', contact: '渡辺', comment: '', projectName: '' },
+  { id: '29188', projectId: '', date: '2026/04/28', time: '17:01', rep: '中谷 太輔', type: '訪問', typeClass: 'type-visit', purpose: '売り前フォロー', company: '丸紅食品株式会社', contact: '渡辺', comment: '要件定義のヒアリング', projectName: '全社基盤刷新' },
+  { id: '29187', projectId: '', date: '2026/04/28', time: '17:01', rep: '中谷 太輔', type: 'メール', typeClass: 'type-email', purpose: 'クレーム対応', company: '丸紅食品株式会社', contact: '渡辺', comment: '遅延のお詫び', projectName: '' },
+  { id: '29186', projectId: '', date: '2026/04/28', time: '17:01', rep: '中谷 太輔', type: 'TEL', typeClass: 'type-tel', purpose: '売り後フォロー', company: '丸紅食品株式会社', contact: '渡辺', comment: '', projectName: '' },
+  { id: '29185', projectId: '', date: '2026/04/28', time: '17:02', rep: '中谷 太輔', type: 'TEL', typeClass: 'type-tel', purpose: '売り後フォロー', company: '丸紅食品株式会社', contact: '渡辺', comment: '', projectName: '' },
+  { id: '29184', projectId: '', date: '2026/04/28', time: '17:02', rep: '中谷 太輔', type: 'TEL', typeClass: 'type-tel', purpose: '売り後フォロー', company: '丸紅食品株式会社', contact: '渡辺', comment: '', projectName: '' },
 ];
 
 export const mockProjects = [
   {
     id: '3042',
+    contactId: '10001',
     issueDate: '2022/12/15',
     followDate: '2021/10/21',
     status: '失注',
     rep: '鈴木 一郎',
     company: '旭川エレクトロニクスサービス株式会社',
-    contact: '佐藤',
+    contact: '渡辺',
     name: '金型更新プロジェクト',
     summary: '金型更新プロジェクトの導入是非を評価中。短納期対応と全体体制重視し、運用負荷の低減を狙う。現場ヒアリングを踏まえた要件定義を行い、段階的実装プランを提案。',
     stage1: true,
