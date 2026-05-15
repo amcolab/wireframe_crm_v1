@@ -36,349 +36,42 @@
           <button class="btn btn-orange" id="btnProjectNewMain">+ 新規案件</button>
         </div>
       </div>
-      <div class="company-main" style="grid-template-rows: 1fr 520px;">
+      <div class="company-main">
         <!-- List Area -->
         <div class="company-grid">
           <div class="company-table-wrap">
             <div class="company-table-scroll">
               <table class="company-table">
-              <thead>
-                <tr>
-                  <th style="width: 100px;">話題日</th>
-                  <th style="width: 100px;">フォロー予定</th>
-                  <th style="width: 100px;">案件ステータス</th>
-                  <th style="width: 120px;">営業担当</th>
-                  <th style="width: 250px;">会社名</th>
-                  <th style="width: 100px;">担当(姓)</th>
-                  <th style="width: 200px;">案件名</th>
-                  <th style="width: 250px;">案件概要</th>
-                  <th style="width: 70px; text-align: center;">ステージ1</th>
-                  <th style="width: 70px; text-align: center;">ステージ2</th>
-                  <th style="width: 70px; text-align: center;">ステージ3</th>
-                  <th style="width: 70px; text-align: center;">ステージ4</th>
-                  <th style="width: 100px;">発生動機</th>
-                  <th style="width: 100px;">引合手段</th>
-                  <th style="width: 120px;">競合会社</th>
-                  <th style="width: 100px;">当初確度</th>
-                  <th style="width: 100px;">見直確度</th>
-                  <th style="width: 150px;">案件自由使用欄1</th>
-                  <th style="width: 150px;">案件自由使用欄2</th>
-                  <th style="width: 150px;">案件自由使用欄3</th>
-                </tr>
-              </thead>
-              <tbody id="projectTableBody">
-                <tr>
-                  <td>2022-12-15</td>
-                  <td>2025-10-21</td>
-                  <td>失注</td>
-                  <td>鈴木 一郎</td>
-                  <td>旭川エレクトロニクスサービス株式会社</td>
-                  <td>佐藤</td>
-                  <td>金型更新プロジェクト</td>
-                  <td>金型更新プロジェクトの導入是非を評価中...</td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td>引合</td>
-                  <td>展示会</td>
-                  <td>Fソリューション</td>
-                  <td>-</td>
-                  <td>見込高</td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>2024-03-15</td>
-                  <td>2024-04-20</td>
-                  <td>保留</td>
-                  <td>中谷 太輔</td>
-                  <td>旭川システム株式会社</td>
-                  <td>佐藤</td>
-                  <td>PC入替</td>
-                  <td>老朽化に伴う入替</td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td>他</td>
-                  <td>FAX</td>
-                  <td>Fソリューション</td>
-                  <td>Bランク</td>
-                  <td>Bランク</td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>2023-01-20</td>
-                  <td>2024-11-15</td>
-                  <td>商談中</td>
-                  <td>鈴木 一郎</td>
-                  <td>B工業株式会社</td>
-                  <td>田中</td>
-                  <td>ライン自動化案件</td>
-                  <td>工場ラインの完全自動化に向けた提案活動中。</td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td>能動PR</td>
-                  <td>電話</td>
-                  <td>B工業</td>
-                  <td>Aランク</td>
-                  <td>Aランク</td>
-                  <td>テストクロージング実施</td>
-                  <td>投資助成金採択企業</td>
-                  <td>WEBマーケティング</td>
-                </tr>
-                <tr>
-                  <td>2023-05-12</td>
-                  <td>2024-06-01</td>
-                  <td>受注</td>
-                  <td>中谷 太輔</td>
-                  <td>Cテックエンジニアリング</td>
-                  <td>高橋</td>
-                  <td>センサー導入</td>
-                  <td>検品ラインへの高精度センサー導入</td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td>引合</td>
-                  <td>SNS</td>
-                  <td>Dテクノロジーズ</td>
-                  <td>Sランク</td>
-                  <td>受注</td>
-                  <td>早期導入希望</td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>2024-01-10</td>
-                  <td>2024-08-20</td>
-                  <td>見積中</td>
-                  <td>鈴木 一郎</td>
-                  <td>東日本製造株式会社</td>
-                  <td>伊藤</td>
-                  <td>基幹システム刷新</td>
-                  <td>2025年の崖対策としてのシステム刷新</td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td>引合</td>
-                  <td>メール</td>
-                  <td>デバイス</td>
-                  <td>Bランク</td>
-                  <td>Bランク</td>
-                  <td>競合他社あり</td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>2024-02-05</td>
-                  <td>2024-03-15</td>
-                  <td>商談中</td>
-                  <td>中谷 太輔</td>
-                  <td>横浜テックソリューションズ</td>
-                  <td>渡辺</td>
-                  <td>クラウド移行</td>
-                  <td>オンプレミスサーバーのAWS移行</td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td>紹介</td>
-                  <td>電話</td>
-                  <td>Sシステム</td>
-                  <td>Aランク</td>
-                  <td>Aランク</td>
-                  <td>セキュリティ重視</td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>2024-02-12</td>
-                  <td>2024-04-10</td>
-                  <td>受注</td>
-                  <td>鈴木 一郎</td>
-                  <td>大阪精機製作所</td>
-                  <td>山本</td>
-                  <td>NC旋盤増設</td>
-                  <td>生産ライン拡大に伴う旋盤の追加導入</td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td>引合</td>
-                  <td>展示会</td>
-                  <td>M機工</td>
-                  <td>Sランク</td>
-                  <td>受注</td>
-                  <td>納期遵守</td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>2024-02-28</td>
-                  <td>2024-05-20</td>
-                  <td>失注</td>
-                  <td>中谷 太輔</td>
-                  <td>名古屋オートパーツ</td>
-                  <td>中村</td>
-                  <td>在庫管理システム</td>
-                  <td>RFIDによるリアルタイム在庫管理</td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td>引合</td>
-                  <td>Web広告</td>
-                  <td>Lロジスティクス</td>
-                  <td>Cランク</td>
-                  <td>失注</td>
-                  <td>価格競争で敗退</td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>2024-03-05</td>
-                  <td>2024-06-15</td>
-                  <td>見積中</td>
-                  <td>鈴木 一郎</td>
-                  <td>福岡電子工業</td>
-                  <td>小林</td>
-                  <td>クリーンルーム改装</td>
-                  <td>半導体生産ラインのクラス向上</td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td>他</td>
-                  <td>SNS</td>
-                  <td>Pテクノ</td>
-                  <td>Bランク</td>
-                  <td>Bランク</td>
-                  <td>助成金利用予定</td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>2024-03-12</td>
-                  <td>2024-07-01</td>
-                  <td>商談中</td>
-                  <td>中谷 太輔</td>
-                  <td>札幌フードサービス</td>
-                  <td>加藤</td>
-                  <td>配送ルート最適化</td>
-                  <td>AIによる配送効率化の検討</td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td>紹介</td>
-                  <td>メール</td>
-                  <td>Gマップス</td>
-                  <td>Aランク</td>
-                  <td>Aランク</td>
-                  <td>段階的導入検討</td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>2024-03-20</td>
-                  <td>2024-08-10</td>
-                  <td>新規</td>
-                  <td>鈴木 一郎</td>
-                  <td>仙台精密機器</td>
-                  <td>吉田</td>
-                  <td>ラボ新設案件</td>
-                  <td>研究開発センターの新設に伴う設備導入</td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td>引合</td>
-                  <td>展示会</td>
-                  <td>Tラボ</td>
-                  <td>-</td>
-                  <td>-</td>
-                  <td>予算化待ち</td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>2024-03-25</td>
-                  <td>2024-09-05</td>
-                  <td>商談中</td>
-                  <td>中谷 太輔</td>
-                  <td>広島マテリアル</td>
-                  <td>佐々木</td>
-                  <td>排水処理設備更新</td>
-                  <td>環境基準強化への対応</td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td>能動PR</td>
-                  <td>電話</td>
-                  <td>Eウォーター</td>
-                  <td>Bランク</td>
-                  <td>Aランク</td>
-                  <td>法規制対応</td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>2024-04-02</td>
-                  <td>2024-10-20</td>
-                  <td>見積中</td>
-                  <td>鈴木 一郎</td>
-                  <td>金沢工芸株式会社</td>
-                  <td>山口</td>
-                  <td>ECサイト構築</td>
-                  <td>海外向け販売チャネルの拡大</td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td>引合</td>
-                  <td>HP問い合わせ</td>
-                  <td>Wデザイン</td>
-                  <td>Bランク</td>
-                  <td>Bランク</td>
-                  <td>多言語対応必須</td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>2024-04-10</td>
-                  <td>2024-11-15</td>
-                  <td>商談中</td>
-                  <td>中谷 太輔</td>
-                  <td>高松ロジスティクス</td>
-                  <td>松本</td>
-                  <td>倉庫自動化プロジェクト</td>
-                  <td>AGV（無人搬送車）の導入検討</td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" checked disabled></td>
-                  <td style="text-align: center;"><input type="checkbox" disabled></td>
-                  <td>引合</td>
-                  <td>電話</td>
-                  <td>Rロボティクス</td>
-                  <td>Aランク</td>
-                  <td>Aランク</td>
-                  <td>24時間稼働対応</td>
-                  <td></td>
-                  <td></td>
-                </tr>
-              </tbody>
-            </table>
+                <thead>
+                  <tr>
+                    <th style="width: 100px;">話題日</th>
+                    <th style="width: 100px;">フォロー予定</th>
+                    <th style="width: 100px;">案件ステータス</th>
+                    <th style="width: 120px;">営業担当</th>
+                    <th style="width: 250px;">会社名</th>
+                    <th style="width: 100px;">担当(姓)</th>
+                    <th style="width: 200px;">案件名</th>
+                    <th style="width: 250px;">案件概要</th>
+                    <th style="width: 70px; text-align: center;">ステージ1</th>
+                    <th style="width: 70px; text-align: center;">ステージ2</th>
+                    <th style="width: 70px; text-align: center;">ステージ3</th>
+                    <th style="width: 70px; text-align: center;">ステージ4</th>
+                    <th style="width: 100px;">発生動機</th>
+                    <th style="width: 100px;">引合手段</th>
+                    <th style="width: 120px;">競合会社</th>
+                    <th style="width: 100px;">当初確度</th>
+                    <th style="width: 100px;">見直確度</th>
+                    <th style="width: 150px;">案件自由使用欄1</th>
+                    <th style="width: 150px;">案件自由使用欄2</th>
+                    <th style="width: 150px;">案件自由使用欄3</th>
+                  </tr>
+                </thead>
+                <tbody id="projectTableBody">
+                  <!-- Rows -->
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
           <div class="company-grid-footer">
             <div class="footer-left">
               <div class="company-grid-pager">
@@ -400,11 +93,14 @@
             </div>
             <div class="footer-right">
               <div class="company-grid-meta">
-                全 <span id="projectTotalCount">1</span> 件   1 - 1
+                全 <span id="projectTotalCount">1</span> 件 &nbsp; 1 - 1
               </div>
             </div>
           </div>
         </div>
+
+        <div class="resizer-horizontal" id="project-resizer"></div>
+
         <!-- Detail Area -->
         <div class="company-detail">
           <div class="company-tabs">

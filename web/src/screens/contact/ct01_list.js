@@ -3,6 +3,7 @@ import { mockContacts, mockActivities, mockProjects } from '../../utils/mockData
 
 export function init() {
   console.log('Contact screen (CT01) initialized');
+  initResizer();
   renderTable(mockContacts);
   renderActivities(mockActivities);
   renderProjects(mockProjects);
@@ -138,4 +139,46 @@ function renderProjects(data) {
       <td>${escapeHtml(p.method || '-')}</td>
     </tr>
   `).join('');
+}
+
+function initResizer() {
+  const resizer = q('contact-resizer');
+  const container = document.querySelector('#contact-root .company-main');
+  
+  if (!resizer || !container) return;
+  
+  let isResizing = false;
+  
+  resizer.addEventListener('mousedown', (e) => {
+    isResizing = true;
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none';
+    resizer.classList.add('active');
+  });
+  
+  document.addEventListener('mousemove', (e) => {
+    if (!isResizing) return;
+    
+    const containerRect = container.getBoundingClientRect();
+    const relativeY = e.clientY - containerRect.top;
+    
+    const minGridHeight = 150;
+    const minDetailHeight = 200;
+    const maxHeight = containerRect.height - minDetailHeight;
+    
+    let newHeight = relativeY - 6;
+    if (newHeight < minGridHeight) newHeight = minGridHeight;
+    if (newHeight > maxHeight) newHeight = maxHeight;
+    
+    container.style.setProperty('--grid-height', `${newHeight}px`);
+  });
+  
+  document.addEventListener('mouseup', () => {
+    if (isResizing) {
+      isResizing = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      resizer.classList.remove('active');
+    }
+  });
 }

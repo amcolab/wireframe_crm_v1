@@ -1,11 +1,28 @@
-<section id="access-code-screen" class="screen active">
-  <div class="window-card">
-    <div class="content center-content">
-      <h2 class="main-title">承認コードを入力してください (LG01)</h2>
-      <div class="input-group">
-        <input type="text" id="access-code">
+<section id="access-code-screen" class="screen active auth-bg">
+  <div class="window-card auth-card">
+    <div class="content">
+      <div class="auth-header">
+        <div class="auth-logo">
+          <svg width="60" height="60" viewBox="0 0 100 100">
+            <path d="M50 5 L90 25 L90 75 L50 95 L10 75 L10 25 Z" fill="none" stroke="var(--accent-color)" stroke-width="3" />
+            <path d="M50 20 L75 35 L75 65 L50 80 L25 65 L25 35 Z" fill="var(--accent-color)" opacity="0.1" />
+            <circle cx="50" cy="50" r="10" fill="var(--accent-color)" />
+          </svg>
+        </div>
+        <h2 class="auth-title">SMOS Access</h2>
+        <p class="auth-subtitle">承認コードを入力してください</p>
       </div>
-      <button id="btn-submit-code" class="btn-primary">送信</button>
+      
+      <div class="input-group">
+        <label for="access-code">アクセスコード (LG01)</label>
+        <input type="text" id="access-code" placeholder="000-000" style="text-align: center; font-size: 20px; letter-spacing: 4px; font-weight: 700;">
+      </div>
+      
+      <button id="btn-submit-code" class="btn-primary" style="width: 100%; padding: 14px; font-size: 16px;">送信</button>
+      
+      <div class="auth-helper-text">
+        コードをお持ちでない場合は管理者にお問い合わせください。
+      </div>
     </div>
   </div>
 </section>

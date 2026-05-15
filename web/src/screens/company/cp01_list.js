@@ -16,6 +16,7 @@ export function init() {
   console.log('Company screen initialized');
   if (!isReady) {
     bindUi();
+    initResizer();
     isReady = true;
   }
   render();
@@ -625,4 +626,47 @@ function renderChildLists(c) {
   `).join('');
   projectsHtml += `</tbody></table></div>`;
   set('companyProjectsList', projectsHtml);
+}
+
+function initResizer() {
+  const resizer = q('company-resizer');
+  const container = document.querySelector('.company-main');
+  
+  if (!resizer || !container) return;
+  
+  let isResizing = false;
+  
+  resizer.addEventListener('mousedown', (e) => {
+    isResizing = true;
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none'; // Prevent text selection during drag
+    resizer.classList.add('active');
+  });
+  
+  document.addEventListener('mousemove', (e) => {
+    if (!isResizing) return;
+    
+    const containerRect = container.getBoundingClientRect();
+    const relativeY = e.clientY - containerRect.top;
+    
+    // Constraints: min height for grid and detail
+    const minGridHeight = 150;
+    const minDetailHeight = 200;
+    const maxHeight = containerRect.height - minDetailHeight;
+    
+    let newHeight = relativeY - 6; // Center the resizer (12px / 2)
+    if (newHeight < minGridHeight) newHeight = minGridHeight;
+    if (newHeight > maxHeight) newHeight = maxHeight;
+    
+    container.style.setProperty('--grid-height', `${newHeight}px`);
+  });
+  
+  document.addEventListener('mouseup', () => {
+    if (isResizing) {
+      isResizing = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      resizer.classList.remove('active');
+    }
+  });
 }

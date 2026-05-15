@@ -38,56 +38,60 @@
 <button class="btn btn-orange" id="btnActivityNewMain">+ 新規活動</button>
 </div>
 </div>
-<div class="company-main" style="grid-template-rows: 1fr 450px;">
-<!-- List Area -->
-<div class="company-grid">
-<div class="company-table-wrap">
-<table class="company-table">
-<thead>
-<tr>
-<th style="width: 100px;">活動日</th>
-<th style="width: 80px;">開始時刻</th>
-<th style="width: 120px;">営業担当</th>
-<th style="width: 80px;">タイプ</th>
-<th style="width: 250px;">会社名</th>
-<th style="width: 100px;">担当(姓)</th>
-<th>コメント</th>
-</tr>
-</thead>
-<tbody id="activityTableBody">
-<!-- Filled by JS -->
-</tbody>
-</table>
-</div>
-<div class="company-grid-footer">
-<div class="footer-left">
-<div class="company-grid-pager">
-<button class="page-num-btn">«</button>
-<button class="page-num-btn">‹</button>
-<div class="page-numbers">
-<button class="page-num-btn active">1</button>
-<button class="page-num-btn">2</button>
-<button class="page-num-btn">3</button>
-</div>
-<button class="page-num-btn">›</button>
-<button class="page-num-btn">»</button>
-</div>
-<div class="pager-jump">
-                        Page <input style="width: 40px; text-align: center;" type="text" value="1"/> / <span id="activityTotalPages">282</span>
-</div>
-<select class="mini-select">
-<option>100件</option>
-</select>
-</div>
-<div class="footer-right">
-<div class="company-grid-meta">
-                        全 <span id="activityTotalCount">28196</span> 件   1 - 100
-                      </div>
-</div>
-</div>
-</div>
-<!-- Detail Area -->
-<div class="company-detail">
+      <div class="company-main">
+        <!-- List Area -->
+        <div class="company-grid">
+          <div class="company-table-wrap">
+            <table class="company-table">
+              <thead>
+                <tr>
+                  <th style="width: 100px;">活動日</th>
+                  <th style="width: 80px;">開始時刻</th>
+                  <th style="width: 120px;">営業担当</th>
+                  <th style="width: 80px;">タイプ</th>
+                  <th style="width: 250px;">会社名</th>
+                  <th style="width: 100px;">担当(姓)</th>
+                  <th>コメント</th>
+                </tr>
+              </thead>
+              <tbody id="activityTableBody">
+                <!-- Filled by JS -->
+              </tbody>
+            </table>
+          </div>
+          <div class="company-grid-footer">
+            <div class="footer-left">
+              <div class="company-grid-pager">
+                <button class="page-num-btn">«</button>
+                <button class="page-num-btn">‹</button>
+                <div class="page-numbers">
+                  <button class="page-num-btn active">1</button>
+                  <button class="page-num-btn">2</button>
+                  <button class="page-num-btn">3</button>
+                </div>
+                <button class="page-num-btn">›</button>
+                <button class="page-num-btn">»</button>
+              </div>
+              <div class="pager-jump">
+                Page <input style="width: 40px; text-align: center;" type="text" value="1" /> / <span
+                  id="activityTotalPages">282</span>
+              </div>
+              <select class="mini-select">
+                <option>100件</option>
+              </select>
+            </div>
+            <div class="footer-right">
+              <div class="company-grid-meta">
+                全 <span id="activityTotalCount">28196</span> 件 &nbsp; 1 - 100
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="resizer-horizontal" id="activity-resizer"></div>
+
+        <!-- Detail Area -->
+        <div class="company-detail">
 <div class="company-tabpanels">
 <div class="detail-form" style="grid-template-columns: 420px 1fr 420px 180px; gap: 20px;">
 <!-- Col 1 -->

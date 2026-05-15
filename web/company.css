@@ -276,13 +276,42 @@
     flex: 1;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 450px 1fr;
-    /* Increased from 280px to show more rows */
-    gap: 16px;
+    grid-template-rows: var(--grid-height, 450px) 12px 1fr;
+    gap: 0;
     min-height: 0;
     height: 100%;
     width: 100%;
     overflow: hidden;
+}
+
+.resizer-horizontal {
+    height: 12px;
+    width: 100%;
+    cursor: row-resize;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-color);
+    transition: background-color 0.2s;
+    user-select: none;
+    position: relative;
+    z-index: 5;
+}
+
+.resizer-horizontal::after {
+    content: '';
+    width: 32px;
+    height: 4px;
+    background-color: var(--border-color);
+    border-radius: 2px;
+}
+
+.resizer-horizontal:hover {
+    background-color: #edf2f7;
+}
+
+.resizer-horizontal:hover::after {
+    background-color: var(--accent-color);
 }
 
 .company-grid {

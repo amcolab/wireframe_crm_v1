@@ -3,6 +3,7 @@ import { mockActivities } from '../../utils/mockData.js';
 
 export function init() {
   console.log('Activity screen (AT01) initialized');
+  initResizer();
   renderTable(mockActivities);
 
   // Search buttons
@@ -126,4 +127,46 @@ function fillDetail(item) {
   setVal('atDetailDate', item.date ? item.date.replace(/\//g, '-') : '');
   setVal('atDetailStartTime', item.time);
   setVal('atDetailComment', item.comment);
+}
+
+function initResizer() {
+  const resizer = q('activity-resizer');
+  const container = document.querySelector('#activity-root .company-main');
+  
+  if (!resizer || !container) return;
+  
+  let isResizing = false;
+  
+  resizer.addEventListener('mousedown', (e) => {
+    isResizing = true;
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none';
+    resizer.classList.add('active');
+  });
+  
+  document.addEventListener('mousemove', (e) => {
+    if (!isResizing) return;
+    
+    const containerRect = container.getBoundingClientRect();
+    const relativeY = e.clientY - containerRect.top;
+    
+    const minGridHeight = 150;
+    const minDetailHeight = 200;
+    const maxHeight = containerRect.height - minDetailHeight;
+    
+    let newHeight = relativeY - 6;
+    if (newHeight < minGridHeight) newHeight = minGridHeight;
+    if (newHeight > maxHeight) newHeight = maxHeight;
+    
+    container.style.setProperty('--grid-height', `${newHeight}px`);
+  });
+  
+  document.addEventListener('mouseup', () => {
+    if (isResizing) {
+      isResizing = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      resizer.classList.remove('active');
+    }
+  });
 }

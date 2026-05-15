@@ -3,6 +3,7 @@ import { mockProjects } from '../../utils/mockData.js';
 
 export function init() {
   console.log('Project screen (PR01) initialized');
+  initResizer();
   renderTable(mockProjects);
 
   // Search logic
@@ -117,4 +118,46 @@ function fillDetail(item) {
   setVal('prDetailContact', item.contact + ' 瑞葵 [' + item.company + ']');
   setVal('prDetailIssueDate', item.issueDate ? item.issueDate.replace(/\//g, '-') : '');
   setVal('prDetailFollowUp', item.followDate ? item.followDate.replace(/\//g, '-') : '');
+}
+
+function initResizer() {
+  const resizer = q('project-resizer');
+  const container = document.querySelector('#project-root .company-main');
+  
+  if (!resizer || !container) return;
+  
+  let isResizing = false;
+  
+  resizer.addEventListener('mousedown', (e) => {
+    isResizing = true;
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none';
+    resizer.classList.add('active');
+  });
+  
+  document.addEventListener('mousemove', (e) => {
+    if (!isResizing) return;
+    
+    const containerRect = container.getBoundingClientRect();
+    const relativeY = e.clientY - containerRect.top;
+    
+    const minGridHeight = 150;
+    const minDetailHeight = 200;
+    const maxHeight = containerRect.height - minDetailHeight;
+    
+    let newHeight = relativeY - 6;
+    if (newHeight < minGridHeight) newHeight = minGridHeight;
+    if (newHeight > maxHeight) newHeight = maxHeight;
+    
+    container.style.setProperty('--grid-height', `${newHeight}px`);
+  });
+  
+  document.addEventListener('mouseup', () => {
+    if (isResizing) {
+      isResizing = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      resizer.classList.remove('active');
+    }
+  });
 }

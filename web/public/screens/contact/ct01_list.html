@@ -3,7 +3,7 @@
     <div class="company-screen">
       <div class="company-topbar">
         <div class="company-topbar-left">
-          <h2 class="section-title">担当者 (CT01)</h2>
+          <div class="company-title">担当者 (CT01)</div>
           <div class="company-search">
             <label class="company-search-label" for="contactSearchCompany">会社名</label>
             <input id="contactSearchCompany" type="text" />
@@ -71,7 +71,6 @@
                 </div>
                 <button class="page-num-btn" title="Next Page">›</button>
                 <button class="page-num-btn" title="Last Page">»</button>
-
                 <div class="pager-jump" style="width: 200px;">
                   <span>Page</span>
                   <select aria-label="page select" class="mini-select">
@@ -79,7 +78,6 @@
                   </select>
                   <span style="min-width: 200px;">/ 26</span>
                 </div>
-
                 <div class="pager-size">
                   <select aria-label="page size" class="mini-select">
                     <option selected="" value="100">100件</option>
@@ -95,6 +93,9 @@
             </div>
           </div>
         </div>
+
+        <div class="resizer-horizontal" id="contact-resizer"></div>
+
         <div class="company-detail">
           <nav class="company-detail-tabs" role="tablist">
             <div class="tabs-list">
