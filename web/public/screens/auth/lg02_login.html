@@ -1,23 +1,38 @@
-<section id="login-screen" class="screen active">
-  <div class="window-card">
+<section id="login-screen" class="window-card auth-card">
+  <div class="window-card auth-card">
     <div class="content">
-      <div class="logo-container">
-        <svg class="logo-img" viewBox="0 0 100 100" style="width: 80px; color: #000;">
-          <path d="M50 5 L90 25 L90 75 L50 95 L10 75 L10 25 Z" fill="none" stroke="currentColor" stroke-width="2" />
-          <path d="M50 5 L50 95 M90 25 L10 75 M10 25 L90 75" fill="none" stroke="currentColor" stroke-width="1"
-            opacity="0.3" />
-        </svg>
-        <h1 class="logo-text">SMOS (LG02)</h1>
+      <div class="auth-header">
+        <div class="auth-logo">
+          <svg width="64" height="64" viewBox="0 0 100 100">
+            <path d="M50 5 L90 25 L90 75 L50 95 L10 75 L10 25 Z" fill="none" stroke="var(--accent-color)"
+              stroke-width="2.5" />
+            <path d="M50 5 L50 95 M90 25 L10 75 M10 25 L90 75" fill="none" stroke="var(--accent-color)" stroke-width="1"
+              opacity="0.2" />
+            <path d="M30 40 L50 30 L70 40 L70 60 L50 70 L30 60 Z" fill="var(--accent-color)" opacity="0.8" />
+          </svg>
+        </div>
+        <h1 class="auth-title">SMOS Portal</h1>
+        <p class="auth-subtitle">システムにログインしてください (LG02)</p>
       </div>
+
       <div class="input-group">
         <label for="username">ログイン名</label>
-        <input type="text" id="username">
+        <input type="text" id="username" placeholder="ユーザーIDまたはメールアドレス">
       </div>
+
       <div class="input-group">
         <label for="password">パスワード</label>
-        <input type="password" id="password">
+        <input type="password" id="password" placeholder="••••••••">
       </div>
+
       <button id="btn-login" class="btn-primary">ログイン</button>
+
+      <!-- <div class="auth-footer">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-secondary);">
+          <input type="checkbox" style="width: 16px; height: 16px; margin: 0;"> 次回から自動ログイン
+        </label>
+        <a href="#" class="auth-link">パスワードを忘れた場合</a>
+      </div> -->
     </div>
   </div>
 </section>

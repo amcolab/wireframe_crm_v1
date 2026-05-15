@@ -3,7 +3,7 @@
     <div class="company-screen">
       <div class="company-topbar">
         <div class="company-topbar-left">
-          <h2 class="section-title">会社 (CP01)</h2>
+          <div class="company-title">会社 (CP01)</div>
           <div class="company-search">
             <label class="company-search-label" for="companySearchName">会社名</label>
             <input id="companySearchName" type="text" placeholder="会社名（部分一致）" />
@@ -40,27 +40,7 @@
       </div> -->
 
           <div class="company-table-wrap">
-            <div class="company-table-scroll">
-              <table class="company-table" aria-label="company list">
-                <thead>
-                  <tr>
-                    <th style="width: 80px;">会社ID</th>
-                    <th style="width: 250px;">会社名</th>
-                    <th style="width: 130px;">代表TEL</th>
-                    <th style="width: 300px;">住所</th>
-                    <th style="width: 120px;">業界</th>
-                    <th style="width: 120px;">業種</th>
-                    <th style="width: 120px;">規模ランク</th>
-                    <th style="width: 100px;">種別</th>
-                    <th style="width: 100px;">従業員数</th>
-                    <th style="width: 80px;">地区</th>
-                    <th style="width: 110px;">都道府県</th>
-                    <th style="width: 300px;">会社備考</th>
-                  </tr>
-                </thead>
-                <tbody id="companyTableBody"></tbody>
-              </table>
-            </div>
+            <div id="companyTable"></div>
           </div>
 
           <div class="company-grid-footer">
@@ -80,9 +60,9 @@
 
                 <select id="companyPageSize" class="mini-select" aria-label="page size">
                   <option value="10">10件</option>
-                  <option value="25">25件</option>
+                  <option value="25" selected>25件</option>
                   <option value="50">50件</option>
-                  <option value="100" selected>100件</option>
+                  <option value="100">100件</option>
                 </select>
               </div>
             </div>
@@ -96,6 +76,8 @@
           </div>
         </div>
 
+        <div class="resizer-horizontal" id="company-resizer"></div>
+
         <div class="company-detail">
           <nav class="company-detail-tabs" role="tablist" aria-label="company detail tabs">
             <div class="tabs-list">
@@ -105,7 +87,7 @@
               <button class="tab-btn" data-company-tab="projects" role="tab" aria-selected="false">案件</button>
             </div>
             <div class="tab-actions">
-              <button class="btn btn-orange" id="btnNewContact" style="display:none">新規担当</button>
+              <button class="btn btn-orange" id="btnNewContact" style="display:none">＋ 新規担当</button>
               <button class="btn btn-orange" id="btnNewActivity" style="display:none">＋ 新規活動</button>
               <button class="btn btn-orange" id="btnNewProject" style="display:none">＋ 新規案件</button>
             </div>
