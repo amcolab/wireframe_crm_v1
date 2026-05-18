@@ -1,22 +1,35 @@
 import { q, escapeHtml, toNum, includesPartial } from '../../utils/helpers.js';
 import { mockCompanies, mockContacts, mockActivities, mockProjects } from '../../utils/mockData.js';
+import { showToast } from '../../utils/toast.js';
+import { initTableColResize } from '../../utils/tableColResize.js';
 
 let state = {
   companies: [...mockCompanies],
   filtered: [...mockCompanies],
   selectedId: mockCompanies[0]?.id ?? null,
+  sortKey: 'id',
+  sortDir: 'desc',
   page: 1,
   pageSize: 25,
-  advanced: null
+  advanced: null,
+
+  contactsPage: 1,
+  contactsPageSize: 10,
+  activitiesPage: 1,
+  activitiesPageSize: 10,
+  projectsPage: 1,
+  projectsPageSize: 10
 };
 
 let isReady = false;
-let table = null;
+let companyTableBound = false;
 
 export function init() {
   console.log('Company screen initialized');
   bindUi();
-  initTabulator();
+  bindCompanyTable();
+  bindCompanyTableSort();
+  initTableColResize('#companyTable', 'smos.cp01.colWidths');
   initResizer();
 
   // Force an initial render after a small delay to ensure everything is ready
@@ -96,8 +109,8 @@ function bindUi() {
     state.advanced = state.advanced || null;
     state.filtered = filterCompanies(state.companies, { ...state.advanced, name });
     state.page = 1;
-    if (!state.filtered.some(c => c.id === state.selectedId)) {
-      state.selectedId = state.filtered[0]?.id ?? null;
+    if (!state.filtered.some(c => String(c.id) === String(state.selectedId))) {
+      state.selectedId = state.filtered[0] ? String(state.filtered[0].id) : null;
     }
     render();
   }
@@ -112,7 +125,7 @@ function bindUi() {
     state.advanced = null;
     state.filtered = [...state.companies];
     state.page = 1;
-    state.selectedId = state.filtered[0]?.id ?? null;
+    state.selectedId = state.filtered[0] ? String(state.filtered[0].id) : null;
     if (formAdv) formAdv.reset();
     render();
   });
@@ -135,13 +148,13 @@ function bindUi() {
     const name = (inputName?.value ?? '').trim();
     state.filtered = filterCompanies(state.companies, { ...adv, name });
     state.page = 1;
-    state.selectedId = state.filtered[0]?.id ?? null;
+    state.selectedId = state.filtered[0] ? String(state.filtered[0].id) : null;
     dlgAdv?.close();
     render();
   });
 
   btnCreate?.addEventListener('click', () => {
-    const selected = state.companies.find(c => c.id === state.selectedId) || null;
+    const selected = state.companies.find(c => String(c.id) === String(state.selectedId)) || null;
     if (formCreate) formCreate.reset();
     fillCreateDialog(formCreate, selected);
     if (dlgCreate?.showModal) dlgCreate.showModal();
@@ -192,15 +205,14 @@ function bindUi() {
     render();
   });
 
-  // Tabulator handles row clicks now
-  /*
-  q('companyTableBody')?.addEventListener('click', (e) => {
-    const tr = e.target.closest('tr[data-id]');
-    if (!tr) return;
-    state.selectedId = tr.getAttribute('data-id');
-    render();
-  });
-  */
+
+  function syncDetailTabLayout(tab) {
+    const card = document.querySelector('.company-detail');
+    if (!card) return;
+    const isDetail = tab === 'detail';
+    card.classList.toggle('detail-tab-mode', isDetail);
+    card.classList.toggle('table-tab-mode', !isDetail);
+  }
 
   tabs.forEach(t => {
     t.addEventListener('click', () => {
@@ -208,6 +220,7 @@ function bindUi() {
       tabs.forEach(x => x.classList.toggle('active', x === t));
       const panels = document.querySelectorAll('[data-company-panel]');
       panels.forEach(p => p.classList.toggle('active', p.getAttribute('data-company-panel') === tab));
+      syncDetailTabLayout(tab);
 
       // Toggle "New" buttons
       const btnNewContact = q('btnNewContact');
@@ -254,6 +267,8 @@ function bindUi() {
 
   bindModalTrigger('btnContactCompanyLookup', 'dlgCompanyLookup');
   bindModalTrigger('btnContactCompanyNew', 'dlgCompanyCreate');
+  bindModalTrigger('btnMainContactLookupCompany', 'dlgCompanyLookup');
+  bindModalTrigger('btnMainContactCreateCompany', 'dlgCompanyCreate');
 
   bindModalTrigger('btnProjectContactLookup', 'dlgContactLookup');
   bindModalTrigger('btnProjectContactNew', 'dlgContactDetailNew');
@@ -278,33 +293,54 @@ function bindUi() {
 
   closeDialogOnAction('btnProjectSave', 'dlgProjectDetail');
 
+  const dlgConfirmDelete = q('dlgCompanyConfirmDelete');
+  const btnConfirmDelete = q('dlgCompanyConfirmDeleteBtn');
+
+  dlgConfirmDelete?.querySelectorAll('[data-confirm-close]').forEach(btn => {
+    btn.addEventListener('click', () => dlgConfirmDelete.close());
+  });
+  dlgConfirmDelete?.addEventListener('click', (e) => {
+    if (e.target === dlgConfirmDelete) dlgConfirmDelete.close();
+  });
+
   q('btnCompanySave')?.addEventListener('click', () => {
-    const selected = state.companies.find(c => c.id === state.selectedId);
+    const selected = state.companies.find(c => String(c.id) === String(state.selectedId));
     if (!selected) return;
     const next = readDetailForm();
     if (!next.name.trim()) {
-      alert('会社名は必須です');
+      showToast('会社名は必須です', 'danger');
       return;
     }
     Object.assign(selected, next, {
       updatedAt: new Date().toISOString().slice(0, 10).replaceAll('-', '/') + ' 12:00',
       updatedBy: 'admin'
     });
-    // refresh current filter results
     const name = (inputName?.value ?? '').trim();
     state.filtered = filterCompanies(state.companies, { ...(state.advanced || null), name });
     render();
+    showToast(`会社「${selected.name}」を保存しました`, 'success');
   });
 
   q('btnCompanyDelete')?.addEventListener('click', () => {
-    const selected = state.companies.find(c => c.id === state.selectedId);
+    const selected = state.companies.find(c => String(c.id) === String(state.selectedId));
+    if (!selected || !dlgConfirmDelete) return;
+    const idEl = q('dlgCompanyConfirmId');
+    const nameEl = q('dlgCompanyConfirmName');
+    if (idEl) idEl.textContent = String(selected.id);
+    if (nameEl) nameEl.textContent = selected.name || '—';
+    dlgConfirmDelete.showModal();
+  });
+
+  btnConfirmDelete?.addEventListener('click', () => {
+    const selected = state.companies.find(c => String(c.id) === String(state.selectedId));
     if (!selected) return;
-    const ok = confirm('削除しますか？（ワイヤーフレーム：関連チェックなし）');
-    if (!ok) return;
-    state.companies = state.companies.filter(c => c.id !== selected.id);
-    state.filtered = state.filtered.filter(c => c.id !== selected.id);
-    state.selectedId = state.filtered[0]?.id ?? null;
+    const removedName = selected.name;
+    dlgConfirmDelete?.close();
+    state.companies = state.companies.filter(c => String(c.id) !== String(selected.id));
+    state.filtered = state.filtered.filter(c => String(c.id) !== String(selected.id));
+    state.selectedId = state.filtered[0] ? String(state.filtered[0].id) : null;
     render();
+    showToast(`会社「${removedName}」を削除しました`, 'success');
   });
 
   q('btnCompanyFirstPage')?.addEventListener('click', () => {
@@ -340,6 +376,75 @@ function bindUi() {
     state.page = 1;
     render();
   });
+
+  // Dynamic child tables pagination helper
+  const bindChildPager = (prefix, renderFn) => {
+    const getSelectedCompany = () => state.companies.find(c => String(c.id) === String(state.selectedId));
+    
+    q(`btn${prefix}FirstPage`)?.addEventListener('click', () => {
+      state[`${prefix.toLowerCase()}Page`] = 1;
+      const c = getSelectedCompany();
+      if (c) renderFn(c);
+    });
+    q(`btn${prefix}PrevPage`)?.addEventListener('click', () => {
+      if (state[`${prefix.toLowerCase()}Page`] > 1) {
+        state[`${prefix.toLowerCase()}Page`]--;
+        const c = getSelectedCompany();
+        if (c) renderFn(c);
+      }
+    });
+    q(`btn${prefix}NextPage`)?.addEventListener('click', () => {
+      const c = getSelectedCompany();
+      if (!c) return;
+      let items = [];
+      if (prefix === 'Contacts') items = mockContacts.filter(m => String(m.companyId) === String(c.id));
+      else if (prefix === 'Activities') {
+        const contactIds = mockContacts.filter(m => String(m.companyId) === String(c.id)).map(m => String(m.id));
+        items = mockActivities.filter(a => contactIds.includes(String(a.contactId)) || String(a.company) === String(c.name));
+      } else if (prefix === 'Projects') {
+        const contactIds = mockContacts.filter(m => String(m.companyId) === String(c.id)).map(m => String(m.id));
+        items = mockProjects.filter(p => contactIds.includes(String(p.contactId)) || String(p.company) === String(c.name));
+      }
+      const totalPages = Math.ceil(items.length / state[`${prefix.toLowerCase()}PageSize`]);
+      if (state[`${prefix.toLowerCase()}Page`] < totalPages) {
+        state[`${prefix.toLowerCase()}Page`]++;
+        renderFn(c);
+      }
+    });
+    q(`btn${prefix}LastPage`)?.addEventListener('click', () => {
+      const c = getSelectedCompany();
+      if (!c) return;
+      let items = [];
+      if (prefix === 'Contacts') items = mockContacts.filter(m => String(m.companyId) === String(c.id));
+      else if (prefix === 'Activities') {
+        const contactIds = mockContacts.filter(m => String(m.companyId) === String(c.id)).map(m => String(m.id));
+        items = mockActivities.filter(a => contactIds.includes(String(a.contactId)) || String(a.company) === String(c.name));
+      } else if (prefix === 'Projects') {
+        const contactIds = mockContacts.filter(m => String(m.companyId) === String(c.id)).map(m => String(m.id));
+        items = mockProjects.filter(p => contactIds.includes(String(p.contactId)) || String(p.company) === String(c.name));
+      }
+      const totalPages = Math.max(1, Math.ceil(items.length / state[`${prefix.toLowerCase()}PageSize`]));
+      state[`${prefix.toLowerCase()}Page`] = totalPages;
+      renderFn(c);
+    });
+    q(`${prefix.toLowerCase()}PageSelect`)?.addEventListener('change', (e) => {
+      state[`${prefix.toLowerCase()}Page`] = parseInt(e.target.value) || 1;
+      const c = getSelectedCompany();
+      if (c) renderFn(c);
+    });
+    q(`${prefix.toLowerCase()}PageSize`)?.addEventListener('change', (e) => {
+      state[`${prefix.toLowerCase()}PageSize`] = parseInt(e.target.value) || 10;
+      state[`${prefix.toLowerCase()}Page`] = 1;
+      const c = getSelectedCompany();
+      if (c) renderFn(c);
+    });
+  };
+
+  bindChildPager('Contacts', renderContactsList);
+  bindChildPager('Activities', renderActivitiesList);
+  bindChildPager('Projects', renderProjectsList);
+
+  syncDetailTabLayout('detail');
 }
 
 function render() {
@@ -352,7 +457,8 @@ function render() {
   const rangeStart = q('companyRangeStart');
   const rangeEnd = q('companyRangeEnd');
 
-  const total = state.filtered.length;
+  const sorted = getSortedFiltered();
+  const total = sorted.length;
   const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
 
   if (state.page > totalPages) state.page = totalPages;
@@ -368,27 +474,11 @@ function render() {
   if (rangeStart) rangeStart.textContent = total > 0 ? (start + 1) : 0;
   if (rangeEnd) rangeEnd.textContent = actualEndIdx;
 
-  // Render Pager Buttons
   if (pageNumbers) {
-    pageNumbers.innerHTML = '';
-    const maxVisible = 5;
-    let startPage = Math.max(1, state.page - Math.floor(maxVisible / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
-
-    if (endPage - startPage + 1 < maxVisible) {
-      startPage = Math.max(1, endPage - maxVisible + 1);
-    }
-
-    for (let p = startPage; p <= endPage; p++) {
-      const btn = document.createElement('button');
-      btn.className = `page-num-btn ${p === state.page ? 'active' : ''}`;
-      btn.textContent = p;
-      btn.onclick = () => {
-        state.page = p;
-        render();
-      };
-      pageNumbers.appendChild(btn);
-    }
+    renderPageNumberButtons(pageNumbers, state.page, totalPages, (p) => {
+      state.page = p;
+      render();
+    });
   }
 
   // Sync Page Select
@@ -403,17 +493,9 @@ function render() {
     }
   }
 
-  const rows = state.filtered.slice(start, actualEndIdx);
-
-  if (table) {
-    table.setData(rows).then(() => {
-      if (state.selectedId) {
-        table.deselectRow();
-        table.selectRow(state.selectedId);
-      }
-      table.redraw();
-    });
-  }
+  const rows = sorted.slice(start, actualEndIdx);
+  renderCompanyTable(rows);
+  updateSortHeaderUI();
 
   // CRITICAL: Always use String for ID comparison to avoid mismatches
   const selected = state.companies.find(c => String(c.id) === String(state.selectedId)) || state.filtered[0] || null;
@@ -518,175 +600,478 @@ function readDetailForm() {
   };
 }
 
-function renderChildLists(c) {
-  const set = (id, html) => {
-    const el = q(id);
-    if (el) el.innerHTML = html;
-  };
-  if (!c) return;
+const TAB_EMPTY = {
+  contacts: {
+    title: '担当者データはまだありません',
+    desc: 'この会社の担当者を登録すると、ここに表示されます。',
+    icon: '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+  },
+  activities: {
+    title: '活動データはまだありません',
+    desc: 'この会社の活動履歴を登録すると、ここに表示されます。',
+    icon: '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>',
+  },
+  projects: {
+    title: '案件データはまだありません',
+    desc: 'この会社の案件を登録すると、ここに表示されます。',
+    icon: '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3"/></svg>',
+  },
+};
 
-  // Render Contacts
-  let contactsHtml = `
-    <div class="mini-table-wrapper">
-      <table class="mini-grid-table">
-        <thead>
-          <tr>
-            <th>担当(姓)</th>
-            <th>担当(名)</th>
-            <th>フリガナ</th>
-            <th>部署名</th>
-            <th>TEL</th>
-            <th>携帯電話</th>
-            <th>Email</th>
-            <th>役職名</th>
-            <th>職位</th>
-            <th>担当者備考</th>
-          </tr>
-        </thead>
-        <tbody>
-  `;
-  contactsHtml += mockContacts.map(m => `
-    <tr>
-      <td class="blue-link">${escapeHtml(m.last)}</td>
-      <td>${escapeHtml(m.first)}</td>
-      <td>${escapeHtml(m.kana)}</td>
-      <td>${escapeHtml(m.dept)}</td>
-      <td>${escapeHtml(m.tel)}</td>
-      <td>${escapeHtml(m.mobile)}</td>
-      <td>${escapeHtml(m.email)}</td>
-      <td>${escapeHtml(m.pos)}</td>
-      <td>${escapeHtml(m.rank)}</td>
-      <td title="${escapeHtml(m.remark)}">${escapeHtml(m.remark)}</td>
-    </tr>
-  `).join('');
-  contactsHtml += `</tbody></table></div>`;
-  set('companyContactsList', contactsHtml);
-
-  // Render Activities
-  let activitiesHtml = `
-    <div class="mini-table-wrapper">
-      <table class="mini-grid-table">
-        <thead>
-          <tr>
-            <th>活動日</th>
-            <th>営業担当</th>
-            <th>担当(姓)</th>
-            <th>タイプ</th>
-            <th style="min-width: 250px;">コメント</th>
-            <th>目的</th>
-            <th>案件名</th>
-          </tr>
-        </thead>
-        <tbody>
-  `;
-  activitiesHtml += mockActivities.map(a => `
-    <tr>
-      <td>${escapeHtml(a.date)}</td>
-      <td>${escapeHtml(a.rep)}</td>
-      <td class="blue-link">${escapeHtml(a.contact)}</td>
-      <td><span class="${a.typeClass}">${escapeHtml(a.type)}</span></td>
-      <td title="${escapeHtml(a.comment)}">${escapeHtml(a.comment)}</td>
-      <td>${escapeHtml(a.purpose || '')}</td>
-      <td>${escapeHtml(a.projectName || '')}</td>
-    </tr>
-  `).join('');
-  activitiesHtml += `</tbody></table></div>`;
-  set('companyActivitiesList', activitiesHtml);
-
-  // Render Projects
-  let projectsHtml = `
-    <div class="mini-table-wrapper">
-      <table class="mini-grid-table">
-        <thead>
-          <tr>
-            <th>話題日</th>
-            <th>売上日</th>
-            <th>フォロー予定</th>
-            <th>案件ステータス</th>
-            <th>営業担当</th>
-            <th>案件名</th>
-            <th>担当(姓)</th>
-            <th style="min-width: 250px;">案件概要</th>
-            <th>当初確度</th>
-            <th>発生動機</th>
-            <th>引合手段</th>
-          </tr>
-        </thead>
-        <tbody>
-  `;
-  projectsHtml += mockProjects.map(p => `
-    <tr>
-      <td>${escapeHtml(p.issueDate)}</td>
-      <td>${escapeHtml(p.saleDate || '')}</td>
-      <td>${escapeHtml(p.followDate || '')}</td>
-      <td>${escapeHtml(p.status)}</td>
-      <td>${escapeHtml(p.rep)}</td>
-      <td class="blue-link">${escapeHtml(p.name)}</td>
-      <td class="blue-link">${escapeHtml(p.contact)}</td>
-      <td title="${escapeHtml(p.summary)}">${escapeHtml(p.summary)}</td>
-      <td>${escapeHtml(p.initial || '')}</td>
-      <td>${escapeHtml(p.motivation || '')}</td>
-      <td>${escapeHtml(p.method || '')}</td>
-    </tr>
-  `).join('');
-  projectsHtml += `</tbody></table></div>`;
-  set('companyProjectsList', projectsHtml);
+function renderTabEmptyState(container, pagerEl, config) {
+  if (pagerEl) pagerEl.style.display = 'none';
+  container.innerHTML = `
+    <div class="empty-state">
+      ${config.icon}
+      <div class="title">${escapeHtml(config.title)}</div>
+      <div class="desc">${escapeHtml(config.desc)}</div>
+    </div>`;
 }
 
-function initTabulator() {
-  const container = q('companyTable');
-  if (!container) return;
+function showTabPager(pagerEl) {
+  if (pagerEl) pagerEl.style.display = '';
+}
 
-  if (table) {
-    try { table.destroy(); } catch (e) { }
+function renderPageNumberButtons(container, currentPage, totalPages, onSelect) {
+  if (!container) return;
+  container.innerHTML = '';
+  if (totalPages < 1) return;
+
+  const maxVisible = 5;
+  let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+  let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+  if (endPage - startPage + 1 < maxVisible) {
+    startPage = Math.max(1, endPage - maxVisible + 1);
   }
 
-  // Calculate initial rows to show data immediately
-  const start = (state.page - 1) * state.pageSize;
-  const initialRows = state.filtered.slice(start, start + state.pageSize);
+  if (startPage > 1) {
+    const first = document.createElement('button');
+    first.type = 'button';
+    first.className = `pg-btn ${currentPage === 1 ? 'active' : ''}`;
+    first.textContent = '1';
+    first.onclick = () => onSelect(1);
+    container.appendChild(first);
+    if (startPage > 2) {
+      const sep = document.createElement('span');
+      sep.className = 'page-sep';
+      sep.textContent = '…';
+      container.appendChild(sep);
+    }
+  }
 
-  table = new Tabulator("#companyTable", {
-    data: initialRows, // Pass data directly here
-    layout: "fitColumns",
-    movableColumns: true,
-    selectableRows: 1,
-    headerSort: false,
-    clipboard: true,
-    clipboardCopyConfig: {
-      columnHeaders: false,
-      formatCells: false,
-    },
-    clipboardCopyStyled: false,
-    tableBuilt: function () {
-      // Data will be handled by the delayed render in init()
-    },
-    rowClick: function (e, row) {
-      const data = row.getData();
-      state.selectedId = String(data.id); // Ensure string
+  for (let p = startPage; p <= endPage; p++) {
+    if (startPage > 1 && p === 1) continue;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = `pg-btn ${p === currentPage ? 'active' : ''}`;
+    btn.textContent = String(p);
+    btn.onclick = () => onSelect(p);
+    container.appendChild(btn);
+  }
 
-      // Update Detail UI
-      fillDetailForm(data);
-      renderChildLists(data);
+  if (endPage < totalPages) {
+    if (endPage < totalPages - 1) {
+      const sep = document.createElement('span');
+      sep.className = 'page-sep';
+      sep.textContent = '…';
+      container.appendChild(sep);
+    }
+    const last = document.createElement('button');
+    last.type = 'button';
+    last.className = `pg-btn ${currentPage === totalPages ? 'active' : ''}`;
+    last.textContent = String(totalPages);
+    last.onclick = () => onSelect(totalPages);
+    container.appendChild(last);
+  }
+}
 
-      // Sync selection
-      table.deselectRow();
-      row.select();
-    },
-    columns: [
-      { title: "会社ID", field: "id", width: 80, headerSort: false },
-      { title: "会社名", field: "name", width: 250, headerSort: false },
-      { title: "代表TEL", field: "tel", width: 130, headerSort: false },
-      { title: "住所", field: "addr", width: 300, headerSort: false },
-      { title: "業界", field: "industry", width: 120, headerSort: false },
-      { title: "業種", field: "biz", width: 120, headerSort: false },
-      { title: "規模ランク", field: "scale", width: 120, headerSort: false },
-      { title: "種別", field: "type", width: 100, headerSort: false },
-      { title: "従業員数", field: "employees", width: 100, headerSort: false },
-      { title: "地区", field: "area", width: 80, headerSort: false },
-      { title: "都道府県", field: "pref", width: 110, headerSort: false },
-      { title: "会社備考", field: "remark", minWidth: 300, headerSort: false },
-    ],
+function updateTabPager(tabName, { total, page, pageSize }, onPageChange) {
+  const key = tabName.toLowerCase();
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const start = (page - 1) * pageSize;
+  const end = Math.min(start + pageSize, total);
+
+  const totalCountEl = q(`${key}TotalCount`);
+  const rangeStartEl = q(`${key}RangeStart`);
+  const rangeEndEl = q(`${key}RangeEnd`);
+  const pageTotalEl = q(`${key}PageTotal`);
+  const pageSelectEl = q(`${key}PageSelect`);
+  const pageNumbersEl = q(`${key}PageNumbers`);
+
+  if (totalCountEl) totalCountEl.textContent = total;
+  if (rangeStartEl) rangeStartEl.textContent = total > 0 ? (start + 1) : 0;
+  if (rangeEndEl) rangeEndEl.textContent = end;
+  if (pageTotalEl) pageTotalEl.textContent = `/ ${totalPages}`;
+
+  if (pageSelectEl) {
+    pageSelectEl.innerHTML = '';
+    for (let p = 1; p <= totalPages; p++) {
+      const opt = document.createElement('option');
+      opt.value = String(p);
+      opt.textContent = String(p);
+      if (p === page) opt.selected = true;
+      pageSelectEl.appendChild(opt);
+    }
+  }
+
+  renderPageNumberButtons(pageNumbersEl, page, totalPages, (p) => {
+    onPageChange(p);
   });
+
+  const first = q(`btn${tabName}FirstPage`);
+  const prev = q(`btn${tabName}PrevPage`);
+  const next = q(`btn${tabName}NextPage`);
+  const last = q(`btn${tabName}LastPage`);
+  if (first) first.disabled = page === 1;
+  if (prev) prev.disabled = page === 1;
+  if (next) next.disabled = page === totalPages;
+  if (last) last.disabled = page === totalPages;
+}
+
+function renderContactsList(c) {
+  const tableWrap = q('companyContactsList');
+  if (!tableWrap) return;
+
+  const pager = q('contactsPager');
+  const contacts = mockContacts.filter(m => String(m.companyId) === String(c.id));
+  const total = contacts.length;
+
+  if (total === 0) {
+    renderTabEmptyState(tableWrap, pager, TAB_EMPTY.contacts);
+    return;
+  }
+  showTabPager(pager);
+  const size = state.contactsPageSize;
+  const totalPages = Math.max(1, Math.ceil(total / size));
+  
+  if (state.contactsPage > totalPages) state.contactsPage = totalPages;
+  if (state.contactsPage < 1) state.contactsPage = 1;
+
+  const start = (state.contactsPage - 1) * size;
+  const actualEndIdx = Math.min(start + size, total);
+  const sliced = contacts.slice(start, actualEndIdx);
+
+  let contactsHtml = `
+    <table class="t">
+      <thead>
+        <tr>
+          <th>担当(姓)</th>
+          <th>担当(名)</th>
+          <th>フリガナ</th>
+          <th>部署名</th>
+          <th>TEL</th>
+          <th>携帯電話</th>
+          <th>Email</th>
+          <th>役職名</th>
+          <th>職位</th>
+          <th>担当者備考</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  if (sliced.length === 0) {
+    contactsHtml += `
+      <tr>
+        <td colspan="10" style="text-align:center; padding: 20px; color: var(--text-3);">表示するデータがありません</td>
+      </tr>
+    `;
+  } else {
+    contactsHtml += sliced.map(m => `
+      <tr>
+        <td class="blue-link">${escapeHtml(m.last)}</td>
+        <td>${escapeHtml(m.first)}</td>
+        <td>${escapeHtml(m.kana)}</td>
+        <td>${escapeHtml(m.dept)}</td>
+        <td>${escapeHtml(m.tel)}</td>
+        <td>${escapeHtml(m.mobile)}</td>
+        <td>${escapeHtml(m.email)}</td>
+        <td>${escapeHtml(m.pos)}</td>
+        <td>${escapeHtml(m.rank)}</td>
+        <td title="${escapeHtml(m.remark)}">${escapeHtml(m.remark)}</td>
+      </tr>
+    `).join('');
+  }
+
+  contactsHtml += `</tbody></table>`;
+  tableWrap.innerHTML = contactsHtml;
+
+  updateTabPager('Contacts', {
+    total,
+    page: state.contactsPage,
+    pageSize: size,
+  }, (p) => {
+    state.contactsPage = p;
+    renderContactsList(c);
+  });
+}
+
+function renderActivitiesList(c) {
+  const tableWrap = q('companyActivitiesList');
+  if (!tableWrap) return;
+
+  const pager = q('activitiesPager');
+  const companyContacts = mockContacts.filter(m => String(m.companyId) === String(c.id));
+  const contactIds = companyContacts.map(m => String(m.id));
+  const activities = mockActivities.filter(a => contactIds.includes(String(a.contactId)) || String(a.company) === String(c.name));
+  const total = activities.length;
+
+  if (total === 0) {
+    renderTabEmptyState(tableWrap, pager, TAB_EMPTY.activities);
+    return;
+  }
+  showTabPager(pager);
+  const size = state.activitiesPageSize;
+  const totalPages = Math.max(1, Math.ceil(total / size));
+  
+  if (state.activitiesPage > totalPages) state.activitiesPage = totalPages;
+  if (state.activitiesPage < 1) state.activitiesPage = 1;
+
+  const start = (state.activitiesPage - 1) * size;
+  const actualEndIdx = Math.min(start + size, total);
+  const sliced = activities.slice(start, actualEndIdx);
+
+  let activitiesHtml = `
+    <table class="t">
+      <thead>
+        <tr>
+          <th>活動日</th>
+          <th>営業担当</th>
+          <th>担当(姓)</th>
+          <th>タイプ</th>
+          <th style="min-width: 250px;">コメント</th>
+          <th>目的</th>
+          <th>案件名</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  if (sliced.length === 0) {
+    activitiesHtml += `
+      <tr>
+        <td colspan="7" style="text-align:center; padding: 20px; color: var(--text-3);">表示するデータがありません</td>
+      </tr>
+    `;
+  } else {
+    activitiesHtml += sliced.map(a => `
+      <tr>
+        <td>${escapeHtml(a.date)}</td>
+        <td>${escapeHtml(a.rep)}</td>
+        <td class="blue-link">${escapeHtml(a.contact)}</td>
+        <td><span class="${a.typeClass}">${escapeHtml(a.type)}</span></td>
+        <td title="${escapeHtml(a.comment)}">${escapeHtml(a.comment)}</td>
+        <td>${escapeHtml(a.purpose || '')}</td>
+        <td>${escapeHtml(a.projectName || '')}</td>
+      </tr>
+    `).join('');
+  }
+
+  activitiesHtml += `</tbody></table>`;
+  tableWrap.innerHTML = activitiesHtml;
+
+  updateTabPager('Activities', {
+    total,
+    page: state.activitiesPage,
+    pageSize: size,
+  }, (p) => {
+    state.activitiesPage = p;
+    renderActivitiesList(c);
+  });
+}
+
+function renderProjectsList(c) {
+  const tableWrap = q('companyProjectsList');
+  if (!tableWrap) return;
+
+  const pager = q('projectsPager');
+  const companyContacts = mockContacts.filter(m => String(m.companyId) === String(c.id));
+  const contactIds = companyContacts.map(m => String(m.id));
+  const projects = mockProjects.filter(p => contactIds.includes(String(p.contactId)) || String(p.company) === String(c.name));
+  const total = projects.length;
+
+  if (total === 0) {
+    renderTabEmptyState(tableWrap, pager, TAB_EMPTY.projects);
+    return;
+  }
+  showTabPager(pager);
+  const size = state.projectsPageSize;
+  const totalPages = Math.max(1, Math.ceil(total / size));
+  
+  if (state.projectsPage > totalPages) state.projectsPage = totalPages;
+  if (state.projectsPage < 1) state.projectsPage = 1;
+
+  const start = (state.projectsPage - 1) * size;
+  const actualEndIdx = Math.min(start + size, total);
+  const sliced = projects.slice(start, actualEndIdx);
+
+  let projectsHtml = `
+    <table class="t">
+      <thead>
+        <tr>
+          <th>話題日</th>
+          <th>売上日</th>
+          <th>フォロー予定</th>
+          <th>案件ステータス</th>
+          <th>営業担当</th>
+          <th>案件名</th>
+          <th>担当(姓)</th>
+          <th style="min-width: 250px;">案件概要</th>
+          <th>当初確度</th>
+          <th>発生動機</th>
+          <th>引合手段</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  if (sliced.length === 0) {
+    projectsHtml += `
+      <tr>
+        <td colspan="11" style="text-align:center; padding: 20px; color: var(--text-3);">表示するデータがありません</td>
+      </tr>
+    `;
+  } else {
+    projectsHtml += sliced.map(p => `
+      <tr>
+        <td>${escapeHtml(p.issueDate)}</td>
+        <td>${escapeHtml(p.saleDate || '')}</td>
+        <td>${escapeHtml(p.followDate || '')}</td>
+        <td>${escapeHtml(p.status)}</td>
+        <td>${escapeHtml(p.rep)}</td>
+        <td class="blue-link">${escapeHtml(p.name)}</td>
+        <td class="blue-link">${escapeHtml(p.contact)}</td>
+        <td title="${escapeHtml(p.summary)}">${escapeHtml(p.summary)}</td>
+        <td>${escapeHtml(p.initial || '')}</td>
+        <td>${escapeHtml(p.motivation || '')}</td>
+        <td>${escapeHtml(p.method || '')}</td>
+      </tr>
+    `).join('');
+  }
+
+  projectsHtml += `</tbody></table>`;
+  tableWrap.innerHTML = projectsHtml;
+
+  updateTabPager('Projects', {
+    total,
+    page: state.projectsPage,
+    pageSize: size,
+  }, (p) => {
+    state.projectsPage = p;
+    renderProjectsList(c);
+  });
+}
+
+function renderChildLists(c) {
+  if (!c) return;
+  renderContactsList(c);
+  renderActivitiesList(c);
+  renderProjectsList(c);
+}
+
+let companySortBound = false;
+
+function compareCompanyRows(a, b, key, type) {
+  let av = a[key];
+  let bv = b[key];
+  if (type === 'num') {
+    av = parseFloat(String(av ?? '').replace(/,/g, '')) || 0;
+    bv = parseFloat(String(bv ?? '').replace(/,/g, '')) || 0;
+    return av < bv ? -1 : av > bv ? 1 : 0;
+  }
+  av = String(av ?? '');
+  bv = String(bv ?? '');
+  return av.localeCompare(bv, 'ja');
+}
+
+function getSortedFiltered() {
+  const thead = document.querySelector('.list-stack table.t thead');
+  const th = thead?.querySelector(`th[data-sort-key="${state.sortKey}"]`);
+  const type = th?.getAttribute('data-sort-type') || 'str';
+  return [...state.filtered].sort((a, b) => {
+    const r = compareCompanyRows(a, b, state.sortKey, type);
+    return state.sortDir === 'asc' ? r : -r;
+  });
+}
+
+function updateSortHeaderUI() {
+  const thead = document.querySelector('.list-stack table.t thead');
+  if (!thead) return;
+  thead.querySelectorAll('th[data-sort-key]').forEach(th => {
+    const isActive = th.getAttribute('data-sort-key') === state.sortKey;
+    th.classList.toggle('sort-asc', isActive && state.sortDir === 'asc');
+    th.classList.toggle('sort-desc', isActive && state.sortDir === 'desc');
+    th.setAttribute(
+      'aria-sort',
+      isActive ? (state.sortDir === 'asc' ? 'ascending' : 'descending') : 'none'
+    );
+  });
+}
+
+function bindCompanyTableSort() {
+  const thead = document.querySelector('.list-stack table.t thead');
+  if (!thead || companySortBound) return;
+  companySortBound = true;
+  thead.addEventListener('click', (e) => {
+    const th = e.target.closest('th[data-sort-key]');
+    if (!th) return;
+    const key = th.getAttribute('data-sort-key');
+    if (key === state.sortKey) {
+      state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      state.sortKey = key;
+      const type = th.getAttribute('data-sort-type');
+      state.sortDir = type === 'num' ? 'desc' : 'asc';
+    }
+    state.page = 1;
+    render();
+  });
+}
+
+function bindCompanyTable() {
+  const tbody = q('companyTableBody');
+  if (!tbody || companyTableBound) return;
+  companyTableBound = true;
+  tbody.addEventListener('click', (e) => {
+    const tr = e.target.closest('tr[data-id]');
+    if (!tr) return;
+    state.selectedId = tr.getAttribute('data-id');
+    const c = state.companies.find(x => String(x.id) === String(state.selectedId))
+      || state.filtered.find(x => String(x.id) === String(state.selectedId));
+    if (c) {
+      fillDetailForm(c);
+      renderChildLists(c);
+    }
+    render();
+  });
+}
+
+function renderCompanyTable(rows) {
+  const tbody = q('companyTableBody');
+  if (!tbody) return;
+
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="12" style="text-align:center;padding:20px;color:var(--text-3);">表示するデータがありません</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = rows.map(c => {
+    const selected = String(c.id) === String(state.selectedId);
+    return `<tr data-id="${escapeHtml(c.id)}" class="${selected ? 'selected' : ''}">
+      <td>${escapeHtml(c.id)}</td>
+      <td>${escapeHtml(c.name)}</td>
+      <td class="tel-num">${escapeHtml(c.tel ?? '')}</td>
+      <td>${escapeHtml(c.addr ?? '')}</td>
+      <td>${escapeHtml(c.industry ?? '')}</td>
+      <td>${escapeHtml(c.biz ?? '')}</td>
+      <td>${escapeHtml(c.scale ?? '')}</td>
+      <td>${escapeHtml(c.type ?? '')}</td>
+      <td class="num">${escapeHtml(c.employees ?? '')}</td>
+      <td>${escapeHtml(c.area ?? '')}</td>
+      <td>${escapeHtml(c.pref ?? '')}</td>
+      <td title="${escapeHtml(c.remark ?? '')}">${escapeHtml(c.remark ?? '')}</td>
+    </tr>`;
+  }).join('');
 }
 
 function initResizer() {
@@ -694,6 +1079,16 @@ function initResizer() {
   const container = document.querySelector('.company-main');
 
   if (!resizer || !container) return;
+
+  if (!container.style.getPropertyValue('--grid-height')) {
+    container.style.setProperty('--grid-height', '400px');
+  }
+  try {
+    const saved = parseInt(localStorage.getItem('smos.cp01.listH') || '', 10);
+    if (saved >= 160) container.style.setProperty('--grid-height', `${saved}px`);
+  } catch {
+    /* ignore */
+  }
 
   let isResizing = false;
 
@@ -710,18 +1105,17 @@ function initResizer() {
     const containerRect = container.getBoundingClientRect();
     const relativeY = e.clientY - containerRect.top;
 
-    // Constraints: min height for grid and detail
-    const minGridHeight = 150;
-    const minDetailHeight = 200;
-    const maxHeight = containerRect.height - minDetailHeight;
+    const minGridHeight = 160;
+    const maxHeight = Math.min(
+      Math.round(window.innerHeight * 0.55),
+      Math.max(minGridHeight, relativeY)
+    );
 
-    let newHeight = relativeY - 6; // Center the resizer (12px / 2)
+    let newHeight = relativeY - 6;
     if (newHeight < minGridHeight) newHeight = minGridHeight;
     if (newHeight > maxHeight) newHeight = maxHeight;
 
     container.style.setProperty('--grid-height', `${newHeight}px`);
-    // Notify tabulator to redraw
-    if (table) table.redraw();
   });
 
   document.addEventListener('mouseup', () => {
@@ -730,6 +1124,12 @@ function initResizer() {
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
       resizer.classList.remove('active');
+      const h = parseInt(container.style.getPropertyValue('--grid-height') || '400', 10);
+      try {
+        localStorage.setItem('smos.cp01.listH', String(h));
+      } catch {
+        /* ignore */
+      }
     }
   });
 }

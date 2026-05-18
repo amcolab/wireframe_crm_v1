@@ -1,17 +1,27 @@
 import { q, escapeHtml } from '../../utils/helpers.js';
 import { mockProjects, mockActivities } from '../../utils/mockData.js';
+import { renderPageNumberButtons } from '../../utils/pager.js';
+import {
+  TAB_EMPTY,
+  renderTabEmptyState,
+  showTabPager,
+  updateTabPager,
+  bindTabPager,
+  syncEntityDetailTabLayout,
+} from '../../utils/entityTabTable.js';
 
 let state = {
   projects: [...mockProjects],
   filtered: [...mockProjects],
   selectedId: mockProjects[0]?.id ? String(mockProjects[0].id) : null,
   page: 1,
-  pageSize: 25
+  pageSize: 25,
+  projectActivitiesPage: 1,
+  projectActivitiesPageSize: 10,
 };
 
-let table = null;
+let tableBound = false;
 
-// Helper to convert YYYY/MM/DD to YYYY-MM-DD for <input type="date">
 function formatDateForInput(dateStr) {
   if (!dateStr) return '';
   return dateStr.replace(/\//g, '-');
@@ -20,55 +30,64 @@ function formatDateForInput(dateStr) {
 export function init() {
   console.log('Project screen (PR01) initialized');
   bindUi();
-  initTabulator();
+  bindProjectTable();
+  bindTabPager(
+    'projectActivities',
+    state,
+    'projectActivitiesPage',
+    'projectActivitiesPageSize',
+    () => getSelectedProjectActivities(),
+    () => {
+      const p = getSelectedProject();
+      if (p) renderProjectActivitiesList(p);
+    }
+  );
   initResizer();
+  const card = document.querySelector('#project-root .company-detail');
+  syncEntityDetailTabLayout(card, 'detail');
+  setTimeout(() => render(), 200);
+}
 
-  setTimeout(() => {
-    render();
-  }, 200);
+function getSelectedProject() {
+  return state.projects.find(p => String(p.id) === String(state.selectedId))
+    || state.filtered.find(p => String(p.id) === String(state.selectedId))
+    || state.filtered[0]
+    || null;
+}
+
+function getSelectedProjectActivities() {
+  const p = getSelectedProject();
+  if (!p) return [];
+  return mockActivities.filter(a => String(a.projectId) === String(p.id));
 }
 
 function bindUi() {
+  const root = q('project-root');
+  if (root?.dataset.bound) return;
+  root.dataset.bound = 'true';
+
   const tabs = document.querySelectorAll('[data-pr-tab]');
   const panels = document.querySelectorAll('[data-pr-panel]');
+  const card = document.querySelector('#project-root .company-detail');
 
   tabs.forEach(t => {
     t.addEventListener('click', () => {
       const tab = t.getAttribute('data-pr-tab');
-      tabs.forEach(x => x.classList.toggle('active', x === t));
-      panels.forEach(p => {
-        const isTarget = p.getAttribute('data-pr-panel') === tab;
-        p.classList.toggle('active', isTarget);
-        p.style.display = isTarget ? 'block' : 'none';
+      tabs.forEach(x => {
+        x.classList.toggle('active', x === t);
+        x.setAttribute('aria-selected', x === t ? 'true' : 'false');
       });
+      panels.forEach(p => {
+        p.classList.toggle('active', p.getAttribute('data-pr-panel') === tab);
+      });
+      syncEntityDetailTabLayout(card, tab);
 
-      // Show/Hide tab-specific actions
-      const isActivities = tab === 'activities';
       const btnAct = q('btnPrTabNewActivity');
-      const btnPrj = q('btnPrTabNewProject');
-      if (btnAct) btnAct.style.display = isActivities ? 'block' : 'none';
-      if (btnPrj) btnPrj.style.display = isActivities ? 'block' : 'none';
-
-      // Redraw table if switching to activities tab
-      if (tab === 'activities' && table) table.redraw();
+      if (btnAct) btnAct.style.display = tab === 'activities' ? 'inline-flex' : 'none';
     });
   });
 
-  q('btnProjectSearch')?.addEventListener('click', () => {
-    const company = q('projectSearchCompany')?.value?.trim();
-    const rep = q('projectSearchSalesRep')?.value?.trim();
-    
-    state.filtered = state.projects.filter(p => {
-      if (company && !(p.company || '').includes(company)) return false;
-      if (rep && !(p.rep || '').includes(rep)) return false;
-      return true;
-    });
-    
-    state.page = 1;
-    state.selectedId = state.filtered[0]?.id ? String(state.filtered[0].id) : null;
-    render();
-  });
-
+  q('btnProjectSearch')?.addEventListener('click', applySearch);
   q('btnProjectClear')?.addEventListener('click', () => {
     if (q('projectSearchCompany')) q('projectSearchCompany').value = '';
     if (q('projectSearchSalesRep')) q('projectSearchSalesRep').value = '';
@@ -77,35 +96,14 @@ function bindUi() {
     state.selectedId = state.filtered[0]?.id ? String(state.filtered[0].id) : null;
     render();
   });
-
-  q('btnProjectNewMain')?.addEventListener('click', () => {
-    q('dlgProjectDetail')?.showModal();
-  });
-
-  q('btnProjectAdvancedSearch')?.addEventListener('click', () => {
-    q('dlgProjectAdvancedSearch')?.showModal();
-  });
-
-  q('btnPrTabNewActivity')?.addEventListener('click', () => {
-    q('dlgActivityDetail')?.showModal();
-  });
-
-  q('btnPrTabNewProject')?.addEventListener('click', () => {
-    q('dlgProjectDetail')?.showModal();
-  });
-
-  q('btnPrDetailContactLookup')?.addEventListener('click', () => {
-    q('dlgContactLookup')?.showModal();
-  });
-
-  q('btnPrDetailContactNew')?.addEventListener('click', () => {
-    q('dlgContactDetailNew')?.showModal();
-  });
-
+  q('btnProjectNewMain')?.addEventListener('click', () => { q('dlgProjectDetail')?.showModal(); });
+  q('btnProjectAdvancedSearch')?.addEventListener('click', () => { q('dlgProjectAdvancedSearch')?.showModal(); });
+  q('btnPrTabNewActivity')?.addEventListener('click', () => { q('dlgActivityDetail')?.showModal(); });
+  q('btnPrDetailContactLookup')?.addEventListener('click', () => { q('dlgContactLookup')?.showModal(); });
+  q('btnPrDetailContactNew')?.addEventListener('click', () => { q('dlgContactDetailNew')?.showModal(); });
   q('btnPrDetailSave')?.addEventListener('click', () => { alert('保存しました'); });
   q('btnPrDetailDelete')?.addEventListener('click', () => { if (confirm('削除しますか？')) alert('削除しました'); });
 
-  // Pager Events
   q('btnProjectFirstPage')?.addEventListener('click', () => { state.page = 1; render(); });
   q('btnProjectPrevPage')?.addEventListener('click', () => { if (state.page > 1) { state.page--; render(); } });
   q('btnProjectNextPage')?.addEventListener('click', () => {
@@ -113,61 +111,72 @@ function bindUi() {
     if (state.page < totalPages) { state.page++; render(); }
   });
   q('btnProjectLastPage')?.addEventListener('click', () => {
-    const totalPages = Math.ceil(state.filtered.length / state.pageSize);
-    state.page = totalPages;
+    state.page = Math.max(1, Math.ceil(state.filtered.length / state.pageSize));
     render();
   });
-
   q('projectPageSelect')?.addEventListener('change', (e) => {
-    state.page = parseInt(e.target.value) || 1;
+    state.page = parseInt(e.target.value, 10) || 1;
     render();
   });
-
   q('projectPageSize')?.addEventListener('change', (e) => {
-    state.pageSize = parseInt(e.target.value) || 25;
+    state.pageSize = parseInt(e.target.value, 10) || 25;
     state.page = 1;
     render();
   });
 }
 
-function render() {
-  const totalCount = q('projectTotalCount');
-  const pageNumbers = q('projectPageNumbers');
-  const pageSelect = q('projectPageSelect');
-  const pageTotal = q('projectPageTotal');
-  const rangeStart = q('projectRangeStart');
-  const rangeEnd = q('projectRangeEnd');
+function applySearch() {
+  const company = q('projectSearchCompany')?.value?.trim();
+  const rep = q('projectSearchSalesRep')?.value?.trim();
+  state.filtered = state.projects.filter(p => {
+    if (company && !(p.company || '').includes(company)) return false;
+    if (rep && !(p.rep || '').includes(rep)) return false;
+    return true;
+  });
+  state.page = 1;
+  state.selectedId = state.filtered[0]?.id ? String(state.filtered[0].id) : null;
+  render();
+}
 
+function bindProjectTable() {
+  const tbody = q('projectTableBody');
+  if (!tbody || tableBound) return;
+  tableBound = true;
+  tbody.addEventListener('click', (e) => {
+    const tr = e.target.closest('tr[data-id]');
+    if (!tr) return;
+    state.selectedId = tr.getAttribute('data-id');
+    const p = getSelectedProject();
+    if (p) {
+      state.selectedId = String(p.id);
+      fillDetailForm(p);
+      state.projectActivitiesPage = 1;
+      renderProjectActivitiesList(p);
+    }
+    render();
+  });
+}
+
+function render() {
   const total = state.filtered.length;
   const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
-
   if (state.page > totalPages) state.page = totalPages;
   if (state.page < 1) state.page = 1;
 
-  if (totalCount) totalCount.textContent = total;
-  if (pageTotal) pageTotal.textContent = `/ ${totalPages}`;
-
   const start = (state.page - 1) * state.pageSize;
-  const actualEndIdx = Math.min(start + state.pageSize, total);
+  const end = Math.min(start + state.pageSize, total);
 
-  if (rangeStart) rangeStart.textContent = total > 0 ? (start + 1) : 0;
-  if (rangeEnd) rangeEnd.textContent = actualEndIdx;
+  if (q('projectTotalCount')) q('projectTotalCount').textContent = total;
+  if (q('projectPageTotal')) q('projectPageTotal').textContent = `/ ${totalPages}`;
+  if (q('projectRangeStart')) q('projectRangeStart').textContent = total > 0 ? (start + 1) : 0;
+  if (q('projectRangeEnd')) q('projectRangeEnd').textContent = end;
 
-  if (pageNumbers) {
-    pageNumbers.innerHTML = '';
-    const maxVisible = 5;
-    let startPage = Math.max(1, state.page - Math.floor(maxVisible / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
-    if (endPage - startPage + 1 < maxVisible) startPage = Math.max(1, endPage - maxVisible + 1);
-    for (let p = startPage; p <= endPage; p++) {
-      const btn = document.createElement('button');
-      btn.className = `page-num-btn ${p === state.page ? 'active' : ''}`;
-      btn.textContent = p;
-      btn.onclick = () => { state.page = p; render(); };
-      pageNumbers.appendChild(btn);
-    }
-  }
+  renderPageNumberButtons(q('projectPageNumbers'), state.page, totalPages, (p) => {
+    state.page = p;
+    render();
+  });
 
+  const pageSelect = q('projectPageSelect');
   if (pageSelect) {
     pageSelect.innerHTML = '';
     for (let p = 1; p <= totalPages; p++) {
@@ -179,25 +188,37 @@ function render() {
     }
   }
 
-  const rows = state.filtered.slice(start, actualEndIdx);
+  renderProjectTable(state.filtered.slice(start, end));
 
-  if (table) {
-    table.setData(rows).then(() => {
-      if (state.selectedId) {
-        table.deselectRow();
-        table.selectRow(state.selectedId);
-      }
-      table.redraw();
-    });
-  }
-
-  const selected = state.projects.find(p => String(p.id) === String(state.selectedId)) || state.filtered[0] || null;
+  const selected = getSelectedProject();
   if (selected) {
     state.selectedId = String(selected.id);
     fillDetailForm(selected);
-    const relatedActivities = mockActivities.filter(a => String(a.projectId) === String(selected.id));
-    renderActivities(relatedActivities);
+    renderProjectActivitiesList(selected);
   }
+}
+
+function renderProjectTable(rows) {
+  const tbody = q('projectTableBody');
+  if (!tbody) return;
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-3);">表示するデータがありません</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.map(p => {
+    const sel = String(p.id) === String(state.selectedId);
+    return `<tr data-id="${escapeHtml(p.id)}" class="${sel ? 'selected' : ''}">
+      <td>${escapeHtml(p.issueDate || '')}</td>
+      <td>${escapeHtml(p.followDate || '')}</td>
+      <td>${escapeHtml(p.status || '')}</td>
+      <td>${escapeHtml(p.rep || '')}</td>
+      <td>${escapeHtml(p.company || '')}</td>
+      <td class="blue-link">${escapeHtml(p.contact || '')}</td>
+      <td>${escapeHtml(p.name || '')}</td>
+      <td title="${escapeHtml(p.summary || '')}">${escapeHtml(p.summary || '')}</td>
+      <td>${escapeHtml(p.motivation || '')}</td>
+    </tr>`;
+  }).join('');
 }
 
 function fillDetailForm(p) {
@@ -209,12 +230,8 @@ function fillDetailForm(p) {
   set('prDetailCompanyName', p.company);
   set('prDetailContact', p.contact);
   set('prDetailSummary', p.summary);
-  
-  // Fix date format
   set('prDetailIssueDate', formatDateForInput(p.issueDate));
   set('prDetailFollowUp', formatDateForInput(p.followDate));
-  
-  // Set checkboxes
   const setChk = (id, val) => { const el = q(id); if (el) el.checked = !!val; };
   setChk('prStage1', p.stage1);
   setChk('prStage2', p.stage2);
@@ -222,61 +239,55 @@ function fillDetailForm(p) {
   setChk('prStage4', p.stage4);
 }
 
-function renderActivities(data) {
-  const tbody = q('projectActivitiesTableBody');
-  if (!tbody) return;
-  if (data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px; color: #999;">関連する活動はありません。</td></tr>';
+function renderProjectActivitiesList(p) {
+  const wrap = q('projectActivitiesList');
+  const pager = q('projectActivitiesPager');
+  if (!wrap) return;
+
+  const items = mockActivities.filter(a => String(a.projectId) === String(p.id));
+  const total = items.length;
+
+  if (total === 0) {
+    renderTabEmptyState(wrap, pager, TAB_EMPTY.projectActivities);
     return;
   }
-  tbody.innerHTML = data.map(a => `
-    <tr>
+  showTabPager(pager);
+
+  const size = state.projectActivitiesPageSize;
+  const totalPages = Math.max(1, Math.ceil(total / size));
+  if (state.projectActivitiesPage > totalPages) state.projectActivitiesPage = totalPages;
+  if (state.projectActivitiesPage < 1) state.projectActivitiesPage = 1;
+
+  const start = (state.projectActivitiesPage - 1) * size;
+  const sliced = items.slice(start, Math.min(start + size, total));
+
+  let html = `<table class="t"><thead><tr>
+    <th>活動日</th><th>営業担当</th><th>タイプ</th><th>目的</th><th>動機</th><th>担当(姓)</th><th>コメント</th>
+  </tr></thead><tbody>`;
+
+  if (!sliced.length) {
+    html += '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text-3);">表示するデータがありません</td></tr>';
+  } else {
+    html += sliced.map(a => `<tr>
       <td>${escapeHtml(a.date || '-')}</td>
       <td>${escapeHtml(a.rep || '-')}</td>
-      <td><span class="type-badge ${a.typeClass || ''}">${escapeHtml(a.type || '-')}</span></td>
+      <td><span class="${escapeHtml(a.typeClass || '')}">${escapeHtml(a.type || '-')}</span></td>
       <td>${escapeHtml(a.purpose || '-')}</td>
       <td>${escapeHtml(a.motivation || '-')}</td>
       <td>${escapeHtml(a.contact || '-')}</td>
-      <td>${escapeHtml(a.comment || '-')}</td>
-    </tr>
-  `).join('');
-}
+      <td title="${escapeHtml(a.comment || '')}">${escapeHtml(a.comment || '')}</td>
+    </tr>`).join('');
+  }
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
 
-function initTabulator() {
-  const container = q('projectTable');
-  if (!container) return;
-  if (table) { try { table.destroy(); } catch (e) { } }
-  const start = (state.page - 1) * state.pageSize;
-  const initialRows = state.filtered.slice(start, start + state.pageSize);
-
-  table = new Tabulator("#projectTable", {
-    data: initialRows,
-    layout: "fitColumns",
-    movableColumns: true,
-    selectableRows: 1,
-    headerSort: false,
-    clipboard: true,
-    rowClick: function (e, row) {
-      const data = row.getData();
-      state.selectedId = String(data.id);
-      fillDetailForm(data);
-      const relatedActivities = mockActivities.filter(a => String(a.projectId) === String(data.id));
-      renderActivities(relatedActivities);
-      table.deselectRow();
-      row.select();
-    },
-    columns: [
-      { title: "話題日", field: "issueDate", width: 110 },
-      { title: "フォロー予定", field: "followDate", width: 110 },
-      { title: "案件ステータス", field: "status", width: 120 },
-      { title: "営業担当", field: "rep", width: 130 },
-      { title: "会社名", field: "company", width: 250 },
-      { title: "担当(姓)", field: "contact", width: 120 },
-      { title: "案件名", field: "name", width: 200 },
-      { title: "案件概要", field: "summary", width: 300 },
-      { title: "発生動機", field: "motivation", width: 100 },
-      { title: "引合手段", field: "method", minWidth: 150 },
-    ],
+  updateTabPager('projectActivities', {
+    total,
+    page: state.projectActivitiesPage,
+    pageSize: size,
+  }, (pg) => {
+    state.projectActivitiesPage = pg;
+    renderProjectActivitiesList(p);
   });
 }
 
@@ -284,8 +295,17 @@ function initResizer() {
   const resizer = q('project-resizer');
   const container = document.querySelector('#project-root .company-main');
   if (!resizer || !container) return;
+
+  if (!container.style.getPropertyValue('--grid-height')) {
+    container.style.setProperty('--grid-height', '400px');
+  }
+  try {
+    const saved = parseInt(localStorage.getItem('smos.pr01.listH') || '', 10);
+    if (saved >= 160) container.style.setProperty('--grid-height', `${saved}px`);
+  } catch { /* ignore */ }
+
   let isResizing = false;
-  resizer.addEventListener('mousedown', (e) => {
+  resizer.addEventListener('mousedown', () => {
     isResizing = true;
     document.body.style.cursor = 'row-resize';
     document.body.style.userSelect = 'none';
@@ -295,21 +315,22 @@ function initResizer() {
     if (!isResizing) return;
     const containerRect = container.getBoundingClientRect();
     const relativeY = e.clientY - containerRect.top;
-    const minGridHeight = 150;
-    const minDetailHeight = 200;
-    const maxHeight = containerRect.height - minDetailHeight;
-    let newHeight = relativeY - 6;
-    if (newHeight < minGridHeight) newHeight = minGridHeight;
-    if (newHeight > maxHeight) newHeight = maxHeight;
-    container.style.setProperty('--grid-height', `${newHeight}px`);
-    if (table) table.redraw();
+    const minGridHeight = 160;
+    const maxHeight = Math.min(
+      Math.round(window.innerHeight * 0.55),
+      Math.max(minGridHeight, relativeY)
+    );
+    container.style.setProperty('--grid-height', `${maxHeight}px`);
   });
   document.addEventListener('mouseup', () => {
-    if (isResizing) {
-      isResizing = false;
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-      resizer.classList.remove('active');
-    }
+    if (!isResizing) return;
+    isResizing = false;
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+    resizer.classList.remove('active');
+    try {
+      const h = parseInt(container.style.getPropertyValue('--grid-height') || '400', 10);
+      localStorage.setItem('smos.pr01.listH', String(h));
+    } catch { /* ignore */ }
   });
 }

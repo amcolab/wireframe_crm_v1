@@ -1,38 +1,47 @@
-<section id="login-screen" class="window-card auth-card">
-  <div class="window-card auth-card">
-    <div class="content">
-      <div class="auth-header">
-        <div class="auth-logo">
-          <svg width="64" height="64" viewBox="0 0 100 100">
-            <path d="M50 5 L90 25 L90 75 L50 95 L10 75 L10 25 Z" fill="none" stroke="var(--accent-color)"
-              stroke-width="2.5" />
-            <path d="M50 5 L50 95 M90 25 L10 75 M10 25 L90 75" fill="none" stroke="var(--accent-color)" stroke-width="1"
-              opacity="0.2" />
-            <path d="M30 40 L50 30 L70 40 L70 60 L50 70 L30 60 Z" fill="var(--accent-color)" opacity="0.8" />
-          </svg>
+<section id="login-screen" class="screen active auth-bg">
+  <main class="auth-card" role="main">
+    <header class="auth-brand">
+      <div class="auth-brand-mark">S</div>
+      <div class="auth-brand-name">SMOS</div>
+      <div class="spacer"></div>
+      <span class="code">Portal v2.6.0</span>
+    </header>
+
+    <section class="auth-body">
+      <h1 class="auth-title">ログイン</h1>
+      <p class="auth-sub">アカウント情報を入力してください (LG02)</p>
+
+      <div class="alert-error" id="loginError" role="alert">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg>
+        <span>ユーザーIDまたはパスワードが正しくありません。</span>
+      </div>
+
+      <div class="form-4col cols-1 density-roomy auth-form">
+        <div class="ff">
+          <label for="username">ユーザーID <span class="req">*</span></label>
+          <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c1-3.5 4-5.5 7-5.5s6 2 7 5.5"/></svg>
+          <input class="input" id="username" type="text" placeholder="例: yamada.kenichi" required>
         </div>
-        <h1 class="auth-title">SMOS Portal</h1>
-        <p class="auth-subtitle">システムにログインしてください (LG02)</p>
+
+        <div class="ff">
+          <label for="password">パスワード <span class="req">*</span></label>
+          <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 1 1 8 0v3"/></svg>
+          <input class="input" id="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
+          <button type="button" class="toggle-pw" id="togglePw" aria-label="パスワードを表示" title="パスワードを表示">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1.5 12s4-7.5 10.5-7.5S22.5 12 22.5 12s-4 7.5-10.5 7.5S1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+
+        <div class="auth-options">
+          <label><input type="checkbox" id="remember" checked> ログイン状態を保持</label>
+          <!-- <a class="auth-link" href="#forgot">パスワードをお忘れですか？</a> -->
+        </div>
+
+        <button id="btn-login" class="btn btn-primary btn-block">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg>
+          ログイン
+        </button>
       </div>
-
-      <div class="input-group">
-        <label for="username">ログイン名</label>
-        <input type="text" id="username" placeholder="ユーザーIDまたはメールアドレス">
-      </div>
-
-      <div class="input-group">
-        <label for="password">パスワード</label>
-        <input type="password" id="password" placeholder="••••••••">
-      </div>
-
-      <button id="btn-login" class="btn-primary">ログイン</button>
-
-      <!-- <div class="auth-footer">
-        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-secondary);">
-          <input type="checkbox" style="width: 16px; height: 16px; margin: 0;"> 次回から自動ログイン
-        </label>
-        <a href="#" class="auth-link">パスワードを忘れた場合</a>
-      </div> -->
-    </div>
-  </div>
+    </section>
+  </main>
 </section>

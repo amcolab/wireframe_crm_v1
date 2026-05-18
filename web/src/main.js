@@ -1,5 +1,6 @@
 import { Router } from './router.js';
 import { initGlobalLookups } from './utils/lookups.js';
+import { initShellChrome } from './utils/shellChrome.js';
 
 // Setup routes
 const routes = {
@@ -87,18 +88,44 @@ async function setupDashboardLayout() {
       });
     });
     
-    // Settings menu toggle
-    const settingsTrigger = document.querySelector('.settings-menu-trigger');
-    if (settingsTrigger) {
-      settingsTrigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        settingsTrigger.classList.toggle('show-menu');
+    initShellChrome();
+
+    // Dynamic Crumbs updating on router transition
+    const updateTopbarCrumbs = () => {
+      const hash = window.location.hash.replace('#', '') || 'company';
+      const screenNames = {
+        'company': '会社 (CP01)',
+        'contact': '担当 (CT01)',
+        'activity': '活動 (AT01)',
+        'project': '案件 (PR01)'
+      };
+      const name = screenNames[hash] || '会社 (CP01)';
+      const crumbEl = document.querySelector('#topbarCurrentScreen');
+      if (crumbEl) crumbEl.textContent = name;
+      
+      // Update sidebar active state
+      document.querySelectorAll('.sidebar-item').forEach(item => {
+        if (item.dataset.section === hash) item.classList.add('active');
+        else item.classList.remove('active');
       });
-      // Close menu when clicking outside
-      document.addEventListener('click', () => {
-        settingsTrigger.classList.remove('show-menu');
-      });
-    }
+    };
+    
+    window.addEventListener('hashchange', updateTopbarCrumbs);
+    updateTopbarCrumbs();
+
+    // Show current dynamic Japanese date (e.g. 2026/05/18 (月))
+    const showTopbarDate = () => {
+      const d = new Date();
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const date = String(d.getDate()).padStart(2, '0');
+      const wdays = ['日', '月', '火', '水', '木', '金', '土'];
+      const wday = wdays[d.getDay()];
+      const formatted = `${year}/${month}/${date} (${wday})`;
+      const dateEl = document.querySelector('#topbarCurrentDate');
+      if (dateEl) dateEl.textContent = formatted;
+    };
+    showTopbarDate();
 
     // Initialize global lookups for shared dialogs
     initGlobalLookups();

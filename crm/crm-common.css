@@ -1,0 +1,224 @@
+/* =====================================================================
+   SMOS CRM — Common Design System
+   Shared between: 会社_compact_business.html (list+create) and 会社_login.html
+   Contains: tokens, base reset, .input, .btn family, .form-4col grid (with
+   density variants), .dropzone. Page-specific layout stays in each HTML.
+   ===================================================================== */
+
+/* -------- Tokens -------- */
+:root{
+  --brand-50:#E8F0FE;
+  --brand-100:#CCDCFA;
+  --brand-500:#1E5BD6;
+  --brand-600:#1448B6;
+  --brand-700:#0E3892;
+
+  --accent-500:#E25D14;
+  --accent-600:#C84F0E;
+
+  --bg:        #ECEEF2;
+  --surface:   #FFFFFF;
+  --surface-2: #F5F6F8;
+  --border:    #C9CFD9;
+  --border-2:  #DDE1EA;
+  --hover:     #EEF2F8;
+  --row-zebra: #F7F8FB;
+  --row-selected:#DCE7FA;
+
+  --text-1:#0E1424;
+  --text-2:#3F4A60;
+  --text-3:#7A8499;
+
+  --success:#15803D;
+  --warning:#B45309;
+  --danger: #B91C1C;
+
+  --nav-bg:#1F2A44;
+  --nav-bg-hover:#2A3658;
+  --nav-active-bg:#33406A;
+  --nav-active-bar:#67A0FF;
+  --nav-text:#B6BCCC;
+
+  --r:4px;
+  --r-card:10px;
+  --shadow-1:0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.06);
+  --shadow-card:0 1px 3px rgba(16,24,40,.05);
+  --shadow-pop:0 25px 50px -12px rgba(15,27,45,.35), 0 8px 24px -8px rgba(15,27,45,.18);
+
+  --font: -apple-system, "Segoe UI", "Hiragino Kaku Gothic ProN",
+          "Noto Sans JP", "Yu Gothic UI", Meiryo, Arial, sans-serif;
+  --fs-xs:11px; --fs-sm:12px; --fs-md:12px; --fs-base:13px; --fs-lg:15px;
+}
+
+/* -------- Reset -------- */
+*{box-sizing:border-box}
+html,body{
+  margin:0; background:var(--bg); color:var(--text-1);
+  font-family:var(--font); font-size:var(--fs-md);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* -------- Base input -------- */
+.input{
+  height:28px; padding:0 8px; border:1px solid var(--border); border-radius:var(--r);
+  background:#fff; font:inherit; color:var(--text-1);
+  transition:border-color .12s, box-shadow .12s;
+  font-size:var(--fs-sm);
+}
+.input:hover{border-color:#9CA6B9}
+.input:focus{outline:none; border-color:var(--brand-500); box-shadow:0 0 0 2px rgba(30,91,214,.18)}
+.input[disabled],.input[readonly]{
+  color:#64748B; background:#F1F3F5; border-color:#E2E8F0; cursor:not-allowed;
+}
+
+textarea.input{height:auto; padding:6px 8px; min-height:48px; resize:vertical; line-height:1.45}
+
+select.input{
+  appearance:none; padding-right:24px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237A8499' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
+  background-repeat:no-repeat;
+  background-position:right 6px center;
+  background-size:11px 11px;
+}
+
+/* -------- Button family -------- */
+.btn{
+  height:28px; padding:0 12px; border-radius:var(--r); border:1px solid transparent;
+  font:inherit; font-size:var(--fs-sm); font-weight:500; cursor:pointer;
+  display:inline-flex; align-items:center; gap:5px; white-space:nowrap;
+  transition:background .12s, border-color .12s, color .12s, box-shadow .12s;
+}
+.btn svg{width:12px; height:12px}
+.btn-primary{background:var(--brand-600); color:#fff; border-color:var(--brand-600)}
+.btn-primary:hover{background:var(--brand-700); border-color:var(--brand-700)}
+.btn-secondary{background:#fff; color:var(--text-1); border-color:var(--border)}
+.btn-secondary:hover{background:var(--hover); border-color:#9CA6B9}
+.btn-ghost{background:transparent; color:var(--text-2); border-color:transparent}
+.btn-ghost:hover{background:var(--hover); color:var(--text-1)}
+.btn-accent{background:var(--accent-500); color:#fff; border-color:var(--accent-500)}
+.btn-accent:hover{background:var(--accent-600); border-color:var(--accent-600)}
+.btn-danger{background:#fff; color:var(--danger); border-color:#E1B0B0}
+.btn-danger:hover{background:#FEF2F2}
+.btn:focus{outline:none; box-shadow:0 0 0 2px rgba(30,91,214,.25)}
+.btn[disabled]{opacity:.55; cursor:not-allowed}
+
+/* =====================================================================
+   SHARED FORM — 4-column grid (label-on-top), token-driven density.
+   Density modifiers:
+     .form-4col              → compact (24px height) — list detail
+     .form-4col.density-roomy → roomy (30px height) — create modal
+   Column-count modifiers:
+     .form-4col.cols-1       → single column (login, simple forms)
+     .form-4col.cols-2       → two columns
+     .form-4col.cols-3       → three columns
+   ===================================================================== */
+.form-4col{
+  --fc-h:          24px;
+  --fc-fs:         11px;
+  --fc-pad-x:      8px;
+  --fc-pad-r-sel:  24px;
+  --fc-label-fs:   11px;
+  --fc-label-gap:  2px;
+  --fc-row-gap:    5px;
+  --fc-col-gap:    12px;
+  --fc-grid-pad:   10px 12px;
+  --fc-textarea-h: 180px;
+  --fc-check-fs:   11px;
+  --fc-chev-size:  10px;
+  --fc-chev-pad:   7px;
+  --fc-drop-pad:   18px 14px;
+  --fc-drop-fs:    11px;
+  --fc-inline-gap: 8px;
+  --fc-cols:       4;
+
+  display:grid; grid-template-columns:repeat(var(--fc-cols), 1fr);
+  gap:var(--fc-row-gap) var(--fc-col-gap);
+  padding:var(--fc-grid-pad);
+}
+
+/* Roomy density (modal / login) */
+.form-4col.density-roomy{
+  --fc-h:          32px;
+  --fc-fs:         13px;
+  --fc-pad-x:      10px;
+  --fc-pad-r-sel:  28px;
+  --fc-label-fs:   12px;
+  --fc-label-gap:  6px;
+  --fc-row-gap:    14px;
+  --fc-col-gap:    18px;
+  --fc-grid-pad:   0;
+  --fc-textarea-h: 220px;
+  --fc-check-fs:   13px;
+  --fc-chev-size:  11px;
+  --fc-chev-pad:   9px;
+  --fc-drop-pad:   36px 16px;
+  --fc-drop-fs:    12px;
+  --fc-inline-gap: 10px;
+}
+
+/* Column-count variants */
+.form-4col.cols-1{ --fc-cols:1 }
+.form-4col.cols-2{ --fc-cols:2 }
+.form-4col.cols-3{ --fc-cols:3 }
+
+/* Structure */
+.form-4col .col{display:flex; flex-direction:column; gap:var(--fc-row-gap); min-width:0}
+.form-4col .ff{display:flex; flex-direction:column; gap:var(--fc-label-gap); min-width:0}
+.form-4col .ff > label,
+.form-4col .ff .sub > label{
+  font-size:var(--fc-label-fs); font-weight:500; color:var(--text-2);
+  display:flex; align-items:center; gap:4px; line-height:1.4;
+}
+.form-4col .ff > label .req{color:var(--danger); font-weight:700}
+
+/* Controls */
+.form-4col .ff input.input{
+  height:var(--fc-h); width:100%; font-size:var(--fc-fs); padding:0 var(--fc-pad-x);
+}
+.form-4col .ff select.input{
+  height:var(--fc-h); width:100%; font-size:var(--fc-fs);
+  padding:0 var(--fc-pad-r-sel) 0 var(--fc-pad-x);
+  background-size:var(--fc-chev-size) var(--fc-chev-size);
+  background-position:right var(--fc-chev-pad) center;
+}
+.form-4col .ff textarea.input{
+  width:100%; font-size:var(--fc-fs); padding:6px var(--fc-pad-x);
+  resize:vertical; min-height:var(--fc-textarea-h); line-height:1.5;
+}
+.form-4col .ff .static{
+  height:var(--fc-h); padding:0 var(--fc-pad-x); border-radius:var(--r);
+  background:var(--surface-2); border:1px solid var(--border-2); color:var(--text-2);
+  display:flex; align-items:center; font-size:var(--fc-fs);
+}
+
+/* Checkboxes row */
+.form-4col .ff .check-row{
+  display:flex; align-items:center; gap:14px; padding-top:2px;
+  min-height:var(--fc-h);
+}
+.form-4col .ff .check-row label{
+  display:inline-flex; align-items:center; gap:5px; cursor:pointer;
+  font-size:var(--fc-check-fs); color:var(--text-1);
+}
+.form-4col .ff .check-row input[type=checkbox]{
+  width:13px; height:13px; accent-color:var(--brand-600);
+}
+
+/* 2-up sub layouts */
+.form-4col .ff.inline-2,
+.form-4col .ff.audit-2{
+  display:grid; grid-template-columns:1fr 1fr; gap:var(--fc-inline-gap);
+}
+.form-4col .ff.inline-2 > .sub,
+.form-4col .ff.audit-2 > .sub{
+  display:flex; flex-direction:column; gap:var(--fc-label-gap);
+}
+
+/* Dropzone (attachment area) */
+.dropzone{
+  border:1.5px dashed var(--border); border-radius:var(--r); background:var(--surface-2);
+  color:var(--text-3); text-align:center; transition:border-color .12s, background .12s;
+  padding:18px 14px; font-size:11px;
+}
+.form-4col .dropzone{padding:var(--fc-drop-pad); font-size:var(--fc-drop-fs)}
+.dropzone:hover{border-color:var(--brand-500); background:#F5F9FF; color:var(--brand-600)}

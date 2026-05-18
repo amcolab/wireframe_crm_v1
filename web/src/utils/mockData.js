@@ -1,4 +1,4 @@
-export const mockCompanies = [
+const _companiesRaw = [
   { id: '1141', name: '旭川エレクトロニクスサービス株式会社', tel: '077-589-2569', fax: '089-5996-4084', postal: '7059306', pref: '北海道', area: '関東', addr: '北海道旭川市東区4丁目18-30', industry: '製造業', biz: '金属製品', scale: '1～30人', type: 'その他', corpNo: '0209176547839', employees: '1909', closingMonth: '9', revenue: '11', capital: '10,000', noDoc: false, noTel: false, remark: '主要取引先：旭川重工', free1: '', free2: '', free3: '', free4: '', free5: '', free6: '', free7: '', createdAt: '2026/04/01 10:00', createdBy: 'admin', updatedAt: '2026/04/20 15:30', updatedBy: 'admin' },
   { id: '1068', name: '旭川システム株式会社', tel: '097-9539-3068', fax: '018-834-4967', postal: '2982635', pref: '滋賀県', area: '関西', addr: '滋賀県市東区1丁目18-20', industry: '製造業', biz: '化学・素材', scale: '1～30人', type: 'メーカー', corpNo: '', employees: '500', closingMonth: '3', revenue: '50', capital: '500', noDoc: false, noTel: false, remark: '', free1: '', free2: '', free3: '', free4: '', free5: '', free6: '', free7: '', createdAt: '2026/03/12 09:20', createdBy: 'user01', updatedAt: '2026/03/12 09:20', updatedBy: 'user01' },
   { id: '1219', name: '旭川電気エレクトロニクス株式会社', tel: '057-8441-7148', fax: '094-4145-1012', postal: '3208708', pref: '東京都', area: '関東', addr: '東京都新宿区西2丁目3-14', industry: '卸売業', biz: '木工・家具', scale: '31～100人', type: 'メーカー', corpNo: '', employees: '80', closingMonth: '12', revenue: '120', capital: '50', noDoc: false, noTel: false, remark: '新規開拓中', free1: '', free2: '', free3: '', free4: '', free5: '', free6: '', free7: '', createdAt: '2026/02/02 13:00', createdBy: 'user02', updatedAt: '2026/04/02 09:10', updatedBy: 'user02' },
@@ -59,6 +59,35 @@ export const mockCompanies = [
   { id: '1274', name: '藤井重機', tel: '06-1111-2222', addr: '大阪府大阪市西成区5-5-5', industry: '製造業', biz: '金属製品', scale: '101～300人', type: 'メーカー', employees: '350', area: '関西', pref: '大阪府', remark: '' },
   { id: '1275', name: '佐々木テック', tel: '03-2222-3333', addr: '東京都足立区6-6-6', industry: '製造業', biz: 'その他製造業', scale: '301人以上', type: 'メーカー', employees: '1200', area: '関東', pref: '東京都', remark: '' }
 ];
+
+const REMARK_FILLERS = [
+  '主要取引先：旭川重工',
+  '新規開拓中',
+  '長期取引先',
+  '主要仕入先',
+  '年次更新3月',
+  '伝統工芸系、職人ベース',
+  '建築設計・インテリア',
+  '再エネ発電事業',
+  '冷凍冷蔵物流',
+  'ISO9001取得済',
+  '技術力高い',
+  '海外展開中',
+  '見積提出済',
+  '契約更新予定',
+  '品質監査対応中',
+  'サンプル送付済',
+  '初回訪問実施',
+  'オンライン商談可',
+  '親会社グループ傘下',
+  '要フォローアップ',
+  '展示会リード',
+];
+
+export const mockCompanies = _companiesRaw.map((c, i) => {
+  if ((c.remark ?? '').trim()) return c;
+  return { ...c, remark: REMARK_FILLERS[i % REMARK_FILLERS.length] };
+});
 
 export const mockContacts = [
   { id: '10001', companyId: '1141', company: '旭川エレクトロニクスサービス株式会社', dept: 'ロジスティクス部', last: '渡辺', first: '沙織', kana: 'ワタナベ サオリ', tel: '012-4294-2357', mobile: '070-7122-8116', email: 'watanabe.saori@c10250.co.jp', role: '管理', rank: '次長', pos: 'ロジスティクス部次長', addr: '北海道旭川市東区4丁目18-30', remark: '展示会での名刺交換による登録。' },
