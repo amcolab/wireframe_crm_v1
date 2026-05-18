@@ -1931,7 +1931,8 @@
 .form-foot-split {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 10px;
   padding: 10px 14px;
   border-top: 1px solid var(--border);
   background: var(--surface-2);
@@ -1940,9 +1941,37 @@
 
 .form-foot-split .left,
 .form-foot-split .right {
-  display: flex;
-  gap: 8px;
+  display: contents;
+}
+
+/* Footer / modal action buttons — compact, label centered (match CRM) */
+.form-foot-split .btn,
+.modal-footer .btn,
+.dlg-actions .btn {
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  width: auto;
+  min-width: 0;
+  flex: 0 0 auto;
+  margin: 0;
+  text-align: center;
+}
+
+.form-foot-split .btn {
+  height: 32px;
+  min-height: 32px;
+  padding: 0 14px;
+  font-size: 13px;
+}
+
+.form-foot-split .btn-primary,
+.form-foot-split .btn-danger {
+  min-width: 72px;
+}
+
+.form-foot-split .btn-primary {
+  box-shadow: 0 2px 6px rgba(20, 72, 182, 0.18);
 }
 
 .tab-table-panel {
@@ -2061,6 +2090,7 @@ select.input {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 5px;
   white-space: nowrap;
   transition: background .12s, border-color .12s, color .12s, box-shadow .12s;
@@ -2661,18 +2691,36 @@ select.input {
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
-  padding: 10px 20px;
+  padding: 12px 20px;
   border-top: 1px solid var(--border);
   background: var(--surface-2);
   flex-shrink: 0;
 }
+
 .modal-footer .btn {
   height: 32px;
+  min-height: 32px;
   padding: 0 16px;
   font-size: 13px;
+  margin: 0;
 }
+
+.modal-footer .btn-search-history {
+  min-width: 180px;
+}
+
 .modal-footer .btn-primary {
+  min-width: 72px;
   box-shadow: 0 2px 6px rgba(20, 72, 182, .18);
+}
+
+.modal-footer .btn:not(.btn-search-history) {
+  justify-content: center;
+}
+
+.modal-dialog .modal-body {
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* ------ CP01 main layout (CRM list-area + detail) ------ */

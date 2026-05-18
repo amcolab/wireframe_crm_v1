@@ -263,7 +263,15 @@ export function initGlobalLookups() {
     });
 
     window.addEventListener('resize', closeMultiSelectPanels);
-    window.addEventListener('scroll', closeMultiSelectPanels, true);
+    window.addEventListener(
+      'scroll',
+      () => {
+        const active = document.querySelector('.multi-select-dropdown.active');
+        if (!active) return;
+        positionMultiSelectPanel(active);
+      },
+      true
+    );
   }
 
   initMultiSelects();
@@ -271,6 +279,7 @@ export function initGlobalLookups() {
   // Company Lookup state
   const dlgLookup = q('dlgCompanyLookup');
   dlgLookup?.addEventListener('close', closeMultiSelectPanels);
+  q('dlgCompanyAdvancedSearch')?.addEventListener('close', closeMultiSelectPanels);
   const lookupTbody = q('lookupCompanyBody');
   const dlgContactLookup = q('dlgContactLookup');
   const contactLookupTbody = q('contactLookupBody') || document.querySelector('.contact-table tbody');
