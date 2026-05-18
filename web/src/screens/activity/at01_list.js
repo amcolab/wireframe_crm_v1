@@ -1,84 +1,61 @@
 import { q, escapeHtml } from '../../utils/helpers.js';
 import { mockActivities } from '../../utils/mockData.js';
+import { renderPageNumberButtons } from '../../utils/pager.js';
+import { syncEntityDetailTabLayout } from '../../utils/entityTabTable.js';
 
 let state = {
   activities: [...mockActivities],
   filtered: [...mockActivities],
   selectedId: mockActivities[0]?.id ?? null,
   page: 1,
-  pageSize: 25
+  pageSize: 25,
 };
 
-let table = null;
+let tableBound = false;
 
 export function init() {
   console.log('Activity screen (AT01) initialized');
   bindUi();
-  initTabulator();
+  bindActivityTable();
   initResizer();
+  const card = document.querySelector('#activity-root .company-detail');
+  syncEntityDetailTabLayout(card, 'detail');
+  setTimeout(() => render(), 200);
+}
 
-  // Force an initial render after a small delay to ensure everything is ready
-  setTimeout(() => {
-    render();
-  }, 200);
+function getSelectedActivity() {
+  return state.activities.find(a => String(a.id) === String(state.selectedId))
+    || state.filtered.find(a => String(a.id) === String(state.selectedId))
+    || state.filtered[0]
+    || null;
 }
 
 function bindUi() {
-  q('btnActivitySearch')?.addEventListener('click', () => {
-    const type = q('activitySearchType')?.value;
-    const rep = q('activitySearchSalesRep')?.value?.trim();
-    const company = q('activitySearchCompany')?.value?.trim();
-    
-    state.filtered = state.activities.filter(a => {
-      if (type && a.type !== type) return false;
-      if (rep && !(a.rep || '').includes(rep)) return false;
-      if (company && !(a.company || '').includes(company)) return false;
-      return true;
-    });
-    
-    state.page = 1;
-    state.selectedId = state.filtered[0]?.id ?? null;
-    render();
-  });
+  const root = q('activity-root');
+  if (root?.dataset.bound) return;
+  root.dataset.bound = 'true';
 
+  q('btnActivitySearch')?.addEventListener('click', applySearch);
   q('btnActivityClear')?.addEventListener('click', () => {
     if (q('activitySearchType')) q('activitySearchType').value = '';
     if (q('activitySearchSalesRep')) q('activitySearchSalesRep').value = '';
     if (q('activitySearchCompany')) q('activitySearchCompany').value = '';
+    if (q('activitySearchDateFrom')) q('activitySearchDateFrom').value = '';
+    if (q('activitySearchDateTo')) q('activitySearchDateTo').value = '';
     state.filtered = [...state.activities];
     state.page = 1;
     state.selectedId = state.filtered[0]?.id ?? null;
     render();
   });
-
-  q('btnActivityNewMain')?.addEventListener('click', () => {
-    q('dlgActivityDetail')?.showModal();
-  });
-
-  q('btnActivityAdvancedSearch')?.addEventListener('click', () => {
-    q('dlgActivityAdvancedSearch')?.showModal();
-  });
-
-  q('btnAtDetailContactLookup')?.addEventListener('click', () => {
-    q('dlgContactLookup')?.showModal();
-  });
-
-  q('btnAtDetailContactNew')?.addEventListener('click', () => {
-    q('dlgContactDetailNew')?.showModal();
-  });
-
-  q('btnAtDetailProjectLookup')?.addEventListener('click', () => {
-    q('dlgProjectLookup')?.showModal();
-  });
-
-  q('btnAtDetailProjectNew')?.addEventListener('click', () => {
-    q('dlgProjectDetail')?.showModal();
-  });
-  
+  q('btnActivityNewMain')?.addEventListener('click', () => { q('dlgActivityDetail')?.showModal(); });
+  q('btnActivityAdvancedSearch')?.addEventListener('click', () => { q('dlgActivityAdvancedSearch')?.showModal(); });
+  q('btnAtDetailContactLookup')?.addEventListener('click', () => { q('dlgContactLookup')?.showModal(); });
+  q('btnAtDetailContactNew')?.addEventListener('click', () => { q('dlgContactDetailNew')?.showModal(); });
+  q('btnAtDetailProjectLookup')?.addEventListener('click', () => { q('dlgProjectLookup')?.showModal(); });
+  q('btnAtDetailProjectNew')?.addEventListener('click', () => { q('dlgProjectDetail')?.showModal(); });
   q('btnAtDetailSave')?.addEventListener('click', () => { alert('保存しました'); });
   q('btnAtDetailDelete')?.addEventListener('click', () => { if (confirm('削除しますか？')) alert('削除しました'); });
 
-  // Pager Events
   q('btnActivityFirstPage')?.addEventListener('click', () => { state.page = 1; render(); });
   q('btnActivityPrevPage')?.addEventListener('click', () => { if (state.page > 1) { state.page--; render(); } });
   q('btnActivityNextPage')?.addEventListener('click', () => {
@@ -86,62 +63,69 @@ function bindUi() {
     if (state.page < totalPages) { state.page++; render(); }
   });
   q('btnActivityLastPage')?.addEventListener('click', () => {
-    const totalPages = Math.ceil(state.filtered.length / state.pageSize);
-    state.page = totalPages;
+    state.page = Math.max(1, Math.ceil(state.filtered.length / state.pageSize));
     render();
   });
-
   q('activityPageSelect')?.addEventListener('change', (e) => {
-    state.page = parseInt(e.target.value) || 1;
+    state.page = parseInt(e.target.value, 10) || 1;
     render();
   });
-
   q('activityPageSize')?.addEventListener('change', (e) => {
-    state.pageSize = parseInt(e.target.value) || 25;
+    state.pageSize = parseInt(e.target.value, 10) || 25;
     state.page = 1;
     render();
   });
 }
 
-function render() {
-  const totalCount = q('activityTotalCount');
-  const pageNumbers = q('activityPageNumbers');
-  const pageSelect = q('activityPageSelect');
-  const pageTotal = q('activityPageTotal');
-  const rangeStart = q('activityRangeStart');
-  const rangeEnd = q('activityRangeEnd');
+function applySearch() {
+  const type = q('activitySearchType')?.value;
+  const rep = q('activitySearchSalesRep')?.value?.trim();
+  const company = q('activitySearchCompany')?.value?.trim();
+  state.filtered = state.activities.filter(a => {
+    if (type && a.type !== type) return false;
+    if (rep && !(a.rep || '').includes(rep)) return false;
+    if (company && !(a.company || '').includes(company)) return false;
+    return true;
+  });
+  state.page = 1;
+  state.selectedId = state.filtered[0]?.id ?? null;
+  render();
+}
 
+function bindActivityTable() {
+  const tbody = q('activityTableBody');
+  if (!tbody || tableBound) return;
+  tableBound = true;
+  tbody.addEventListener('click', (e) => {
+    const tr = e.target.closest('tr[data-id]');
+    if (!tr) return;
+    state.selectedId = tr.getAttribute('data-id');
+    const a = getSelectedActivity();
+    if (a) fillDetailForm(a);
+    render();
+  });
+}
+
+function render() {
   const total = state.filtered.length;
   const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
-
   if (state.page > totalPages) state.page = totalPages;
   if (state.page < 1) state.page = 1;
 
-  if (totalCount) totalCount.textContent = total;
-  if (pageTotal) pageTotal.textContent = `/ ${totalPages}`;
-
   const start = (state.page - 1) * state.pageSize;
-  const actualEndIdx = Math.min(start + state.pageSize, total);
+  const end = Math.min(start + state.pageSize, total);
 
-  if (rangeStart) rangeStart.textContent = total > 0 ? (start + 1) : 0;
-  if (rangeEnd) rangeEnd.textContent = actualEndIdx;
+  if (q('activityTotalCount')) q('activityTotalCount').textContent = total;
+  if (q('activityPageTotal')) q('activityPageTotal').textContent = `/ ${totalPages}`;
+  if (q('activityRangeStart')) q('activityRangeStart').textContent = total > 0 ? (start + 1) : 0;
+  if (q('activityRangeEnd')) q('activityRangeEnd').textContent = end;
 
-  if (pageNumbers) {
-    pageNumbers.innerHTML = '';
-    const maxVisible = 5;
-    let startPage = Math.max(1, state.page - Math.floor(maxVisible / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
-    if (endPage - startPage + 1 < maxVisible) startPage = Math.max(1, endPage - maxVisible + 1);
+  renderPageNumberButtons(q('activityPageNumbers'), state.page, totalPages, (p) => {
+    state.page = p;
+    render();
+  });
 
-    for (let p = startPage; p <= endPage; p++) {
-      const btn = document.createElement('button');
-      btn.className = `page-num-btn ${p === state.page ? 'active' : ''}`;
-      btn.textContent = p;
-      btn.onclick = () => { state.page = p; render(); };
-      pageNumbers.appendChild(btn);
-    }
-  }
-
+  const pageSelect = q('activityPageSelect');
   if (pageSelect) {
     pageSelect.innerHTML = '';
     for (let p = 1; p <= totalPages; p++) {
@@ -153,23 +137,34 @@ function render() {
     }
   }
 
-  const rows = state.filtered.slice(start, actualEndIdx);
+  renderActivityTable(state.filtered.slice(start, end));
 
-  if (table) {
-    table.setData(rows).then(() => {
-      if (state.selectedId) {
-        table.deselectRow();
-        table.selectRow(state.selectedId);
-      }
-      table.redraw();
-    });
-  }
-
-  const selected = state.activities.find(a => String(a.id) === String(state.selectedId)) || state.filtered[0] || null;
+  const selected = getSelectedActivity();
   if (selected) {
     state.selectedId = String(selected.id);
     fillDetailForm(selected);
   }
+}
+
+function renderActivityTable(rows) {
+  const tbody = q('activityTableBody');
+  if (!tbody) return;
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text-3);">表示するデータがありません</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.map(a => {
+    const sel = String(a.id) === String(state.selectedId);
+    return `<tr data-id="${escapeHtml(a.id)}" class="${sel ? 'selected' : ''}">
+      <td>${escapeHtml(a.date)}</td>
+      <td>${escapeHtml(a.time || '')}</td>
+      <td>${escapeHtml(a.rep)}</td>
+      <td><span class="${escapeHtml(a.typeClass || '')}">${escapeHtml(a.type)}</span></td>
+      <td>${escapeHtml(a.company)}</td>
+      <td class="blue-link">${escapeHtml(a.contact)}</td>
+      <td title="${escapeHtml(a.comment)}">${escapeHtml(a.comment)}</td>
+    </tr>`;
+  }).join('');
 }
 
 function fillDetailForm(a) {
@@ -185,52 +180,21 @@ function fillDetailForm(a) {
   set('atDetailCompanyName', a.company);
 }
 
-function initTabulator() {
-  const container = q('activityTable');
-  if (!container) return;
-
-  if (table) { try { table.destroy(); } catch (e) { } }
-
-  const start = (state.page - 1) * state.pageSize;
-  const initialRows = state.filtered.slice(start, start + state.pageSize);
-
-  table = new Tabulator("#activityTable", {
-    data: initialRows,
-    layout: "fitColumns",
-    movableColumns: true,
-    selectableRows: 1,
-    headerSort: false,
-    clipboard: true,
-    rowClick: function (e, row) {
-      const data = row.getData();
-      state.selectedId = String(data.id);
-      fillDetailForm(data);
-      table.deselectRow();
-      row.select();
-    },
-    columns: [
-      { title: "活動日", field: "date", width: 110 },
-      { title: "開始時刻", field: "time", width: 90 },
-      { title: "営業担当", field: "rep", width: 130 },
-      { title: "タイプ", field: "type", width: 80, formatter: (cell) => {
-          const val = cell.getValue();
-          let cls = val === 'TEL' ? 'type-tel' : (val === '訪問' ? 'type-visit' : 'type-mail');
-          return `<span class="type-badge ${cls}">${val}</span>`;
-        }, htmlOutput: true 
-      },
-      { title: "会社名", field: "company", width: 250 },
-      { title: "担当(姓)", field: "contact", width: 120 },
-      { title: "コメント", field: "comment", minWidth: 300 },
-    ],
-  });
-}
-
 function initResizer() {
   const resizer = q('activity-resizer');
   const container = document.querySelector('#activity-root .company-main');
   if (!resizer || !container) return;
+
+  if (!container.style.getPropertyValue('--grid-height')) {
+    container.style.setProperty('--grid-height', '400px');
+  }
+  try {
+    const saved = parseInt(localStorage.getItem('smos.at01.listH') || '', 10);
+    if (saved >= 160) container.style.setProperty('--grid-height', `${saved}px`);
+  } catch { /* ignore */ }
+
   let isResizing = false;
-  resizer.addEventListener('mousedown', (e) => {
+  resizer.addEventListener('mousedown', () => {
     isResizing = true;
     document.body.style.cursor = 'row-resize';
     document.body.style.userSelect = 'none';
@@ -240,21 +204,22 @@ function initResizer() {
     if (!isResizing) return;
     const containerRect = container.getBoundingClientRect();
     const relativeY = e.clientY - containerRect.top;
-    const minGridHeight = 150;
-    const minDetailHeight = 200;
-    const maxHeight = containerRect.height - minDetailHeight;
-    let newHeight = relativeY - 6;
-    if (newHeight < minGridHeight) newHeight = minGridHeight;
-    if (newHeight > maxHeight) newHeight = maxHeight;
-    container.style.setProperty('--grid-height', `${newHeight}px`);
-    if (table) table.redraw();
+    const minGridHeight = 160;
+    const maxHeight = Math.min(
+      Math.round(window.innerHeight * 0.55),
+      Math.max(minGridHeight, relativeY)
+    );
+    container.style.setProperty('--grid-height', `${maxHeight}px`);
   });
   document.addEventListener('mouseup', () => {
-    if (isResizing) {
-      isResizing = false;
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-      resizer.classList.remove('active');
-    }
+    if (!isResizing) return;
+    isResizing = false;
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+    resizer.classList.remove('active');
+    try {
+      const h = parseInt(container.style.getPropertyValue('--grid-height') || '400', 10);
+      localStorage.setItem('smos.at01.listH', String(h));
+    } catch { /* ignore */ }
   });
 }

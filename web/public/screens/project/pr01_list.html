@@ -1,96 +1,98 @@
 <section class="section active" id="project">
   <div class="section-body" id="project-root">
     <div class="company-screen">
-      <div class="company-topbar">
-        <div class="company-topbar-left">
-          <div class="company-title">案件 (PR01)</div>
-          <div class="company-search">
-            <div style="display: flex; align-items: center; gap: 5px;">
-              <label class="company-search-label">ステータス</label>
-              <select id="projectSearchStatus" style="width: 100px;">
-                <option value="">-</option>
-              </select>
-            </div>
-            <div style="display: flex; align-items: center; gap: 5px;">
-              <label class="company-search-label">営業担当</label>
-              <input id="projectSearchSalesRep" style="width: 120px;" type="text" />
-            </div>
-            <div style="display: flex; align-items: center; gap: 5px;">
-              <label class="company-search-label">会社名</label>
-              <input id="projectSearchCompany" style="width: 150px;" type="text" />
-            </div>
-            <div style="display: flex; align-items: center; gap: 5px;">
-              <label class="company-search-label">話題日</label>
-              <input id="projectSearchDateFrom" style="width: 130px;" type="date" />
-              <span>～</span>
-              <input id="projectSearchDateTo" style="width: 130px;" type="date" />
-            </div>
-          </div>
+      <div class="search-header search-header--multi">
+        <div class="screen-title">案件 <span class="code">(PR01)</span></div>
+        <div class="field">
+          <label for="projectSearchStatus">ステータス</label>
+          <select id="projectSearchStatus" class="input" style="width:100px">
+            <option value="">-</option>
+          </select>
         </div>
-        <div class="company-topbar-right">
-          <button class="btn btn-secondary" id="btnProjectSearch">🔍 検索</button>
-          <button class="btn btn-secondary" id="btnProjectAdvancedSearch">詳細検索</button>
-          <button class="btn btn-secondary" id="btnProjectClear">✕ クリア</button>
-          <button class="btn btn-secondary" id="btnProjectExport">📥 エクスポート</button>
-          <button class="btn btn-orange" id="btnProjectNewMain">+ 新規案件</button>
+        <div class="field">
+          <label for="projectSearchSalesRep">営業担当</label>
+          <input id="projectSearchSalesRep" class="input" type="text" style="width:min(140px,22vw)" />
+        </div>
+        <div class="field">
+          <label for="projectSearchCompany">会社名</label>
+          <input id="projectSearchCompany" class="input" type="text" style="width:min(160px,24vw)" />
+        </div>
+        <div class="field field-range">
+          <label>話題日</label>
+          <input id="projectSearchDateFrom" class="input" type="date" />
+          <span class="range-sep">～</span>
+          <input id="projectSearchDateTo" class="input" type="date" />
+        </div>
+        <button class="btn btn-secondary" id="btnProjectSearch" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg> 検索</button>
+        <button class="btn btn-secondary" id="btnProjectAdvancedSearch" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg> 詳細検索</button>
+        <button class="btn btn-ghost" id="btnProjectClear" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg> クリア</button>
+        <div class="right">
+          <button class="btn btn-secondary" id="btnProjectExport" type="button">エクスポート</button>
+          <button class="btn btn-accent" id="btnProjectNewMain" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg> 新規案件</button>
         </div>
       </div>
       <div class="company-main">
         <!-- List Area -->
-        <div class="company-grid">
-          <div class="company-table-wrap">
-            <div id="projectTable"></div>
-          </div>
-          <div class="company-grid-footer">
-            <div class="footer-left">
-              <div class="company-grid-pager">
-                <button class="icon-btn" id="btnProjectFirstPage" title="First Page">«</button>
-                <button class="icon-btn" id="btnProjectPrevPage" title="Previous Page">‹</button>
-                <div id="projectPageNumbers" class="page-numbers"></div>
-                <button class="icon-btn" id="btnProjectNextPage" title="Next Page">›</button>
-                <button class="icon-btn" id="btnProjectLastPage" title="Last Page">»</button>
-
-                <div class="pager-jump">
-                  Page
-                  <select id="projectPageSelect" class="mini-select" aria-label="page select"></select>
-                  <span id="projectPageTotal" style="width: 50px;">/ 1</span>
-                </div>
-
-                <select id="projectPageSize" class="mini-select" aria-label="page size">
-                  <option value="10">10件</option>
-                  <option value="25" selected>25件</option>
-                  <option value="50">50件</option>
-                  <option value="100">100件</option>
-                </select>
-              </div>
+        <div class="list-stack">
+          <div class="panel">
+            <div class="company-table-wrap table-wrap">
+              <table class="t" id="projectTable">
+                <thead><tr>
+                  <th>話題日</th><th>フォロー予定</th><th>ステータス</th><th>営業担当</th>
+                  <th>会社名</th><th>担当(姓)</th><th>案件名</th><th>案件概要</th><th>発生動機</th>
+                </tr></thead>
+                <tbody id="projectTableBody"></tbody>
+              </table>
             </div>
-            <div class="footer-right">
-              <div class="company-grid-meta">
-                全 <span id="projectTotalCount">0</span> 件
-                <span class="range-info"><span id="projectRangeStart">0</span> - <span
-                    id="projectRangeEnd">0</span></span>
-              </div>
+          </div>
+          <div class="pager-standalone">
+            <div class="pages">
+              <button class="pg-btn" id="btnProjectFirstPage" type="button" title="最初へ">«</button>
+              <button class="pg-btn" id="btnProjectPrevPage" type="button" title="前へ">‹</button>
+              <div id="projectPageNumbers" class="page-numbers" style="display:inline-flex;gap:3px;"></div>
+              <button class="pg-btn" id="btnProjectNextPage" type="button" title="次へ">›</button>
+              <button class="pg-btn" id="btnProjectLastPage" type="button" title="最後へ">»</button>
+            </div>
+            <div class="page-jump">
+              <span>Page</span>
+              <select id="projectPageSelect" class="mini" aria-label="page select"></select>
+              <span id="projectPageTotal">/ 1</span>
+            </div>
+            <select id="projectPageSize" class="pgsize-trigger" aria-label="page size">
+              <option value="10">10件</option>
+              <option value="25" selected>25件</option>
+              <option value="50">50件</option>
+              <option value="100">100件</option>
+            </select>
+            <div class="meta-right">
+              全 <span id="projectTotalCount">0</span>件 <span id="projectRangeStart">0</span> - <span id="projectRangeEnd">0</span>
             </div>
           </div>
         </div>
 
-        <div class="resizer-horizontal" id="project-resizer"></div>
+        <div class="resizer-h" id="project-resizer" role="separator" aria-orientation="horizontal" title="ドラッグで高さ調整" tabindex="0"></div>
 
         <!-- Detail Area -->
-        <div class="company-detail">
-          <div class="company-tabs">
-            <div class="tabs-list">
-              <button class="tab-btn active" data-pr-tab="detail">案件詳細</button>
-              <button class="tab-btn" data-pr-tab="activities">活動</button>
+        <div class="company-detail detail-tab-mode">
+          <nav class="tabs-underline" role="tablist" aria-label="project detail tabs">
+            <button class="tab-btn active" data-pr-tab="detail" type="button">案件詳細</button>
+            <button class="tab-btn" data-pr-tab="activities" type="button">活動</button>
+            <div class="tab-actions">
+              <button class="btn btn-orange" id="btnPrTabNewActivity" style="display:none;" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+                新規活動
+              </button>
+              <button class="btn btn-orange" id="btnPrTabNewProject" style="display:none;" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+                新規案件
+              </button>
             </div>
-            <div class="tab-actions" style="margin-left: auto; display: flex; gap: 8px;">
-              <button class="btn btn-orange" id="btnPrTabNewActivity" style="display:none;">+ 新規活動</button>
-              <button class="btn btn-orange" id="btnPrTabNewProject" style="display:none;">+ 新規案件</button>
-            </div>
-          </div>
+          </nav>
           <div class="company-tabpanels">
-            <div class="project-panel active" data-pr-panel="detail">
-              <div class="detail-form" style="grid-template-columns: repeat(4, 1fr); gap: 24px; padding: 20px;">
+            <section class="company-panel active" data-pr-panel="detail" role="tabpanel">
+              <div class="panel-detail">
+                <div class="panel-detail-body">
+              <div class="detail-form">
                 <!-- Col 1 -->
                 <div class="form-col">
                   <div class="form-row">
@@ -313,7 +315,7 @@
                       <label>住所</label>
                       <input disabled id="prDetailAddress" type="text" value="北海道市東区4丁目18-30" />
                     </div>
-                    <div style="margin-top: auto; border-top: 1px solid #eee; padding-top: 15px;">
+                    <div class="detail-audit">
                       <div class="form-row two">
                         <div>
                           <label>作成日時</label>
@@ -367,89 +369,56 @@
                     <label>案件自由使用欄7</label>
                     <input id="prDetailFree7" type="text" />
                   </div>
-                  <div class="form-row" style="margin-top: auto;">
+                  <div class="form-row attach-field">
                     <label>添付資料</label>
-                    <div class="attach-box"
-                      style="height: 120px; border: 2px dashed #e2e8f0; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:12px; border-radius: 8px; background: #f8fafc;">
-                      ここにドラッグ＆ドロップ</div>
-                  </div>
-                  <div class="form-actions" style="justify-content: space-between; margin-top: 15px; padding-top:0;">
-                    <button class="btn btn-secondary" id="btnPrDetailDelete" style="background:#f9f9f9;">削除</button>
-                    <button class="btn btn-primary" id="btnPrDetailSave">保存</button>
+                    <div class="attach-box attach-box--compact">ここにドラッグ＆ドロップ</div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="project-panel" data-pr-panel="activities" style="display:none; padding: 20px;">
-              <div class="company-table-wrap"
-                style="height: 400px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
-                <table class="company-table">
-                  <thead>
-                    <tr>
-                      <th style="width: 100px;">活動日</th>
-                      <th style="width: 120px;">営業担当</th>
-                      <th style="width: 80px;">タイプ</th>
-                      <th style="width: 100px;">目的</th>
-                      <th style="width: 100px;">動機</th>
-                      <th style="width: 100px;">担当(姓)</th>
-                      <th>コメント</th>
-                    </tr>
-                  </thead>
-                  <tbody id="projectActivitiesTableBody">
-                    <tr>
-                      <td>2024-05-10</td>
-                      <td>鈴木 一郎</td>
-                      <td><span class="badge badge-blue">訪問</span></td>
-                      <td>定期訪問</td>
-                      <td>引合</td>
-                      <td>佐藤</td>
-                      <td>仕様打合せを実施。次回見積提出予定。</td>
-                    </tr>
-                    <tr>
-                      <td>2024-05-02</td>
-                      <td>鈴木 一郎</td>
-                      <td><span class="badge badge-green">TEL</span></td>
-                      <td>売り前フォロー</td>
-                      <td>引合</td>
-                      <td>佐藤</td>
-                      <td>日程調整の連絡。5/10に訪問決定。</td>
-                    </tr>
-                    <tr>
-                      <td>2024-04-25</td>
-                      <td>鈴木 一郎</td>
-                      <td>email</td>
-                      <td>資料送付</td>
-                      <td>HP問い合わせ</td>
-                      <td>佐藤</td>
-                      <td>カタログ一式をPDFにて送付。</td>
-                    </tr>
-                    <tr>
-                      <td>2024-04-15</td>
-                      <td>鈴木 一郎</td>
-                      <td><span class="badge badge-green">TEL</span></td>
-                      <td>ヒアリング</td>
-                      <td>HP問い合わせ</td>
-                      <td>佐藤</td>
-                      <td>現行機の不満点について聞き取り。</td>
-                    </tr>
-                    <tr>
-                      <td>2024-04-10</td>
-                      <td>システム</td>
-                      <td><span class="badge badge-gray">WEB</span></td>
-                      <td>自動受付</td>
-                      <td>HP問い合わせ</td>
-                      <td>佐藤</td>
-                      <td>HPの問い合わせフォームより受付。</td>
-                    </tr>
-                  </tbody>
-                </table>
+              </div>
+              <div class="form-foot-split">
+                <div class="left">
+                  <button class="btn btn-danger" id="btnPrDetailDelete" type="button">削除</button>
+                </div>
+                <div class="right">
+                  <button class="btn btn-primary" id="btnPrDetailSave" type="button">保存</button>
+                </div>
               </div>
             </div>
+            </section>
+            <section class="company-panel" data-pr-panel="activities" role="tabpanel">
+                            <div class="tab-table-panel">
+                <div class="table-wrap tab-table-wrap">
+                  <div id="projectActivitiesList"></div>
+                </div>
+                <div class="pager-standalone tab-pager" id="projectActivitiesPager">
+                  <div class="pages">
+                    <button class="pg-btn" id="btnProjectActivitiesFirstPage" type="button" title="最初へ">«</button>
+                    <button class="pg-btn" id="btnProjectActivitiesPrevPage" type="button" title="前へ">‹</button>
+                    <div id="projectActivitiesPageNumbers" class="page-numbers" style="display:inline-flex;gap:3px;"></div>
+                    <button class="pg-btn" id="btnProjectActivitiesNextPage" type="button" title="次へ">›</button>
+                    <button class="pg-btn" id="btnProjectActivitiesLastPage" type="button" title="最後へ">»</button>
+                  </div>
+                  <div class="page-jump">
+                    <span>Page</span>
+                    <select id="projectActivitiesPageSelect" class="mini" aria-label="page select"></select>
+                    <span id="projectActivitiesPageTotal">/ 1</span>
+                  </div>
+                  <select id="projectActivitiesPageSize" class="pgsize-trigger" aria-label="page size">
+                    <option value="10" selected>10件</option>
+                    <option value="25">25件</option>
+                    <option value="50">50件</option>
+                    <option value="100">100件</option>
+                  </select>
+                  <div class="meta-right">
+                    全 <span id="projectActivitiesTotalCount">0</span>件 <span id="projectActivitiesRangeStart">0</span> - <span id="projectActivitiesRangeEnd">0</span>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  </div>
   </div>
 </section>

@@ -1,0 +1,1313 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>SMOS CRM — 会社 (Mobile Hi-Fi)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS — synced with 会社_compact_business.html ============ */
+:root{
+  --brand-50:#E8F0FE;
+  --brand-100:#CCDCFA;
+  --brand-500:#1E5BD6;
+  --brand-600:#1448B6;
+  --brand-700:#0E3892;
+
+  --accent-500:#E25D14;
+  --accent-600:#C84F0E;
+
+  --nav-bg:#1F2A44;
+  --nav-bg-2:#162038;
+  --nav-active-bar:#67A0FF;
+
+  --bg:        #ECEEF2;
+  --bg-page:   #F4F6FA;
+  --surface:   #FFFFFF;
+  --surface-2: #F7F8FB;
+  --border:    #E2E6EE;
+  --border-2:  #ECEFF5;
+  --hover:     #EEF2F8;
+  --row-zebra: #FAFBFD;
+  --row-selected:#DCE7FA;
+
+  --text-1:#0E1424;
+  --text-2:#3F4A60;
+  --text-3:#7A8499;
+  --text-on-dark:#E6ECF5;
+
+  --success:#15803D;
+  --warning:#B45309;
+  --danger: #B91C1C;
+  --info:   #1E5BD6;
+
+  --r-sm:6px;
+  --r:8px;
+  --r-lg:12px;
+  --r-xl:16px;
+
+  --shadow-card:0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.06);
+  --shadow-pop:0 4px 14px rgba(16,24,40,.10), 0 1px 3px rgba(16,24,40,.06);
+  --shadow-phone:0 30px 60px -20px rgba(16,24,40,.35),0 18px 36px -18px rgba(16,24,40,.25);
+
+  --font: "Inter","Noto Sans JP",-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,Arial,sans-serif;
+  --fs-xs:10px; --fs-sm:11px; --fs-md:12px; --fs-base:13px; --fs-lg:15px; --fs-xl:17px;
+}
+
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0; padding:0; min-height:100vh; background:linear-gradient(135deg,#E5E9F2 0%,#F4F6FA 60%,#EEF2F8 100%); font-family:var(--font); color:var(--text-1); -webkit-font-smoothing:antialiased}
+
+/* ============ STAGE / GALLERY ============ */
+.stage{
+  min-height:100vh; padding:36px 24px 60px;
+  display:flex; flex-direction:column; align-items:center; gap:28px;
+}
+.stage-head{ text-align:center; max-width:780px; }
+.stage-head h1{margin:0 0 6px; font-size:22px; font-weight:700; letter-spacing:-.01em; color:#0E1424}
+.stage-head p{margin:0; color:#475467; font-size:13px; line-height:1.55}
+.legend{display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border:1px solid #DDE1EA; border-radius:999px; background:#fff; color:#3F4A60; font-size:11px; font-weight:500; margin-top:10px}
+.legend .dot{width:6px; height:6px; border-radius:50%; background:#22C55E; box-shadow:0 0 0 3px rgba(34,197,94,.18)}
+
+.gallery{
+  display:flex; gap:36px; flex-wrap:wrap; justify-content:center; align-items:flex-start;
+}
+.frame-wrap{ display:flex; flex-direction:column; align-items:center; gap:12px }
+.frame-label{
+  display:inline-flex; align-items:center; gap:6px; padding:5px 11px;
+  background:#fff; border:1px solid var(--border); border-radius:999px;
+  font-size:11px; font-weight:600; color:#3F4A60; box-shadow:var(--shadow-card);
+}
+.frame-label .num{display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border-radius:50%; background:var(--brand-600); color:#fff; font-size:9px; font-weight:700}
+
+/* ============ iPhone Frame ============ */
+.iphone{
+  width:390px; height:844px; background:#0B0F1A; border-radius:54px;
+  padding:14px; box-shadow:var(--shadow-phone),inset 0 0 0 1px rgba(255,255,255,.08);
+  position:relative;
+}
+.iphone::before{
+  /* outer bezel highlight */
+  content:""; position:absolute; inset:6px; border-radius:48px; pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);
+}
+.screen{
+  position:relative; width:100%; height:100%; border-radius:42px; overflow:hidden;
+  background:var(--bg-page); display:flex; flex-direction:column;
+}
+/* Dynamic island */
+.island{
+  position:absolute; top:11px; left:50%; transform:translateX(-50%);
+  width:120px; height:34px; background:#000; border-radius:20px; z-index:1000;
+}
+/* Status bar */
+.statusbar{
+  height:54px; padding:0 28px 0 32px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:space-between;
+  font-family:"Inter",-apple-system,sans-serif; font-weight:600; font-size:15px;
+  color:#fff; position:relative; z-index:5;
+  background:var(--nav-bg);
+}
+.statusbar.dark{color:#fff}
+.statusbar .icons{display:flex; align-items:center; gap:6px}
+.statusbar svg{display:block}
+
+/* App header (navy) */
+.app-header{
+  background:linear-gradient(180deg,var(--nav-bg) 0%, var(--nav-bg-2) 100%);
+  color:#fff; padding:6px 16px 14px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  box-shadow:0 4px 12px rgba(16,24,40,.08);
+}
+.app-header .left, .app-header .right{display:flex; align-items:center; gap:8px; min-width:32px}
+.app-header .title{flex:1; text-align:center; font-size:17px; font-weight:700; letter-spacing:.2px}
+.app-header .logo{font-family:"Inter"; font-weight:700; font-size:15px; letter-spacing:1px; color:#fff}
+.icon-btn{
+  width:36px; height:36px; border-radius:10px; background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1); color:#E6ECF5;
+  display:inline-flex; align-items:center; justify-content:center; cursor:pointer;
+  transition:background .15s;
+}
+.icon-btn:hover{background:rgba(255,255,255,.12)}
+.icon-btn svg{width:18px; height:18px}
+.back-btn{padding:0 8px 0 4px; gap:2px; width:auto; min-width:36px; font-size:13px; font-weight:500}
+.back-btn svg{width:18px; height:18px}
+
+/* Body (scrollable) */
+.body{
+  flex:1; overflow-y:auto; padding-bottom:96px;
+  scrollbar-width:none;
+}
+.body.detail-body{padding-bottom:170px}
+.body.activity-body{padding-bottom:170px}
+.body::-webkit-scrollbar{display:none}
+
+/* ============ SEARCH BAR (sticky) ============ */
+.search-bar{
+  position:sticky; top:0; z-index:20;
+  margin-top:12px;
+  padding:0 14px 10px;
+  background:rgba(244,246,250,.86); backdrop-filter:saturate(180%) blur(14px); -webkit-backdrop-filter:saturate(180%) blur(14px);
+  display:flex; align-items:center; gap:10px;
+}
+.search-input{
+  flex:1; height:38px; background:#fff; border:1px solid var(--border);
+  border-radius:10px; display:flex; align-items:center; gap:8px; padding:0 12px;
+  font-size:13px; color:var(--text-1); box-shadow:0 1px 2px rgba(16,24,40,.03);
+}
+.search-input svg{flex-shrink:0; color:#7A8499}
+.search-input input{
+  flex:1; height:100%; border:none; outline:none; background:transparent;
+  font:inherit; font-size:13px; color:var(--text-1);
+}
+.search-input input::placeholder{color:#9BA3B5}
+.filter-btn{
+  width:38px; height:38px; border:1px solid var(--border); background:#fff;
+  border-radius:10px; display:inline-flex; align-items:center; justify-content:center;
+  color:#3F4A60; box-shadow:0 1px 2px rgba(16,24,40,.03); position:relative;
+}
+.filter-btn .dot{position:absolute; top:6px; right:6px; width:8px; height:8px; background:var(--accent-500); border-radius:50%; border:1.5px solid #fff}
+.filter-chips{
+  display:flex; gap:6px; padding:0 14px 8px; overflow-x:auto; scrollbar-width:none;
+  background:rgba(244,246,250,.86); backdrop-filter:saturate(180%) blur(14px);
+}
+.filter-chips::-webkit-scrollbar{display:none}
+.chip{
+  flex-shrink:0; padding:5px 11px; border-radius:999px; border:1px solid var(--border);
+  background:#fff; font-size:11px; font-weight:500; color:var(--text-2);
+  display:inline-flex; align-items:center; gap:5px;
+}
+.chip.active{background:var(--brand-600); color:#fff; border-color:var(--brand-600)}
+.chip .cnt{font-weight:600; font-size:10px; opacity:.85}
+
+/* List meta strip */
+.list-meta{
+  padding:6px 14px 8px; display:flex; align-items:center; justify-content:space-between;
+  color:var(--text-2); font-size:11px;
+}
+.list-meta .total{font-weight:500}
+.list-meta .total b{color:var(--text-1); font-weight:700}
+.sort-trigger{display:inline-flex; align-items:center; gap:3px; color:var(--brand-600); font-weight:500}
+
+/* ============ Company Cards ============ */
+.list{display:flex; flex-direction:column; gap:8px; padding:0 12px}
+.co-card{
+  background:#fff; border:1px solid var(--border); border-radius:12px;
+  padding:11px 12px 12px; box-shadow:var(--shadow-card); position:relative;
+  display:flex; flex-direction:column; gap:8px;
+}
+.co-card:active{transform:scale(.997)}
+.co-card.selected{border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(30,91,214,.12), var(--shadow-card)}
+.co-card-head{display:flex; align-items:flex-start; justify-content:space-between; gap:8px}
+.co-name{
+  font-size:14px; font-weight:700; color:var(--text-1); line-height:1.35;
+  letter-spacing:-.01em;
+}
+.co-id{font-size:10px; color:var(--text-3); font-weight:500; font-family:"Inter"; margin-top:2px}
+.co-flag{
+  display:inline-flex; align-items:center; gap:3px; padding:2px 7px;
+  border-radius:999px; font-size:10px; font-weight:600; flex-shrink:0;
+}
+.flag-A{background:rgba(20,128,61,.1); color:#15803D; border:1px solid rgba(20,128,61,.22)}
+.flag-B{background:rgba(30,91,214,.08); color:#1448B6; border:1px solid rgba(30,91,214,.18)}
+.flag-C{background:rgba(180,83,9,.08); color:#B45309; border:1px solid rgba(180,83,9,.18)}
+
+.co-grid{
+  display:grid; grid-template-columns:auto 1fr; gap:4px 10px;
+  font-size:11.5px; line-height:1.45;
+}
+.co-grid dt{color:var(--text-3); font-weight:500; white-space:nowrap}
+.co-grid dd{margin:0; color:var(--text-1); font-weight:500; min-width:0; word-break:break-word}
+.co-grid dd.tel{color:var(--brand-600); font-family:"Inter"; font-weight:600; letter-spacing:.2px}
+
+.co-card-foot{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding-top:8px; border-top:1px dashed var(--border-2);
+}
+.last-act{
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:10.5px; color:var(--text-2); font-weight:500;
+}
+.last-act svg{width:12px; height:12px; color:var(--text-3); flex-shrink:0}
+.tags{display:flex; gap:4px; flex-wrap:wrap}
+.tag{
+  display:inline-flex; align-items:center; padding:2px 6px; border-radius:4px;
+  font-size:10px; font-weight:500; line-height:1.4;
+}
+.tag.brand{background:var(--brand-50); color:var(--brand-700)}
+.tag.green{background:#E8F7EE; color:#15803D}
+.tag.amber{background:#FFF6E1; color:#92400E}
+.tag.gray{background:#EEF1F6; color:#475467}
+
+.quick-actions{display:flex; gap:6px}
+.qa-btn{
+  width:28px; height:28px; border-radius:8px; border:1px solid var(--border);
+  background:#fff; color:var(--brand-600);
+  display:inline-flex; align-items:center; justify-content:center;
+}
+.qa-btn svg{width:14px; height:14px}
+.qa-btn.accent{background:var(--accent-500); color:#fff; border-color:var(--accent-500)}
+
+/* ============ FAB ============ */
+.fab{
+  position:absolute; right:18px; bottom:92px; z-index:30;
+  height:48px; padding:0 18px 0 14px; border-radius:24px;
+  background:linear-gradient(135deg,var(--accent-500),var(--accent-600));
+  color:#fff; font-weight:600; font-size:13px;
+  display:inline-flex; align-items:center; gap:6px;
+  box-shadow:0 10px 24px rgba(226,93,20,.45),0 2px 6px rgba(226,93,20,.3);
+  border:none;
+}
+.fab svg{width:18px; height:18px}
+
+/* ============ Bottom Tab Bar ============ */
+.tabbar{
+  position:absolute; bottom:0; left:0; right:0; z-index:40;
+  background:rgba(255,255,255,.94); backdrop-filter:saturate(180%) blur(20px); -webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-top:1px solid rgba(226,230,238,.7);
+  display:flex; align-items:center; justify-content:space-around;
+  padding:8px 6px 22px; height:80px;
+}
+.tab-item{
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:2px;
+  color:#7A8499; font-size:10px; font-weight:500; padding:2px 0;
+}
+.tab-item svg{width:22px; height:22px; stroke-width:1.6}
+.tab-item.active{color:var(--brand-600)}
+.tab-item.active svg{stroke-width:2}
+
+/* Home indicator (iOS) */
+.home-indicator{
+  position:absolute; bottom:6px; left:50%; transform:translateX(-50%);
+  width:134px; height:5px; border-radius:3px; background:rgba(0,0,0,.35); z-index:50;
+}
+
+/* ============ DETAIL SCREEN ============ */
+.detail-hero{
+  margin:12px 12px 10px; background:#fff; border:1px solid var(--border);
+  border-radius:14px; padding:14px; box-shadow:var(--shadow-card); position:relative;
+  overflow:hidden;
+}
+.detail-hero::before{
+  content:""; position:absolute; top:0; right:-30px; width:160px; height:160px;
+  background:radial-gradient(circle, rgba(30,91,214,.06), transparent 60%); pointer-events:none;
+}
+.hero-row{display:flex; align-items:flex-start; gap:12px; position:relative; z-index:1}
+.hero-icon{
+  width:48px; height:48px; border-radius:12px; flex-shrink:0;
+  background:linear-gradient(135deg,#E8F0FE,#CCDCFA);
+  color:var(--brand-700); display:flex; align-items:center; justify-content:center;
+  box-shadow:inset 0 0 0 1px rgba(20,72,182,.12);
+}
+.hero-icon svg{width:24px; height:24px}
+.hero-info{flex:1; min-width:0}
+.hero-name{font-size:16px; font-weight:700; color:var(--text-1); line-height:1.35; letter-spacing:-.005em}
+.hero-sub{margin-top:4px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; color:var(--text-3); font-size:11px}
+.hero-sub .pill{
+  padding:2px 8px; background:var(--surface-2); border:1px solid var(--border-2); border-radius:999px;
+  color:var(--text-2); font-weight:500;
+}
+.hero-tags{margin-top:10px; display:flex; gap:5px; flex-wrap:wrap; position:relative; z-index:1}
+
+.hero-actions{
+  margin-top:12px; padding-top:12px; border-top:1px solid var(--border-2);
+  display:grid; grid-template-columns:repeat(4,1fr); gap:6px; position:relative; z-index:1;
+}
+.ha-btn{
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  padding:8px 4px; border-radius:10px; background:var(--surface-2);
+  border:1px solid var(--border-2); color:var(--brand-600); font-size:10px; font-weight:600;
+}
+.ha-btn svg{width:18px; height:18px}
+.ha-btn.primary{background:var(--brand-600); color:#fff; border-color:var(--brand-600)}
+
+/* Segmented tabs */
+.seg{
+  margin:0 12px 8px; padding:3px; background:#E9EDF5; border-radius:10px;
+  display:grid; grid-template-columns:repeat(4,1fr); gap:2px; font-size:11px;
+}
+.seg button{
+  border:none; background:transparent; color:var(--text-2); padding:7px 4px;
+  border-radius:8px; font-weight:600; cursor:pointer; font-family:inherit;
+  display:inline-flex; align-items:center; justify-content:center; gap:3px;
+}
+.seg button.active{background:#fff; color:var(--brand-700); box-shadow:0 1px 3px rgba(16,24,40,.08)}
+.seg .badge-cnt{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:14px; height:14px; padding:0 4px; border-radius:7px;
+  background:rgba(20,72,182,.12); color:var(--brand-700); font-size:9px; font-weight:700;
+}
+.seg button:not(.active) .badge-cnt{background:rgba(63,74,96,.1); color:var(--text-2)}
+
+/* Detail field list (card sections) */
+.section{
+  margin:0 12px 8px; background:#fff; border:1px solid var(--border);
+  border-radius:12px; overflow:hidden; box-shadow:var(--shadow-card);
+}
+.section-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:9px 12px 8px; background:var(--surface-2); border-bottom:1px solid var(--border-2);
+}
+.section-head h3{margin:0; font-size:11.5px; font-weight:700; color:var(--text-2); letter-spacing:.4px; text-transform:uppercase}
+.section-head .meta{font-size:10px; color:var(--text-3)}
+.fields{display:flex; flex-direction:column}
+.field-row{
+  display:grid; grid-template-columns:96px 1fr; gap:10px; align-items:center;
+  padding:8px 12px; border-bottom:1px solid var(--border-2); min-height:36px;
+}
+.field-row:last-child{border-bottom:0}
+.field-row .k{color:var(--text-3); font-size:11px; font-weight:500}
+.field-row .v{color:var(--text-1); font-size:12.5px; font-weight:500; word-break:break-word}
+.field-row .v.mono{font-family:"Inter"; letter-spacing:.2px; font-weight:600}
+.field-row .v.link{color:var(--brand-600); font-weight:600}
+.field-row.full{grid-template-columns:1fr}
+.field-row.full .k{margin-bottom:3px}
+
+/* Detail value variants */
+.field-row .v.muted{color:var(--text-3); font-style:italic}
+.field-row .v.long{line-height:1.5}
+.field-row .v .chip-inline{
+  display:inline-block; padding:2px 8px; border-radius:6px;
+  background:var(--brand-50); color:var(--brand-700); font-size:11px; font-weight:600;
+  border:1px solid var(--brand-100);
+}
+.field-row .v .chip-inline.gray{background:#EEF1F6; color:#475467; border-color:#DDE1EA}
+.field-row .v .chip-inline.green{background:#E8F7EE; color:#15803D; border-color:#BFE9CC}
+.field-row .v .chip-inline.danger{background:#FDECEC; color:#B91C1C; border-color:#F5C6C6}
+.field-row .v .num{font-family:"Inter"; font-weight:600; letter-spacing:.2px}
+
+/* Long-text block (備考) */
+.text-block{
+  margin:0; padding:11px 12px; font-size:12.5px; color:var(--text-1); line-height:1.55;
+  background:var(--surface-2); border-top:1px solid var(--border-2);
+  white-space:pre-wrap; word-break:break-word;
+}
+.text-block:first-child{border-top:0}
+
+/* Custom free fields list */
+.free-list{display:flex; flex-direction:column}
+.free-row{
+  display:grid; grid-template-columns:96px 1fr; gap:10px; align-items:center;
+  padding:8px 12px; border-bottom:1px solid var(--border-2); min-height:36px;
+}
+.free-row:last-child{border-bottom:0}
+.free-row .k{font-size:11px; color:var(--text-3); font-weight:500}
+.free-row .v{font-size:12.5px; color:var(--text-1); font-weight:500; word-break:break-word}
+.free-row .v.empty{color:var(--text-3); font-style:italic}
+
+/* Attachment dropzone */
+.dropzone{
+  margin:10px 12px; padding:18px 12px; border:1.5px dashed var(--border);
+  border-radius:10px; background:var(--surface-2); text-align:center;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+}
+.dropzone svg{color:#9BA3B5}
+.dropzone-title{font-size:12.5px; color:var(--text-2); font-weight:600}
+.dropzone-sub{font-size:10.5px; color:var(--text-3)}
+.attach-list{padding:4px 12px 10px; display:flex; flex-direction:column; gap:6px}
+.attach-item{
+  display:flex; align-items:center; gap:10px; padding:8px 10px;
+  background:#fff; border:1px solid var(--border-2); border-radius:8px;
+}
+.attach-item-icon{
+  width:30px; height:30px; border-radius:7px; flex-shrink:0;
+  background:var(--brand-50); color:var(--brand-700);
+  display:flex; align-items:center; justify-content:center;
+}
+.attach-item-icon svg{width:16px; height:16px}
+.attach-item-body{flex:1; min-width:0}
+.attach-item-name{font-size:12px; font-weight:600; color:var(--text-1); line-height:1.3; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.attach-item-meta{font-size:10.5px; color:var(--text-3); margin-top:2px}
+.attach-item-action{
+  width:30px; height:30px; border-radius:7px; border:none; background:transparent;
+  color:var(--text-3); display:inline-flex; align-items:center; justify-content:center;
+}
+
+/* Audit (作成・更新) */
+.audit-grid{
+  display:grid; grid-template-columns:1fr 1fr; gap:0;
+  padding:6px 0;
+}
+.audit-grid > div{
+  padding:8px 12px; display:flex; flex-direction:column; gap:2px;
+  border-right:1px solid var(--border-2); border-bottom:1px solid var(--border-2);
+}
+.audit-grid > div:nth-child(2n){border-right:0}
+.audit-grid > div:nth-last-child(-n+2){border-bottom:0}
+.audit-grid .lbl{font-size:10px; color:var(--text-3); font-weight:600; text-transform:uppercase; letter-spacing:.4px}
+.audit-grid .val{font-size:12px; color:var(--text-1); font-weight:600}
+.audit-grid .val.mono{font-family:"Inter"; letter-spacing:.2px}
+
+/* Memo */
+.memo-card{margin:0 12px 12px; background:#fff; border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow-card); overflow:hidden}
+.memo-head{padding:10px 12px 0; display:flex; align-items:center; justify-content:space-between}
+.memo-head h3{margin:0; font-size:11.5px; font-weight:700; color:var(--text-2); letter-spacing:.4px; text-transform:uppercase}
+.memo-head .edit{color:var(--brand-600); font-size:11px; font-weight:600}
+.memo-body{padding:8px 12px 12px}
+.memo-body textarea{
+  width:100%; min-height:74px; resize:none; border:1px solid var(--border-2);
+  border-radius:8px; padding:10px 11px; font:inherit; font-size:12.5px; color:var(--text-1);
+  background:var(--surface-2); line-height:1.55;
+}
+.memo-body textarea:focus{outline:none; border-color:var(--brand-500); background:#fff; box-shadow:0 0 0 3px rgba(30,91,214,.12)}
+
+/* Activity timeline preview */
+.timeline{margin:0 12px 14px; background:#fff; border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow-card); padding:10px 12px}
+.tl-head{display:flex; align-items:center; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid var(--border-2); margin-bottom:8px}
+.tl-head h3{margin:0; font-size:11.5px; font-weight:700; color:var(--text-2); letter-spacing:.4px; text-transform:uppercase}
+.tl-head a{color:var(--brand-600); font-size:11px; font-weight:600; text-decoration:none}
+.tl-item{display:flex; gap:10px; padding:6px 0}
+.tl-dot{
+  width:24px; height:24px; flex-shrink:0; border-radius:50%; background:var(--brand-50);
+  color:var(--brand-700); display:flex; align-items:center; justify-content:center; margin-top:1px;
+}
+.tl-dot svg{width:13px; height:13px}
+.tl-dot.green{background:#E8F7EE; color:#15803D}
+.tl-dot.amber{background:#FFF6E1; color:#B45309}
+.tl-body{flex:1; min-width:0}
+.tl-title{font-size:12px; font-weight:600; color:var(--text-1); line-height:1.4}
+.tl-meta{font-size:10.5px; color:var(--text-3); margin-top:2px}
+
+/* Save bar (detail screen) */
+.save-bar{
+  position:absolute; left:0; right:0; bottom:80px; z-index:35;
+  background:rgba(255,255,255,.96); backdrop-filter:saturate(180%) blur(16px);
+  border-top:1px solid var(--border-2);
+  padding:8px 14px; display:flex; gap:8px; align-items:center;
+}
+.btn{
+  height:38px; padding:0 14px; border-radius:10px; border:1px solid transparent;
+  font:inherit; font-size:13px; font-weight:600; cursor:pointer;
+  display:inline-flex; align-items:center; justify-content:center; gap:6px;
+}
+.btn svg{width:15px; height:15px}
+.btn-primary{flex:1; background:var(--brand-600); color:#fff; box-shadow:0 6px 14px rgba(20,72,182,.28)}
+.btn-primary.accent{background:linear-gradient(135deg,var(--accent-500),var(--accent-600)); box-shadow:0 8px 20px rgba(226,93,20,.35)}
+.btn-secondary{background:#fff; color:var(--text-1); border-color:var(--border)}
+
+/* Pull-to-refresh hint */
+.ptr{display:flex; align-items:center; justify-content:center; gap:5px; padding:8px 0; color:var(--text-3); font-size:10.5px}
+.ptr svg{width:13px; height:13px}
+
+/* ============ ACTIVITY FORM ============ */
+.ctx-card{
+  margin:10px 12px 10px; padding:12px; background:#fff;
+  border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow-card);
+  display:flex; align-items:center; gap:10px;
+}
+.ctx-icon{
+  width:36px; height:36px; flex-shrink:0; border-radius:10px;
+  background:linear-gradient(135deg,#E8F0FE,#CCDCFA); color:var(--brand-700);
+  display:flex; align-items:center; justify-content:center;
+}
+.ctx-icon svg{width:18px; height:18px}
+.ctx-body{flex:1; min-width:0}
+.ctx-label{font-size:10px; font-weight:600; color:var(--text-3); letter-spacing:.4px; text-transform:uppercase; margin-bottom:3px}
+.ctx-title{font-size:13px; font-weight:700; color:var(--text-1); line-height:1.3}
+.ctx-sub{font-size:10.5px; color:var(--text-3); margin-top:2px}
+.ctx-pill{
+  flex-shrink:0; padding:3px 9px; border-radius:999px; background:var(--brand-50);
+  color:var(--brand-700); font-size:10px; font-weight:700; font-family:"Inter";
+}
+
+.form-section{
+  margin:0 12px 8px; background:#fff; border:1px solid var(--border);
+  border-radius:12px; box-shadow:var(--shadow-card); overflow:hidden;
+}
+.form-section-head{
+  padding:9px 12px 8px; background:var(--surface-2); border-bottom:1px solid var(--border-2);
+  font-size:11.5px; font-weight:700; color:var(--text-2); letter-spacing:.4px; text-transform:uppercase;
+}
+.form-body{padding:6px 0}
+.form-field{padding:10px 12px; border-bottom:1px solid var(--border-2)}
+.form-field:last-child{border-bottom:0}
+.form-field label{
+  display:block; font-size:10.5px; font-weight:600; color:var(--text-3);
+  letter-spacing:.4px; text-transform:uppercase; margin-bottom:6px;
+}
+.form-field label .req{color:var(--danger); margin-left:2px}
+.form-field input,.form-field select,.form-field textarea{
+  width:100%; height:38px; padding:0 12px; font:inherit; font-size:13px; color:var(--text-1);
+  background:#fff; border:1px solid var(--border); border-radius:8px; outline:none;
+  transition:border-color .12s, box-shadow .12s;
+}
+.form-field textarea{height:auto; min-height:88px; padding:9px 12px; resize:vertical; line-height:1.5}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{
+  border-color:var(--brand-500); box-shadow:0 0 0 3px rgba(30,91,214,.14);
+}
+.form-field select{
+  appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237A8499' stroke-width='2'><path d='m6 9 6 6 6-6'/></svg>");
+  background-repeat:no-repeat; background-position:right 10px center; background-size:16px; padding-right:36px;
+}
+.form-field .static{
+  height:38px; padding:0 12px; display:flex; align-items:center; font-size:13px;
+  color:var(--text-2); background:var(--surface-2);
+  border:1px solid var(--border-2); border-radius:8px;
+}
+.row-2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+
+.seg-pick{display:grid; grid-template-columns:repeat(4,1fr); gap:6px}
+.seg-pick button{
+  padding:9px 4px; border-radius:8px; border:1px solid var(--border); background:#fff;
+  font-size:11px; font-weight:600; color:var(--text-2); font-family:inherit;
+  display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer;
+}
+.seg-pick button svg{width:16px; height:16px}
+.seg-pick button.active{
+  background:var(--brand-50); border-color:var(--brand-500); color:var(--brand-700);
+  box-shadow:0 0 0 3px rgba(30,91,214,.10);
+}
+
+.attach-row{display:flex; gap:8px; flex-wrap:wrap}
+.attach-btn{
+  height:40px; padding:0 12px; border-radius:8px; background:var(--surface-2);
+  border:1px dashed var(--border); color:var(--text-2); font-size:12px; font-weight:500;
+  display:inline-flex; align-items:center; gap:6px; font-family:inherit;
+}
+.attach-btn svg{width:14px; height:14px}
+
+.toggle-row{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+.toggle-row .desc{font-size:11px; color:var(--text-3); margin-top:2px; font-weight:400; text-transform:none; letter-spacing:0}
+.toggle{
+  width:42px; height:24px; border-radius:13px; background:#D2D7E0; position:relative; flex-shrink:0;
+  transition:background .15s;
+}
+.toggle::after{
+  content:""; position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%;
+  background:#fff; box-shadow:0 2px 5px rgba(16,24,40,.18); transition:transform .15s;
+}
+.toggle.on{background:var(--brand-600)}
+.toggle.on::after{transform:translateX(18px)}
+
+/* swatch panel under gallery */
+.tokens{
+  width:100%; max-width:856px; background:#fff; border:1px solid var(--border);
+  border-radius:14px; padding:18px 20px; box-shadow:var(--shadow-card);
+}
+.tokens h3{margin:0 0 10px; font-size:13px; font-weight:700; color:var(--text-1)}
+.token-grid{display:grid; grid-template-columns:repeat(6,1fr); gap:10px}
+.swatch{display:flex; flex-direction:column; gap:6px; align-items:flex-start}
+.swatch .chip{width:100%; height:36px; border-radius:8px; border:1px solid rgba(16,24,40,.06)}
+.swatch .lab{font-size:10px; color:var(--text-3); font-weight:500}
+.swatch .val{font-family:"Inter"; font-size:11px; font-weight:600; color:var(--text-1)}
+
+@media (max-width:880px){
+  .gallery{flex-direction:column}
+  .token-grid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <div class="stage-head">
+    <h1>SMOS CRM — 会社 (Mobile Hi-Fi)</h1>
+    <p>Production-ready iOS design, compact density · synced với <code>会社_compact_business.html</code> tokens. Hai màn chính: 会社 一覧 (list) + 会社詳細 (detail).</p>
+    <span class="legend"><span class="dot"></span>Hi-Fi · iPhone 14 Pro · 390×844 · safe area aware</span>
+  </div>
+
+  <div class="gallery">
+
+    <!-- ========== SCREEN 1 — LIST ========== -->
+    <div class="frame-wrap">
+      <span class="frame-label"><span class="num">1</span>会社 一覧 · List (view only)</span>
+      <div class="iphone">
+        <div class="island"></div>
+        <div class="screen">
+
+          <div class="statusbar dark">
+            <span>9:41</span>
+            <div class="icons">
+              <!-- signal -->
+              <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+              <!-- wifi -->
+              <svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 3.6a10 10 0 0 1 13 0"/><path d="M3.4 6.2a6.5 6.5 0 0 1 8.2 0"/><path d="M5.9 8.7a3 3 0 0 1 3.2 0"/><circle cx="7.5" cy="10" r=".6" fill="currentColor"/></svg>
+              <!-- battery -->
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="currentColor" stroke-opacity=".5"/><rect x="2" y="2" width="19" height="8" rx="1.5" fill="currentColor"/><rect x="23.5" y="4" width="1.5" height="4" rx=".5" fill="currentColor" opacity=".5"/></svg>
+            </div>
+          </div>
+
+          <header class="app-header">
+            <div class="left">
+              <span class="logo">SMOS</span>
+            </div>
+            <div class="title">会社</div>
+            <div class="right">
+              <button class="icon-btn" aria-label="refresh">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+              </button>
+            </div>
+          </header>
+
+          <div class="body">
+
+            <div class="search-bar">
+              <div class="search-input">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                <input type="text" placeholder="会社名・TEL・住所で検索">
+              </div>
+              <button class="filter-btn" aria-label="filter">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+                <span class="dot"></span>
+              </button>
+            </div>
+
+            <div class="filter-chips">
+              <span class="chip active">すべて<span class="cnt">2,548</span></span>
+              <span class="chip">製造業<span class="cnt">1,204</span></span>
+              <span class="chip">卸売業<span class="cnt">412</span></span>
+              <span class="chip">小売業<span class="cnt">186</span></span>
+              <span class="chip">金融業<span class="cnt">96</span></span>
+              <span class="chip">建設業<span class="cnt">284</span></span>
+              <span class="chip">運輸業<span class="cnt">143</span></span>
+            </div>
+
+            <div class="list-meta">
+              <span class="total"><b>12,548</b>件</span>
+              <span class="sort-trigger">
+                会社ID
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+            </div>
+
+            <div class="ptr">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+              引っ張って更新
+            </div>
+
+            <div class="list">
+
+              <!-- Selected card -->
+              <article class="co-card selected">
+                <div class="co-card-head">
+                  <div>
+                    <div class="co-name">旭川エレクトロニクスサービス株式会社</div>
+                    <div class="co-id">CO-1141 · 製造業</div>
+                  </div>
+                  <span class="co-flag flag-A">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 15 9l7 .5-5.5 4.7L18 22l-6-3.7L6 22l1.5-7.8L2 9.5 9 9z"/></svg>
+                    A
+                  </span>
+                </div>
+                <dl class="co-grid">
+                  <dt>都道府県</dt><dd>北海道</dd>
+                  <dt>郵便番号</dt><dd>064-0921</dd>
+                  <dt>住所</dt><dd>札幌市中央区南三条西7-15 中央ビル4F</dd>
+                  <dt>代表TEL</dt><dd class="tel">011-555-9988</dd>
+                </dl>
+                <div class="co-card-foot">
+                  <div class="last-act">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>
+                    最終活動 04/22 · 見積送付
+                  </div>
+                  <div class="quick-actions">
+                    <button class="qa-btn" aria-label="call"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L7.9 9.7a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2Z"/></svg></button>
+                    <button class="qa-btn accent" aria-label="open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m9 6 6 6-6 6"/></svg></button>
+                  </div>
+                </div>
+              </article>
+
+              <article class="co-card">
+                <div class="co-card-head">
+                  <div>
+                    <div class="co-name">株式会社ハシモトクリエイティブ</div>
+                    <div class="co-id">CO-1142 · 広告代理店</div>
+                  </div>
+                  <span class="co-flag flag-B">B</span>
+                </div>
+                <dl class="co-grid">
+                  <dt>都道府県</dt><dd>京都府</dd>
+                  <dt>郵便番号</dt><dd>602-8334</dd>
+                  <dt>住所</dt><dd>京都市上京区今出川通烏丸西入</dd>
+                  <dt>代表TEL</dt><dd class="tel">075-845-1230</dd>
+                </dl>
+                <div class="co-card-foot">
+                  <div class="last-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>最終活動 04/18 · 電話</div>
+                  <div class="quick-actions">
+                    <button class="qa-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L7.9 9.7a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2Z"/></svg></button>
+                    <button class="qa-btn accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m9 6 6 6-6 6"/></svg></button>
+                  </div>
+                </div>
+              </article>
+
+              <article class="co-card">
+                <div class="co-card-head">
+                  <div>
+                    <div class="co-name">福岡フィッシング合同会社</div>
+                    <div class="co-id">CO-1143 · 水産業</div>
+                  </div>
+                  <span class="co-flag flag-C">C</span>
+                </div>
+                <dl class="co-grid">
+                  <dt>都道府県</dt><dd>福岡県</dd>
+                  <dt>郵便番号</dt><dd>810-0001</dd>
+                  <dt>住所</dt><dd>福岡市中央区天神2-3-10</dd>
+                  <dt>代表TEL</dt><dd class="tel">092-712-3344</dd>
+                </dl>
+                <div class="co-card-foot">
+                  <div class="last-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>最終活動 04/12 · 訪問</div>
+                  <div class="quick-actions">
+                    <button class="qa-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L7.9 9.7a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2Z"/></svg></button>
+                    <button class="qa-btn accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m9 6 6 6-6 6"/></svg></button>
+                  </div>
+                </div>
+              </article>
+
+              <article class="co-card">
+                <div class="co-card-head">
+                  <div>
+                    <div class="co-name">札幌ライフデザイン株式会社</div>
+                    <div class="co-id">CO-1144 · 建築設計</div>
+                  </div>
+                  <span class="co-flag flag-B">B</span>
+                </div>
+                <dl class="co-grid">
+                  <dt>都道府県</dt><dd>北海道</dd>
+                  <dt>郵便番号</dt><dd>060-0807</dd>
+                  <dt>住所</dt><dd>札幌市北区北7条西4-1-2</dd>
+                  <dt>代表TEL</dt><dd class="tel">011-820-5566</dd>
+                </dl>
+                <div class="co-card-foot">
+                  <div class="last-act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>最終活動 04/05 · メール</div>
+                  <div class="quick-actions">
+                    <button class="qa-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L7.9 9.7a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2Z"/></svg></button>
+                    <button class="qa-btn accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m9 6 6 6-6 6"/></svg></button>
+                  </div>
+                </div>
+              </article>
+
+            </div>
+          </div>
+
+          <!-- Tabbar -->
+          <nav class="tabbar">
+            <a class="tab-item active">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-7h6v7"/></svg>
+              会社
+            </a>
+            <a class="tab-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c1-3.5 4-5.5 7-5.5s6 2 7 5.5"/></svg>
+              担当者
+            </a>
+            <a class="tab-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg>
+              ホーム
+            </a>
+            <a class="tab-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3"/></svg>
+              活動
+            </a>
+            <a class="tab-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m6 12 3-3 3 3 6-6"/><path d="M21 21H3V3"/></svg>
+              案件
+            </a>
+          </nav>
+          <div class="home-indicator"></div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SCREEN 2 — DETAIL ========== -->
+    <div class="frame-wrap">
+      <span class="frame-label"><span class="num">2</span>会社詳細 · Detail (read-only)</span>
+      <div class="iphone">
+        <div class="island"></div>
+        <div class="screen">
+
+          <div class="statusbar dark">
+            <span>9:41</span>
+            <div class="icons">
+              <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+              <svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 3.6a10 10 0 0 1 13 0"/><path d="M3.4 6.2a6.5 6.5 0 0 1 8.2 0"/><path d="M5.9 8.7a3 3 0 0 1 3.2 0"/><circle cx="7.5" cy="10" r=".6" fill="currentColor"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="currentColor" stroke-opacity=".5"/><rect x="2" y="2" width="19" height="8" rx="1.5" fill="currentColor"/><rect x="23.5" y="4" width="1.5" height="4" rx=".5" fill="currentColor" opacity=".5"/></svg>
+            </div>
+          </div>
+
+          <header class="app-header">
+            <div class="left">
+              <button class="icon-btn back-btn" aria-label="back">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 6-6 6 6 6"/></svg>
+              </button>
+            </div>
+            <div class="title">会社詳細</div>
+            <div class="right">
+              <button class="icon-btn" aria-label="more">
+                <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>
+              </button>
+            </div>
+          </header>
+
+          <div class="body detail-body">
+
+            <!-- Hero (no company logo) -->
+            <section class="detail-hero">
+              <div class="hero-row">
+                <div class="hero-info">
+                  <div class="hero-name">旭川エレクトロニクスサービス株式会社</div>
+                  <div class="hero-sub">
+                    <span class="pill">CO-1141</span>
+                    <span>製造業</span>
+                    <span>·</span>
+                    <span>メーカー</span>
+                  </div>
+                </div>
+                <span class="co-flag flag-A" style="margin-top:2px">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 15 9l7 .5-5.5 4.7L18 22l-6-3.7L6 22l1.5-7.8L2 9.5 9 9z"/></svg>
+                  A
+                </span>
+              </div>
+              <div class="hero-actions">
+                <button class="ha-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L7.9 9.7a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2Z"/></svg>
+                  電話
+                </button>
+                <button class="ha-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+                  メール
+                </button>
+                <button class="ha-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                  地図
+                </button>
+                <button class="ha-btn primary">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
+                  活動登録
+                </button>
+              </div>
+            </section>
+
+            <!-- Tabs -->
+            <div class="seg">
+              <button class="active">詳細</button>
+              <button>担当者<span class="badge-cnt">5</span></button>
+              <button>活動<span class="badge-cnt">23</span></button>
+              <button>案件<span class="badge-cnt">3</span></button>
+            </div>
+
+            <!-- 基本情報 -->
+            <section class="section">
+              <div class="section-head">
+                <h3>基本情報</h3>
+              </div>
+              <div class="fields">
+                <div class="field-row"><span class="k">会社ID</span><span class="v mono">CO-1141</span></div>
+                <div class="field-row full"><span class="k">会社名</span><span class="v">旭川エレクトロニクスサービス株式会社</span></div>
+                <div class="field-row"><span class="k">代表TEL</span><span class="v link mono">011-555-9988</span></div>
+                <div class="field-row"><span class="k">代表FAX</span><span class="v mono">011-555-9989</span></div>
+                <div class="field-row"><span class="k">地区</span><span class="v"><span class="chip-inline gray">関東</span></span></div>
+                <div class="field-row"><span class="k">郵便番号</span><span class="v mono">064-0921</span></div>
+                <div class="field-row"><span class="k">都道府県</span><span class="v">北海道</span></div>
+                <div class="field-row full"><span class="k">住所</span><span class="v">札幌市中央区南三条西7-15 中央ビル4F</span></div>
+              </div>
+            </section>
+
+            <!-- 業種・規模 -->
+            <section class="section">
+              <div class="section-head">
+                <h3>業種・規模</h3>
+              </div>
+              <div class="fields">
+                <div class="field-row"><span class="k">業界</span><span class="v">製造業</span></div>
+                <div class="field-row"><span class="k">業種</span><span class="v">金属製品</span></div>
+                <div class="field-row"><span class="k">規模ランク</span><span class="v"><span class="chip-inline">101〜300人</span></span></div>
+                <div class="field-row"><span class="k">会社種別</span><span class="v">メーカー</span></div>
+                <div class="field-row"><span class="k">法人番号</span><span class="v mono">1234567890123</span></div>
+                <div class="field-row"><span class="k">従業員数</span><span class="v"><span class="num">250</span> 名</span></div>
+              </div>
+            </section>
+
+            <!-- 財務情報 -->
+            <section class="section">
+              <div class="section-head">
+                <h3>財務情報</h3>
+              </div>
+              <div class="fields">
+                <div class="field-row"><span class="k">決算月</span><span class="v">3 月</span></div>
+                <div class="field-row"><span class="k">売上高</span><span class="v mono">¥1,200,000,000</span></div>
+                <div class="field-row"><span class="k">資本金</span><span class="v"><span class="num">50</span> 百万円</span></div>
+              </div>
+            </section>
+
+            <!-- 備考 -->
+            <section class="section">
+              <div class="section-head">
+                <h3>備考</h3>
+              </div>
+              <div class="text-block">既存顧客。年次更新時期は3月。担当窓口は鈴木様（経理部）。社内システム導入の提案を検討中。前回訪問時、新製品ラインへの興味を示していたため、04/28に再訪予定。</div>
+            </section>
+
+            <!-- 会社自由使用欄 1〜7 -->
+            <section class="section">
+              <div class="section-head">
+                <h3>会社自由使用欄</h3>
+                <span class="meta">1〜4</span>
+              </div>
+              <div class="free-list">
+                <div class="free-row"><span class="k">使用欄 1</span><span class="v">親会社：旭川HD</span></div>
+                <div class="free-row"><span class="k">使用欄 2</span><span class="v">取引銀行：北海道銀行</span></div>
+                <div class="free-row"><span class="k">使用欄 3</span><span class="v">ISO9001 取得</span></div>
+                <div class="free-row"><span class="k">使用欄 4</span><span class="v">主要取引先：A社・B社</span></div>
+              </div>
+            </section>
+
+            <!-- 添付資料 -->
+            <section class="section">
+              <div class="section-head">
+                <h3>添付資料</h3>
+                <span class="meta">3件</span>
+              </div>
+              <div class="attach-list">
+                <div class="attach-item">
+                  <div class="attach-item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                  </div>
+                  <div class="attach-item-body">
+                    <div class="attach-item-name">基本契約書_2018.pdf</div>
+                    <div class="attach-item-meta">PDF · 1.2 MB · 2018/04/15</div>
+                  </div>
+                  <button class="attach-item-action" aria-label="open">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 4 4 4-4 4"/></svg>
+                  </button>
+                </div>
+                <div class="attach-item">
+                  <div class="attach-item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+                  </div>
+                  <div class="attach-item-body">
+                    <div class="attach-item-name">工場外観.jpg</div>
+                    <div class="attach-item-meta">画像 · 820 KB · 2024/06/10</div>
+                  </div>
+                  <button class="attach-item-action">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 4 4 4-4 4"/></svg>
+                  </button>
+                </div>
+                <div class="attach-item">
+                  <div class="attach-item-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+                  </div>
+                  <div class="attach-item-body">
+                    <div class="attach-item-name">会社案内_2025.xlsx</div>
+                    <div class="attach-item-meta">Excel · 2.4 MB · 2025/03/20</div>
+                  </div>
+                  <button class="attach-item-action">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 4 4 4-4 4"/></svg>
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <!-- 履歴情報 -->
+            <section class="section">
+              <div class="section-head">
+                <h3>履歴情報</h3>
+              </div>
+              <div class="audit-grid">
+                <div>
+                  <span class="lbl">作成日</span>
+                  <span class="val mono">2018/04/15</span>
+                </div>
+                <div>
+                  <span class="lbl">作成者</span>
+                  <span class="val">山田 健一</span>
+                </div>
+                <div>
+                  <span class="lbl">更新日</span>
+                  <span class="val mono">2026/04/22</span>
+                </div>
+                <div>
+                  <span class="lbl">更新者</span>
+                  <span class="val">佐藤 太郎</span>
+                </div>
+              </div>
+            </section>
+
+          </div>
+
+          <!-- Action bar (only register activity — no edit company) -->
+          <div class="save-bar">
+            <button class="btn btn-primary accent">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+              活動を登録する
+            </button>
+          </div>
+
+          <!-- Tabbar -->
+          <nav class="tabbar">
+            <a class="tab-item active">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-7h6v7"/></svg>
+              会社
+            </a>
+            <a class="tab-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c1-3.5 4-5.5 7-5.5s6 2 7 5.5"/></svg>
+              担当者
+            </a>
+            <a class="tab-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg>
+              ホーム
+            </a>
+            <a class="tab-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3"/></svg>
+              活動
+            </a>
+            <a class="tab-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m6 12 3-3 3 3 6-6"/><path d="M21 21H3V3"/></svg>
+              案件
+            </a>
+          </nav>
+          <div class="home-indicator"></div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SCREEN 3 — ACTIVITY REGISTRATION ========== -->
+    <div class="frame-wrap">
+      <span class="frame-label"><span class="num">3</span>活動登録 · Activity Registration</span>
+      <div class="iphone">
+        <div class="island"></div>
+        <div class="screen">
+
+          <div class="statusbar dark">
+            <span>9:41</span>
+            <div class="icons">
+              <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+              <svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 3.6a10 10 0 0 1 13 0"/><path d="M3.4 6.2a6.5 6.5 0 0 1 8.2 0"/><path d="M5.9 8.7a3 3 0 0 1 3.2 0"/><circle cx="7.5" cy="10" r=".6" fill="currentColor"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" stroke="currentColor" stroke-opacity=".5"/><rect x="2" y="2" width="19" height="8" rx="1.5" fill="currentColor"/><rect x="23.5" y="4" width="1.5" height="4" rx=".5" fill="currentColor" opacity=".5"/></svg>
+            </div>
+          </div>
+
+          <header class="app-header">
+            <div class="left">
+              <button class="icon-btn" aria-label="cancel">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+            <div class="title">活動登録</div>
+            <div class="right">
+              <button class="icon-btn" aria-label="history" title="履歴">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+              </button>
+            </div>
+          </header>
+
+          <div class="body activity-body">
+
+            <!-- Context: which company -->
+            <section class="ctx-card">
+              <div class="ctx-body">
+                <div class="ctx-label">活動対象</div>
+                <div class="ctx-title">旭川エレクトロニクスサービス株式会社</div>
+                <div class="ctx-sub">CO-1141 · 北海道 · 製造業</div>
+              </div>
+              <span class="ctx-pill">A</span>
+            </section>
+
+            <!-- 活動種別 -->
+            <section class="form-section">
+              <div class="form-section-head">活動種別</div>
+              <div class="form-body">
+                <div class="form-field">
+                  <div class="seg-pick">
+                    <button class="active">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L7.9 9.7a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2Z"/></svg>
+                      電話
+                    </button>
+                    <button>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                      訪問
+                    </button>
+                    <button>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+                      メール
+                    </button>
+                    <button>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 12h6M12 9v6"/></svg>
+                      その他
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- 日時・担当 -->
+            <section class="form-section">
+              <div class="form-section-head">活動情報</div>
+              <div class="form-body">
+                <div class="form-field">
+                  <div class="row-2">
+                    <div>
+                      <label>活動日<span class="req">*</span></label>
+                      <input type="date" value="2026-05-16">
+                    </div>
+                    <div>
+                      <label>時刻</label>
+                      <input type="time" value="14:30">
+                    </div>
+                  </div>
+                </div>
+                <div class="form-field">
+                  <label>所要時間</label>
+                  <select>
+                    <option>15分</option>
+                    <option selected>30分</option>
+                    <option>1時間</option>
+                    <option>1時間30分</option>
+                    <option>2時間</option>
+                    <option>半日</option>
+                    <option>終日</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label>担当者</label>
+                  <select>
+                    <option selected>佐藤 太郎（自分）</option>
+                    <option>鈴木 一郎</option>
+                    <option>田中 花子</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label>相手先（先方担当）</label>
+                  <input type="text" value="鈴木様（経理部）" placeholder="例: 鈴木様">
+                </div>
+              </div>
+            </section>
+
+            <!-- 内容 -->
+            <section class="form-section">
+              <div class="form-section-head">内容</div>
+              <div class="form-body">
+                <div class="form-field">
+                  <label>件名<span class="req">*</span></label>
+                  <input type="text" value="見積書フォローアップ" placeholder="活動の件名を入力">
+                </div>
+                <div class="form-field">
+                  <label>内容</label>
+                  <textarea placeholder="活動の詳細を入力してください…">B-2026-018 の見積についてフォロー。先方より「来週中に社内決裁完了予定」との回答あり。次回は 04/28 に再度連絡予定。</textarea>
+                </div>
+                <div class="form-field">
+                  <label>関連案件</label>
+                  <select>
+                    <option>選択なし</option>
+                    <option selected>B-2026-018 ／ 制御盤更新案件</option>
+                    <option>B-2026-022 ／ 保守契約更新</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label>結果・次のアクション</label>
+                  <textarea placeholder="例: 04/28 再連絡、見積確定" style="min-height:60px">04/28 に進捗確認の電話を入れる。決裁が下りた場合は契約書ドラフトを送付。</textarea>
+                </div>
+              </div>
+            </section>
+
+            <!-- 添付 -->
+            <section class="form-section">
+              <div class="form-section-head">添付・オプション</div>
+              <div class="form-body">
+                <div class="form-field">
+                  <label>添付ファイル</label>
+                  <div class="attach-row">
+                    <button class="attach-btn">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+                      写真
+                    </button>
+                    <button class="attach-btn">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+                      ファイル
+                    </button>
+                    <button class="attach-btn">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="11" r="3"/><path d="M19 11a7 7 0 0 1-14 0"/><path d="M12 18v4M8 22h8"/></svg>
+                      音声録音
+                    </button>
+                  </div>
+                </div>
+                <div class="form-field">
+                  <div class="toggle-row">
+                    <div>
+                      <label style="margin-bottom:0">フォローアップ予定</label>
+                      <div class="desc">後日リマインドを設定</div>
+                    </div>
+                    <span class="toggle on"></span>
+                  </div>
+                </div>
+                <div class="form-field">
+                  <div class="toggle-row">
+                    <div>
+                      <label style="margin-bottom:0">上司に共有</label>
+                      <div class="desc">活動完了時に通知を送る</div>
+                    </div>
+                    <span class="toggle"></span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+          </div>
+
+          <!-- Save bar -->
+          <div class="save-bar">
+            <button class="btn btn-secondary">下書き</button>
+            <button class="btn btn-primary accent">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12l5 5L20 7"/></svg>
+              登録する
+            </button>
+          </div>
+
+          <!-- Tabbar -->
+          <nav class="tabbar">
+            <a class="tab-item active">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-7h6v7"/></svg>
+              会社
+            </a>
+            <a class="tab-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c1-3.5 4-5.5 7-5.5s6 2 7 5.5"/></svg>
+              担当者
+            </a>
+            <a class="tab-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/></svg>
+              ホーム
+            </a>
+            <a class="tab-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3"/></svg>
+              活動
+            </a>
+            <a class="tab-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m6 12 3-3 3 3 6-6"/><path d="M21 21H3V3"/></svg>
+              案件
+            </a>
+          </nav>
+          <div class="home-indicator"></div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Token reference -->
+  <div class="tokens">
+    <h3>Design Tokens — synced với compact-business web</h3>
+    <div class="token-grid">
+      <div class="swatch"><div class="chip" style="background:#1F2A44"></div><span class="lab">nav-bg</span><span class="val">#1F2A44</span></div>
+      <div class="swatch"><div class="chip" style="background:#1448B6"></div><span class="lab">brand-600</span><span class="val">#1448B6</span></div>
+      <div class="swatch"><div class="chip" style="background:#1E5BD6"></div><span class="lab">brand-500</span><span class="val">#1E5BD6</span></div>
+      <div class="swatch"><div class="chip" style="background:#E25D14"></div><span class="lab">accent-500</span><span class="val">#E25D14</span></div>
+      <div class="swatch"><div class="chip" style="background:#15803D"></div><span class="lab">success</span><span class="val">#15803D</span></div>
+      <div class="swatch"><div class="chip" style="background:#B45309"></div><span class="lab">warning</span><span class="val">#B45309</span></div>
+      <div class="swatch"><div class="chip" style="background:#F4F6FA;border:1px solid #DDE1EA"></div><span class="lab">bg-page</span><span class="val">#F4F6FA</span></div>
+      <div class="swatch"><div class="chip" style="background:#FFFFFF;border:1px solid #DDE1EA"></div><span class="lab">surface</span><span class="val">#FFFFFF</span></div>
+      <div class="swatch"><div class="chip" style="background:#E2E6EE"></div><span class="lab">border</span><span class="val">#E2E6EE</span></div>
+      <div class="swatch"><div class="chip" style="background:#0E1424"></div><span class="lab">text-1</span><span class="val">#0E1424</span></div>
+      <div class="swatch"><div class="chip" style="background:#3F4A60"></div><span class="lab">text-2</span><span class="val">#3F4A60</span></div>
+      <div class="swatch"><div class="chip" style="background:#7A8499"></div><span class="lab">text-3</span><span class="val">#7A8499</span></div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

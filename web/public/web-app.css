@@ -1,0 +1,630 @@
+/* =====================================================================
+   SMOS Web — App utilities (dialogs, auth, legacy aliases)
+   Load after crm-common.css + crm-shell.css + company.css
+   ===================================================================== */
+
+:root {
+  /* Legacy aliases used in a few templates/JS */
+  --bg-color: var(--bg);
+  --border-color: var(--border);
+  --text-primary: var(--text-1);
+  --text-secondary: var(--text-2);
+  --accent-color: var(--brand-500);
+  --primary-color: var(--nav-bg);
+  --font-main: var(--font);
+  --radius-main: var(--r-card);
+  --radius-sm: var(--r);
+  --shadow-sm: var(--shadow-1);
+  --shadow-md: var(--shadow-pop);
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font);
+  font-size: var(--fs-md);
+  color: var(--text-1);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.app-container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg);
+}
+
+/* ---------- Auth (LG01 / LG02) ---------- */
+.auth-bg {
+  min-height: 100vh;
+  width: 100%;
+  background:
+    radial-gradient(1200px 600px at 88% 110%, rgba(20, 72, 182, 0.1), transparent 60%),
+    radial-gradient(900px 500px at 5% 0%, rgba(226, 93, 20, 0.06), transparent 60%),
+    linear-gradient(135deg, #e9edf5 0%, #f4f6fa 60%, #eef2f8 100%) !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+}
+
+.auth-bg::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: radial-gradient(circle at 1px 1px, rgba(15, 27, 45, 0.06) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+.auth-card {
+  position: relative;
+  z-index: 1;
+  width: 420px;
+  max-width: 100%;
+  background: var(--surface) !important;
+  border-radius: 14px !important;
+  box-shadow: var(--shadow-pop) !important;
+  overflow: hidden;
+  border: 1px solid var(--border) !important;
+  animation: fadeUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.auth-brand {
+  background: linear-gradient(180deg, var(--nav-bg) 0%, #162038 100%);
+  color: #fff;
+  padding: 22px 28px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.auth-brand-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--nav-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+}
+
+.auth-brand-name {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 1.5px;
+  color: #fff !important;
+}
+
+.auth-brand .spacer {
+  flex: 1;
+}
+
+.auth-brand .code {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+.auth-body {
+  padding: 28px 32px 24px;
+  text-align: left;
+}
+
+.auth-title {
+  margin: 0 0 4px !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: var(--text-1) !important;
+  letter-spacing: -0.01em !important;
+}
+
+.auth-sub {
+  margin: 0 0 22px !important;
+  color: var(--text-2) !important;
+  font-size: 13px !important;
+  line-height: 1.55 !important;
+}
+
+/* Match standalone CRM login (crm/index.html + crm-common density-roomy) */
+.auth-form.form-4col.density-roomy {
+  --fc-h: 32px;
+  --fc-fs: 13px;
+  --fc-pad-x: 10px;
+  --fc-pad-r-sel: 28px;
+  --fc-label-fs: 12px;
+  --fc-label-gap: 6px;
+  --fc-row-gap: 14px;
+  --fc-col-gap: 18px;
+  --fc-grid-pad: 0;
+  --fc-check-fs: 13px;
+}
+
+.auth-form .ff {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--fc-label-gap, 6px);
+  margin-bottom: 0;
+}
+
+.auth-form .ff > label {
+  font-size: var(--fc-label-fs, 12px);
+}
+
+.auth-form .ff input.input {
+  height: var(--fc-h, 32px) !important;
+  min-height: var(--fc-h, 32px);
+  font-size: var(--fc-fs, 13px) !important;
+  padding: 0 var(--fc-pad-x, 10px);
+  padding-left: 36px !important;
+}
+
+.auth-form .ff:has(.toggle-pw) input.input {
+  padding-right: 36px !important;
+}
+
+.auth-form .ff .toggle-pw {
+  position: absolute;
+  right: 6px;
+  top: calc(100% - var(--fc-h, 32px));
+  width: 28px;
+  height: var(--fc-h, 32px);
+  border: none;
+  background: transparent;
+  color: var(--text-3);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 4px;
+}
+
+.auth-form .ff .toggle-pw:hover {
+  color: var(--text-1);
+  background: var(--hover);
+}
+
+.auth-form .ff .toggle-pw svg {
+  width: 16px;
+  height: 16px;
+}
+
+.auth-form .ff .field-icon {
+  position: absolute;
+  left: 10px;
+  width: 18px;
+  height: 18px;
+  color: var(--text-3);
+  pointer-events: none;
+  top: calc(100% - (var(--fc-h, 32px) / 2) - 9px);
+}
+
+.auth-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.auth-options label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--text-1);
+  font-size: 12px;
+}
+
+.auth-options input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--brand-600);
+}
+
+.auth-link {
+  color: var(--brand-600);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.auth-link:hover {
+  color: var(--brand-700);
+  text-decoration: underline;
+}
+
+.btn-block {
+  display: flex;
+  width: 100%;
+  height: 38px;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  box-shadow: 0 6px 14px rgba(20, 72, 182, 0.28);
+}
+
+.auth-form .btn-block svg {
+  width: 16px;
+  height: 16px;
+}
+
+.auth-helper-text {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-2);
+  margin-top: 16px;
+}
+
+.access-code-input {
+  text-align: center;
+  font-size: 20px !important;
+  letter-spacing: 4px;
+  font-weight: 700;
+  height: var(--fc-h, 32px) !important;
+  min-height: var(--fc-h, 32px);
+}
+
+.alert-error {
+  display: none;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 9px 12px;
+  background: #fdecec;
+  border: 1px solid #f5c6c6;
+  border-radius: var(--r);
+  color: var(--danger);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.alert-error.show {
+  display: flex;
+}
+
+.alert-error svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Orange CTA alias → CRM accent */
+.btn-orange {
+  background: var(--accent-500) !important;
+  color: #fff !important;
+  border-color: var(--accent-500) !important;
+  height: 28px;
+  padding: 0 12px;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  border-radius: var(--r);
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.btn-orange:hover {
+  background: var(--accent-600) !important;
+  border-color: var(--accent-600) !important;
+  transform: none !important;
+}
+
+/* ---------- Dialogs ---------- */
+.dlg::backdrop {
+  background: rgba(15, 27, 45, 0.45);
+  backdrop-filter: blur(3px);
+}
+
+.dlg {
+  border: none;
+  border-radius: var(--r-card);
+  padding: 0;
+  width: min(920px, calc(100vw - 32px));
+  margin: auto;
+  box-shadow: var(--shadow-pop);
+  background: var(--surface);
+}
+
+.dlg-wide {
+  width: min(1100px, calc(100vw - 24px));
+}
+
+.dlg-narrow {
+  width: min(520px, calc(100vw - 24px));
+}
+
+/* Lookup / CP10 — wider than default .dlg (920px) */
+.dlg.dlg-hero {
+  width: min(97vw, 1580px);
+  max-width: min(97vw, 1580px);
+}
+
+/* CP06 / CP08 — 3-column detail forms */
+#dlgActivityDetail.dlg-hero,
+#dlgContactDetailNew.dlg-hero {
+  width: min(96vw, 1180px);
+  max-width: min(96vw, 1180px);
+}
+
+@media (max-width: 900px) {
+  .dlg.dlg-hero {
+    width: min(98vw, calc(100vw - 16px));
+    max-width: min(98vw, calc(100vw - 16px));
+  }
+}
+
+.dlg-body {
+  display: flex;
+  flex-direction: column;
+  max-height: min(88vh, 900px);
+}
+
+.dlg-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, #fafbfd, #f3f5f9);
+  border-radius: var(--r-card) var(--r-card) 0 0;
+}
+
+.dlg-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.dlg-content {
+  padding: 12px 16px;
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.dlg-note {
+  font-size: var(--fs-sm);
+  color: var(--text-2);
+  margin-bottom: 10px;
+}
+
+.dlg-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--surface-2);
+  border-radius: 0 0 var(--r-card) var(--r-card);
+}
+
+.dlg-actions.dlg-actions--split {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dlg-actions.dlg-actions--split .dlg-actions-left {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.dlg-grid {
+  display: grid;
+  gap: 10px 16px;
+}
+
+.dlg-grid.two-col {
+  grid-template-columns: 1fr 1fr;
+}
+
+.dlg-grid.four-col {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.dlg .icon-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--surface);
+  color: var(--text-2);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.dlg .icon-btn:hover {
+  background: var(--hover);
+  border-color: #9ca6b9;
+  color: var(--text-1);
+  transform: none;
+}
+
+/* Toast (CRM) */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  background: #0e1424;
+  color: #fff;
+  padding: 10px 16px 10px 14px;
+  border-radius: 10px;
+  box-shadow: 0 12px 32px -8px rgba(15, 27, 45, 0.4);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.toast.success svg {
+  color: #34d399;
+}
+
+.toast.danger svg {
+  color: #fca5a5;
+}
+
+/* Confirm delete dialog (CRM) */
+.confirm-dialog {
+  border: none;
+  padding: 0;
+  background: transparent;
+  width: 440px;
+  max-width: calc(100vw - 32px);
+}
+
+.confirm-dialog::backdrop {
+  background: rgba(15, 27, 45, 0.45);
+  backdrop-filter: blur(4px);
+}
+
+.confirm-card {
+  background: #fff;
+  border-radius: var(--r-card);
+  box-shadow: var(--shadow-pop);
+  overflow: hidden;
+}
+
+.confirm-body {
+  padding: 20px 22px 18px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.confirm-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #fdecec;
+  color: var(--danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.confirm-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.confirm-title {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.confirm-message {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--text-2);
+  line-height: 1.55;
+}
+
+.confirm-target {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: var(--r);
+  background: var(--surface-2);
+  border: 1px solid var(--border-2);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.confirm-target .id {
+  font-size: 10.5px;
+  font-weight: 600;
+  background: #fff;
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.confirm-target .name {
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.confirm-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 22px 16px;
+  border-top: 1px solid var(--border-2);
+  background: var(--surface-2);
+}
+
+.btn-danger-solid {
+  background: var(--danger);
+  color: #fff;
+  border-color: var(--danger);
+  box-shadow: 0 2px 6px rgba(185, 28, 28, 0.22);
+}
+
+.btn-danger-solid:hover {
+  background: #9b1818;
+  border-color: #9b1818;
+}

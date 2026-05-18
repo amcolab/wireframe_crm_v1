@@ -1,42 +1,103 @@
 import { q, escapeHtml } from '../../utils/helpers.js';
 import { mockContacts, mockActivities, mockProjects } from '../../utils/mockData.js';
+import { renderPageNumberButtons } from '../../utils/pager.js';
+import {
+  TAB_EMPTY,
+  renderTabEmptyState,
+  showTabPager,
+  updateTabPager,
+  bindTabPager,
+  syncEntityDetailTabLayout,
+} from '../../utils/entityTabTable.js';
 
 let state = {
   contacts: [...mockContacts],
   filtered: [...mockContacts],
   selectedId: mockContacts[0]?.id ? String(mockContacts[0].id) : null,
   page: 1,
-  pageSize: 25
+  pageSize: 25,
+  contactActivitiesPage: 1,
+  contactActivitiesPageSize: 10,
+  contactProjectsPage: 1,
+  contactProjectsPageSize: 10,
 };
 
-let table = null;
+let tableBound = false;
 
 export function init() {
   console.log('Contact screen (CT01) initialized');
   bindUi();
-  initTabulator();
+  bindContactTable();
+  bindTabPager(
+    'contactActivities',
+    state,
+    'contactActivitiesPage',
+    'contactActivitiesPageSize',
+    () => getSelectedContactActivities(),
+    () => {
+      const c = getSelectedContact();
+      if (c) renderContactActivitiesList(c);
+    }
+  );
+  bindTabPager(
+    'contactProjects',
+    state,
+    'contactProjectsPage',
+    'contactProjectsPageSize',
+    () => getSelectedContactProjects(),
+    () => {
+      const c = getSelectedContact();
+      if (c) renderContactProjectsList(c);
+    }
+  );
   initResizer();
+  const card = document.querySelector('#contact-root .company-detail');
+  syncEntityDetailTabLayout(card, 'detail');
+  setTimeout(() => render(), 200);
+}
 
-  // Force an initial render after a small delay to ensure everything is ready
-  setTimeout(() => {
-    render();
-  }, 200);
+function getSelectedContact() {
+  return state.contacts.find(c => String(c.id) === String(state.selectedId))
+    || state.filtered.find(c => String(c.id) === String(state.selectedId))
+    || state.filtered[0]
+    || null;
+}
+
+function getSelectedContactActivities() {
+  const c = getSelectedContact();
+  if (!c) return [];
+  return mockActivities.filter(a => String(a.contactId) === String(c.id));
+}
+
+function getSelectedContactProjects() {
+  const c = getSelectedContact();
+  if (!c) return [];
+  return mockProjects.filter(p => String(p.contactId) === String(c.id));
 }
 
 function bindUi() {
+  const root = q('contact-root');
+  if (root?.dataset.bound) return;
+  root.dataset.bound = 'true';
+
   const tabs = document.querySelectorAll('[data-contact-tab]');
   const panels = document.querySelectorAll('[data-contact-panel]');
+  const card = document.querySelector('#contact-root .company-detail');
 
   tabs.forEach(t => {
     t.addEventListener('click', () => {
       const tab = t.getAttribute('data-contact-tab');
-      tabs.forEach(x => x.classList.toggle('active', x === t));
+      tabs.forEach(x => {
+        x.classList.toggle('active', x === t);
+        x.setAttribute('aria-selected', x === t ? 'true' : 'false');
+      });
       panels.forEach(p => p.classList.toggle('active', p.getAttribute('data-contact-panel') === tab));
+      syncEntityDetailTabLayout(card, tab);
 
       const btnNewActivity = q('btnContactNewActivity');
       const btnNewProject = q('btnContactNewProject');
-      if (btnNewActivity) btnNewActivity.style.display = tab === 'activities' ? 'block' : 'none';
-      if (btnNewProject) btnNewProject.style.display = tab === 'projects' ? 'block' : 'none';
+      if (btnNewActivity) btnNewActivity.style.display = tab === 'activities' ? 'inline-flex' : 'none';
+      if (btnNewProject) btnNewProject.style.display = tab === 'projects' ? 'inline-flex' : 'none';
     });
   });
 
@@ -49,19 +110,7 @@ function bindUi() {
   q('btnContactSave')?.addEventListener('click', () => { alert('保存しました'); });
   q('btnContactDelete')?.addEventListener('click', () => { if (confirm('削除しますか？')) alert('削除しました'); });
 
-  q('btnContactSearch')?.addEventListener('click', () => {
-    const name = q('contactSearchName')?.value?.trim();
-    const company = q('contactSearchCompany')?.value?.trim();
-    state.filtered = state.contacts.filter(c => {
-      if (name && !((c.last || '') + (c.first || '')).includes(name)) return false;
-      if (company && !(c.company || '').includes(company)) return false;
-      return true;
-    });
-    state.page = 1;
-    state.selectedId = state.filtered[0]?.id ? String(state.filtered[0].id) : null;
-    render();
-  });
-
+  q('btnContactSearch')?.addEventListener('click', applySearch);
   q('btnContactClear')?.addEventListener('click', () => {
     if (q('contactSearchName')) q('contactSearchName').value = '';
     if (q('contactSearchCompany')) q('contactSearchCompany').value = '';
@@ -71,7 +120,6 @@ function bindUi() {
     render();
   });
 
-  // Pager Events
   q('btnContactFirstPage')?.addEventListener('click', () => { state.page = 1; render(); });
   q('btnContactPrevPage')?.addEventListener('click', () => { if (state.page > 1) { state.page--; render(); } });
   q('btnContactNextPage')?.addEventListener('click', () => {
@@ -79,61 +127,71 @@ function bindUi() {
     if (state.page < totalPages) { state.page++; render(); }
   });
   q('btnContactLastPage')?.addEventListener('click', () => {
-    const totalPages = Math.ceil(state.filtered.length / state.pageSize);
-    state.page = totalPages;
+    state.page = Math.max(1, Math.ceil(state.filtered.length / state.pageSize));
     render();
   });
-
   q('contactPageSelect')?.addEventListener('change', (e) => {
-    state.page = parseInt(e.target.value) || 1;
+    state.page = parseInt(e.target.value, 10) || 1;
     render();
   });
-
   q('contactPageSize')?.addEventListener('change', (e) => {
-    state.pageSize = parseInt(e.target.value) || 25;
+    state.pageSize = parseInt(e.target.value, 10) || 25;
     state.page = 1;
     render();
   });
 }
 
-function render() {
-  const totalCount = q('contactTotalCount');
-  const pageNumbers = q('contactPageNumbers');
-  const pageSelect = q('contactPageSelect');
-  const pageTotal = q('contactPageTotal');
-  const rangeStart = q('contactRangeStart');
-  const rangeEnd = q('contactRangeEnd');
+function applySearch() {
+  const name = q('contactSearchName')?.value?.trim();
+  const company = q('contactSearchCompany')?.value?.trim();
+  state.filtered = state.contacts.filter(c => {
+    if (name && !(`${c.last || ''}${c.first || ''}`).includes(name)) return false;
+    if (company && !(c.company || '').includes(company)) return false;
+    return true;
+  });
+  state.page = 1;
+  state.selectedId = state.filtered[0]?.id ? String(state.filtered[0].id) : null;
+  render();
+}
 
+function bindContactTable() {
+  const tbody = q('contactTableBody');
+  if (!tbody || tableBound) return;
+  tableBound = true;
+  tbody.addEventListener('click', (e) => {
+    const tr = e.target.closest('tr[data-id]');
+    if (!tr) return;
+    state.selectedId = tr.getAttribute('data-id');
+    const c = getSelectedContact();
+    if (c) {
+      state.selectedId = String(c.id);
+      fillDetailForm(c);
+      renderChildLists(c);
+    }
+    render();
+  });
+}
+
+function render() {
   const total = state.filtered.length;
   const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
-
   if (state.page > totalPages) state.page = totalPages;
   if (state.page < 1) state.page = 1;
 
-  if (totalCount) totalCount.textContent = total;
-  if (pageTotal) pageTotal.textContent = `/ ${totalPages}`;
-
   const start = (state.page - 1) * state.pageSize;
-  const actualEndIdx = Math.min(start + state.pageSize, total);
+  const end = Math.min(start + state.pageSize, total);
 
-  if (rangeStart) rangeStart.textContent = total > 0 ? (start + 1) : 0;
-  if (rangeEnd) rangeEnd.textContent = actualEndIdx;
+  if (q('contactTotalCount')) q('contactTotalCount').textContent = total;
+  if (q('contactPageTotal')) q('contactPageTotal').textContent = `/ ${totalPages}`;
+  if (q('contactRangeStart')) q('contactRangeStart').textContent = total > 0 ? (start + 1) : 0;
+  if (q('contactRangeEnd')) q('contactRangeEnd').textContent = end;
 
-  if (pageNumbers) {
-    pageNumbers.innerHTML = '';
-    const maxVisible = 5;
-    let startPage = Math.max(1, state.page - Math.floor(maxVisible / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
-    if (endPage - startPage + 1 < maxVisible) startPage = Math.max(1, endPage - maxVisible + 1);
-    for (let p = startPage; p <= endPage; p++) {
-      const btn = document.createElement('button');
-      btn.className = `page-num-btn ${p === state.page ? 'active' : ''}`;
-      btn.textContent = p;
-      btn.onclick = () => { state.page = p; render(); };
-      pageNumbers.appendChild(btn);
-    }
-  }
+  renderPageNumberButtons(q('contactPageNumbers'), state.page, totalPages, (p) => {
+    state.page = p;
+    render();
+  });
 
+  const pageSelect = q('contactPageSelect');
   if (pageSelect) {
     pageSelect.innerHTML = '';
     for (let p = 1; p <= totalPages; p++) {
@@ -145,115 +203,169 @@ function render() {
     }
   }
 
-  const rows = state.filtered.slice(start, actualEndIdx);
+  renderContactTable(state.filtered.slice(start, end));
 
-  if (table) {
-    table.setData(rows).then(() => {
-      if (state.selectedId) {
-        table.deselectRow();
-        table.selectRow(state.selectedId);
-      }
-      table.redraw(); // Ensure correct width
-    });
-  }
-
-  const selected = state.contacts.find(c => String(c.id) === String(state.selectedId)) || state.filtered[0] || null;
+  const selected = getSelectedContact();
   if (selected) {
     state.selectedId = String(selected.id);
     fillDetailForm(selected);
-    renderActivities(mockActivities.filter(a => String(a.contactId) === String(selected.id)));
-    renderProjects(mockProjects.filter(p => String(p.contactId) === String(selected.id)));
+    renderChildLists(selected);
   }
 }
 
+function renderContactTable(rows) {
+  const tbody = q('contactTableBody');
+  if (!tbody) return;
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="13" style="text-align:center;padding:20px;color:var(--text-3);">表示するデータがありません</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.map(c => {
+    const sel = String(c.id) === String(state.selectedId);
+    return `<tr data-id="${escapeHtml(c.id)}" class="${sel ? 'selected' : ''}">
+      <td>${escapeHtml(c.companyId)}</td>
+      <td>${escapeHtml(c.company)}</td>
+      <td>${escapeHtml(c.dept)}</td>
+      <td class="blue-link">${escapeHtml(c.last)}</td>
+      <td>${escapeHtml(c.first)}</td>
+      <td>${escapeHtml(c.kana)}</td>
+      <td class="tel-num">${escapeHtml(c.tel)}</td>
+      <td class="tel-num">${escapeHtml(c.mobile)}</td>
+      <td>${escapeHtml(c.email)}</td>
+      <td>${escapeHtml(c.role)}</td>
+      <td>${escapeHtml(c.rank)}</td>
+      <td>${escapeHtml(c.pos)}</td>
+      <td title="${escapeHtml(c.addr)}">${escapeHtml(c.addr)}</td>
+    </tr>`;
+  }).join('');
+}
+
 function fillDetailForm(c) {
-  // Mapping based on the HTML IDs in ct01_list.html
-  // Need to find the correct IDs. Looking at HTML:
-  // The HTML has inputs without IDs in some places, but let's use the ones I can find
-  const inputs = document.querySelectorAll('#contact-panel-detail input, #contact-panel-detail select, #contact-panel-detail textarea');
-  // For simplicity in this wireframe, I'll just fill the first few fields I know exist
-  const idEl = document.querySelector('#contact-panel-detail input[disabled]');
-  if (idEl) idEl.value = c.id || '';
-
-  // Actually, let's use the specific selectors from the HTML
-  const setVal = (selector, val) => { const el = document.querySelector(selector); if (el) el.value = val ?? ''; };
-
-  setVal('#contact-root input[value="石井"]', c.last);
-  setVal('#contact-root input[value="智也"]', c.first);
-  setVal('#mainContactCompanyName', c.company);
+  const set = (sel, val) => { const el = q(sel); if (el) el.value = val ?? ''; };
+  set('contactDetailId', c.id);
+  set('contactDetailLast', c.last);
+  set('contactDetailFirst', c.first);
+  set('contactDetailKana', c.kana);
+  set('mainContactCompanyName', c.company);
+  set('contactDetailDept', c.dept);
+  set('contactDetailTel', c.tel);
+  set('contactDetailExt', c.ext);
+  set('contactDetailFax', c.fax);
+  set('contactDetailMobile', c.mobile);
+  set('contactDetailEmail', c.email);
+  set('contactDetailRemark', c.remark);
 }
 
-function renderActivities(data) {
-  const tbody = q('contactActivitiesBody');
-  if (!tbody) return;
-  tbody.innerHTML = data.map(a => `
-    <tr>
-      <td>${escapeHtml(a.date || '-')}</td>
-      <td>${escapeHtml(a.rep || '-')}</td>
-      <td><span class="type-badge ${a.typeClass || ''}">${escapeHtml(a.type || '-')}</span></td>
-      <td>${escapeHtml(a.comment || '-')}</td>
-      <td>${escapeHtml(a.purpose || '-')}</td>
-    </tr>
-  `).join('');
+function renderChildLists(c) {
+  state.contactActivitiesPage = 1;
+  state.contactProjectsPage = 1;
+  renderContactActivitiesList(c);
+  renderContactProjectsList(c);
 }
 
-function renderProjects(data) {
-  const tbody = q('contactProjectsBody');
-  if (!tbody) return;
-  tbody.innerHTML = data.map(p => `
-    <tr>
+function renderContactActivitiesList(c) {
+  const wrap = q('contactActivitiesList');
+  const pager = q('contactActivitiesPager');
+  if (!wrap) return;
+
+  const items = mockActivities.filter(a => String(a.contactId) === String(c.id));
+  const total = items.length;
+
+  if (total === 0) {
+    renderTabEmptyState(wrap, pager, TAB_EMPTY.contactActivities);
+    return;
+  }
+  showTabPager(pager);
+
+  const size = state.contactActivitiesPageSize;
+  const totalPages = Math.max(1, Math.ceil(total / size));
+  if (state.contactActivitiesPage > totalPages) state.contactActivitiesPage = totalPages;
+  if (state.contactActivitiesPage < 1) state.contactActivitiesPage = 1;
+
+  const start = (state.contactActivitiesPage - 1) * size;
+  const sliced = items.slice(start, Math.min(start + size, total));
+
+  let html = `<table class="t"><thead><tr>
+    <th>活動日</th><th>営業担当</th><th>タイプ</th><th>コメント</th><th>目的</th>
+  </tr></thead><tbody>`;
+
+  if (!sliced.length) {
+    html += '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-3);">表示するデータがありません</td></tr>';
+  } else {
+    html += sliced.map(a => `<tr>
+      <td>${escapeHtml(a.date)}</td>
+      <td>${escapeHtml(a.rep)}</td>
+      <td><span class="${escapeHtml(a.typeClass || '')}">${escapeHtml(a.type)}</span></td>
+      <td title="${escapeHtml(a.comment)}">${escapeHtml(a.comment)}</td>
+      <td>${escapeHtml(a.purpose || '')}</td>
+    </tr>`).join('');
+  }
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+
+  updateTabPager('contactActivities', {
+    total,
+    page: state.contactActivitiesPage,
+    pageSize: size,
+  }, (p) => {
+    state.contactActivitiesPage = p;
+    renderContactActivitiesList(c);
+  });
+}
+
+function renderContactProjectsList(c) {
+  const wrap = q('contactProjectsList');
+  const pager = q('contactProjectsPager');
+  if (!wrap) return;
+
+  const items = mockProjects.filter(p => String(p.contactId) === String(c.id));
+  const total = items.length;
+
+  if (total === 0) {
+    renderTabEmptyState(wrap, pager, TAB_EMPTY.contactProjects);
+    return;
+  }
+  showTabPager(pager);
+
+  const size = state.contactProjectsPageSize;
+  const totalPages = Math.max(1, Math.ceil(total / size));
+  if (state.contactProjectsPage > totalPages) state.contactProjectsPage = totalPages;
+  if (state.contactProjectsPage < 1) state.contactProjectsPage = 1;
+
+  const start = (state.contactProjectsPage - 1) * size;
+  const sliced = items.slice(start, Math.min(start + size, total));
+
+  let html = `<table class="t"><thead><tr>
+    <th>話題日</th><th>売上日</th><th>案件ステータス</th><th>営業担当</th><th>案件名</th>
+    <th>担当(姓)</th><th>案件概要</th><th>当初確度</th><th>発生動機</th><th>引合手段</th>
+  </tr></thead><tbody>`;
+
+  if (!sliced.length) {
+    html += '<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--text-3);">表示するデータがありません</td></tr>';
+  } else {
+    html += sliced.map(p => `<tr>
       <td>${escapeHtml(p.issueDate || '-')}</td>
       <td>${escapeHtml(p.saleDate || '-')}</td>
-      <td><span class="status-badge ${p.status === '受注' ? 'status-won' : 'status-lost'}">${escapeHtml(p.status || '-')}</span></td>
+      <td>${escapeHtml(p.status || '-')}</td>
       <td>${escapeHtml(p.rep || '-')}</td>
       <td>${escapeHtml(p.name || '-')}</td>
       <td>${escapeHtml(p.contact || '-')}</td>
-      <td>${escapeHtml(p.summary || '-')}</td>
+      <td title="${escapeHtml(p.summary || '')}">${escapeHtml(p.summary || '')}</td>
       <td>${escapeHtml(p.initial || '-')}</td>
       <td>${escapeHtml(p.motivation || '-')}</td>
       <td>${escapeHtml(p.method || '-')}</td>
-    </tr>
-  `).join('');
-}
+    </tr>`).join('');
+  }
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
 
-function initTabulator() {
-  const container = q('contactTable');
-  if (!container) return;
-  if (table) { try { table.destroy(); } catch (e) { } }
-  const start = (state.page - 1) * state.pageSize;
-  const initialRows = state.filtered.slice(start, start + state.pageSize);
-
-  table = new Tabulator("#contactTable", {
-    data: initialRows,
-    layout: "fitColumns",
-    movableColumns: true,
-    selectableRows: 1,
-    headerSort: false,
-    clipboard: true,
-    rowClick: function (e, row) {
-      const data = row.getData();
-      state.selectedId = String(data.id);
-      fillDetailForm(data);
-      renderActivities(mockActivities.filter(a => String(a.contactId) === String(data.id)));
-      renderProjects(mockProjects.filter(p => String(p.contactId) === String(data.id)));
-      table.deselectRow();
-      row.select();
-    },
-    columns: [
-      { title: "会社ID", field: "companyId", width: 80 },
-      { title: "会社名", field: "company", width: 200 },
-      { title: "部署名", field: "dept", width: 150 },
-      { title: "担当(姓)", field: "last", width: 90 },
-      { title: "担当(名)", field: "first", width: 90 },
-      { title: "フリガナ", field: "kana", width: 100 },
-      { title: "TEL", field: "tel", width: 110 },
-      { title: "携帯電話", field: "mobile", width: 110 },
-      { title: "Email", field: "email", width: 150 },
-      { title: "職種", field: "role", width: 100 },
-      { title: "職位", field: "rank", width: 100 },
-      { title: "役職名", field: "pos", width: 100 },
-      { title: "住所", field: "addr", minWidth: 200 },
-    ],
+  updateTabPager('contactProjects', {
+    total,
+    page: state.contactProjectsPage,
+    pageSize: size,
+  }, (p) => {
+    state.contactProjectsPage = p;
+    renderContactProjectsList(c);
   });
 }
 
@@ -261,8 +373,17 @@ function initResizer() {
   const resizer = q('contact-resizer');
   const container = document.querySelector('#contact-root .company-main');
   if (!resizer || !container) return;
+
+  if (!container.style.getPropertyValue('--grid-height')) {
+    container.style.setProperty('--grid-height', '400px');
+  }
+  try {
+    const saved = parseInt(localStorage.getItem('smos.ct01.listH') || '', 10);
+    if (saved >= 160) container.style.setProperty('--grid-height', `${saved}px`);
+  } catch { /* ignore */ }
+
   let isResizing = false;
-  resizer.addEventListener('mousedown', (e) => {
+  resizer.addEventListener('mousedown', () => {
     isResizing = true;
     document.body.style.cursor = 'row-resize';
     document.body.style.userSelect = 'none';
@@ -272,21 +393,22 @@ function initResizer() {
     if (!isResizing) return;
     const containerRect = container.getBoundingClientRect();
     const relativeY = e.clientY - containerRect.top;
-    const minGridHeight = 150;
-    const minDetailHeight = 200;
-    const maxHeight = containerRect.height - minDetailHeight;
-    let newHeight = relativeY - 6;
-    if (newHeight < minGridHeight) newHeight = minGridHeight;
-    if (newHeight > maxHeight) newHeight = maxHeight;
-    container.style.setProperty('--grid-height', `${newHeight}px`);
-    if (table) table.redraw();
+    const minGridHeight = 160;
+    const maxHeight = Math.min(
+      Math.round(window.innerHeight * 0.55),
+      Math.max(minGridHeight, relativeY)
+    );
+    container.style.setProperty('--grid-height', `${maxHeight}px`);
   });
   document.addEventListener('mouseup', () => {
-    if (isResizing) {
-      isResizing = false;
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-      resizer.classList.remove('active');
-    }
+    if (!isResizing) return;
+    isResizing = false;
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+    resizer.classList.remove('active');
+    try {
+      const h = parseInt(container.style.getPropertyValue('--grid-height') || '400', 10);
+      localStorage.setItem('smos.ct01.listH', String(h));
+    } catch { /* ignore */ }
   });
 }

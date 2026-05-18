@@ -1,5 +1,11 @@
 import { q, escapeHtml } from './helpers.js';
 import { mockCompanies, mockEmployees, mockProjects, mockTenants } from './mockData.js';
+import { renderPageNumberButtons } from './pager.js';
+
+function closeShellMenus() {
+  document.querySelector('.settings-menu-trigger')?.classList.remove('show-menu');
+  q('userMenuTrigger')?.classList.remove('active');
+}
 
 export function initGlobalLookups() {
   
@@ -11,15 +17,15 @@ export function initGlobalLookups() {
   const renderEmployeeMaster = (data = mockEmployees) => {
     if (!employeeTbody) return;
     employeeTbody.innerHTML = data.map((emp, index) => `
-      <tr data-id="${emp.id}">
-        <td style="text-align: center; color: #64748b; font-weight: 600;">${index + 1}</td>
-        <td>${emp.id}</td>
-        <td>${emp.name}</td>
-        <td>${emp.kana}</td>
-        <td>${emp.dept}</td>
-        <td>${emp.group}</td>
-        <td>${emp.login}</td>
-        <td>${emp.password}</td>
+      <tr data-id="${escapeHtml(emp.id)}">
+        <td class="col-no">${index + 1}</td>
+        <td>${escapeHtml(emp.id)}</td>
+        <td class="blue-link">${escapeHtml(emp.name)}</td>
+        <td>${escapeHtml(emp.kana)}</td>
+        <td>${escapeHtml(emp.dept)}</td>
+        <td>${escapeHtml(emp.group)}</td>
+        <td>${escapeHtml(emp.login)}</td>
+        <td>${escapeHtml(emp.password)}</td>
       </tr>
     `).join('');
 
@@ -31,7 +37,9 @@ export function initGlobalLookups() {
     });
   };
 
-  q('menuEmployeeMaster')?.addEventListener('click', () => {
+  q('menuEmployeeMaster')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeShellMenus();
     dlgEmployee?.showModal();
     renderEmployeeMaster();
   });
@@ -76,8 +84,31 @@ export function initGlobalLookups() {
     }
   });
 
-  q('menuPasswordChange')?.addEventListener('click', () => {
+  q('menuPasswordChange')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeShellMenus();
     q('dlgPasswordChange')?.showModal();
+  });
+
+  q('btnPasswordSave')?.addEventListener('click', () => {
+    const cur = q('pwdCurrent')?.value;
+    const neu = q('pwdNew')?.value;
+    const conf = q('pwdConfirm')?.value;
+    if (!cur || !neu || !conf) {
+      alert('すべての項目を入力してください');
+      return;
+    }
+    if (neu !== conf) {
+      alert('新しいパスワードが一致しません');
+      return;
+    }
+    alert('パスワードを変更しました');
+    q('dlgPasswordChange')?.close();
+  });
+
+  q('btnSecuritySave')?.addEventListener('click', () => {
+    alert('登録が完了しました');
+    q('dlgSecurityMaster')?.close();
   });
 
   q('btnEmployeeNew')?.addEventListener('click', () => {
@@ -94,30 +125,29 @@ export function initGlobalLookups() {
     const tbody = q('tenantCompanyBody');
     if (!tbody) return;
     tbody.innerHTML = mockTenants.map(t => `
-      <tr>
-        <td style="font-weight: 600; color: #004080;">${t.id}</td>
-        <td>${t.name}</td>
-        <td><code>${t.loginCode}</code></td>
-        <td style="text-align: center;">
-          <select class="status-select" data-id="${t.id}" style="font-size: 11px; padding: 2px 4px; border-radius: 4px; border: 1px solid #ccc; background: ${t.isActive ? '#e8f5e9' : '#ffebee'}; color: ${t.isActive ? '#2e7d32' : '#c62828'};">
+      <tr data-id="${escapeHtml(t.id)}">
+        <td class="blue-link">${escapeHtml(t.id)}</td>
+        <td>${escapeHtml(t.name)}</td>
+        <td><code class="tenant-code">${escapeHtml(t.loginCode)}</code></td>
+        <td class="col-center">
+          <select class="input status-select ${t.isActive ? 'status-active' : 'status-inactive'}" data-id="${escapeHtml(t.id)}">
             <option value="true" ${t.isActive ? 'selected' : ''}>有効</option>
             <option value="false" ${!t.isActive ? 'selected' : ''}>無効</option>
           </select>
         </td>
-        <td style="color: #666; font-size: 11px;">${t.createdAt}</td>
-        <td style="text-align: center;">
-          <button class="btn btn-primary btn-sm btnCreateTenantUser" data-id="${t.id}" style="font-size: 10px; padding: 4px 8px; background: #001f4d; color: #fff; border: none;">+ ユーザー作成</button>
+        <td class="text-muted">${escapeHtml(t.createdAt)}</td>
+        <td class="col-center">
+          <button type="button" class="btn btn-secondary btn-sm btnCreateTenantUser" data-id="${escapeHtml(t.id)}">+ ユーザー作成</button>
         </td>
       </tr>
     `).join('');
 
     // Bind click events to status change
     tbody.querySelectorAll('.status-select').forEach(sel => {
-      sel.addEventListener('change', (e) => {
+      sel.addEventListener('change', () => {
         const val = sel.value === 'true';
-        sel.style.background = val ? '#e8f5e9' : '#ffebee';
-        sel.style.color = val ? '#2e7d32' : '#c62828';
-        // In real app, update mockData here
+        sel.classList.toggle('status-active', val);
+        sel.classList.toggle('status-inactive', !val);
       });
     });
 
@@ -137,7 +167,9 @@ export function initGlobalLookups() {
     });
   };
 
-  q('menuTenantCompany')?.addEventListener('click', () => {
+  q('menuTenantCompany')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeShellMenus();
     renderTenants();
     q('dlgTenantCompany')?.showModal();
   });
@@ -150,61 +182,100 @@ export function initGlobalLookups() {
     alert('新しいテナントを有効化しました。');
     q('dlgTenantDetail')?.close();
   });
-  // Initialize Multi-select dropdowns globally
-  const initMultiSelects = () => {
-    document.querySelectorAll('.multi-select-dropdown').forEach(dropdown => {
-      // Avoid double binding
-      if (dropdown.dataset.initialized) return;
-      dropdown.dataset.initialized = 'true';
+  const updateMultiSelectTrigger = (dropdown) => {
+    if (!dropdown) return;
+    const trigger = dropdown.querySelector('.multi-select-trigger');
+    const placeholder = dropdown.dataset.placeholder || '選択..';
+    if (!trigger) return;
+    const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
+    const selected = Array.from(checkboxes)
+      .filter((c) => c.checked)
+      .map((c) => c.parentElement?.textContent?.trim() || c.value);
 
-      const trigger = dropdown.querySelector('.multi-select-trigger');
-      const placeholder = dropdown.dataset.placeholder || '選択..';
+    if (selected.length === 0) {
+      trigger.textContent = placeholder;
+    } else if (selected.length <= 2) {
+      trigger.textContent = selected.join(', ');
+    } else {
+      trigger.textContent = `${selected.length}項目選択中`;
+    }
+  };
 
-      trigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        document.querySelectorAll('.multi-select-dropdown').forEach(d => {
-          if (d !== dropdown) d.classList.remove('active');
-        });
-        dropdown.classList.toggle('active');
-      });
-
-      const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
-      checkboxes.forEach(cb => {
-        cb.addEventListener('click', (e) => e.stopPropagation());
-        cb.addEventListener('change', () => {
-          const selected = Array.from(checkboxes)
-            .filter(c => c.checked)
-            .map(c => c.parentElement.textContent.trim());
-
-          if (selected.length === 0) {
-            trigger.textContent = placeholder;
-          } else if (selected.length <= 2) {
-            trigger.textContent = selected.join(', ');
-          } else {
-            trigger.textContent = `${selected.length}項目選択中`;
-          }
-        });
-      });
+  const closeMultiSelectPanels = () => {
+    document.querySelectorAll('.multi-select-dropdown.active').forEach((d) => {
+      d.classList.remove('active');
+      const panel = d.querySelector('.multi-select-content');
+      if (panel) {
+        panel.classList.remove('is-fixed');
+        panel.style.position = '';
+        panel.style.left = '';
+        panel.style.top = '';
+        panel.style.width = '';
+        panel.style.right = '';
+      }
     });
   };
 
-  // Run on init
-  initMultiSelects();
+  const positionMultiSelectPanel = (dropdown) => {
+    const trigger = dropdown.querySelector('.multi-select-trigger');
+    const panel = dropdown.querySelector('.multi-select-content');
+    if (!trigger || !panel) return;
+    const rect = trigger.getBoundingClientRect();
+    panel.classList.add('is-fixed');
+    panel.style.position = 'fixed';
+    panel.style.left = `${rect.left}px`;
+    panel.style.top = `${rect.bottom + 4}px`;
+    panel.style.width = `${rect.width}px`;
+    panel.style.right = 'auto';
+  };
 
-  // Also close dropdowns on outside click
-  document.addEventListener('click', () => {
-    document.querySelectorAll('.multi-select-dropdown').forEach(d => {
-      d.classList.remove('active');
+  const initMultiSelects = () => {
+    document.querySelectorAll('.multi-select-dropdown').forEach(updateMultiSelectTrigger);
+  };
+
+  if (!window.__multiSelectDelegationBound) {
+    window.__multiSelectDelegationBound = true;
+
+    document.addEventListener('click', (e) => {
+      const trigger = e.target.closest('.multi-select-trigger');
+      if (trigger) {
+        e.preventDefault();
+        e.stopPropagation();
+        const dropdown = trigger.closest('.multi-select-dropdown');
+        if (!dropdown) return;
+        const wasActive = dropdown.classList.contains('active');
+        closeMultiSelectPanels();
+        if (!wasActive) {
+          dropdown.classList.add('active');
+          positionMultiSelectPanel(dropdown);
+        }
+        return;
+      }
+
+      if (e.target.closest('.multi-select-dropdown')) return;
+      closeMultiSelectPanels();
     });
-  });
+
+    document.addEventListener('change', (e) => {
+      if (e.target.matches('.multi-select-dropdown input[type="checkbox"]')) {
+        updateMultiSelectTrigger(e.target.closest('.multi-select-dropdown'));
+      }
+    });
+
+    window.addEventListener('resize', closeMultiSelectPanels);
+    window.addEventListener('scroll', closeMultiSelectPanels, true);
+  }
+
+  initMultiSelects();
 
   // Company Lookup state
   const dlgLookup = q('dlgCompanyLookup');
+  dlgLookup?.addEventListener('close', closeMultiSelectPanels);
   const lookupTbody = q('lookupCompanyBody');
   const dlgContactLookup = q('dlgContactLookup');
-  const contactLookupTbody = document.querySelector('.contact-table tbody');
+  const contactLookupTbody = q('contactLookupBody') || document.querySelector('.contact-table tbody');
   const dlgProjectLookup = q('dlgProjectLookup');
-  const projectLookupTbody = document.querySelector('.project-table tbody');
+  const projectLookupTbody = q('projectLookupBody') || document.querySelector('.project-table tbody');
   let tempLookupSelection = null;
   let tempContactSelection = null;
   let tempProjectSelection = null;
@@ -251,7 +322,7 @@ export function initGlobalLookups() {
         <td>${c.employees || '0'}</td>
         <td>${c.area || ''}</td>
         <td>${c.pref || ''}</td>
-        <td>${c.remarks || ''}</td>
+        <td>${c.remark || ''}</td>
       </tr>
     `).join('');
 
@@ -290,20 +361,10 @@ export function initGlobalLookups() {
     }
 
     if (pageNumbers) {
-      pageNumbers.innerHTML = '';
-      const maxBtn = 5;
-      let startP = Math.max(1, lookupState.page - 2);
-      let endP = Math.min(totalPages, startP + maxBtn - 1);
-      if (endP - startP < maxBtn - 1) startP = Math.max(1, endP - maxBtn + 1);
-
-      for (let i = startP; i <= endP; i++) {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `page-num-btn ${i === lookupState.page ? 'active' : ''}`;
-        btn.textContent = i;
-        btn.onclick = () => { lookupState.page = i; renderLookupResults(); };
-        pageNumbers.appendChild(btn);
-      }
+      renderPageNumberButtons(pageNumbers, lookupState.page, totalPages, (p) => {
+        lookupState.page = p;
+        renderLookupResults();
+      });
     }
   };
 
@@ -371,8 +432,8 @@ export function initGlobalLookups() {
 
     contactLookupTbody.innerHTML = rows.map(c => `
       <tr data-id="${c.last}-${c.first}" class="${tempContactSelection?.last === c.last && tempContactSelection?.first === c.first ? 'selected' : ''}">
-        <td>10001</td>
-        <td>株式会社サンプル商事</td>
+        <td>${c.companyId || ''}</td>
+        <td>${c.company || ''}</td>
         <td>${c.dept || ''}</td>
         <td>${c.last}</td>
         <td>${c.first}</td>
@@ -418,20 +479,10 @@ export function initGlobalLookups() {
     }
 
     if (pageNumbers) {
-      pageNumbers.innerHTML = '';
-      const maxBtn = 5;
-      let startP = Math.max(1, contactLookupState.page - 2);
-      let endP = Math.min(totalPages, startP + maxBtn - 1);
-      if (endP - startP < maxBtn - 1) startP = Math.max(1, endP - maxBtn + 1);
-
-      for (let i = startP; i <= endP; i++) {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `page-num-btn ${i === contactLookupState.page ? 'active' : ''}`;
-        btn.textContent = i;
-        btn.onclick = () => { contactLookupState.page = i; renderContactLookupResults(); };
-        pageNumbers.appendChild(btn);
-      }
+      renderPageNumberButtons(pageNumbers, contactLookupState.page, totalPages, (p) => {
+        contactLookupState.page = p;
+        renderContactLookupResults();
+      });
     }
   };
 
@@ -582,20 +633,10 @@ export function initGlobalLookups() {
     }
 
     if (pageNumbers) {
-      pageNumbers.innerHTML = '';
-      const maxBtn = 5;
-      let startP = Math.max(1, projectLookupState.page - 2);
-      let endP = Math.min(totalPages, startP + maxBtn - 1);
-      if (endP - startP < maxBtn - 1) startP = Math.max(1, endP - maxBtn + 1);
-
-      for (let i = startP; i <= endP; i++) {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `page-num-btn ${i === projectLookupState.page ? 'active' : ''}`;
-        btn.textContent = i;
-        btn.onclick = () => { projectLookupState.page = i; renderProjectLookupResults(); };
-        pageNumbers.appendChild(btn);
-      }
+      renderPageNumberButtons(pageNumbers, projectLookupState.page, totalPages, (p) => {
+        projectLookupState.page = p;
+        renderProjectLookupResults();
+      });
     }
   };
 

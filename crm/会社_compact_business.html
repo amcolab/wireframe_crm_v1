@@ -1,0 +1,3880 @@
+<!-- Compact-business variant — 会社 screen redesign — width target 1366+ -->
+<meta charset="utf-8">
+<title>SMOS CRM — 会社 (Compact-business)</title>
+<style>
+  /* ===================== TOKENS (Compact) ===================== */
+  :root {
+    --brand-50: #E8F0FE;
+    --brand-100: #CCDCFA;
+    --brand-500: #1E5BD6;
+    --brand-600: #1448B6;
+    --brand-700: #0E3892;
+
+    --accent-500: #E25D14;
+    --accent-600: #C84F0E;
+
+    --bg: #ECEEF2;
+    --surface: #FFFFFF;
+    --surface-2: #F5F6F8;
+    --border: #C9CFD9;
+    /* mảnh hơn cũ nhưng vẫn rõ */
+    --border-2: #DDE1EA;
+    --hover: #EEF2F8;
+    --row-zebra: #F7F8FB;
+    --row-selected: #DCE7FA;
+
+    --text-1: #0E1424;
+    --text-2: #3F4A60;
+    --text-3: #7A8499;
+
+    --success: #15803D;
+    --warning: #B45309;
+    --danger: #B91C1C;
+
+    --nav-bg: #1F2A44;
+    --nav-bg-hover: #2A3658;
+    --nav-active-bg: #33406A;
+    --nav-active-bar: #67A0FF;
+    --nav-text: #B6BCCC;
+
+    --r: 4px;
+    --r-card: 10px;
+    --shadow-1: 0 1px 2px rgba(16, 24, 40, .04), 0 1px 3px rgba(16, 24, 40, .06);
+    --shadow-card: 0 1px 3px rgba(16, 24, 40, .05);
+
+    --font: -apple-system, "Segoe UI", "Hiragino Kaku Gothic ProN",
+      "Noto Sans JP", "Yu Gothic UI", Meiryo, Arial, sans-serif;
+    --fs-xs: 11px;
+    --fs-sm: 12px;
+    --fs-md: 12px;
+    --fs-base: 13px;
+    --fs-lg: 15px;
+  }
+
+  * {
+    box-sizing: border-box
+  }
+
+  html,
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text-1);
+    font-family: var(--font);
+    font-size: var(--fs-md);
+    -webkit-font-smoothing: antialiased
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    min-height: 100vh
+  }
+
+  /* ---------- Sidebar (compact) ---------- */
+  .sidebar {
+    background: var(--nav-bg);
+    color: var(--nav-text);
+    display: flex;
+    flex-direction: column;
+    padding: 8px 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+
+  .logo {
+    color: #fff;
+    font-weight: 700;
+    text-align: center;
+    padding: 6px 0 12px;
+    font-size: 13px;
+    letter-spacing: .4px;
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 0 4px
+  }
+
+  .nav .item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 4px;
+    border-radius: 4px;
+    color: var(--nav-text);
+    cursor: pointer;
+    font-size: 10.5px;
+    text-decoration: none;
+  }
+
+  .nav .item:hover {
+    background: var(--nav-bg-hover);
+    color: #fff
+  }
+
+  .nav .item.active {
+    background: var(--nav-active-bg);
+    color: #fff
+  }
+
+  .nav .item.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--nav-active-bar);
+  }
+
+  .nav .item svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 1.6
+  }
+
+  .nav-spacer {
+    flex: 1
+  }
+
+  /* ---------- Content ---------- */
+  .content {
+    display: flex;
+    flex-direction: column;
+    min-width: 0
+  }
+
+  .topbar {
+    height: 40px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    position: relative;
+    z-index: 50;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 14px
+  }
+
+  .topbar-date {
+    color: var(--text-2);
+    font-size: var(--fs-sm);
+    font-variant-numeric: tabular-nums
+  }
+
+  /* ===== User menu (top-right with logout) ===== */
+  .user-menu {
+    position: relative
+  }
+
+  .user-menu-trigger {
+    height: 30px;
+    padding: 0 8px 0 4px;
+    border: 1px solid transparent;
+    background: transparent;
+    border-radius: var(--r);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-1);
+    font: inherit;
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    transition: background-color .12s, border-color .12s;
+  }
+
+  .user-menu-trigger:hover {
+    background: var(--hover);
+    border-color: var(--border)
+  }
+
+  .user-menu.open .user-menu-trigger {
+    background: var(--hover);
+    border-color: var(--border-2)
+  }
+
+  .user-menu-trigger .chev {
+    width: 12px;
+    height: 12px;
+    color: var(--text-3);
+    transition: transform .15s
+  }
+
+  .user-menu.open .user-menu-trigger .chev {
+    transform: rotate(180deg);
+    color: var(--text-1)
+  }
+
+  .user-avatar {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand-500), var(--brand-700));
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    box-shadow: 0 2px 4px rgba(20, 72, 182, .25);
+  }
+
+  .user-menu-dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    min-width: 220px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    box-shadow: var(--shadow-pop, 0 10px 30px -8px rgba(15, 27, 45, .18));
+    padding: 6px;
+    z-index: 60;
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+    transition: opacity .12s, transform .12s;
+  }
+
+  .user-menu.open .user-menu-dropdown {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .user-menu-header {
+    padding: 10px 12px 10px
+  }
+
+  .user-menu-header .name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-1);
+    line-height: 1.3
+  }
+
+  .user-menu-header .email {
+    font-size: 11px;
+    color: var(--text-3);
+    margin-top: 2px;
+    word-break: break-all
+  }
+
+  .user-menu-divider {
+    height: 1px;
+    background: var(--border-2);
+    margin: 4px 6px
+  }
+
+  .user-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 8px 10px;
+    background: transparent;
+    border: none;
+    border-radius: var(--r);
+    font: inherit;
+    font-size: 12px;
+    color: var(--text-1);
+    cursor: pointer;
+    text-align: left;
+    transition: background-color .12s, color .12s;
+  }
+
+  .user-menu-item svg {
+    width: 15px;
+    height: 15px;
+    color: var(--text-3);
+    flex-shrink: 0
+  }
+
+  .user-menu-item:hover {
+    background: var(--hover)
+  }
+
+  .user-menu-item:hover svg {
+    color: var(--brand-600)
+  }
+
+  .user-menu-item.danger {
+    color: var(--danger)
+  }
+
+  .user-menu-item.danger svg {
+    color: var(--danger)
+  }
+
+  .user-menu-item.danger:hover {
+    background: #FDECEC
+  }
+
+  .user-menu-item .shortcut {
+    margin-left: auto;
+    padding: 1px 6px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-2);
+    border-radius: 4px;
+    font-size: 10px;
+    color: var(--text-3);
+    font-family: Inter, inherit;
+    letter-spacing: .4px;
+  }
+
+  .crumbs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-2);
+    font-size: var(--fs-sm)
+  }
+
+  .crumbs strong {
+    color: var(--text-1);
+    font-weight: 600
+  }
+
+  .crumbs .sep {
+    color: var(--text-3)
+  }
+
+  .page {
+    padding: 8px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px
+  }
+
+  /* Section header bar — compact */
+  .sec-bar {
+    height: 34px;
+    padding: 0 12px;
+    background: linear-gradient(180deg, #FAFBFD, #F3F5F9);
+    border: 1px solid var(--border);
+    border-bottom: 0;
+    border-radius: var(--r-card) var(--r-card) 0 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--fs-sm);
+    color: var(--text-2);
+  }
+
+  .sec-bar strong {
+    color: var(--text-1);
+    font-weight: 600;
+    font-size: 13px
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    box-shadow: var(--shadow-card)
+  }
+
+  .panel.attached {
+    border-radius: 0 0 var(--r-card) var(--r-card);
+    border-top: 0
+  }
+
+  /* ---------- Search ---------- */
+  .search {
+    padding: 8px 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 10px;
+    align-items: center;
+  }
+
+  .field {
+    display: flex;
+    align-items: center;
+    gap: 6px
+  }
+
+  .field label {
+    font-size: var(--fs-sm);
+    color: var(--text-2);
+    white-space: nowrap;
+    font-weight: 500
+  }
+
+  .input {
+    height: 28px;
+    padding: 0 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    background: #fff;
+    font: inherit;
+    color: var(--text-1);
+    transition: border-color .12s, box-shadow .12s;
+    font-size: var(--fs-sm);
+  }
+
+  .input.w-id {
+    width: 110px
+  }
+
+  .input.w-tel {
+    width: 140px
+  }
+
+  .input:hover {
+    border-color: #9CA6B9
+  }
+
+  .input:focus {
+    outline: none;
+    border-color: var(--brand-500);
+    box-shadow: 0 0 0 2px rgba(30, 91, 214, .18)
+  }
+
+  /* ---------- Buttons (compact) ---------- */
+  .btn {
+    height: 28px;
+    padding: 0 12px;
+    border-radius: var(--r);
+    border: 1px solid transparent;
+    font: inherit;
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .btn svg {
+    width: 12px;
+    height: 12px
+  }
+
+  .btn-primary {
+    background: var(--brand-600);
+    color: #fff;
+    border-color: var(--brand-600)
+  }
+
+  .btn-primary:hover {
+    background: var(--brand-700);
+    border-color: var(--brand-700)
+  }
+
+  .btn-secondary {
+    background: #fff;
+    color: var(--text-1);
+    border-color: var(--border)
+  }
+
+  .btn-secondary:hover {
+    background: var(--hover);
+    border-color: #9CA6B9
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-2);
+    border-color: transparent
+  }
+
+  .btn-ghost:hover {
+    background: var(--hover);
+    color: var(--text-1)
+  }
+
+  .btn-accent {
+    background: var(--accent-500);
+    color: #fff;
+    border-color: var(--accent-500)
+  }
+
+  .btn-accent:hover {
+    background: var(--accent-600);
+    border-color: var(--accent-600)
+  }
+
+  .btn-danger {
+    background: #fff;
+    color: var(--danger);
+    border-color: #E1B0B0
+  }
+
+  .btn-danger:hover {
+    background: #FEF2F2
+  }
+
+  .btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(30, 91, 214, .25)
+  }
+
+  .toolbar-right {
+    margin-left: auto;
+    display: flex;
+    gap: 6px
+  }
+
+  /* ---------- List area (resizable height) ---------- */
+  .list-area {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: var(--list-height, 420px);
+    min-height: 160px;
+    max-height: 80vh;
+  }
+
+  .list-area>.panel {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column
+  }
+
+  /* Horizontal resizer between list-area and tabs/form */
+  .resizer-h {
+    height: 10px;
+    cursor: row-resize;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-user-select: none;
+    user-select: none;
+    transition: background-color .15s;
+  }
+
+  .resizer-h::after {
+    content: "";
+    width: 48px;
+    height: 4px;
+    border-radius: 4px;
+    background: var(--border);
+    transition: background-color .15s, width .15s;
+  }
+
+  .resizer-h:hover {
+    background: #EEF2F8
+  }
+
+  .resizer-h:hover::after {
+    background: var(--brand-500);
+    width: 64px
+  }
+
+  .resizer-h.dragging {
+    background: #EEF2F8
+  }
+
+  .resizer-h.dragging::after {
+    background: var(--brand-600);
+    width: 80px
+  }
+
+  body.resizing-h {
+    cursor: row-resize !important;
+    -webkit-user-select: none;
+    user-select: none
+  }
+
+  body.resizing-h * {
+    cursor: row-resize !important
+  }
+
+  /* ---------- Table (compact, denser rows — Vercel style) ---------- */
+  .table-wrap {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    position: relative
+  }
+
+  table.t {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 11px;
+    table-layout: fixed;
+  }
+
+  /* Sticky header — pins to top of .table-wrap when scrolling vertically.
+     border-bottom on the th can disappear with `border-collapse:separate` + scroll
+     in some engines, so we draw the divider as a box-shadow which stays painted
+     during scroll. */
+  table.t thead {
+    position: sticky;
+    top: 0;
+    z-index: 5
+  }
+
+  table.t thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: #F8FAFC;
+    color: #475569;
+    font-weight: 600;
+    font-size: 11px;
+    text-align: left;
+    padding: 6px 10px;
+    border-right: 1px solid #E2E8F0;
+    white-space: nowrap;
+    line-height: 1.4;
+    /* draw a 2px under-line + subtle shadow that appears when scrolled */
+    box-shadow:
+      inset 0 -2px 0 #CBD5E1,
+      0 4px 6px -4px rgba(15, 27, 45, .08);
+  }
+
+  /* Filter row (column-filter, when present) sticks below the header */
+  table.t thead tr.filter-row td {
+    position: sticky;
+    top: 32px;
+    z-index: 4;
+    background: #F8FAFC;
+  }
+
+  /* Sortable header — arrows hidden by default; only show on active column or hover */
+  table.t thead th[data-sort-key] {
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    padding-right: 14px;
+    transition: background-color .12s, padding-right .12s;
+  }
+
+  table.t thead th[data-sort-key]:hover {
+    background: #EEF2F8;
+    padding-right: 22px
+  }
+
+  table.t thead th.sort-asc,
+  table.t thead th.sort-desc {
+    padding-right: 22px
+  }
+
+  table.t thead th .sort-arrow {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    flex-direction: column;
+    gap: 1px;
+    opacity: 0;
+    transition: opacity .15s;
+    pointer-events: none;
+  }
+
+  table.t thead th .sort-arrow::before,
+  table.t thead th .sort-arrow::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-color: transparent;
+  }
+
+  table.t thead th .sort-arrow::before {
+    border-width: 0 3.5px 4.5px 3.5px;
+    border-bottom-color: currentColor
+  }
+
+  table.t thead th .sort-arrow::after {
+    border-width: 4.5px 3.5px 0 3.5px;
+    border-top-color: currentColor
+  }
+
+  /* Hover non-active: dim preview */
+  table.t thead th[data-sort-key]:hover .sort-arrow {
+    opacity: .45
+  }
+
+  /* Active sorted column */
+  table.t thead th.sort-asc,
+  table.t thead th.sort-desc {
+    color: var(--brand-700);
+    background: #F1F5FF
+  }
+
+  table.t thead th.sort-asc .sort-arrow,
+  table.t thead th.sort-desc .sort-arrow {
+    opacity: 1
+  }
+
+  table.t thead th.sort-asc .sort-arrow::after {
+    opacity: .2
+  }
+
+  table.t thead th.sort-desc .sort-arrow::before {
+    opacity: .2
+  }
+
+  /* Column resize handle on th right edge */
+  table.t thead th {
+    position: sticky
+  }
+
+  .col-resizer {
+    position: absolute;
+    top: 0;
+    right: -3px;
+    width: 8px;
+    height: 100%;
+    cursor: col-resize;
+    z-index: 3;
+    -webkit-user-select: none;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .col-resizer::before {
+    content: "";
+    width: 2px;
+    height: 60%;
+    background: transparent;
+    border-radius: 2px;
+    transition: background .12s;
+  }
+
+  .col-resizer:hover::before,
+  .col-resizer.dragging::before {
+    background: var(--brand-500)
+  }
+
+  .col-resizer.dragging::before {
+    background: var(--brand-600);
+    height: 100%;
+    width: 2px
+  }
+
+  body.col-resizing {
+    cursor: col-resize !important;
+    -webkit-user-select: none;
+    user-select: none
+  }
+
+  body.col-resizing * {
+    cursor: col-resize !important
+  }
+
+  /* Make th position:relative so resizer can absolute-position to its right edge.
+     Note: sticky + relative is allowed; sticky also creates a positioning context. */
+  table.t tbody td {
+    padding: 4px 10px;
+    border-bottom: 1px solid #F1F5F9;
+    border-right: 1px solid #F1F5F9;
+    color: var(--text-1);
+    white-space: nowrap;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  table.t tbody td:last-child,
+  table.t thead th:last-child {
+    border-right: 0
+  }
+
+  table.t tbody tr:nth-child(even) td {
+    background: #FBFCFD
+  }
+
+  table.t tbody tr:hover td {
+    background: #F7FBFF;
+    cursor: pointer
+  }
+
+  table.t tbody tr.selected td {
+    background: #E6F2FF;
+    color: #0B2A66
+  }
+
+  table.t tbody tr.selected {
+    outline: 1px solid #7AB8FF;
+    outline-offset: -1px
+  }
+
+  table.t .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums
+  }
+
+  .checkcol {
+    width: 28px;
+    text-align: center
+  }
+
+  .checkbox {
+    width: 13px;
+    height: 13px;
+    accent-color: var(--brand-600);
+    vertical-align: middle
+  }
+
+  /* Column-filter row */
+  .filter-row td {
+    background: #F8FAFC !important;
+    padding: 3px 5px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .filter-input {
+    width: 100%;
+    height: 22px;
+    padding: 0 6px;
+    font-size: 11px;
+    border: 1px solid var(--border-2);
+    border-radius: var(--r);
+    background: #fff;
+  }
+
+  .filter-input:focus {
+    outline: none;
+    border-color: var(--brand-500)
+  }
+
+  /* Pagination */
+  .pager {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-top: 1px solid #E2E8F0;
+    background: #F8FAFC;
+    min-height: 44px;
+  }
+
+  .pager .meta {
+    color: #333;
+    font-size: 12px
+  }
+
+  .pages {
+    display: flex;
+    gap: 3px;
+    align-items: center
+  }
+
+  .pg-btn {
+    min-width: 26px;
+    height: 26px;
+    padding: 0 7px;
+    border-radius: var(--r);
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--text-1);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .12s;
+  }
+
+  .pg-btn:hover {
+    background: var(--hover);
+    border-color: #9CA6B9
+  }
+
+  .pg-btn.active {
+    background: var(--brand-600);
+    color: #fff;
+    border-color: var(--brand-600)
+  }
+
+  .pgsize {
+    display: flex;
+    align-items: center;
+    gap: 6px
+  }
+
+  .pgsize select {
+    height: 26px;
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    background: #fff;
+    padding: 0 22px 0 8px;
+    font: inherit;
+    font-size: 12px;
+    appearance: none;
+    cursor: pointer;
+    background-image: linear-gradient(45deg, transparent 50%, var(--text-2) 50%),
+      linear-gradient(135deg, var(--text-2) 50%, transparent 50%);
+    background-position: calc(100% - 10px) 11px, calc(100% - 6px) 11px;
+    background-size: 4px 4px;
+    background-repeat: no-repeat;
+  }
+
+  /* Tabs (compact business style) */
+  .tabs {
+    display: flex;
+    gap: 0;
+    background: linear-gradient(180deg, #FAFBFD, #F3F5F9);
+    border: 1px solid var(--border);
+    border-bottom: 0;
+    border-radius: var(--r-card) var(--r-card) 0 0;
+    padding: 0 6px;
+  }
+
+  .tab {
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-2);
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-bottom: 0;
+    margin: 4px 1px 0;
+    border-radius: var(--r) var(--r) 0 0;
+  }
+
+  .tab:hover {
+    color: var(--text-1);
+    background: rgba(255, 255, 255, .5)
+  }
+
+  .tab.active {
+    background: #fff;
+    color: var(--brand-700);
+    border-color: var(--border);
+    margin-bottom: -1px;
+    position: relative;
+    z-index: 1;
+    font-weight: 600;
+  }
+
+  /* Form */
+  .form-card {
+    padding: 12px 14px
+  }
+
+  .form-grid {
+    display: grid;
+    gap: 8px 16px;
+    grid-template-columns: 80px 1fr 80px 1fr 80px 1fr 80px 1fr;
+    align-items: center;
+  }
+
+  .form-grid label {
+    font-size: var(--fs-sm);
+    color: var(--text-2);
+    justify-self: end;
+    padding-right: 2px
+  }
+
+  .form-grid label.req::after {
+    content: " *";
+    color: var(--danger)
+  }
+
+  .form-grid .v {
+    min-width: 0
+  }
+
+  .form-grid .v input.input,
+  .form-grid .v select.input,
+  .form-grid .v textarea.input {
+    width: 100%
+  }
+
+  .form-grid .span2 {
+    grid-column: span 3
+  }
+
+  .form-grid .span3 {
+    grid-column: span 5
+  }
+
+  .form-grid .span4 {
+    grid-column: span 7
+  }
+
+  .static {
+    height: 28px;
+    padding: 4px 10px;
+    border-radius: var(--r);
+    background: var(--surface-2);
+    border: 1px solid var(--border-2);
+    color: var(--text-2);
+    display: flex;
+    align-items: center;
+    font-size: var(--fs-sm);
+  }
+
+  textarea.input {
+    height: auto;
+    padding: 6px 8px;
+    min-height: 48px;
+    resize: vertical;
+    line-height: 1.45
+  }
+
+  select.input {
+    appearance: none;
+    padding-right: 24px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237A8499' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    background-size: 11px 11px;
+  }
+
+  hr.divider {
+    height: 1px;
+    background: var(--border-2);
+    margin: 10px 0;
+    border: 0
+  }
+
+  .form-foot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 10px 14px;
+    border-top: 1px solid var(--border);
+    background: var(--surface-2);
+    border-radius: 0 0 var(--r-card) var(--r-card);
+  }
+
+  /* Badges */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 7px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 500;
+    background: var(--brand-50);
+    color: var(--brand-700);
+    border: 1px solid var(--brand-100);
+  }
+
+  .badge.gray {
+    background: #EEF1F6;
+    color: #475467;
+    border-color: #DDE1EA
+  }
+
+  .badge.green {
+    background: #E8F7EE;
+    color: #15803D;
+    border-color: #BFE9CC
+  }
+
+  .badge.amber {
+    background: #FFF6E1;
+    color: #92400E;
+    border-color: #F9DDA0
+  }
+
+  .sec-bar .right {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+    align-items: center
+  }
+
+  /* ====== Search header (combined title + search + actions) ====== */
+  .search-header {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    box-shadow: var(--shadow-card);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+  }
+
+  .search-header .screen-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-1);
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+
+  .search-header .screen-title .code {
+    color: var(--text-3);
+    font-weight: 600;
+    font-size: 12px;
+    font-family: Inter, inherit;
+    letter-spacing: .3px
+  }
+
+  .search-header .field label {
+    font-size: var(--fs-sm);
+    color: var(--text-2);
+    font-weight: 500
+  }
+
+  .search-header input.input {
+    height: 30px;
+    font-size: var(--fs-sm)
+  }
+
+  .search-header .search-input {
+    width: 240px
+  }
+
+  .search-header .right {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+    align-items: center
+  }
+
+  /* ====== Pager standalone bar (between table and tabs) ====== */
+  .pager-standalone {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-card);
+    box-shadow: var(--shadow-card);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 6px 12px;
+  }
+
+  .pager-standalone .meta-right {
+    margin-left: auto;
+    color: var(--text-2);
+    font-size: 12px
+  }
+
+  .pager-standalone .page-jump {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-2);
+    font-size: 12px
+  }
+
+  .pager-standalone .page-jump select.mini,
+  .pager-standalone .pgsize-trigger {
+    height: 24px;
+    padding: 0 24px 0 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    background: #fff;
+    font-size: 12px;
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237A8499' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    background-size: 11px 11px;
+    line-height: 22px;
+  }
+
+  .pager-standalone .page-jump select.mini:hover,
+  .pager-standalone .pgsize-trigger:hover {
+    background: var(--hover);
+    border-color: #9CA6B9
+  }
+
+  .pager-standalone .page-jump select.mini:focus,
+  .pager-standalone .pgsize-trigger:focus {
+    outline: none;
+    border-color: var(--brand-500);
+    box-shadow: 0 0 0 2px rgba(30, 91, 214, .18)
+  }
+
+  /* ====== Underline tabs (matching screenshot) ====== */
+  .tabs-underline {
+    display: flex;
+    gap: 0;
+    padding: 0 4px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: var(--r-card) var(--r-card) 0 0;
+    align-items: center;
+  }
+
+  .tabs-underline .tab {
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-2);
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color .12s;
+  }
+
+  .tabs-underline .tab:hover {
+    color: var(--text-1)
+  }
+
+  .tabs-underline .tab.active {
+    color: var(--brand-600);
+    border-bottom-color: var(--brand-600)
+  }
+
+  .tabs-underline .tab-actions {
+    margin-left: auto;
+    padding-right: 8px;
+    display: flex;
+    gap: 6px
+  }
+
+  /* Tab panels visibility */
+  .tab-panel {
+    display: none
+  }
+
+  .tab-panel.active {
+    display: block
+  }
+
+  /* Toolbar above sub-table inside tab panel */
+  .panel-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
+    gap: 8px;
+  }
+
+  .panel-toolbar .left,
+  .panel-toolbar .right {
+    display: flex;
+    align-items: center;
+    gap: 8px
+  }
+
+  .panel-toolbar .count {
+    color: var(--text-2);
+    font-size: 12px
+  }
+
+  .panel-toolbar .count b {
+    color: var(--text-1)
+  }
+
+  /* Empty state for inactive entities */
+  .empty-state {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--text-3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .empty-state svg {
+    color: #C9CFD9
+  }
+
+  .empty-state .title {
+    color: var(--text-2);
+    font-size: 13px;
+    font-weight: 600
+  }
+
+  .empty-state .desc {
+    font-size: 12px
+  }
+
+  /* Email link style in contact table */
+  table.t td.email {
+    color: var(--brand-600);
+    font-family: Inter, inherit;
+    letter-spacing: .2px
+  }
+
+  table.t td.tel-num {
+    font-family: Inter, inherit;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .2px
+  }
+
+  /* ====================================================================
+     SHARED FORM — used by both 会社詳細 (list detail panel) and 会社登録 (CP03 modal).
+     Density is controlled via CSS variables. Base = compact (list).
+     Add modifier class `.density-roomy` for spacious layout (modal).
+     ==================================================================== */
+  .form-4col {
+    /* density tokens (compact defaults) */
+    --fc-h: 24px;
+    /* input/select/static height */
+    --fc-fs: 11px;
+    /* input/select/static font size */
+    --fc-pad-x: 8px;
+    /* input/select horizontal padding (left+right for input) */
+    --fc-pad-r-sel: 24px;
+    /* select right padding (extra for chevron) */
+    --fc-label-fs: 11px;
+    /* label font size */
+    --fc-label-gap: 2px;
+    /* gap between label and control */
+    --fc-row-gap: 5px;
+    /* vertical gap between fields in a column */
+    --fc-col-gap: 12px;
+    /* horizontal gap between columns */
+    --fc-grid-pad: 10px 12px;
+    /* outer padding of the grid */
+    --fc-textarea-h: 180px;
+    /* textarea min-height */
+    --fc-check-fs: 11px;
+    /* checkbox label font */
+    --fc-chev-size: 10px;
+    /* select chevron SVG size */
+    --fc-chev-pad: 7px;
+    /* select chevron distance from right edge */
+    --fc-drop-pad: 18px 14px;
+    /* dropzone padding */
+    --fc-drop-fs: 11px;
+    /* dropzone font size */
+    --fc-inline-gap: 8px;
+    /* inline-2 / audit-2 gap */
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--fc-row-gap) var(--fc-col-gap);
+    padding: var(--fc-grid-pad);
+  }
+
+  /* Roomy density — applied to modal form */
+  .form-4col.density-roomy {
+    --fc-h: 30px;
+    --fc-fs: 12px;
+    --fc-pad-x: 10px;
+    --fc-pad-r-sel: 28px;
+    --fc-label-fs: 12px;
+    --fc-label-gap: 4px;
+    --fc-row-gap: 10px;
+    --fc-col-gap: 18px;
+    --fc-grid-pad: 18px 22px;
+    --fc-textarea-h: 220px;
+    --fc-check-fs: 12px;
+    --fc-chev-size: 11px;
+    --fc-chev-pad: 9px;
+    --fc-drop-pad: 36px 16px;
+    --fc-drop-fs: 12px;
+    --fc-inline-gap: 10px;
+  }
+
+  /* ---- Structure ---- */
+  .form-4col .col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fc-row-gap);
+    min-width: 0
+  }
+
+  .form-4col .ff {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fc-label-gap);
+    min-width: 0
+  }
+
+  .form-4col .ff>label,
+  .form-4col .ff .sub>label {
+    font-size: var(--fc-label-fs);
+    font-weight: 500;
+    color: var(--text-2);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    line-height: 1.4;
+  }
+
+  .form-4col .ff>label .req {
+    color: var(--danger);
+    font-weight: 700
+  }
+
+  /* ---- Controls ---- */
+  .form-4col .ff input.input {
+    height: var(--fc-h);
+    width: 100%;
+    font-size: var(--fc-fs);
+    padding: 0 var(--fc-pad-x);
+  }
+
+  .form-4col .ff select.input {
+    height: var(--fc-h);
+    width: 100%;
+    font-size: var(--fc-fs);
+    padding: 0 var(--fc-pad-r-sel) 0 var(--fc-pad-x);
+    background-size: var(--fc-chev-size) var(--fc-chev-size);
+    background-position: right var(--fc-chev-pad) center;
+  }
+
+  .form-4col .ff textarea.input {
+    width: 100%;
+    font-size: var(--fc-fs);
+    padding: 6px var(--fc-pad-x);
+    resize: vertical;
+    min-height: var(--fc-textarea-h);
+    line-height: 1.5;
+  }
+
+  .form-4col .ff .static {
+    height: var(--fc-h);
+    padding: 0 var(--fc-pad-x);
+    border-radius: var(--r);
+    background: var(--surface-2);
+    border: 1px solid var(--border-2);
+    color: var(--text-2);
+    display: flex;
+    align-items: center;
+    font-size: var(--fc-fs);
+  }
+
+  /* ---- Checkboxes inline row (resource ban / TEL ban) ---- */
+  .form-4col .ff .check-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-top: 2px;
+    min-height: var(--fc-h);
+  }
+
+  .form-4col .ff .check-row label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    font-size: var(--fc-check-fs);
+    color: var(--text-1);
+  }
+
+  .form-4col .ff .check-row input[type=checkbox] {
+    width: 13px;
+    height: 13px;
+    accent-color: var(--brand-600);
+  }
+
+  /* ---- 2-up sub layouts (郵便番号+都道府県, 決算月+売上高, 作成日+作成者, etc.) ---- */
+  .form-4col .ff.inline-2,
+  .form-4col .ff.audit-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--fc-inline-gap);
+  }
+
+  .form-4col .ff.inline-2>.sub,
+  .form-4col .ff.audit-2>.sub {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fc-label-gap);
+  }
+
+  /* ---- Attachment list (添付資料 — 既存ファイル一覧) ---- */
+  .attach-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .attach-item {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border: 1px solid var(--border-2);
+    border-radius: var(--r);
+    background: #fff;
+    transition: border-color .12s, background .12s;
+  }
+
+  .attach-item:hover {
+    border-color: #9CA6B9;
+    background: var(--surface-2)
+  }
+
+  .attach-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    flex-shrink: 0;
+  }
+
+  .attach-icon.pdf {
+    background: #D03B3B
+  }
+
+  .attach-icon.xls {
+    background: #157F47
+  }
+
+  .attach-icon.doc {
+    background: #1E5BD6
+  }
+
+  .attach-icon.zip {
+    background: #7A4FBF
+  }
+
+  .attach-icon.img {
+    background: #0E7490
+  }
+
+  .attach-icon.txt {
+    background: #6B7280
+  }
+
+  .attach-name {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .attach-name .n {
+    font-size: 11px;
+    color: var(--text-1);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-decoration: none;
+  }
+
+  .attach-name a.n:hover {
+    color: var(--brand-600);
+    text-decoration: underline
+  }
+
+  .attach-name .meta {
+    font-size: 10px;
+    color: var(--text-3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .attach-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  .attach-actions .icon-btn {
+    width: 22px;
+    height: 22px;
+    border-radius: var(--r);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-2);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .12s, color .12s, border-color .12s;
+  }
+
+  .attach-actions .icon-btn svg {
+    width: 13px;
+    height: 13px
+  }
+
+  .attach-actions .icon-btn:hover {
+    background: var(--hover);
+    color: var(--brand-600);
+    border-color: var(--border-2)
+  }
+
+  .attach-actions .icon-btn.danger:hover {
+    color: var(--danger);
+    background: #FEF2F2;
+    border-color: #E1B0B0
+  }
+
+  .attach-actions .icon-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(30, 91, 214, .25)
+  }
+
+  /* small dropzone variant — used under existing attach list */
+  .dropzone.compact {
+    padding: 8px 10px;
+    font-size: 10px
+  }
+
+  .form-4col .dropzone.compact {
+    padding: 8px 10px;
+    font-size: 10px
+  }
+
+  /* ---- Dropzone (添付資料) ---- */
+  .dropzone {
+    border: 1.5px dashed var(--border);
+    border-radius: var(--r);
+    background: var(--surface-2);
+    color: var(--text-3);
+    text-align: center;
+    transition: border-color .12s, background .12s;
+    padding: 18px 14px;
+    font-size: 11px;
+    /* defaults; overridden by .form-4col density vars when nested */
+  }
+
+  .form-4col .dropzone {
+    padding: var(--fc-drop-pad);
+    font-size: var(--fc-drop-fs)
+  }
+
+  .dropzone:hover {
+    border-color: var(--brand-500);
+    background: #F5F9FF;
+    color: var(--brand-600)
+  }
+
+  /* Form footer with delete left + save right */
+  .form-foot-split {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-top: 1px solid var(--border);
+    background: var(--surface-2);
+    border-radius: 0 0 var(--r-card) var(--r-card);
+  }
+
+  .form-foot-split .left,
+  .form-foot-split .right {
+    display: flex;
+    gap: 8px;
+    align-items: center
+  }
+
+  /* ====== Modal (会社登録 CP03) ====== */
+  .modal-dialog {
+    border: none;
+    padding: 0;
+    background: transparent;
+    width: 1240px;
+    max-width: calc(100vw - 48px);
+    max-height: calc(100vh - 48px);
+    overflow: visible;
+  }
+
+  .modal-dialog::backdrop {
+    background: rgba(15, 27, 45, .45);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-dialog[open] {
+    animation: .18s cubic-bezier(.16, 1, .3, 1) modalIn;
+  }
+
+  @keyframes modalIn {
+    0% {
+      opacity: 0;
+      transform: translateY(8px) scale(.985)
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1)
+    }
+  }
+
+  .modal-card {
+    background: #fff;
+    border-radius: var(--r-card);
+    box-shadow: 0 25px 50px -12px rgba(15, 27, 45, .35), 0 8px 24px -8px rgba(15, 27, 45, .18);
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 48px);
+    overflow: hidden;
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .modal-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-1);
+    letter-spacing: -.01em;
+  }
+
+  .modal-title .code {
+    color: var(--text-1);
+    font-weight: 700;
+    font-size: 18px;
+    margin-left: 2px;
+  }
+
+  .modal-close {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--r);
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--text-2);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .12s;
+  }
+
+  .modal-close:hover {
+    background: var(--hover);
+    color: var(--text-1);
+    border-color: #9CA6B9
+  }
+
+  .modal-close svg {
+    width: 16px;
+    height: 16px
+  }
+
+  .modal-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0;
+  }
+
+  .modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 22px;
+    border-top: 1px solid var(--border);
+    background: var(--surface-2);
+    flex-shrink: 0;
+  }
+
+  .modal-footer .btn {
+    height: 34px;
+    padding: 0 18px;
+    font-size: 13px
+  }
+
+  .modal-footer .btn-primary {
+    box-shadow: 0 2px 6px rgba(20, 72, 182, .18)
+  }
+
+  /* ===== Confirm dialog (small, used for 削除) ===== */
+  .confirm-dialog {
+    border: none;
+    padding: 0;
+    background: transparent;
+    width: 440px;
+    max-width: calc(100vw - 32px);
+  }
+
+  .confirm-dialog::backdrop {
+    background: rgba(15, 27, 45, .45);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+
+  .confirm-dialog[open] {
+    animation: .18s cubic-bezier(.16, 1, .3, 1) modalIn
+  }
+
+  .confirm-card {
+    background: #fff;
+    border-radius: var(--r-card);
+    box-shadow: 0 25px 50px -12px rgba(15, 27, 45, .35), 0 8px 24px -8px rgba(15, 27, 45, .18);
+    overflow: hidden;
+  }
+
+  .confirm-body {
+    padding: 20px 22px 18px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .confirm-icon {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #FDECEC;
+    color: var(--danger);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .confirm-icon svg {
+    width: 22px;
+    height: 22px
+  }
+
+  .confirm-content {
+    flex: 1;
+    min-width: 0
+  }
+
+  .confirm-title {
+    margin: 0 0 6px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-1);
+    line-height: 1.4;
+  }
+
+  .confirm-message {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--text-2);
+    line-height: 1.55;
+  }
+
+  .confirm-target {
+    margin-top: 10px;
+    padding: 8px 10px;
+    border-radius: var(--r);
+    background: var(--surface-2);
+    border: 1px solid var(--border-2);
+    font-size: 12px;
+    color: var(--text-1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .confirm-target .id {
+    font-family: Inter, inherit;
+    font-size: 10.5px;
+    font-weight: 600;
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  .confirm-target .name {
+    font-weight: 600;
+    color: var(--text-1)
+  }
+
+  .confirm-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 22px 16px;
+    border-top: 1px solid var(--border-2);
+    background: var(--surface-2);
+  }
+
+  .confirm-footer .btn {
+    height: 32px;
+    padding: 0 16px;
+    font-size: 12.5px
+  }
+
+  .confirm-footer .btn-danger-solid {
+    background: var(--danger);
+    color: #fff;
+    border-color: var(--danger);
+    box-shadow: 0 2px 6px rgba(185, 28, 28, .22);
+  }
+
+  .confirm-footer .btn-danger-solid:hover {
+    background: #9B1818;
+    border-color: #9B1818
+  }
+
+  /* ===== Toast notification (after action) ===== */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    background: #0E1424;
+    color: #fff;
+    padding: 10px 16px 10px 14px;
+    border-radius: 10px;
+    box-shadow: 0 12px 32px -8px rgba(15, 27, 45, .4);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: opacity .22s ease, transform .22s ease;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0)
+  }
+
+  .toast svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0
+  }
+
+  .toast.success svg {
+    color: #34D399
+  }
+
+  .toast.danger svg {
+    color: #FCA5A5
+  }
+
+  /* Disabled / placeholder static look for create-modal id + audit fields */
+  .modal-body .input[disabled],
+  .modal-body .input[readonly] {
+    color: var(--text-3);
+    background: #F1F3F5;
+    border-color: #E2E8F0;
+    cursor: not-allowed;
+  }
+</style>
+
+<body>
+  <div class="app">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">SMOS</div>
+      <nav class="nav">
+        <a class="item active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M4 21V7l8-4 8 4v14" />
+            <path d="M9 21v-7h6v7" />
+          </svg>
+          会社
+        </a>
+        <a class="item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="8" r="3.5" />
+            <path d="M5 20c1-3.5 4-5.5 7-5.5s6 2 7 5.5" />
+          </svg>
+          担当
+        </a>
+        <a class="item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M3 12h4l3-7 4 14 3-7h4" />
+          </svg>
+          活動
+        </a>
+        <a class="item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <rect x="3" y="6" width="18" height="13" rx="2" />
+            <path d="M8 6V4h8v2" />
+          </svg>
+          案件
+        </a>
+      </nav>
+      <div class="nav-spacer"></div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div class="crumbs"><span>SMOS CRM</span><span class="sep">›</span><strong>会社</strong></div>
+        <div class="topbar-right">
+          <span class="topbar-date">2026/04/30 (木)</span>
+          <div class="user-menu" id="userMenu">
+            <button class="user-menu-trigger" id="userMenuTrigger" aria-haspopup="menu" aria-expanded="false">
+              <span class="user-avatar">山</span>
+              <span>山田 健一</span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+            <div class="user-menu-dropdown" role="menu" aria-label="ユーザーメニュー">
+              <div class="user-menu-header">
+                <div class="name">山田 健一</div>
+                <div class="email">yamada.kenichi@smos.co.jp</div>
+              </div>
+              <div class="user-menu-divider"></div>
+              <button class="user-menu-item" role="menuitem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <circle cx="12" cy="8" r="3.6" />
+                  <path d="M5 20c1-3.5 4-5.5 7-5.5s6 2 7 5.5" />
+                </svg>
+                プロフィール
+              </button>
+              <button class="user-menu-item" role="menuitem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <circle cx="12" cy="12" r="3" />
+                  <path
+                    d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2-1.2L14 3h-4l-.6 2.6a7 7 0 0 0-2 1.2l-2.3-1-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2 1.2L10 21h4l.6-2.6a7 7 0 0 0 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2Z" />
+                </svg>
+                設定
+              </button>
+              <button class="user-menu-item" role="menuitem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 1-1 1.7" />
+                  <path d="M12 17h.01" />
+                </svg>
+                ヘルプ
+              </button>
+              <div class="user-menu-divider"></div>
+              <button class="user-menu-item danger" role="menuitem" id="btnLogout">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M9 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4" />
+                  <path d="m16 17 5-5-5-5" />
+                  <path d="M21 12H9" />
+                </svg>
+                ログアウト
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="page">
+
+        <!-- ============ SEARCH HEADER (single row) ============ -->
+        <section class="search-header">
+          <div class="screen-title">会社 <span class="code">(CP01)</span></div>
+          <div class="field">
+            <label>会社名</label>
+            <input class="input search-input" placeholder="会社名（部分一致）">
+          </div>
+          <button class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.5-3.5" />
+            </svg>
+            検索
+          </button>
+          <button class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+            詳細検索
+          </button>
+          <button class="btn btn-ghost">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+            クリア
+          </button>
+          <div class="right">
+            <button class="btn btn-accent" id="btnNewCompany">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              新規会社
+            </button>
+          </div>
+        </section>
+
+        <!-- ============ LIST AREA (resizable) ============ -->
+        <div class="list-area" id="listArea">
+          <section class="panel" style="overflow:hidden">
+            <div class="table-wrap">
+              <table class="t">
+                <colgroup>
+                  <col style="width:68px"> <!-- 会社ID -->
+                  <col style="width:260px"> <!-- 会社名 -->
+                  <col style="width:130px"> <!-- 代表TEL -->
+                  <col style="width:260px"> <!-- 住所 -->
+                  <col style="width:90px"> <!-- 業界 -->
+                  <col style="width:120px"> <!-- 業種 -->
+                  <col style="width:100px"> <!-- 規模ランク -->
+                  <col style="width:120px"> <!-- 種別 -->
+                  <col style="width:90px"> <!-- 従業員数 -->
+                  <col style="width:80px"> <!-- 地区 -->
+                  <col style="width:90px"> <!-- 都道府県 -->
+                  <col style="width:200px"> <!-- 会社備考 -->
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th data-sort-key="id" data-sort-type="num">会社ID<span class="sort-arrow"></span></th>
+                    <th data-sort-key="name" data-sort-type="str">会社名<span class="sort-arrow"></span></th>
+                    <th data-sort-key="tel" data-sort-type="str">代表TEL<span class="sort-arrow"></span></th>
+                    <th data-sort-key="addr" data-sort-type="str">住所<span class="sort-arrow"></span></th>
+                    <th data-sort-key="industry" data-sort-type="str">業界<span class="sort-arrow"></span></th>
+                    <th data-sort-key="category" data-sort-type="str">業種<span class="sort-arrow"></span></th>
+                    <th data-sort-key="scale" data-sort-type="str">規模ランク<span class="sort-arrow"></span></th>
+                    <th data-sort-key="type" data-sort-type="str">種別<span class="sort-arrow"></span></th>
+                    <th data-sort-key="employees" data-sort-type="num" class="num">従業員数<span class="sort-arrow"></span>
+                    </th>
+                    <th data-sort-key="region" data-sort-type="str">地区<span class="sort-arrow"></span></th>
+                    <th data-sort-key="pref" data-sort-type="str">都道府県<span class="sort-arrow"></span></th>
+                    <th data-sort-key="note" data-sort-type="str">会社備考<span class="sort-arrow"></span></th>
+                  </tr>
+                </thead>
+                <tbody id="companyTbody"><!-- rendered by JS --></tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- ============ PAGER STANDALONE ============ -->
+          <section class="pager-standalone">
+            <div class="pages">
+              <button class="pg-btn" title="最初へ">«</button>
+              <button class="pg-btn" title="前へ">‹</button>
+              <button class="pg-btn active">1</button>
+              <button class="pg-btn">2</button>
+              <button class="pg-btn">3</button>
+              <button class="pg-btn" title="次へ">›</button>
+              <button class="pg-btn" title="最後へ">»</button>
+            </div>
+            <div class="page-jump">
+              <span>Page</span>
+              <select class="mini">
+                <option selected>1</option>
+                <option>2</option>
+                <option>3</option>
+              </select>
+              <span>/ 3</span>
+            </div>
+            <select class="pgsize-trigger">
+              <option>10件</option>
+              <option selected>25件</option>
+              <option>50件</option>
+              <option>100件</option>
+            </select>
+            <div class="meta-right">全 59件 1 - 25</div>
+          </section>
+        </div><!-- /.list-area -->
+
+        <!-- Drag handle to resize list height -->
+        <div class="resizer-h" id="resizerH" role="separator" aria-orientation="horizontal" aria-label="リスト領域のサイズ変更"
+          title="ドラッグで高さ調整・ダブルクリックでリセット" tabindex="0"></div>
+
+        <!-- ============ TABS + DETAIL FORM ============ -->
+        <div>
+          <div class="tabs-underline" id="detailTabs">
+            <button class="tab active" data-tab="company">会社詳細</button>
+            <button class="tab" data-tab="tan">担当者</button>
+            <button class="tab" data-tab="act">活動</button>
+            <button class="tab" data-tab="case">案件</button>
+            <div class="tab-actions" id="tabActions">
+              <!-- Tab-specific action buttons injected here -->
+            </div>
+          </div>
+
+          <section class="panel" style="border-radius:0 0 var(--r-card) var(--r-card); border-top:0">
+
+            <!-- ===== Tab panel: 会社詳細 ===== -->
+            <div class="tab-panel active" data-panel="company">
+
+              <div class="form-4col" id="detailForm">
+
+                <!-- ========== COLUMN 1 — Basic info ========== -->
+                <div class="col">
+                  <div class="ff">
+                    <label>会社ID</label>
+                    <div class="static" data-field="id">1141</div>
+                  </div>
+                  <div class="ff">
+                    <label>会社名 <span class="req">*</span></label>
+                    <input class="input" data-field="name" value="旭川エレクトロニクスサービス株式会社">
+                  </div>
+                  <div class="ff">
+                    <label>代表TEL</label>
+                    <input class="input" data-field="tel" value="077-589-2569">
+                  </div>
+                  <div class="ff">
+                    <label>代表FAX</label>
+                    <input class="input" data-field="fax" value="089-5996-4084">
+                  </div>
+                  <div class="ff">
+                    <label>地区</label>
+                    <select class="input" data-field="region">
+                      <option>関東</option>
+                      <option>関西</option>
+                      <option>中部</option>
+                      <option>東北</option>
+                      <option>九州</option>
+                      <option>北海道</option>
+                      <option>沖縄</option>
+                    </select>
+                  </div>
+                  <div class="ff inline-2">
+                    <div class="sub">
+                      <label>郵便番号</label>
+                      <input class="input" data-field="zip" value="7059306">
+                    </div>
+                    <div class="sub">
+                      <label>都道府県</label>
+                      <select class="input" data-field="pref">
+                        <option>北海道</option>
+                        <option>東京都</option>
+                        <option>大阪府</option>
+                        <option>愛知県</option>
+                        <option>福岡県</option>
+                        <option>滋賀県</option>
+                        <option>栃木県</option>
+                        <option>宮城県</option>
+                        <option>沖縄県</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="ff">
+                    <label>住所</label>
+                    <input class="input" data-field="addr" value="北海道旭川市東区4丁目18-30">
+                  </div>
+                  <div class="ff">
+                    <label>禁止設定</label>
+                    <div class="check-row">
+                      <label><input type="checkbox" data-field="ban_doc"> 資料禁止</label>
+                      <label><input type="checkbox" data-field="ban_tel"> TEL禁止</label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ========== COLUMN 2 — Industry / Scale / Financial ========== -->
+                <div class="col">
+                  <div class="ff">
+                    <label>業界</label>
+                    <select class="input" data-field="industry">
+                      <option>製造業</option>
+                      <option>卸売業</option>
+                      <option>小売業</option>
+                      <option>金融業</option>
+                    </select>
+                  </div>
+                  <div class="ff">
+                    <label>業種</label>
+                    <select class="input" data-field="category">
+                      <option>金属製品</option>
+                      <option>化学・素材</option>
+                      <option>自動車・輸送用機械</option>
+                      <option>木工・家具</option>
+                      <option>その他製造業</option>
+                      <option>食品・飲料</option>
+                    </select>
+                  </div>
+                  <div class="ff">
+                    <label>規模ランク</label>
+                    <select class="input" data-field="scale">
+                      <option>1〜30人</option>
+                      <option>31〜100人</option>
+                      <option>101〜300人</option>
+                      <option>101〜500人</option>
+                      <option>301人以上</option>
+                    </select>
+                  </div>
+                  <div class="ff">
+                    <label>会社種別</label>
+                    <select class="input" data-field="type">
+                      <option>その他</option>
+                      <option>メーカー</option>
+                      <option>機械・装置メ…</option>
+                    </select>
+                  </div>
+                  <div class="ff">
+                    <label>法人番号</label>
+                    <input class="input" data-field="corpNo" value="0209176547839">
+                  </div>
+                  <div class="ff">
+                    <label>従業員数</label>
+                    <input class="input" data-field="employees" value="1909">
+                  </div>
+                  <div class="ff inline-2">
+                    <div class="sub">
+                      <label>決算月</label>
+                      <input class="input" data-field="fiscalMonth" value="9">
+                    </div>
+                    <div class="sub">
+                      <label>売上高</label>
+                      <input class="input" data-field="revenue" value="11">
+                    </div>
+                  </div>
+                  <div class="ff">
+                    <label>資本金（百万円）</label>
+                    <input class="input" data-field="capital" value="10,000">
+                  </div>
+                </div>
+
+                <!-- ========== COLUMN 3 — 備考 + Audit ========== -->
+                <div class="col">
+                  <div class="ff">
+                    <label>備考</label>
+                    <textarea class="input" data-field="note">主要取引先：旭川重工</textarea>
+                  </div>
+                  <div class="ff audit-2">
+                    <div class="sub">
+                      <label>作成日</label>
+                      <div class="static" data-field="createdAt">2026/04/01 10:00</div>
+                    </div>
+                    <div class="sub">
+                      <label>作成者</label>
+                      <div class="static" data-field="createdBy">admin</div>
+                    </div>
+                  </div>
+                  <div class="ff audit-2">
+                    <div class="sub">
+                      <label>更新日</label>
+                      <div class="static" data-field="updatedAt">2026/04/20 15:30</div>
+                    </div>
+                    <div class="sub">
+                      <label>更新者</label>
+                      <div class="static" data-field="updatedBy">admin</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ========== COLUMN 4 — 自由使用欄 + 添付資料 ========== -->
+                <div class="col">
+                  <div class="ff"><label>会社自由使用欄1</label><input class="input" data-field="free1"></div>
+                  <div class="ff"><label>会社自由使用欄2</label><input class="input" data-field="free2"></div>
+                  <div class="ff"><label>会社自由使用欄3</label><input class="input" data-field="free3"></div>
+                  <div class="ff"><label>会社自由使用欄4</label><input class="input" data-field="free4"></div>
+                  <div class="ff"><label>会社自由使用欄5</label><input class="input" data-field="free5"></div>
+                  <div class="ff"><label>会社自由使用欄6</label><input class="input" data-field="free6"></div>
+                  <div class="ff"><label>会社自由使用欄7</label><input class="input" data-field="free7"></div>
+                  <div class="ff">
+                    <label>添付資料 <span style="color:var(--text-3); font-weight:400">(2件)</span></label>
+                    <div class="attach-list" id="attachList">
+                      <!-- File 1: PDF -->
+                      <div class="attach-item">
+                        <div class="attach-icon pdf" title="PDFファイル">PDF</div>
+                        <div class="attach-name">
+                          <a class="n" href="attachments/会社案内_2024.pdf" download="会社案内_2024.pdf"
+                            title="会社案内_2024.pdf">会社案内_2024.pdf</a>
+                          <span class="meta">2.7 KB · 2024/03/15 · 山田 健一</span>
+                        </div>
+                        <div class="attach-actions">
+                          <a class="icon-btn" href="attachments/会社案内_2024.pdf" target="_blank" rel="noopener"
+                            title="プレビュー">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                              stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" />
+                              <circle cx="12" cy="12" r="3" />
+                            </svg>
+                          </a>
+                          <a class="icon-btn" href="attachments/会社案内_2024.pdf" download="会社案内_2024.pdf" title="ダウンロード">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                              stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M12 3v12" />
+                              <path d="m7 10 5 5 5-5" />
+                              <path d="M5 21h14" />
+                            </svg>
+                          </a>
+                          <button class="icon-btn danger" type="button" title="削除"
+                            onclick="if(confirm('このファイルを削除しますか？')){this.closest('.attach-item').remove();}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                              stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M3 6h18" />
+                              <path d="M8 6V4h8v2" />
+                              <path d="m6 6 1 14h10l1-14" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- File 2: XLSX -->
+                      <div class="attach-item">
+                        <div class="attach-icon xls" title="Excelファイル">XLS</div>
+                        <div class="attach-name">
+                          <a class="n" href="attachments/取引基本契約書_2023.xlsx" download="取引基本契約書_2023.xlsx"
+                            title="取引基本契約書_2023.xlsx">取引基本契約書_2023.xlsx</a>
+                          <span class="meta">5.4 KB · 2023/06/15 · 鈴木 健</span>
+                        </div>
+                        <div class="attach-actions">
+                          <a class="icon-btn" href="attachments/取引基本契約書_2023.xlsx" download="取引基本契約書_2023.xlsx"
+                            title="ダウンロード">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                              stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M12 3v12" />
+                              <path d="m7 10 5 5 5-5" />
+                              <path d="M5 21h14" />
+                            </svg>
+                          </a>
+                          <button class="icon-btn danger" type="button" title="削除"
+                            onclick="if(confirm('このファイルを削除しますか？')){this.closest('.attach-item').remove();}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                              stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M3 6h18" />
+                              <path d="M8 6V4h8v2" />
+                              <path d="m6 6 1 14h10l1-14" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="dropzone compact" style="margin-top:6px">＋ ファイルを追加 / ドラッグ&ドロップ</div>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="form-foot-split">
+                <div class="left">
+                  <button class="btn btn-danger" id="btnDeleteCompany">削除</button>
+                </div>
+                <div class="right">
+                  <button class="btn btn-primary">保存</button>
+                </div>
+              </div>
+            </div><!-- /tab-panel company -->
+
+            <!-- ===== Tab panel: 担当者 ===== -->
+            <div class="tab-panel" data-panel="tan">
+              <!-- <div class="panel-toolbar">
+              <div class="left">
+                <span class="count" id="contactsCount"><b>—</b> 件</span>
+              </div>
+              <div class="right">
+                <button class="btn btn-secondary">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+                  フィルタ
+                </button>
+                <button class="btn btn-ghost">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+                  更新
+                </button>
+              </div>
+            </div> -->
+              <div class="table-wrap" style="max-height:360px">
+                <table class="t" id="contactsTable">
+                  <colgroup>
+                    <col style="width:90px"> <!-- 担当(姓) -->
+                    <col style="width:90px"> <!-- 担当(名) -->
+                    <col style="width:170px"> <!-- フリガナ -->
+                    <col style="width:140px"> <!-- 部署名 -->
+                    <col style="width:130px"> <!-- TEL -->
+                    <col style="width:130px"> <!-- 携帯電話 -->
+                    <col style="width:240px"> <!-- EMAIL -->
+                    <col style="width:170px"> <!-- 役職名 -->
+                    <col style="width:80px"> <!-- 職位 -->
+                    <col style="width:260px"> <!-- 担当者備考 -->
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th>担当(姓)</th>
+                      <th>担当(名)</th>
+                      <th>フリガナ</th>
+                      <th>部署名</th>
+                      <th>TEL</th>
+                      <th>携帯電話</th>
+                      <th>EMAIL</th>
+                      <th>役職名</th>
+                      <th>職位</th>
+                      <th>担当者備考</th>
+                    </tr>
+                  </thead>
+                  <tbody id="contactsTbody"><!-- rendered by JS --></tbody>
+                </table>
+              </div>
+
+              <!-- Pager (visible when total > pageSize) -->
+              <section class="pager-standalone pager-contacts"
+                style="margin:8px 12px 12px; border-radius:var(--r-card)">
+                <div class="pages" id="contactsPages"><!-- buttons rendered by JS --></div>
+                <div class="page-jump">
+                  <span>Page</span>
+                  <select class="mini" id="contactsPageJump"><!-- options rendered --></select>
+                  <span id="contactsTotalPages">/ —</span>
+                </div>
+                <select class="pgsize-trigger" id="contactsPageSize">
+                  <option value="10" selected>10件</option>
+                  <option value="25">25件</option>
+                  <option value="50">50件</option>
+                  <option value="100">100件</option>
+                </select>
+                <div class="meta-right" id="contactsRange">—</div>
+              </section>
+            </div><!-- /tab-panel tan -->
+
+            <!-- ===== Tab panel: 活動 ===== -->
+            <div class="tab-panel" data-panel="act">
+              <div class="empty-state">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+                  <path d="M3 12h4l3-7 4 14 3-7h4" />
+                </svg>
+                <div class="title">活動データはまだありません</div>
+                <div class="desc">この会社の活動履歴を登録すると、ここに表示されます。</div>
+              </div>
+            </div><!-- /tab-panel act -->
+
+            <!-- ===== Tab panel: 案件 ===== -->
+            <div class="tab-panel" data-panel="case">
+              <div class="empty-state">
+                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+                  <rect x="3" y="7" width="18" height="13" rx="2" />
+                  <path d="M8 7V4h8v3" />
+                </svg>
+                <div class="title">案件データはまだありません</div>
+                <div class="desc">この会社の案件を登録すると、ここに表示されます。</div>
+              </div>
+            </div><!-- /tab-panel case -->
+
+          </section>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ============ CONFIRM DIALOG: 削除 ============ -->
+  <dialog class="confirm-dialog" id="dlgConfirmDelete" aria-labelledby="dlgConfirmTitle">
+    <div class="confirm-card">
+      <div class="confirm-body">
+        <div class="confirm-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 9v4M12 17h.01" />
+            <path d="M10.3 3.9 2.4 17a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
+          </svg>
+        </div>
+        <div class="confirm-content">
+          <h3 class="confirm-title" id="dlgConfirmTitle">会社を削除しますか？</h3>
+          <p class="confirm-message">この操作は取り消せません。関連する担当者・活動・案件のデータも削除される可能性があります。</p>
+          <div class="confirm-target">
+            <span class="id" id="dlgConfirmId">CO-—</span>
+            <span class="name" id="dlgConfirmName">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="confirm-footer">
+        <button class="btn btn-secondary" type="button" data-close>キャンセル</button>
+        <button class="btn btn-danger-solid" type="button" id="dlgConfirmDeleteBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14" />
+          </svg>
+          削除する
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Toast for action feedback -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <svg id="toastIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+      <path d="M5 12l5 5L20 7" />
+    </svg>
+    <span id="toastMsg">完了しました</span>
+  </div>
+
+  <!-- ============ MODAL: 会社登録 (CP03) ============ -->
+  <dialog class="modal-dialog" id="dlgNewCompany" aria-labelledby="dlgNewCompanyTitle">
+    <div class="modal-card">
+      <header class="modal-header">
+        <h2 class="modal-title" id="dlgNewCompanyTitle">会社登録<span class="code">(CP03)</span></h2>
+        <button class="modal-close" type="button" aria-label="閉じる" data-close>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </header>
+
+      <div class="modal-body">
+        <div class="form-4col density-roomy">
+
+          <!-- COL 1 -->
+          <div class="col">
+            <div class="ff">
+              <label>会社ID</label>
+              <input class="input" placeholder="(登録後に採番)" disabled>
+            </div>
+            <div class="ff">
+              <label>会社名 <span class="req">*</span></label>
+              <input class="input" placeholder="例：旭川エレクトロニクスサービス株式会社">
+            </div>
+            <div class="ff">
+              <label>代表TEL</label>
+              <input class="input" placeholder="例：077-589-2569">
+            </div>
+            <div class="ff">
+              <label>代表FAX</label>
+              <input class="input">
+            </div>
+            <div class="ff">
+              <label>地区</label>
+              <select class="input">
+                <option value="">-</option>
+                <option>関東</option>
+                <option>関西</option>
+                <option>中部</option>
+                <option>東北</option>
+                <option>九州</option>
+                <option>北海道</option>
+                <option>沖縄</option>
+              </select>
+            </div>
+            <div class="ff inline-2">
+              <div class="sub">
+                <label>郵便番号</label>
+                <input class="input">
+              </div>
+              <div class="sub">
+                <label>都道府県</label>
+                <select class="input">
+                  <option value="">-</option>
+                  <option>北海道</option>
+                  <option>東京都</option>
+                  <option>大阪府</option>
+                  <option>愛知県</option>
+                  <option>福岡県</option>
+                </select>
+              </div>
+            </div>
+            <div class="ff">
+              <label>住所</label>
+              <input class="input">
+            </div>
+            <div class="ff">
+              <div class="check-row">
+                <label><input type="checkbox"> 資料禁止</label>
+                <label><input type="checkbox"> TEL禁止</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- COL 2 -->
+          <div class="col">
+            <div class="ff">
+              <label>業界</label>
+              <select class="input">
+                <option value="">-</option>
+                <option>製造業</option>
+                <option>卸売業</option>
+                <option>小売業</option>
+                <option>金融業</option>
+              </select>
+            </div>
+            <div class="ff">
+              <label>業種</label>
+              <select class="input">
+                <option value="">-</option>
+                <option>金属製品</option>
+                <option>化学・素材</option>
+                <option>自動車・輸送用機械</option>
+                <option>木工・家具</option>
+              </select>
+            </div>
+            <div class="ff">
+              <label>規模ランク</label>
+              <select class="input">
+                <option value="">-</option>
+                <option>1〜30人</option>
+                <option>31〜100人</option>
+                <option>101〜300人</option>
+                <option>301人以上</option>
+              </select>
+            </div>
+            <div class="ff">
+              <label>会社種別</label>
+              <select class="input">
+                <option value="">-</option>
+                <option>メーカー</option>
+                <option>その他</option>
+              </select>
+            </div>
+            <div class="ff">
+              <label>法人番号</label>
+              <input class="input">
+            </div>
+            <div class="ff">
+              <label>従業員数</label>
+              <input class="input">
+            </div>
+            <div class="ff inline-2">
+              <div class="sub">
+                <label>決算月</label>
+                <input class="input" placeholder="例：9">
+              </div>
+              <div class="sub">
+                <label>売上高</label>
+                <input class="input">
+              </div>
+            </div>
+            <div class="ff">
+              <label>資本金（百万円）</label>
+              <input class="input">
+            </div>
+          </div>
+
+          <!-- COL 3 -->
+          <div class="col">
+            <div class="ff">
+              <label>備考</label>
+              <textarea class="input" style="min-height:300px"></textarea>
+            </div>
+            <div class="ff audit-2">
+              <div class="sub">
+                <label>作成日</label>
+                <input class="input" disabled>
+              </div>
+              <div class="sub">
+                <label>作成者</label>
+                <input class="input" disabled>
+              </div>
+            </div>
+            <div class="ff audit-2">
+              <div class="sub">
+                <label>更新日</label>
+                <input class="input" disabled>
+              </div>
+              <div class="sub">
+                <label>更新者</label>
+                <input class="input" disabled>
+              </div>
+            </div>
+          </div>
+
+          <!-- COL 4 -->
+          <div class="col">
+            <div class="ff"><label>会社自由使用欄1</label><input class="input"></div>
+            <div class="ff"><label>会社自由使用欄2</label><input class="input"></div>
+            <div class="ff"><label>会社自由使用欄3</label><input class="input"></div>
+            <div class="ff"><label>会社自由使用欄4</label><input class="input"></div>
+            <div class="ff"><label>会社自由使用欄5</label><input class="input"></div>
+            <div class="ff"><label>会社自由使用欄6</label><input class="input"></div>
+            <div class="ff"><label>会社自由使用欄7</label><input class="input"></div>
+            <div class="ff">
+              <label>添付資料</label>
+              <div class="dropzone">ここにドラッグ&ドロップ</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <footer class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-close>キャンセル</button>
+        <button class="btn btn-primary" type="button" id="dlgSaveNew">保存</button>
+      </footer>
+    </div>
+  </dialog>
+
+  <script>
+    /* ===== Company data ===== */
+    const COMPANIES = [
+      {
+        id: '1141', name: '旭川エレクトロニクスサービス株式会社',
+        tel: '077-589-2569', fax: '089-5996-4084',
+        region: '関東', zip: '7059306', pref: '北海道', addr: '北海道旭川市東区4丁目18-30',
+        ban_doc: false, ban_tel: false,
+        industry: '製造業', category: '金属製品', scale: '1〜30人', type: 'その他',
+        corpNo: '0209176547839', employees: '1909',
+        fiscalMonth: '9', revenue: '11', capital: '10,000',
+        note: '主要取引先：旭川重工',
+        createdAt: '2026/04/01 10:00', createdBy: 'admin',
+        updatedAt: '2026/04/20 15:30', updatedBy: 'admin',
+        free1: '親会社：旭川HD', free2: '取引銀行：北海道銀行', free3: 'ISO9001 取得', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1068', name: '旭川システム株式会社',
+        tel: '097-9539-3068', fax: '097-9539-3069',
+        region: '関西', zip: '5208512', pref: '滋賀県', addr: '滋賀県東区1丁目18-20',
+        ban_doc: false, ban_tel: false,
+        industry: '製造業', category: '化学・素材', scale: '1〜30人', type: 'メーカー',
+        corpNo: '0123456780011', employees: '500',
+        fiscalMonth: '3', revenue: '8', capital: '5,000',
+        note: '',
+        createdAt: '2025/11/12 09:20', createdBy: 'admin',
+        updatedAt: '2026/03/18 11:05', updatedBy: 'admin',
+        free1: '', free2: '', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1219', name: '旭川電気エレクトロニクス株式会社',
+        tel: '057-8441-7148', fax: '057-8441-7149',
+        region: '関東', zip: '1600022', pref: '東京都', addr: '東京都新宿区西2丁目3-14',
+        ban_doc: false, ban_tel: true,
+        industry: '卸売業', category: '木工・家具', scale: '31〜100人', type: 'メーカー',
+        corpNo: '0334567890212', employees: '80',
+        fiscalMonth: '12', revenue: '4.5', capital: '1,200',
+        note: '新規開拓中',
+        createdAt: '2026/02/05 14:00', createdBy: 'admin',
+        updatedAt: '2026/04/10 16:22', updatedBy: 'sato',
+        free1: '初回訪問：03/12', free2: '', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1220', name: '中村エレクトロニクス株式会社',
+        tel: '057-2097-3971', fax: '057-2097-3972',
+        region: '沖縄', zip: '9000015', pref: '沖縄県', addr: '沖縄県那覇市泉崎1-1-1',
+        ban_doc: true, ban_tel: false,
+        industry: '製造業', category: '木工・家具', scale: '101〜500人', type: '機械・装置メ…',
+        corpNo: '0445678900912', employees: '490',
+        fiscalMonth: '6', revenue: '9.8', capital: '8,500',
+        note: '',
+        createdAt: '2025/08/20 10:00', createdBy: 'admin',
+        updatedAt: '2026/04/18 09:30', updatedBy: 'tanaka',
+        free1: '', free2: '', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1221', name: '中村システム株式会社',
+        tel: '027-3203-2018', fax: '027-3203-2019',
+        region: '関東', zip: '3200811', pref: '栃木県', addr: '栃木県宇都宮市本町1-1',
+        ban_doc: false, ban_tel: false,
+        industry: '製造業', category: 'その他製造業', scale: '1〜30人', type: 'メーカー',
+        corpNo: '0556789012023', employees: '59',
+        fiscalMonth: '9', revenue: '2.1', capital: '500',
+        note: '',
+        createdAt: '2025/05/14 13:15', createdBy: 'admin',
+        updatedAt: '2026/02/28 17:45', updatedBy: 'admin',
+        free1: '', free2: '', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1222', name: '大阪精密機器株式会社',
+        tel: '06-6342-1180', fax: '06-6342-1181',
+        region: '関西', zip: '5300001', pref: '大阪府', addr: '大阪府大阪市北区梅田2-4-9',
+        ban_doc: false, ban_tel: false,
+        industry: '製造業', category: '自動車・輸送用機械', scale: '101〜500人', type: 'メーカー',
+        corpNo: '0667890123344', employees: '312',
+        fiscalMonth: '3', revenue: '15', capital: '12,500',
+        note: '長期取引先',
+        createdAt: '2018/04/15 09:00', createdBy: 'admin',
+        updatedAt: '2026/04/21 14:00', updatedBy: 'sato',
+        free1: '主要取引先：トヨタ系', free2: 'JIS認証取得', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1223', name: '仙台食品工業株式会社',
+        tel: '022-256-7790', fax: '022-256-7791',
+        region: '東北', zip: '9800014', pref: '宮城県', addr: '宮城県仙台市青葉区本町1-12-3',
+        ban_doc: false, ban_tel: false,
+        industry: '卸売業', category: '食品・飲料', scale: '31〜100人', type: 'その他',
+        corpNo: '0778901234445', employees: '98',
+        fiscalMonth: '9', revenue: '3.8', capital: '800',
+        note: '',
+        createdAt: '2024/11/08 11:00', createdBy: 'admin',
+        updatedAt: '2026/01/30 10:00', updatedBy: 'admin',
+        free1: '', free2: '', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1224', name: '名古屋金属工業合同会社',
+        tel: '052-911-8822', fax: '052-911-8823',
+        region: '中部', zip: '4600008', pref: '愛知県', addr: '愛知県名古屋市中区栄2-10-19',
+        ban_doc: false, ban_tel: false,
+        industry: '製造業', category: '金属製品', scale: '301人以上', type: 'メーカー',
+        corpNo: '0889012345556', employees: '820',
+        fiscalMonth: '3', revenue: '42', capital: '30,000',
+        note: '主要仕入先',
+        createdAt: '2015/06/01 09:00', createdBy: 'admin',
+        updatedAt: '2026/04/22 13:18', updatedBy: 'yamada',
+        free1: '親会社：名古屋金属HD', free2: 'ISO9001/14001', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1225', name: '福岡商事株式会社',
+        tel: '092-712-3344', fax: '092-712-3345',
+        region: '九州', zip: '8100001', pref: '福岡県', addr: '福岡県福岡市中央区天神2-3-10',
+        ban_doc: false, ban_tel: false,
+        industry: '卸売業', category: '化学・素材', scale: '31〜100人', type: 'その他',
+        corpNo: '0990123456667', employees: '76',
+        fiscalMonth: '12', revenue: '5.2', capital: '1,500',
+        note: '',
+        createdAt: '2026/01/10 09:30', createdBy: 'admin',
+        updatedAt: '2026/04/15 16:00', updatedBy: 'admin',
+        free1: '', free2: '', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      // ----- 15 records added: 1228〜1242 (full detail) -----
+      {
+        id: '1228', name: '横浜エンジニアリング株式会社',
+        tel: '045-321-4455', fax: '045-321-4456',
+        region: '関東', zip: '2200012', pref: '神奈川県', addr: '神奈川県横浜市西区みなとみらい3-3-1',
+        ban_doc: false, ban_tel: false,
+        industry: '製造業', category: '機械・装置', scale: '101〜500人', type: 'メーカー',
+        corpNo: '1001234567228', employees: '312',
+        fiscalMonth: '3', revenue: '18.5', capital: '5,000',
+        note: '長期取引先。年次更新3月。',
+        createdAt: '2019/05/20 10:00', createdBy: 'admin',
+        updatedAt: '2026/04/12 11:30', updatedBy: 'sato',
+        free1: '親会社：横浜HD', free2: '取引銀行：横浜銀行', free3: 'ISO9001/14001', free4: 'RoHS対応', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1229', name: '京都精工有限会社',
+        tel: '075-845-1230', fax: '075-845-1231',
+        region: '関西', zip: '6028334', pref: '京都府', addr: '京都府京都市上京区今出川通烏丸西入',
+        ban_doc: false, ban_tel: false,
+        industry: '製造業', category: '金属製品', scale: '1〜30人', type: 'メーカー',
+        corpNo: '1001234567229', employees: '24',
+        fiscalMonth: '9', revenue: '1.2', capital: '300',
+        note: '伝統工芸系、職人ベース。',
+        createdAt: '2022/03/10 09:00', createdBy: 'admin',
+        updatedAt: '2026/02/14 14:00', updatedBy: 'admin',
+        free1: '組合加盟：京都精密金属', free2: '', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1230', name: '札幌ライフデザイン株式会社',
+        tel: '011-820-5566', fax: '011-820-5567',
+        region: '北海道', zip: '0600807', pref: '北海道', addr: '北海道札幌市北区北7条西4-1-2',
+        ban_doc: false, ban_tel: false,
+        industry: 'サービス業', category: 'その他サービス', scale: '31〜100人', type: '設計事務所',
+        corpNo: '1001234567230', employees: '58',
+        fiscalMonth: '12', revenue: '3.4', capital: '1,000',
+        note: '建築設計・インテリア。',
+        createdAt: '2023/06/01 10:30', createdBy: 'admin',
+        updatedAt: '2026/03/30 16:00', updatedBy: 'tanaka',
+        free1: '一級建築士事務所登録', free2: '', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1231', name: '浜松エナジー株式会社',
+        tel: '053-468-1122', fax: '053-468-1123',
+        region: '中部', zip: '4300927', pref: '静岡県', addr: '静岡県浜松市中区利町302',
+        ban_doc: false, ban_tel: false,
+        industry: '電気・ガス・水道業', category: 'エネルギー', scale: '101〜500人', type: 'その他',
+        corpNo: '1001234567231', employees: '215',
+        fiscalMonth: '3', revenue: '42.0', capital: '8,500',
+        note: '再エネ発電事業。',
+        createdAt: '2017/04/12 09:00', createdBy: 'admin',
+        updatedAt: '2026/04/18 10:20', updatedBy: 'yamada',
+        free1: '太陽光発電所5箇所運営', free2: 'FIT認定済', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1232', name: '那覇マリンサービス合同会社',
+        tel: '098-868-3344', fax: '',
+        region: '沖縄', zip: '9000015', pref: '沖縄県', addr: '沖縄県那覇市久茂地3-15-9',
+        ban_doc: false, ban_tel: true,
+        industry: '運輸業', category: '物流・倉庫', scale: '1〜30人', type: 'その他',
+        corpNo: '1001234567232', employees: '18',
+        fiscalMonth: '6', revenue: '0.9', capital: '300',
+        note: '船舶代理店、要TEL不可。',
+        createdAt: '2024/01/22 11:00', createdBy: 'admin',
+        updatedAt: '2026/01/10 09:00', updatedBy: 'admin',
+        free1: '海運貨物取扱業者登録', free2: '', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1233', name: '高崎食品ロジスティクス株式会社',
+        tel: '027-345-8800', fax: '027-345-8801',
+        region: '関東', zip: '3700852', pref: '群馬県', addr: '群馬県高崎市中央銀座1-1',
+        ban_doc: false, ban_tel: false,
+        industry: '運輸業', category: '物流・倉庫', scale: '101〜500人', type: 'その他',
+        corpNo: '1001234567233', employees: '160',
+        fiscalMonth: '3', revenue: '12.8', capital: '3,500',
+        note: '冷凍冷蔵物流。',
+        createdAt: '2020/10/15 09:30', createdBy: 'admin',
+        updatedAt: '2026/04/05 15:45', updatedBy: 'sato',
+        free1: '冷凍倉庫保有', free2: 'HACCP対応', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1234', name: '富山化学薬品工業株式会社',
+        tel: '076-441-9920', fax: '076-441-9921',
+        region: '中部', zip: '9300004', pref: '富山県', addr: '富山県富山市桜橋通り3-1',
+        ban_doc: false, ban_tel: false,
+        industry: '製造業', category: '化学・素材', scale: '301人以上', type: 'メーカー',
+        corpNo: '1001234567234', employees: '680',
+        fiscalMonth: '3', revenue: '58.0', capital: '22,000',
+        note: '特殊化学品メーカー。',
+        createdAt: '2010/08/01 09:00', createdBy: 'admin',
+        updatedAt: '2026/04/22 13:10', updatedBy: 'yamada',
+        free1: '東証スタンダード上場', free2: 'ISO14001', free3: 'REACH対応', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1235', name: '鹿児島農産品流通センター株式会社',
+        tel: '099-225-7733', fax: '099-225-7734',
+        region: '九州', zip: '8920811', pref: '鹿児島県', addr: '鹿児島県鹿児島市天保山町1-10',
+        ban_doc: false, ban_tel: false,
+        industry: '卸売業', category: '食品・飲料', scale: '31〜100人', type: 'その他',
+        corpNo: '1001234567235', employees: '72',
+        fiscalMonth: '9', revenue: '4.1', capital: '900',
+        note: '地場農産品流通。',
+        createdAt: '2021/02/18 14:00', createdBy: 'admin',
+        updatedAt: '2026/03/12 11:20', updatedBy: 'admin',
+        free1: 'JA鹿児島連携', free2: '地理的表示保護登録', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1236', name: '千葉メディカル機器株式会社',
+        tel: '043-256-9911', fax: '043-256-9912',
+        region: '関東', zip: '2600013', pref: '千葉県', addr: '千葉県千葉市中央区中央1-5-1',
+        ban_doc: false, ban_tel: false,
+        industry: '製造業', category: '医療機器', scale: '101〜500人', type: 'メーカー',
+        corpNo: '1001234567236', employees: '248',
+        fiscalMonth: '3', revenue: '22.5', capital: '7,000',
+        note: '医療機器製造販売業。',
+        createdAt: '2016/11/01 09:00', createdBy: 'admin',
+        updatedAt: '2026/04/19 09:15', updatedBy: 'sato',
+        free1: '医療機器製造販売業許可', free2: 'ISO13485認証', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1237', name: '金沢工芸製作所',
+        tel: '076-220-4455', fax: '076-220-4456',
+        region: '中部', zip: '9200962', pref: '石川県', addr: '石川県金沢市広坂1-1-1',
+        ban_doc: false, ban_tel: false,
+        industry: '製造業', category: 'その他製造業', scale: '1〜30人', type: 'メーカー',
+        corpNo: '1001234567237', employees: '12',
+        fiscalMonth: '12', revenue: '0.4', capital: '200',
+        note: '伝統工芸・漆器。',
+        createdAt: '2024/05/05 10:00', createdBy: 'admin',
+        updatedAt: '2026/02/02 10:00', updatedBy: 'admin',
+        free1: '伝統工芸品産地組合所属', free2: '', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1238', name: '高知海洋テクノロジー株式会社',
+        tel: '088-855-3322', fax: '088-855-3323',
+        region: '四国', zip: '7800870', pref: '高知県', addr: '高知県高知市本町4-1-37',
+        ban_doc: false, ban_tel: false,
+        industry: '情報通信業', category: 'IT・ソフトウェア', scale: '31〜100人', type: 'その他',
+        corpNo: '1001234567238', employees: '45',
+        fiscalMonth: '6', revenue: '2.8', capital: '600',
+        note: '海洋IoTセンサー開発。',
+        createdAt: '2022/09/14 09:30', createdBy: 'admin',
+        updatedAt: '2026/04/01 17:00', updatedBy: 'tanaka',
+        free1: '海洋研究開発機構と共同開発', free2: '特許出願中3件', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1239', name: '長野アグリテック合同会社',
+        tel: '026-234-7700', fax: '',
+        region: '中部', zip: '3800813', pref: '長野県', addr: '長野県長野市鶴賀緑町1612',
+        ban_doc: false, ban_tel: false,
+        industry: '情報通信業', category: 'IT・ソフトウェア', scale: '1〜30人', type: 'その他',
+        corpNo: '1001234567239', employees: '21',
+        fiscalMonth: '3', revenue: '1.1', capital: '500',
+        note: 'スマート農業ソリューション。',
+        createdAt: '2024/02/01 10:00', createdBy: 'admin',
+        updatedAt: '2026/03/25 14:30', updatedBy: 'admin',
+        free1: 'NEDO採択事業実施中', free2: '', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1240', name: '北九州製鋼所',
+        tel: '093-571-9988', fax: '093-571-9989',
+        region: '九州', zip: '8050061', pref: '福岡県', addr: '福岡県北九州市八幡東区西本町1-12-5',
+        ban_doc: false, ban_tel: false,
+        industry: '製造業', category: '金属製品', scale: '301人以上', type: 'メーカー',
+        corpNo: '1001234567240', employees: '920',
+        fiscalMonth: '3', revenue: '120.0', capital: '45,000',
+        note: '大手製鋼メーカー。',
+        createdAt: '2008/04/01 09:00', createdBy: 'admin',
+        updatedAt: '2026/04/24 10:00', updatedBy: 'yamada',
+        free1: '東証プライム上場', free2: '製造拠点5箇所', free3: 'ISO9001/14001', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1241', name: '奈良観光開発株式会社',
+        tel: '0742-22-4488', fax: '0742-22-4489',
+        region: '関西', zip: '6308213', pref: '奈良県', addr: '奈良県奈良市登大路町30',
+        ban_doc: false, ban_tel: false,
+        industry: 'サービス業', category: 'その他サービス', scale: '31〜100人', type: 'その他',
+        corpNo: '1001234567241', employees: '64',
+        fiscalMonth: '9', revenue: '3.2', capital: '800',
+        note: '観光地開発・運営。',
+        createdAt: '2019/07/22 10:00', createdBy: 'admin',
+        updatedAt: '2026/03/18 13:00', updatedBy: 'admin',
+        free1: '観光庁認定 DMO', free2: 'インバウンド対応', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1242', name: '青森りんご加工協同組合',
+        tel: '017-738-5511', fax: '017-738-5512',
+        region: '東北', zip: '0300823', pref: '青森県', addr: '青森県青森市橋本2-2-19',
+        ban_doc: false, ban_tel: false,
+        industry: '製造業', category: '食品・飲料', scale: '1〜30人', type: 'メーカー',
+        corpNo: '1001234567242', employees: '28',
+        fiscalMonth: '9', revenue: '0.7', capital: '400',
+        note: 'りんご加工品（ジュース・ジャム）。',
+        createdAt: '2023/11/01 09:00', createdBy: 'admin',
+        updatedAt: '2026/02/20 10:00', updatedBy: 'admin',
+        free1: '組合員10社', free2: 'JAS認証', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      // ----- 2 extra rows: table-visible fields only, no detail data -----
+      {
+        id: '1226', name: '神戸スチール株式会社',
+        tel: '078-321-4567', fax: '',
+        region: '関西', zip: '', pref: '兵庫県', addr: '兵庫県神戸市中央区港島中町6-9',
+        ban_doc: false, ban_tel: false,
+        industry: '製造業', category: '金属製品', scale: '301人以上', type: 'メーカー',
+        corpNo: '', employees: '1250',
+        fiscalMonth: '', revenue: '', capital: '',
+        note: '',
+        createdAt: '', createdBy: '',
+        updatedAt: '', updatedBy: '',
+        free1: '', free2: '', free3: '', free4: '', free5: '', free6: '', free7: ''
+      },
+      {
+        id: '1227', name: '広島電機商会合同会社',
+        tel: '082-555-2210', fax: '',
+        region: '中部', zip: '', pref: '広島県', addr: '広島県広島市中区基町10-3',
+        ban_doc: false, ban_tel: false,
+        industry: '小売業', category: 'その他製造業', scale: '31〜100人', type: 'その他',
+        corpNo: '', employees: '62',
+        fiscalMonth: '', revenue: '', capital: '',
+        note: '代理店候補',
+        createdAt: '', createdBy: '',
+        updatedAt: '', updatedBy: '',
+        free1: '', free2: '', free3: '', free4: '', free5: '', free6: '', free7: ''
+      }
+    ];
+
+    /* ===== Render + sort company list table ===== */
+    const CompanyTable = (function () {
+      const tbody = document.getElementById('companyTbody');
+      const thead = document.querySelector('.list-area table.t thead');
+      if (!tbody || !thead) return null;
+
+      // Default sort: 会社ID descending
+      let sortKey = 'id';
+      let sortDir = 'desc';
+      let selectedId = '1141';
+
+      function fmtEmployees(n) {
+        const num = parseInt(String(n || '').replace(/,/g, ''), 10);
+        if (isNaN(num)) return n || '';
+        return num.toLocaleString('en-US');
+      }
+
+      function rowHtml(c) {
+        return (
+          '<tr data-id="' + c.id + '">' +
+          '<td class="num">' + c.id + '</td>' +
+          '<td>' + (c.name || '') + '</td>' +
+          '<td>' + (c.tel || '') + '</td>' +
+          '<td>' + (c.addr || '') + '</td>' +
+          '<td>' + (c.industry || '') + '</td>' +
+          '<td>' + (c.category || '') + '</td>' +
+          '<td>' + (c.scale || '') + '</td>' +
+          '<td>' + (c.type || '') + '</td>' +
+          '<td class="num">' + fmtEmployees(c.employees) + '</td>' +
+          '<td>' + (c.region || '') + '</td>' +
+          '<td>' + (c.pref || '') + '</td>' +
+          '<td>' + (c.note || '') + '</td>' +
+          '</tr>'
+        );
+      }
+
+      function compare(a, b, key, type) {
+        let av = a[key], bv = b[key];
+        if (type === 'num') {
+          av = parseFloat(String(av || '').replace(/,/g, '')) || 0;
+          bv = parseFloat(String(bv || '').replace(/,/g, '')) || 0;
+        } else {
+          av = String(av || '');
+          bv = String(bv || '');
+          // Localized JP-friendly compare
+          return av.localeCompare(bv, 'ja');
+        }
+        return av < bv ? -1 : (av > bv ? 1 : 0);
+      }
+
+      function render() {
+        // Update aria + visual on thead
+        thead.querySelectorAll('th[data-sort-key]').forEach(th => {
+          const isActive = th.getAttribute('data-sort-key') === sortKey;
+          th.classList.toggle('sort-asc', isActive && sortDir === 'asc');
+          th.classList.toggle('sort-desc', isActive && sortDir === 'desc');
+          th.setAttribute('aria-sort',
+            isActive ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none');
+        });
+        // Find type for sort key
+        const th = thead.querySelector('th[data-sort-key="' + sortKey + '"]');
+        const type = th ? th.getAttribute('data-sort-type') : 'str';
+        // Sort
+        const sorted = [...COMPANIES].sort((a, b) => {
+          const r = compare(a, b, sortKey, type);
+          return sortDir === 'asc' ? r : -r;
+        });
+        // Render rows
+        tbody.innerHTML = sorted.map(rowHtml).join('');
+        // Re-apply selected
+        if (selectedId) {
+          const tr = tbody.querySelector('tr[data-id="' + selectedId + '"]');
+          if (tr) tr.classList.add('selected');
+        }
+      }
+
+      function setSelectedId(id) { selectedId = id; }
+      function getSelectedId() { return selectedId; }
+
+      // Header click → toggle sort
+      thead.addEventListener('click', (e) => {
+        const th = e.target.closest('th[data-sort-key]');
+        if (!th) return;
+        // Don't sort when clicking the column resize handle
+        if (e.target.closest('.col-resizer')) return;
+        const key = th.getAttribute('data-sort-key');
+        if (key === sortKey) {
+          sortDir = (sortDir === 'asc') ? 'desc' : 'asc';
+        } else {
+          sortKey = key;
+          // numeric default desc (newest/largest first), string default asc
+          const type = th.getAttribute('data-sort-type');
+          sortDir = (type === 'num') ? 'desc' : 'asc';
+        }
+        render();
+      });
+
+      // Initial render
+      render();
+
+      return { render, setSelectedId, getSelectedId };
+    })();
+
+    /* ===== Click row → populate detail form ===== */
+    (function () {
+      const tbody = document.getElementById('companyTbody');
+      const form = document.getElementById('detailForm');
+      if (!tbody || !form) return;
+
+      function setField(name, value) {
+        const el = form.querySelector('[data-field="' + name + '"]');
+        if (!el) return;
+        if (el.tagName === 'INPUT') {
+          if (el.type === 'checkbox') {
+            el.checked = !!value;
+          } else {
+            el.value = value == null ? '' : value;
+          }
+        } else if (el.tagName === 'SELECT') {
+          const target = value == null ? '' : String(value);
+          let matched = false;
+          Array.from(el.options).forEach(opt => {
+            if (opt.value === target || opt.textContent === target) {
+              opt.selected = true; matched = true;
+            }
+          });
+          if (!matched && target) {
+            // create option dynamically if not exists
+            const opt = document.createElement('option');
+            opt.value = target; opt.textContent = target; opt.selected = true;
+            el.appendChild(opt);
+          }
+        } else if (el.tagName === 'TEXTAREA') {
+          el.value = value == null ? '' : value;
+        } else {
+          // .static div
+          el.textContent = value == null || value === '' ? '—' : value;
+        }
+      }
+
+      function fillForm(company) {
+        if (!company) return;
+        Object.keys(company).forEach(key => setField(key, company[key]));
+      }
+
+      function selectRow(tr) {
+        if (!tr) return;
+        // Clear other selected rows
+        tbody.querySelectorAll('tr.selected').forEach(r => r.classList.remove('selected'));
+        tr.classList.add('selected');
+        // Populate form
+        const id = tr.getAttribute('data-id');
+        if (typeof CompanyTable !== 'undefined' && CompanyTable && typeof CompanyTable.setSelectedId === 'function') {
+          CompanyTable.setSelectedId(id);
+        }
+        const company = COMPANIES.find(c => c.id === id);
+        fillForm(company);
+        // Smooth scroll detail into view if it's below viewport
+        const detail = document.getElementById('detailForm');
+        if (detail) {
+          const rect = detail.getBoundingClientRect();
+          if (rect.top > window.innerHeight - 100) {
+            detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      }
+
+      // Click event delegation on tbody
+      tbody.addEventListener('click', (e) => {
+        const tr = e.target.closest('tr');
+        if (!tr || !tr.hasAttribute('data-id')) return;
+        selectRow(tr);
+      });
+
+      // Keyboard: ArrowUp/Down to navigate, Enter to select
+      tbody.addEventListener('keydown', (e) => {
+        const current = tbody.querySelector('tr.selected');
+        if (!current) return;
+        if (e.key === 'ArrowDown') {
+          const next = current.nextElementSibling;
+          if (next && next.hasAttribute('data-id')) { selectRow(next); e.preventDefault(); }
+        } else if (e.key === 'ArrowUp') {
+          const prev = current.previousElementSibling;
+          if (prev && prev.hasAttribute('data-id')) { selectRow(prev); e.preventDefault(); }
+        }
+      });
+      // Make tbody focusable for keyboard
+      tbody.setAttribute('tabindex', '0');
+
+      // Init: populate with first selected row's data
+      const initSelected = tbody.querySelector('tr.selected') || tbody.querySelector('tr[data-id]');
+      if (initSelected) {
+        if (!initSelected.classList.contains('selected')) initSelected.classList.add('selected');
+        const id = initSelected.getAttribute('data-id');
+        fillForm(COMPANIES.find(c => c.id === id));
+      }
+    })();
+
+    /* ===== Toast helper ===== */
+    const Toast = (function () {
+      const el = document.getElementById('toast');
+      const icon = document.getElementById('toastIcon');
+      const msg = document.getElementById('toastMsg');
+      let hideTimer = null;
+      const ICONS = {
+        success: '<path d="M5 12l5 5L20 7"/>',
+        danger: '<circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16h.01"/>',
+        info: '<circle cx="12" cy="12" r="9"/><path d="M12 8v0"/><path d="M11 12h1v5h1"/>'
+      };
+      function show(text, kind) {
+        if (!el) return;
+        el.classList.remove('success', 'danger', 'info');
+        el.classList.add(kind || 'success');
+        if (icon) {
+          icon.innerHTML = ICONS[kind || 'success'] || ICONS.success;
+        }
+        if (msg) msg.textContent = text;
+        el.classList.add('show');
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(() => el.classList.remove('show'), 2200);
+      }
+      return { show };
+    })();
+
+    /* ===== Confirm dialog: 削除 ===== */
+    (function () {
+      const dlg = document.getElementById('dlgConfirmDelete');
+      const trigger = document.getElementById('btnDeleteCompany');
+      const idEl = document.getElementById('dlgConfirmId');
+      const nameEl = document.getElementById('dlgConfirmName');
+      const confirmBtn = document.getElementById('dlgConfirmDeleteBtn');
+      if (!dlg || !trigger) return;
+
+      function close() {
+        if (typeof dlg.close === 'function') dlg.close();
+        else dlg.removeAttribute('open');
+      }
+      function open() {
+        // Fill with currently selected company info
+        let id = '—', name = '—';
+        if (typeof CompanyTable !== 'undefined' && CompanyTable) {
+          id = CompanyTable.getSelectedId() || '—';
+        }
+        if (typeof COMPANIES !== 'undefined') {
+          const c = COMPANIES.find(c => c.id === id);
+          if (c) name = c.name;
+        }
+        idEl.textContent = 'CO-' + id;
+        nameEl.textContent = name;
+
+        if (typeof dlg.showModal === 'function') dlg.showModal();
+        else dlg.setAttribute('open', '');
+        // Focus the cancel button by default (avoid accidental confirm)
+        setTimeout(() => dlg.querySelector('[data-close]')?.focus(), 60);
+      }
+
+      trigger.addEventListener('click', open);
+      dlg.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+      // Backdrop click closes
+      dlg.addEventListener('click', (e) => {
+        if (e.target === dlg) {
+          const card = dlg.querySelector('.confirm-card');
+          if (!card) return close();
+          const r = card.getBoundingClientRect();
+          if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) close();
+        }
+      });
+
+      // Confirm → simulate delete (demo: remove row from table)
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', () => {
+          const id = (typeof CompanyTable !== 'undefined' && CompanyTable) ? CompanyTable.getSelectedId() : null;
+          close();
+          if (id && typeof COMPANIES !== 'undefined') {
+            const idx = COMPANIES.findIndex(c => c.id === id);
+            if (idx > -1) {
+              const removed = COMPANIES.splice(idx, 1)[0];
+              // Pick a new selected id (next/prev/first)
+              const newSel = (COMPANIES[idx] || COMPANIES[idx - 1] || COMPANIES[0]);
+              if (CompanyTable) {
+                CompanyTable.setSelectedId(newSel ? newSel.id : null);
+                CompanyTable.render();
+              }
+              // Repopulate form for new selection
+              if (newSel) {
+                const tr = document.querySelector('tr[data-id="' + newSel.id + '"]');
+                if (tr) tr.click();
+              }
+              Toast.show('会社 「' + removed.name + '」 を削除しました', 'success');
+            }
+          } else {
+            Toast.show('削除しました', 'success');
+          }
+        });
+      }
+    })();
+
+    /* ===== User menu (top-right): open/close + logout ===== */
+    (function () {
+      const menu = document.getElementById('userMenu');
+      const trigger = document.getElementById('userMenuTrigger');
+      const logoutBtn = document.getElementById('btnLogout');
+      if (!menu || !trigger) return;
+
+      function open() { menu.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); }
+      function close() { menu.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); }
+      function toggle() { menu.classList.contains('open') ? close() : open(); }
+
+      trigger.addEventListener('click', (e) => { e.stopPropagation(); toggle(); });
+      // Click outside → close
+      document.addEventListener('click', (e) => {
+        if (!menu.contains(e.target)) close();
+      });
+      // Esc → close
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && menu.classList.contains('open')) close();
+      });
+
+      // Logout → redirect to index (login)
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          close();
+          // Optional confirm; keep silent for SPA-like UX
+          window.location.href = 'index.html';
+        });
+      }
+    })();
+
+    /* ===== Modal: 会社登録 (CP03) ===== */
+    (function () {
+      const dlg = document.getElementById('dlgNewCompany');
+      const openBtn = document.getElementById('btnNewCompany');
+      if (!dlg || !openBtn) return;
+
+      function open() {
+        if (typeof dlg.showModal === 'function') {
+          dlg.showModal();
+        } else {
+          dlg.setAttribute('open', '');
+        }
+        // Focus first editable input
+        const firstEditable = dlg.querySelector('.modal-body .input:not([disabled])');
+        if (firstEditable) setTimeout(() => firstEditable.focus(), 60);
+      }
+      function close() {
+        if (typeof dlg.close === 'function') {
+          dlg.close();
+        } else {
+          dlg.removeAttribute('open');
+        }
+      }
+
+      openBtn.addEventListener('click', open);
+
+      // Close: any [data-close], including ✕ and キャンセル
+      dlg.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', close));
+
+      // Click backdrop (the dialog element itself, not its card) → close
+      dlg.addEventListener('click', (e) => {
+        if (e.target === dlg) {
+          const card = dlg.querySelector('.modal-card');
+          if (!card) return close();
+          const r = card.getBoundingClientRect();
+          const x = e.clientX, y = e.clientY;
+          if (x < r.left || x > r.right || y < r.top || y > r.bottom) close();
+        }
+      });
+
+      // Save (demo only): close after fake "save"
+      const saveBtn = document.getElementById('dlgSaveNew');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', () => {
+          // Validate required: 会社名
+          const nameInput = dlg.querySelector('.form-4col .col:first-child .ff:nth-child(2) input');
+          if (nameInput && !nameInput.value.trim()) {
+            nameInput.focus();
+            nameInput.style.borderColor = 'var(--danger)';
+            nameInput.style.boxShadow = '0 0 0 3px rgba(185,28,28,.15)';
+            setTimeout(() => {
+              nameInput.style.borderColor = '';
+              nameInput.style.boxShadow = '';
+            }, 1600);
+            return;
+          }
+          close();
+        });
+      }
+    })();
+
+    /* ===== Contacts (担当者) data + pagination ===== */
+    const CONTACTS = [
+      { last: '渡辺', first: '沙織', kana: 'ワタナベ サオリ', dept: 'ロジスティクス部', tel: '012-4294-2357', mobile: '070-7122-8116', email: 'watanabe.saori@c10250.co.jp', title: 'ロジスティクス部次長', rank: '次長', note: '展示会での名刺交換による登録。' },
+      { last: '高橋', first: '翔太', kana: 'タカハシ ショウタ', dept: '設備エンジ部', tel: '012-4294-2441', mobile: '070-7358-3862', email: 'takahashi.shouta@c10250.co.jp', title: '設備エンジ部員', rank: '係員', note: 'オンラインセミナー参加者。' },
+      { last: '松本', first: '彩', kana: 'マツモト アヤ', dept: '製造部', tel: '012-4294-2420', mobile: '090-2738-8654', email: 'matsumoto.aya@c10250.co.jp', title: '製造部本部長', rank: '本部長', note: '訪問にて名刺交換。' },
+      { last: '井上', first: '智也', kana: 'イノウエ トモヤ', dept: '生産管理部', tel: '012-4294-2441', mobile: '080-4521-6195', email: 'inoue.tomoya@c10250.co.jp', title: '生産管理部主任', rank: '主任', note: '若手社員。' },
+      { last: '井上', first: '淳', kana: 'イノウエ ジュン', dept: '研究開発部', tel: '012-4294-2363', mobile: '070-4602-3745', email: 'inoue.jun@c10250.co.jp', title: '研究開発部長', rank: '課長', note: '技術キーマン。' },
+      { last: '近藤', first: '恵', kana: 'コンドウ メグミ', dept: 'QA部', tel: '012-4294-2394', mobile: '080-2713-5599', email: 'kondou.megumi@c10250.co.jp', title: 'QA部員', rank: '一般', note: 'プロジェクト窓口。' },
+      { last: '吉田', first: '茜', kana: 'ヨシダ アカネ', dept: '生産技術部', tel: '012-4294-2368', mobile: '080-2495-2298', email: 'yoshida.akane@c10250.co.jp', title: '生産技術部長', rank: '部長', note: '意思決定者。' },
+      { last: '斉藤', first: '結衣', kana: 'サイトウ ユイ', dept: '製造部', tel: '03-1234-5678', mobile: '070-1481-7371', email: 'saitou.yui@sato.co.jp', title: '製造部係長', rank: '係長', note: '' },
+      { last: '山本', first: '和也', kana: 'ヤマモト カズヤ', dept: '生産管理部', tel: '06-9876-5432', mobile: '080-4490-6679', email: 'yamamoto.kazuya@tanaka.co.jp', title: '生産管理部係長', rank: '係長', note: '' },
+      { last: '井上', first: '大輔', kana: 'イノウエ ダイスケ', dept: 'デザイン部', tel: '052-111-2222', mobile: '090-7240-6650', email: 'inoue.daisuke@ito.co.jp', title: 'デザイン部長', rank: '部長', note: '' },
+      { last: '佐々木', first: '美咲', kana: 'ササキ ミサキ', dept: 'マーケティング部', tel: '012-4294-2380', mobile: '080-1234-5678', email: 'sasaki.misaki@c10250.co.jp', title: 'マーケティング部主任', rank: '主任', note: 'SNS担当。' },
+      { last: '中島', first: '拓海', kana: 'ナカジマ タクミ', dept: '営業部', tel: '012-4294-2399', mobile: '090-5678-1234', email: 'nakajima.takumi@c10250.co.jp', title: '営業部課長', rank: '課長', note: '新規開拓担当。' },
+      { last: '藤田', first: '真理子', kana: 'フジタ マリコ', dept: '人事部', tel: '012-4294-2310', mobile: '080-9999-1111', email: 'fujita.mariko@c10250.co.jp', title: '人事部長', rank: '部長', note: '' },
+      { last: '石川', first: '健一', kana: 'イシカワ ケンイチ', dept: 'IT推進室', tel: '012-4294-2350', mobile: '090-3333-2222', email: 'ishikawa.kenichi@c10250.co.jp', title: 'IT推進室室長', rank: '課長', note: 'システム導入の窓口。' },
+      { last: '清水', first: '葵', kana: 'シミズ アオイ', dept: '経理部', tel: '012-4294-2333', mobile: '080-2222-3333', email: 'shimizu.aoi@c10250.co.jp', title: '経理部主任', rank: '主任', note: '請求書送付先。' },
+      { last: '森', first: '健太', kana: 'モリ ケンタ', dept: '品質管理部', tel: '012-4294-2371', mobile: '070-4444-5555', email: 'mori.kenta@c10250.co.jp', title: '品質管理部係長', rank: '係長', note: '' },
+      { last: '橋本', first: '雅子', kana: 'ハシモト マサコ', dept: '総務部', tel: '012-4294-2308', mobile: '090-7777-8888', email: 'hashimoto.masako@c10250.co.jp', title: '総務部長', rank: '部長', note: '契約書類管理。' },
+      { last: '山田', first: '雄一', kana: 'ヤマダ ユウイチ', dept: '営業部', tel: '012-4294-2390', mobile: '080-6666-9999', email: 'yamada.yuichi@c10250.co.jp', title: '営業部本部長', rank: '本部長', note: '最終決裁者。' },
+      { last: '池田', first: '恵理', kana: 'イケダ エリ', dept: '設備エンジ部', tel: '012-4294-2447', mobile: '070-8888-7777', email: 'ikeda.eri@c10250.co.jp', title: '設備エンジ部主任', rank: '主任', note: '' },
+      { last: '阿部', first: '拓也', kana: 'アベ タクヤ', dept: '生産技術部', tel: '012-4294-2369', mobile: '080-5555-4444', email: 'abe.takuya@c10250.co.jp', title: '生産技術部係員', rank: '係員', note: '' },
+      { last: '長谷川', first: '美穂', kana: 'ハセガワ ミホ', dept: 'マーケティング部', tel: '012-4294-2382', mobile: '090-1111-2222', email: 'hasegawa.miho@c10250.co.jp', title: 'マーケティング部員', rank: '一般', note: 'Web担当。' },
+      { last: '木村', first: '直樹', kana: 'キムラ ナオキ', dept: '物流部', tel: '012-4294-2415', mobile: '080-3333-4444', email: 'kimura.naoki@c10250.co.jp', title: '物流部長', rank: '部長', note: '納期調整窓口。' },
+      { last: '岡田', first: '香織', kana: 'オカダ カオリ', dept: 'カスタマーサポート部', tel: '012-4294-2360', mobile: '070-9999-8888', email: 'okada.kaori@c10250.co.jp', title: 'カスタマーサポート部係長', rank: '係長', note: '' },
+      { last: '前田', first: '裕介', kana: 'マエダ ユウスケ', dept: '研究開発部', tel: '012-4294-2365', mobile: '080-7777-6666', email: 'maeda.yusuke@c10250.co.jp', title: '研究開発部主任', rank: '主任', note: '新製品開発。' },
+      { last: '金子', first: '桃子', kana: 'カネコ モモコ', dept: '広報部', tel: '012-4294-2305', mobile: '090-5555-6666', email: 'kaneko.momoko@c10250.co.jp', title: '広報部員', rank: '一般', note: '' },
+      { last: '西村', first: '翔', kana: 'ニシムラ ショウ', dept: 'IT推進室', tel: '012-4294-2351', mobile: '080-4444-3333', email: 'nishimura.shou@c10250.co.jp', title: 'IT推進室係員', rank: '係員', note: '技術サポート。' },
+      { last: '坂本', first: '由美子', kana: 'サカモト ユミコ', dept: '人事部', tel: '012-4294-2311', mobile: '070-2222-1111', email: 'sakamoto.yumiko@c10250.co.jp', title: '人事部係長', rank: '係長', note: '' }
+    ];
+
+    const ContactsTable = (function () {
+      const tbody = document.getElementById('contactsTbody');
+      const pagesEl = document.getElementById('contactsPages');
+      const jumpEl = document.getElementById('contactsPageJump');
+      const totalPagesEl = document.getElementById('contactsTotalPages');
+      const pageSizeEl = document.getElementById('contactsPageSize');
+      const countEl = document.getElementById('contactsCount');
+      const rangeEl = document.getElementById('contactsRange');
+      const pagerWrap = document.querySelector('.pager-contacts');
+      if (!tbody) return null;
+
+      let pageSize = 10;
+      let page = 1;
+
+      function rowHtml(c) {
+        return (
+          '<tr>' +
+          '<td>' + c.last + '</td>' +
+          '<td>' + c.first + '</td>' +
+          '<td>' + c.kana + '</td>' +
+          '<td>' + c.dept + '</td>' +
+          '<td class="tel-num">' + c.tel + '</td>' +
+          '<td class="tel-num">' + c.mobile + '</td>' +
+          '<td class="email">' + c.email + '</td>' +
+          '<td>' + c.title + '</td>' +
+          '<td>' + c.rank + '</td>' +
+          '<td>' + (c.note || '') + '</td>' +
+          '</tr>'
+        );
+      }
+
+      function buildPageButtons(total) {
+        // Build window of pages similar to company list: « ‹ 1 2 3 4 5 … N › »
+        const parts = [];
+        parts.push('<button class="pg-btn" data-go="first" ' + (page === 1 ? 'disabled' : '') + ' title="最初へ">«</button>');
+        parts.push('<button class="pg-btn" data-go="prev" ' + (page === 1 ? 'disabled' : '') + ' title="前へ">‹</button>');
+        const MAX = 5;
+        let start = Math.max(1, page - 2);
+        let end = Math.min(total, start + MAX - 1);
+        if (end - start + 1 < MAX) start = Math.max(1, end - MAX + 1);
+        if (start > 1) {
+          parts.push('<button class="pg-btn" data-page="1">1</button>');
+          if (start > 2) parts.push('<span class="page-sep" style="color:var(--text-3); padding:0 2px">…</span>');
+        }
+        for (let i = start; i <= end; i++) {
+          parts.push('<button class="pg-btn ' + (i === page ? 'active' : '') + '" data-page="' + i + '">' + i + '</button>');
+        }
+        if (end < total) {
+          if (end < total - 1) parts.push('<span class="page-sep" style="color:var(--text-3); padding:0 2px">…</span>');
+          parts.push('<button class="pg-btn" data-page="' + total + '">' + total + '</button>');
+        }
+        parts.push('<button class="pg-btn" data-go="next" ' + (page === total ? 'disabled' : '') + ' title="次へ">›</button>');
+        parts.push('<button class="pg-btn" data-go="last" ' + (page === total ? 'disabled' : '') + ' title="最後へ">»</button>');
+        return parts.join('');
+      }
+
+      function render() {
+        const total = CONTACTS.length;
+        const totalPages = Math.max(1, Math.ceil(total / pageSize));
+        if (page > totalPages) page = totalPages;
+        if (page < 1) page = 1;
+
+        const start = (page - 1) * pageSize;
+        const end = Math.min(start + pageSize, total);
+        const slice = CONTACTS.slice(start, end);
+        tbody.innerHTML = slice.map(rowHtml).join('');
+
+        // Count
+        if (countEl) countEl.innerHTML = '<b>' + total + '</b> 件';
+
+        // Pages
+        if (pagesEl) pagesEl.innerHTML = buildPageButtons(totalPages);
+        if (jumpEl) {
+          let opts = '';
+          for (let i = 1; i <= totalPages; i++) {
+            opts += '<option value="' + i + '"' + (i === page ? ' selected' : '') + '>' + i + '</option>';
+          }
+          jumpEl.innerHTML = opts;
+        }
+        if (totalPagesEl) totalPagesEl.textContent = '/ ' + totalPages;
+        if (rangeEl) rangeEl.textContent = '全 ' + total + '件 ' + (start + 1) + ' - ' + end;
+
+        // Hide pager when only 1 page and ≤10
+        if (pagerWrap) {
+          pagerWrap.style.display = (total > 10) ? '' : 'none';
+        }
+      }
+
+      // Event delegation: page buttons
+      if (pagesEl) {
+        pagesEl.addEventListener('click', (e) => {
+          const btn = e.target.closest('.pg-btn');
+          if (!btn || btn.disabled) return;
+          const totalPages = Math.ceil(CONTACTS.length / pageSize);
+          const go = btn.getAttribute('data-go');
+          const p = btn.getAttribute('data-page');
+          if (go === 'first') page = 1;
+          else if (go === 'prev') page = Math.max(1, page - 1);
+          else if (go === 'next') page = Math.min(totalPages, page + 1);
+          else if (go === 'last') page = totalPages;
+          else if (p) page = parseInt(p, 10);
+          render();
+        });
+      }
+      if (jumpEl) {
+        jumpEl.addEventListener('change', (e) => {
+          page = parseInt(e.target.value, 10) || 1;
+          render();
+        });
+      }
+      if (pageSizeEl) {
+        pageSizeEl.addEventListener('change', (e) => {
+          pageSize = parseInt(e.target.value, 10) || 10;
+          page = 1;
+          render();
+        });
+      }
+
+      // Initial render
+      render();
+      return { render };
+    })();
+
+    /* ===== Tab switching (会社詳細 / 担当者 / 案件 / 活動) ===== */
+    (function () {
+      const tabs = document.getElementById('detailTabs');
+      const actions = document.getElementById('tabActions');
+      if (!tabs) return;
+      const tabBtns = tabs.querySelectorAll('button.tab');
+      const panels = document.querySelectorAll('.tab-panel');
+
+      // Action button config per tab
+      const TAB_ACTIONS = {
+        company: '',
+        tan: '<button class="btn btn-accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>新規担当</button>',
+        act: '<button class="btn btn-accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>新規活動</button>',
+        'case': '<button class="btn btn-accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>新規案件</button>'
+      };
+
+      function setActive(name) {
+        tabBtns.forEach(b => b.classList.toggle('active', b.getAttribute('data-tab') === name));
+        panels.forEach(p => p.classList.toggle('active', p.getAttribute('data-panel') === name));
+        if (actions) actions.innerHTML = TAB_ACTIONS[name] || '';
+      }
+
+      tabs.addEventListener('click', (e) => {
+        const btn = e.target.closest('button.tab');
+        if (!btn) return;
+        const name = btn.getAttribute('data-tab');
+        if (name) setActive(name);
+      });
+
+      // Init based on currently active tab
+      const init = tabs.querySelector('button.tab.active') || tabBtns[0];
+      if (init) setActive(init.getAttribute('data-tab'));
+    })();
+
+    /* ===== Resizable columns (drag right edge of th) ===== */
+    (function () {
+      const table = document.querySelector('.list-area table.t');
+      if (!table) return;
+      const thead = table.querySelector('thead');
+      const colgroup = table.querySelector('colgroup');
+      if (!thead || !colgroup) return;
+      const ths = thead.querySelectorAll('tr:first-child th');
+      const cols = colgroup.querySelectorAll('col');
+
+      const MIN_W = 50;
+      const STORE_KEY = 'smos.cp01.colWidths';
+
+      function persist() {
+        try {
+          const widths = Array.from(cols).map(c => c.style.width || '');
+          localStorage.setItem(STORE_KEY, JSON.stringify(widths));
+        } catch (e) { }
+      }
+
+      function restore() {
+        try {
+          const raw = localStorage.getItem(STORE_KEY);
+          if (!raw) return;
+          const arr = JSON.parse(raw);
+          arr.forEach((w, i) => { if (cols[i] && w) cols[i].style.width = w; });
+        } catch (e) { }
+      }
+      restore();
+
+      ths.forEach((th, idx) => {
+        if (!cols[idx]) return;
+        th.style.position = 'sticky'; // keep sticky for vertical scroll
+        // Add resize handle
+        const handle = document.createElement('div');
+        handle.className = 'col-resizer';
+        handle.setAttribute('role', 'separator');
+        handle.setAttribute('aria-orientation', 'vertical');
+        handle.setAttribute('title', 'ドラッグで列幅調整・ダブルクリックで自動幅');
+        th.appendChild(handle);
+
+        let dragging = false;
+        let startX = 0;
+        let startW = 0;
+
+        function onDown(e) {
+          const evt = e.touches ? e.touches[0] : e;
+          dragging = true;
+          startX = evt.clientX;
+          // Use rendered cell width as starting point
+          const cellRect = th.getBoundingClientRect();
+          startW = cellRect.width;
+          handle.classList.add('dragging');
+          document.body.classList.add('col-resizing');
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        function onMove(e) {
+          if (!dragging) return;
+          const evt = e.touches ? e.touches[0] : e;
+          const dx = evt.clientX - startX;
+          const newW = Math.max(MIN_W, startW + dx);
+          cols[idx].style.width = newW + 'px';
+        }
+        function onUp() {
+          if (!dragging) return;
+          dragging = false;
+          handle.classList.remove('dragging');
+          document.body.classList.remove('col-resizing');
+          persist();
+        }
+
+        handle.addEventListener('mousedown', onDown);
+        handle.addEventListener('touchstart', onDown, { passive: false });
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('touchmove', onMove, { passive: false });
+        window.addEventListener('mouseup', onUp);
+        window.addEventListener('touchend', onUp);
+        window.addEventListener('touchcancel', onUp);
+
+        // Double-click handle → reset this column to auto (measure widest content)
+        handle.addEventListener('dblclick', (e) => {
+          e.preventDefault(); e.stopPropagation();
+          // Temporarily unset width and measure natural width
+          const prev = cols[idx].style.width;
+          cols[idx].style.width = '';
+          // Force reflow then measure
+          table.style.tableLayout = 'auto';
+          const naturalW = th.getBoundingClientRect().width;
+          // Restore fixed layout with measured width (+ small padding)
+          table.style.tableLayout = 'fixed';
+          cols[idx].style.width = Math.max(MIN_W, Math.ceil(naturalW + 8)) + 'px';
+          persist();
+        });
+
+        // Prevent row-click selection when starting drag on handle
+        handle.addEventListener('click', (e) => { e.stopPropagation(); });
+      });
+    })();
+
+    /* ===== Resizable list area (drag handle) ===== */
+    (function () {
+      const resizer = document.getElementById('resizerH');
+      const list = document.getElementById('listArea');
+      if (!resizer || !list) return;
+
+      const DEFAULT_H = 420;
+      const MIN_H = 160;
+      const MAX_RATIO = 0.8; // up to 80% viewport
+
+      function getMaxH() { return Math.max(MIN_H + 80, Math.round(window.innerHeight * MAX_RATIO)); }
+      function setH(px) {
+        const clamped = Math.min(getMaxH(), Math.max(MIN_H, px));
+        document.documentElement.style.setProperty('--list-height', clamped + 'px');
+        try { localStorage.setItem('smos.cp01.listH', String(clamped)); } catch (e) { }
+      }
+
+      // Restore saved height
+      try {
+        const saved = parseInt(localStorage.getItem('smos.cp01.listH') || '', 10);
+        if (!isNaN(saved)) setH(saved);
+      } catch (e) { }
+
+      let dragging = false;
+      let startY = 0;
+      let startH = 0;
+
+      function onDown(e) {
+        const evt = e.touches ? e.touches[0] : e;
+        dragging = true;
+        startY = evt.clientY;
+        startH = list.getBoundingClientRect().height;
+        resizer.classList.add('dragging');
+        document.body.classList.add('resizing-h');
+        e.preventDefault();
+      }
+      function onMove(e) {
+        if (!dragging) return;
+        const evt = e.touches ? e.touches[0] : e;
+        const dy = evt.clientY - startY;
+        setH(startH + dy);
+      }
+      function onUp() {
+        if (!dragging) return;
+        dragging = false;
+        resizer.classList.remove('dragging');
+        document.body.classList.remove('resizing-h');
+      }
+
+      resizer.addEventListener('mousedown', onDown);
+      resizer.addEventListener('touchstart', onDown, { passive: false });
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('touchmove', onMove, { passive: false });
+      window.addEventListener('mouseup', onUp);
+      window.addEventListener('touchend', onUp);
+      window.addEventListener('touchcancel', onUp);
+
+      // Double-click resets to default
+      resizer.addEventListener('dblclick', () => setH(DEFAULT_H));
+
+      // Keyboard support (Up/Down to nudge, Home/End to extremes)
+      resizer.addEventListener('keydown', (e) => {
+        const cur = list.getBoundingClientRect().height;
+        const step = e.shiftKey ? 40 : 12;
+        if (e.key === 'ArrowUp') { setH(cur - step); e.preventDefault(); }
+        else if (e.key === 'ArrowDown') { setH(cur + step); e.preventDefault(); }
+        else if (e.key === 'Home') { setH(MIN_H); e.preventDefault(); }
+        else if (e.key === 'End') { setH(getMaxH()); e.preventDefault(); }
+        else if (e.key === 'Enter' || e.key === ' ') { setH(DEFAULT_H); e.preventDefault(); }
+      });
+    })();
+  </script>
+</body>

@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>SMOS CRM — ログイン (LG01)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<!-- Shared design system -->
+<link rel="stylesheet" href="crm-common.css">
+
+<style>
+/* ============ Page-specific styles for login (LG01) ============ */
+
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(1200px 600px at 88% 110%, rgba(20,72,182,.10), transparent 60%),
+    radial-gradient(900px 500px at 5% 0%, rgba(226,93,20,.06), transparent 60%),
+    linear-gradient(135deg, #E9EDF5 0%, #F4F6FA 60%, #EEF2F8 100%);
+  display:flex; align-items:center; justify-content:center;
+  padding:24px;
+}
+
+/* Subtle pattern */
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; opacity:.5;
+  background-image:radial-gradient(circle at 1px 1px, rgba(15,27,45,.06) 1px, transparent 0);
+  background-size:24px 24px;
+}
+
+/* Login card */
+.auth-card{
+  position:relative; z-index:1;
+  width:420px; max-width:100%;
+  background:#fff; border-radius:14px;
+  box-shadow:var(--shadow-pop);
+  overflow:hidden;
+  animation:.35s cubic-bezier(.16,1,.3,1) fadeUp;
+}
+@keyframes fadeUp{
+  0%{opacity:0; transform:translateY(8px)}
+  to{opacity:1; transform:translateY(0)}
+}
+
+/* Top brand strip */
+.auth-brand{
+  background:linear-gradient(180deg, var(--nav-bg) 0%, #162038 100%);
+  color:#fff;
+  padding:22px 28px 18px;
+  display:flex; align-items:center; gap:10px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.auth-brand-mark{
+  width:32px; height:32px; border-radius:8px;
+  background:#fff; color:var(--nav-bg);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:14px; letter-spacing:.5px;
+  box-shadow:0 4px 10px rgba(0,0,0,.18);
+}
+.auth-brand-name{font-weight:700; font-size:15px; letter-spacing:1.5px}
+.auth-brand .spacer{flex:1}
+.auth-brand .code{
+  color:rgba(255,255,255,.55); font-size:11px;
+  font-family:Inter,inherit; letter-spacing:.5px;
+}
+
+/* Body */
+.auth-body{padding:28px 32px 24px}
+.auth-title{
+  margin:0 0 4px; font-size:20px; font-weight:700; color:var(--text-1);
+  letter-spacing:-.01em;
+}
+.auth-sub{
+  margin:0 0 22px; color:var(--text-2); font-size:13px; line-height:1.55;
+}
+
+/* Form-level overrides for login context */
+.auth-form .ff input.input{padding-left:36px}  /* leave room for prefix icon */
+.auth-form .ff{position:relative}
+.auth-form .ff .field-icon{
+  position:absolute; left:10px; top:auto;
+  width:18px; height:18px; color:var(--text-3); pointer-events:none;
+  /* Anchor to input vertical center: input is below label */
+}
+/* Position icon over the actual input — calculated relative to .ff */
+.auth-form .ff{--ff-input-h:32px}
+.auth-form .ff .field-icon{
+  top:calc(100% - (var(--ff-input-h) / 2) - 9px);
+}
+
+/* Password show/hide button */
+.auth-form .ff .toggle-pw{
+  position:absolute; right:6px; bottom:6px;
+  width:22px; height:20px; border:none; background:transparent;
+  color:var(--text-3); cursor:pointer; display:inline-flex;
+  align-items:center; justify-content:center; padding:0; border-radius:4px;
+}
+.auth-form .ff .toggle-pw:hover{color:var(--text-1); background:var(--hover)}
+.auth-form .ff .toggle-pw svg{width:16px; height:16px}
+
+/* Remember + forgot row */
+.auth-options{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-top:8px; font-size:12px;
+}
+.auth-options label{
+  display:inline-flex; align-items:center; gap:6px; cursor:pointer; color:var(--text-1);
+}
+.auth-options input[type=checkbox]{width:14px; height:14px; accent-color:var(--brand-600)}
+.auth-link{
+  color:var(--brand-600); text-decoration:none; font-weight:500;
+}
+.auth-link:hover{color:var(--brand-700); text-decoration:underline}
+
+/* Submit button — full width primary */
+.btn-block{
+  display:flex; width:100%; height:38px; padding:0; font-size:13px; font-weight:600;
+  justify-content:center; align-items:center;
+  margin-top:16px;
+  box-shadow:0 6px 14px rgba(20,72,182,.28);
+}
+
+/* Error alert */
+.alert-error{
+  display:none; align-items:flex-start; gap:8px;
+  margin-bottom:14px; padding:9px 12px;
+  background:#FDECEC; border:1px solid #F5C6C6; border-radius:var(--r);
+  color:var(--danger); font-size:12px; line-height:1.45;
+}
+.alert-error.show{display:flex}
+.alert-error svg{width:14px; height:14px; flex-shrink:0; margin-top:1px}
+
+/* Build info bottom-right */
+.build-info{
+  position:fixed; right:12px; bottom:10px; z-index:1;
+  color:var(--text-3); font-size:10.5px; letter-spacing:.3px;
+  font-family:Inter,inherit;
+}
+</style>
+</head>
+
+<body>
+
+<main class="auth-card" role="main">
+
+  <header class="auth-brand">
+    <div class="auth-brand-mark">S</div>
+    <div class="auth-brand-name">SMOS</div>
+    <div class="spacer"></div>
+    <span class="code">CRM v2.6.0</span>
+  </header>
+
+  <section class="auth-body">
+
+    <h1 class="auth-title">ログイン</h1>
+    <p class="auth-sub">アカウント情報を入力してください</p>
+
+    <!-- Error message (toggled by JS on bad submit) -->
+    <div class="alert-error" id="loginError" role="alert">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg>
+      <span>ユーザーIDまたはパスワードが正しくありません。</span>
+    </div>
+
+    <!-- Re-uses shared form layout: 1-column roomy density -->
+    <form class="form-4col cols-1 density-roomy auth-form" id="loginForm" autocomplete="on">
+
+      <div class="ff">
+        <label for="userId">ユーザーID <span class="req">*</span></label>
+        <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c1-3.5 4-5.5 7-5.5s6 2 7 5.5"/></svg>
+        <input class="input" id="userId" type="text" name="username" autocomplete="username" placeholder="例: yamada.kenichi" required>
+      </div>
+
+      <div class="ff">
+        <label for="password">パスワード <span class="req">*</span></label>
+        <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 1 1 8 0v3"/></svg>
+        <input class="input" id="password" type="password" name="password" autocomplete="current-password" placeholder="••••••••" required>
+        <button type="button" class="toggle-pw" id="togglePw" aria-label="パスワードを表示" title="パスワードを表示">
+          <svg id="iconEye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1.5 12s4-7.5 10.5-7.5S22.5 12 22.5 12s-4 7.5-10.5 7.5S1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+
+      <div class="auth-options">
+        <label><input type="checkbox" id="remember" checked> ログイン状態を保持</label>
+        <a class="auth-link" href="#forgot">パスワードをお忘れですか？</a>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/></svg>
+        ログイン
+      </button>
+    </form>
+
+  </section>
+
+</main>
+
+<div class="build-info">© 2026 SMOS CRM · LG01</div>
+
+<script>
+/* ===== Toggle password visibility ===== */
+(function(){
+  const btn = document.getElementById('togglePw');
+  const input = document.getElementById('password');
+  if (!btn || !input) return;
+  btn.addEventListener('click', () => {
+    const isPw = input.type === 'password';
+    input.type = isPw ? 'text' : 'password';
+    btn.setAttribute('aria-label', isPw ? 'パスワードを非表示' : 'パスワードを表示');
+    btn.setAttribute('title', isPw ? 'パスワードを非表示' : 'パスワードを表示');
+    // Swap icon (eye / eye-off)
+    btn.innerHTML = isPw
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1.5 12s4-7.5 10.5-7.5c2 0 3.7.45 5.1 1.1"/><path d="M22.5 12s-1.55 2.9-4.6 5"/><path d="m6.5 6.5 11 11"/><path d="M14.1 14.1A3 3 0 0 1 9.9 9.9"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1.5 12s4-7.5 10.5-7.5S22.5 12 22.5 12s-4 7.5-10.5 7.5S1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+  });
+})();
+
+/* ===== Submit (demo only) =====
+   Demo logic: any non-empty pair "succeeds". Empty fields trigger the error alert.
+*/
+(function(){
+  const form = document.getElementById('loginForm');
+  const err = document.getElementById('loginError');
+  if (!form || !err) return;
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const u = document.getElementById('userId').value.trim();
+    const p = document.getElementById('password').value.trim();
+    if (!u || !p){
+      err.classList.add('show');
+      return;
+    }
+    err.classList.remove('show');
+    // Simulate redirect
+    const btn = form.querySelector('button[type=submit]');
+    if (btn){
+      btn.disabled = true;
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-3-6.7"/></svg> ログイン中…';
+      setTimeout(() => {
+        // Redirect to main screen (demo)
+        window.location.href = '会社_compact_business.html';
+      }, 600);
+    }
+  });
+})();
+</script>
+<style>@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}</style>
+
+</body>
+</html>

@@ -1,86 +1,91 @@
 <section class="section active" id="activity">
 <div class="section-body" id="activity-root">
 <div class="company-screen">
-    <div class="company-topbar">
-      <div class="company-topbar-left">
-        <div class="company-title">活動 (AT01)</div>
-        <div class="company-search">
-<div style="display: flex; align-items: center; gap: 5px;">
-<label class="company-search-label">活動タイプ</label>
-<select id="activitySearchType" style="width: 100px;">
-<option value="">-</option>
-<option>TEL</option>
-<option>訪問</option>
-<option>メール</option>
-</select>
-</div>
-<div style="display: flex; align-items: center; gap: 5px;">
-<label class="company-search-label">営業担当</label>
-<input id="activitySearchSalesRep" style="width: 120px;" type="text"/>
-</div>
-<div style="display: flex; align-items: center; gap: 5px;">
-<label class="company-search-label">会社名</label>
-<input id="activitySearchCompany" style="width: 120px;" type="text"/>
-</div>
-<div style="display: flex; align-items: center; gap: 5px;">
-<label class="company-search-label">活動日</label>
-<input id="activitySearchDateFrom" style="width: 130px;" type="date"/>
-<span>～</span>
-<input id="activitySearchDateTo" style="width: 130px;" type="date"/>
-</div>
+          <div class="search-header search-header--multi">
+        <div class="screen-title">活動 <span class="code">(AT01)</span></div>
+        <div class="field">
+          <label for="activitySearchType">活動タイプ</label>
+          <select id="activitySearchType" class="input" style="width:100px">
+            <option value="">-</option>
+            <option>TEL</option>
+            <option>訪問</option>
+            <option>メール</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="activitySearchSalesRep">営業担当</label>
+          <input id="activitySearchSalesRep" class="input" type="text" style="width:min(140px,22vw)" />
+        </div>
+        <div class="field">
+          <label for="activitySearchCompany">会社名</label>
+          <input id="activitySearchCompany" class="input" type="text" style="width:min(160px,24vw)" />
+        </div>
+        <div class="field field-range">
+          <label>活動日</label>
+          <input id="activitySearchDateFrom" class="input" type="date" />
+          <span class="range-sep">～</span>
+          <input id="activitySearchDateTo" class="input" type="date" />
+        </div>
+        <button class="btn btn-secondary" id="btnActivitySearch" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg> 検索</button>
+        <button class="btn btn-secondary" id="btnActivityAdvancedSearch" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg> 詳細検索</button>
+        <button class="btn btn-ghost" id="btnActivityClear" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg> クリア</button>
+        <div class="right">
+          <button class="btn btn-secondary" id="btnActivityExport" type="button">エクスポート</button>
+          <button class="btn btn-accent" id="btnActivityNewMain" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg> 新規活動</button>
+        </div>
       </div>
-    </div>
-    <div class="company-topbar-right">
-        <button class="btn btn-secondary" id="btnActivitySearch">🔍 検索</button>
-        <button class="btn btn-secondary" id="btnActivityAdvancedSearch">詳細検索</button>
-        <button class="btn btn-secondary" id="btnActivityClear">✕ クリア</button>
-        <button class="btn btn-secondary" id="btnActivityExport">📥 エクスポート</button>
-        <button class="btn btn-orange" id="btnActivityNewMain">+ 新規活動</button>
-      </div>
-    </div>
       <div class="company-main">
         <!-- List Area -->
-        <div class="company-grid">
-          <div class="company-table-wrap">
-            <div id="activityTable"></div>
-          </div>
-          <div class="company-grid-footer">
-            <div class="footer-left">
-              <div class="company-grid-pager">
-                <button class="icon-btn" id="btnActivityFirstPage" title="First Page">«</button>
-                <button class="icon-btn" id="btnActivityPrevPage" title="Previous Page">‹</button>
-                <div id="activityPageNumbers" class="page-numbers"></div>
-                <button class="icon-btn" id="btnActivityNextPage" title="Next Page">›</button>
-                <button class="icon-btn" id="btnActivityLastPage" title="Last Page">»</button>
-
-                <div class="pager-jump">
-                  Page
-                  <select id="activityPageSelect" class="mini-select" aria-label="page select"></select>
-                  <span id="activityPageTotal" style="width: 50px;">/ 1</span>
-                </div>
-
-                <select id="activityPageSize" class="mini-select" aria-label="page size">
-                  <option value="10">10件</option>
-                  <option value="25" selected>25件</option>
-                  <option value="50">50件</option>
-                  <option value="100">100件</option>
-                </select>
-              </div>
+        <div class="list-stack">
+          <div class="panel">
+            <div class="company-table-wrap table-wrap">
+              <table class="t" id="activityTable">
+                <thead>
+                  <tr>
+                    <th>活動日</th>
+                    <th>開始時刻</th>
+                    <th>営業担当</th>
+                    <th>タイプ</th>
+                    <th>会社名</th>
+                    <th>担当(姓)</th>
+                    <th>コメント</th>
+                  </tr>
+                </thead>
+                <tbody id="activityTableBody"></tbody>
+              </table>
             </div>
-            <div class="footer-right">
-              <div class="company-grid-meta">
-                全 <span id="activityTotalCount">0</span> 件
-                <span class="range-info"><span id="activityRangeStart">0</span> - <span id="activityRangeEnd">0</span></span>
-              </div>
+          </div>
+          <div class="pager-standalone">
+            <div class="pages">
+              <button class="pg-btn" id="btnActivityFirstPage" type="button" title="最初へ">«</button>
+              <button class="pg-btn" id="btnActivityPrevPage" type="button" title="前へ">‹</button>
+              <div id="activityPageNumbers" class="page-numbers" style="display:inline-flex;gap:3px;"></div>
+              <button class="pg-btn" id="btnActivityNextPage" type="button" title="次へ">›</button>
+              <button class="pg-btn" id="btnActivityLastPage" type="button" title="最後へ">»</button>
+            </div>
+            <div class="page-jump">
+              <span>Page</span>
+              <select id="activityPageSelect" class="mini" aria-label="page select"></select>
+              <span id="activityPageTotal">/ 1</span>
+            </div>
+            <select id="activityPageSize" class="pgsize-trigger" aria-label="page size">
+              <option value="10">10件</option>
+              <option value="25" selected>25件</option>
+              <option value="50">50件</option>
+              <option value="100">100件</option>
+            </select>
+            <div class="meta-right">
+              全 <span id="activityTotalCount">0</span>件 <span id="activityRangeStart">0</span> - <span id="activityRangeEnd">0</span>
             </div>
           </div>
         </div>
 
-        <div class="resizer-horizontal" id="activity-resizer"></div>
+        <div class="resizer-h" id="activity-resizer" role="separator" aria-orientation="horizontal" title="ドラッグで高さ調整" tabindex="0"></div>
 
-        <div class="company-detail">
-          <div class="company-tabpanels">
-            <div class="detail-form" style="grid-template-columns: repeat(4, 1fr); gap: 24px; padding: 20px;">
+        <div class="company-detail detail-tab-mode">
+          <div class="panel-detail">
+            <div class="panel-detail-body">
+            <div class="detail-form">
               <!-- Col 1 -->
               <div class="form-col">
                 <div class="form-row">
@@ -178,13 +183,13 @@
                   <label class="check"><input id="atDetailIsClaim" type="checkbox" /> クレーム</label>
                 </div>
               </div>
-<!-- Col 2 -->
-<div class="form-col">
-<div class="form-row" style="height: 100%;">
-<label>コメント</label>
-<textarea id="atDetailComment" style="flex: 1; min-height: 300px;">wwww</textarea>
-</div>
-</div>
+              <!-- Col 2 -->
+              <div class="form-col">
+                <div class="form-row form-row--remark">
+                  <label>コメント</label>
+                  <textarea id="atDetailComment" class="input" rows="4">wwww</textarea>
+                </div>
+              </div>
               <!-- Col 3 -->
               <div class="form-col">
                 <div class="form-row">
@@ -241,7 +246,7 @@
                   <label>住所</label>
                   <input disabled id="atDetailAddress" type="text" value="北海道市東区4丁目18-30" />
                 </div>
-                <div style="margin-top: auto; border-top: 1px solid #eee; padding-top: 15px;">
+                <div class="detail-audit">
                   <div class="form-row two">
                     <div>
                       <label>作成日時</label>
@@ -294,15 +299,18 @@
                   <label>活動自由使用欄7</label>
                   <input id="atDetailFree7" type="text" />
                 </div>
-                <div class="form-row" style="margin-top: auto;">
+                <div class="form-row attach-field">
                   <label>添付資料</label>
-                  <div class="attach-box"
-                    style="height: 120px; border: 2px dashed #e2e8f0; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:12px; border-radius: 8px; background: #f8fafc;">
-                    ここにドラッグ＆ドロップ</div>
+                  <div class="attach-box attach-box--compact">ここにドラッグ＆ドロップ</div>
                 </div>
-                <div class="form-actions" style="justify-content: space-between; margin-top: 15px; padding-top:0;">
-                  <button class="btn btn-secondary" id="btnAtDetailDelete" style="background:#f9f9f9;">削除</button>
-                  <button class="btn btn-primary" id="btnAtDetailSave">保存</button>
+              </div>
+              </div>
+              <div class="form-foot-split">
+                <div class="left">
+                  <button class="btn btn-danger" id="btnAtDetailDelete" type="button">削除</button>
+                </div>
+                <div class="right">
+                  <button class="btn btn-primary" id="btnAtDetailSave" type="button">保存</button>
                 </div>
               </div>
             </div>
