@@ -60,50 +60,6 @@ function bindUi() {
 
   const tabs = document.querySelectorAll('[data-company-tab]');
 
-  // Multi-select dropdown logic
-  document.querySelectorAll('.multi-select-dropdown').forEach(dropdown => {
-    const trigger = dropdown.querySelector('.multi-select-trigger');
-    const content = dropdown.querySelector('.multi-select-content');
-    const placeholder = dropdown.dataset.placeholder || '選択..';
-
-    trigger.addEventListener('click', (e) => {
-      e.stopPropagation();
-      // Close other dropdowns
-      document.querySelectorAll('.multi-select-dropdown').forEach(d => {
-        if (d !== dropdown) d.classList.remove('active');
-      });
-      dropdown.classList.toggle('active');
-    });
-
-    dropdown.addEventListener('click', (e) => {
-      e.stopPropagation();
-    });
-
-    const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach(cb => {
-      cb.addEventListener('change', () => {
-        const selected = Array.from(checkboxes)
-          .filter(c => c.checked)
-          .map(c => c.parentElement.textContent.trim());
-
-        if (selected.length === 0) {
-          trigger.textContent = placeholder;
-        } else if (selected.length <= 2) {
-          trigger.textContent = selected.join(', ');
-        } else {
-          trigger.textContent = `${selected.length}項目選択中`;
-        }
-      });
-    });
-  });
-
-  // Close dropdowns when clicking outside
-  document.addEventListener('click', () => {
-    document.querySelectorAll('.multi-select-dropdown').forEach(d => {
-      d.classList.remove('active');
-    });
-  });
-
   function applyBasicSearch() {
     const name = (inputName?.value ?? '').trim();
     state.advanced = state.advanced || null;

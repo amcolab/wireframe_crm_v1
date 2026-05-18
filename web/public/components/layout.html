@@ -466,8 +466,8 @@
 
       <div class="modal-footer">
         <button class="btn btn-secondary btn-search-history" type="button" id="btnAdvancedHistory">検索条件リストを表示</button>
-        <button class="btn btn-secondary" type="button" id="btnAdvancedClear" style="width: 100px;">クリア</button>
-        <button class="btn btn-primary" value="default" id="btnAdvancedApply" style="margin-left: auto; width: 100px;">検索</button>
+        <button class="btn btn-secondary" type="button" id="btnAdvancedClear">クリア</button>
+        <button class="btn btn-primary" value="default" id="btnAdvancedApply">検索</button>
       </div>
     </form>
   </div>
@@ -816,8 +816,8 @@
 
         <!-- Action Buttons Right-aligned -->
         <div style="display: flex; justify-content: flex-end; gap: 12px; margin: 16px 0;">
-          <button type="button" class="btn btn-secondary btn-search-history" style="min-width: 180px;">検索条件リストを表示</button>
-          <button type="button" class="btn btn-primary" style="min-width: 150px;" id="btnLookupSearch">検索</button>
+          <button type="button" class="btn btn-secondary btn-search-history">検索条件リストを表示</button>
+          <button type="button" class="btn btn-primary" id="btnLookupSearch">検索</button>
         </div>
 
         <div class="lookup-results-section" style="border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 15px;">
@@ -882,9 +882,9 @@
         </div>
       </div>
 
-      <div class="modal-footer" style="padding: 15px 24px; border-top: 1px solid var(--border-color); background: var(--bg-hover); display: flex; justify-content: space-between;">
-        <button type="button" class="btn btn-secondary" style="width: 100px;" id="btnLookupClear">クリア</button>
-        <button type="button" class="btn btn-primary" style="width: 120px; margin-left:auto;" id="btnLookupSelect">選択</button>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btnLookupClear">クリア</button>
+        <button type="button" class="btn btn-primary" id="btnLookupSelect">選択
       </div>
     </form>
   </div>
@@ -913,16 +913,10 @@
         </table>
       </div>
     </div>
-    <div class="dlg-actions"
-      style="padding: 20px 24px; background: #f8fafc; border-top: 1px solid #e2e8f0; gap: 12px; justify-content: space-between;">
-      <button type="button" class="btn btn-secondary" id="btnHistorySelect"
-        style="min-width: 120px; height: 42px;">選択</button>
-      <div style="display: flex; gap: 12px;">
-        <button type="button" class="btn btn-secondary" id="btnHistoryDelete"
-          style="min-width: 90px; height: 42px;">削除</button>
-        <button type="button" class="btn btn-primary" id="btnHistorySaveCurrent"
-          style="white-space: nowrap; height: 42px;">現在の条件を追加</button>
-      </div>
+    <div class="dlg-actions">
+      <button type="button" class="btn btn-secondary" id="btnHistorySelect">選択</button>
+      <button type="button" class="btn btn-secondary" id="btnHistoryDelete">削除</button>
+      <button type="button" class="btn btn-primary" id="btnHistorySaveCurrent">現在の条件を追加</button>
     </div>
   </form>
 </dialog>
@@ -1106,10 +1100,9 @@
         </div>
       </div>
     </div>
-    <div class="dlg-actions" style="justify-content: center; position: relative;">
-      <button class="btn btn-primary" id="btnActivitySave">保存</button>
-      <button class="btn btn-secondary" id="btnActivityDelete" disabled
-        style="position: absolute; right: 20px; bottom: 15px; color: #777;">🗑 削除</button>
+    <div class="dlg-actions">
+      <button type="button" class="btn btn-danger" id="btnActivityDelete" disabled>削除</button>
+      <button type="button" class="btn btn-primary" id="btnActivitySave">保存</button>
     </div>
   </form>
 </dialog>
@@ -1207,7 +1200,7 @@
         <button type="button" class="btn btn-secondary">クリア</button>
         <button type="button" class="btn btn-secondary btn-search-history">検索条件リストを表示</button>
       </div>
-      <button type="submit" class="btn btn-primary" style="min-width:120px;">検索</button>
+      <button type="submit" class="btn btn-primary">検索</button>
     </div>
   </form>
 </dialog>
@@ -1322,7 +1315,7 @@
         <button type="button" class="btn btn-secondary">クリア</button>
         <button type="button" class="btn btn-secondary btn-search-history">検索条件リストを表示</button>
       </div>
-      <button type="submit" class="btn btn-primary" style="min-width:120px;">検索</button>
+      <button type="submit" class="btn btn-primary">検索</button>
     </div>
   </form>
 </dialog>
@@ -1372,8 +1365,8 @@
           </div>
         </div>
         <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:16px;">
-          <button type="button" class="btn btn-secondary btn-search-history" style="min-width:180px;">検索条件リストを表示</button>
-          <button type="button" class="btn btn-primary" id="btnContactLookupSearch" style="min-width:150px;">検索</button>
+          <button type="button" class="btn btn-secondary btn-search-history">検索条件リストを表示</button>
+          <button type="button" class="btn btn-primary" id="btnContactLookupSearch">検索</button>
         </div>
       </div>
       <div class="lookup-results-section" style="border-top:1px solid var(--border);padding-top:15px;margin-top:15px;">
@@ -1417,10 +1410,9 @@
         </div>
       </div>
     </div>
-    <div class="dlg-actions"
-      style="display: flex; justify-content: space-between; background: #f5f5f5; border-top: 1px solid #ccc; padding: 10px 20px;">
-      <button type="button" class="btn btn-primary" style="background: #003366;">クリア</button>
-      <button type="button" class="btn btn-primary" style="background: #003366; padding: 5px 40px;">選択</button>
+    <div class="dlg-actions">
+      <button type="button" class="btn btn-secondary">クリア</button>
+      <button type="button" class="btn btn-primary">選択</button>
     </div>
   </form>
 </dialog>
@@ -1477,7 +1469,7 @@
         <button type="button" class="btn btn-secondary">クリア</button>
         <button type="button" class="btn btn-secondary btn-search-history">検索条件リストを表示</button>
       </div>
-      <button type="submit" class="btn btn-primary" style="min-width:120px;">検索</button>
+      <button type="submit" class="btn btn-primary">検索</button>
     </div>
   </form>
 </dialog>
@@ -1630,10 +1622,9 @@
         </div>
       </div>
     </div>
-    <div class="dlg-actions" style="justify-content: center; position: relative;">
-      <button class="btn btn-primary" id="btnContactSave">保存</button>
-      <button class="btn btn-secondary" id="btnContactDelete" disabled
-        style="position: absolute; right: 20px; bottom: 15px; color: #777;">🗑 削除</button>
+    <div class="dlg-actions">
+      <button type="button" class="btn btn-danger" id="btnContactDelete" disabled>削除</button>
+      <button type="button" class="btn btn-primary" id="btnContactSave">保存</button>
     </div>
   </form>
 </dialog>
@@ -1739,8 +1730,8 @@
           </div>
         </div>
         <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:16px;">
-          <button type="button" class="btn btn-secondary btn-search-history" style="min-width:180px;">検索条件リストを表示</button>
-          <button type="button" class="btn btn-primary" id="btnProjectLookupSearch" style="min-width:150px;">検索</button>
+          <button type="button" class="btn btn-secondary btn-search-history">検索条件リストを表示</button>
+          <button type="button" class="btn btn-primary" id="btnProjectLookupSearch">検索</button>
         </div>
       </div>
 
@@ -1793,11 +1784,9 @@
       </div>
     </div>
 
-    <div class="dlg-actions"
-      style="display: flex; justify-content: space-between; background: #f5f5f5; border-top: 1px solid #ccc; padding: 10px 20px;">
-      <button type="button" class="btn btn-primary" style="background: #003366;">クリア</button>
-      <button type="button" class="btn btn-primary" id="btnProjectSelect"
-        style="background: #003366; padding: 5px 40px;">選択</button>
+    <div class="dlg-actions">
+      <button type="button" class="btn btn-secondary">クリア</button>
+      <button type="button" class="btn btn-primary" id="btnProjectSelect">選択</button>
     </div>
   </form>
 </dialog>
@@ -1987,10 +1976,9 @@
         </div>
       </div>
     </div>
-    <div class="dlg-actions" style="justify-content: center; position: relative;">
-      <button class="btn btn-primary" id="btnProjectSave">保存</button>
-      <button class="btn btn-secondary" id="btnProjectDelete" disabled
-        style="position: absolute; right: 20px; bottom: 15px; color: #777;">🗑 削除</button>
+    <div class="dlg-actions">
+      <button type="button" class="btn btn-danger" id="btnProjectDelete" disabled>削除</button>
+      <button type="button" class="btn btn-primary" id="btnProjectSave">保存</button>
     </div>
   </form>
 </dialog>
@@ -2188,10 +2176,9 @@
         </div>
       </div>
     </div>
-    <div class="dlg-actions" style="justify-content: center; position: relative;">
-      <button class="btn btn-primary" id="btnContactDetailSave" style="padding: 10px 60px;">保存</button>
-      <button class="btn btn-secondary" id="btnContactDetailDelete"
-        style="position: absolute; right: 20px; bottom: 15px; color: #777;">🗑 削除</button>
+    <div class="dlg-actions">
+      <button type="button" class="btn btn-danger" id="btnContactDetailDelete">削除</button>
+      <button type="button" class="btn btn-primary" id="btnContactDetailSave">保存</button>
     </div>
   </form>
 </dialog>
