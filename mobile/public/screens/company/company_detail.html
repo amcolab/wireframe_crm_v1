@@ -1,106 +1,101 @@
-<div class="detail-container">
-    <section class="detail-section">
-        <div class="detail-header">
-            <i data-lucide="building-2"></i>
-            <h2>会社</h2>
-        </div>
-        <div class="detail-grid">
-            <div class="field-full">
-                <div class="field-label">会社名</div>
-                <div class="field-value" id="company-name">-</div>
-            </div>
-            <div class="detail-field">
-                <div class="field-label">郵便番号</div>
-                <div class="field-value" id="company-postal">-</div>
-            </div>
-            <div class="detail-field">
-                <div class="field-label">都道府県</div>
-                <div class="field-value" id="company-pref">-</div>
-            </div>
-            <div class="field-full">
-                <div class="field-label">住所</div>
-                <div class="field-value" id="company-addr">-</div>
-            </div>
-            <div class="detail-field">
-                <div class="field-label">代表TEL</div>
-                <div class="field-value" id="company-tel">-</div>
-            </div>
-            <div class="detail-field">
-                <div class="field-label">代表FAX</div>
-                <div class="field-value" id="company-fax">-</div>
-            </div>
-            <div class="detail-field">
-                <div class="field-label">地区</div>
-                <div class="field-value" id="company-district">-</div>
-            </div>
-            <div class="detail-field">
-                <div class="field-label">業界</div>
-                <div class="field-value" id="company-industryGroup">-</div>
-            </div>
-            <div class="detail-field">
-                <div class="field-label">業種</div>
-                <div class="field-value" id="company-industry">-</div>
-            </div>
-            <div class="detail-field">
-                <div class="field-label">規模ランク</div>
-                <div class="field-value" id="company-scale">-</div>
-            </div>
-            <div class="detail-field">
-                <div class="field-label">会社種別</div>
-                <div class="field-value" id="company-type">-</div>
-            </div>
-            <div class="detail-field">
-                <div class="field-label">法人番号</div>
-                <div class="field-value" id="company-corpNumber">-</div>
-            </div>
-            <div class="detail-field">
-                <div class="field-label">従業員数</div>
-                <div class="field-value" id="company-employees">-</div>
-            </div>
-            <div class="detail-field">
-                <div class="field-label">資本金</div>
-                <div class="field-value" id="company-capital">-</div>
-            </div>
-        </div>
+<div class="page-inner detail-page">
+  <section class="detail-hero">
+    <div class="hero-row">
+      <div class="hero-info">
+        <div class="hero-name" id="company-name">-</div>
+        <div class="hero-sub" id="company-hero-sub"></div>
+      </div>
+    </div>
+    <!-- <div class="hero-actions">
+      <button type="button" class="ha-btn" aria-label="電話">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.6a2 2 0 0 1-.5 2.1L7.9 9.7a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.8.3 1.7.5 2.6.6a2 2 0 0 1 1.7 2Z"/></svg>
+        電話
+      </button>
+      <button type="button" class="ha-btn" aria-label="メール">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        メール
+      </button>
+      <button type="button" class="ha-btn" aria-label="地図">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+        地図
+      </button>
+      <button type="button" class="ha-btn primary" aria-label="活動登録">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        活動登録
+      </button>
+    </div> -->
+  </section>
+
+  <!-- <div class="detail-seg" id="company-detail-seg" role="tablist">
+    <button type="button" class="active" data-tab="detail" role="tab" aria-selected="true">詳細</button>
+    <button type="button" data-tab="contacts" role="tab">担当者<span class="badge-cnt" id="company-contact-cnt">0</span></button>
+    <button type="button" data-tab="activity" role="tab">活動<span class="badge-cnt" id="company-activity-cnt">0</span></button>
+    <button type="button" data-tab="project" role="tab">案件<span class="badge-cnt" id="company-project-cnt">0</span></button>
+  </div> -->
+
+  <div class="detail-tab-panel" id="company-tab-detail" data-tab-panel="detail">
+    <section class="section">
+      <div class="section-head"><h3>基本情報</h3></div>
+      <div class="fields">
+        <div class="field-row"><span class="k">会社ID</span><span class="v mono" id="company-id">-</span></div>
+        <div class="field-row"><span class="k">会社名</span><span class="v" id="company-name-field">-</span></div>
+        <div class="field-row"><span class="k">代表TEL</span><span class="v link mono" id="company-tel">-</span></div>
+        <div class="field-row"><span class="k">代表FAX</span><span class="v mono" id="company-fax">-</span></div>
+        <div class="field-row"><span class="k">地区</span><span class="v" id="company-district-wrap">-</span></div>
+        <div class="field-row"><span class="k">郵便番号</span><span class="v mono" id="company-postal">-</span></div>
+        <div class="field-row"><span class="k">都道府県</span><span class="v" id="company-pref">-</span></div>
+        <div class="field-row full"><span class="k">住所</span><span class="v" id="company-addr">-</span></div>
+      </div>
     </section>
 
-    <section class="detail-section">
-        <div class="field-label mb-2">メモ (クイック編集)</div>
-        <textarea id="company-memo" class="memo-textarea" placeholder="ここにメモを入力してください..."></textarea>
+    <section class="section">
+      <div class="section-head"><h3>業種・規模</h3></div>
+      <div class="fields">
+        <div class="field-row"><span class="k">業界</span><span class="v" id="company-industryGroup">-</span></div>
+        <div class="field-row"><span class="k">業種</span><span class="v" id="company-industry">-</span></div>
+        <div class="field-row"><span class="k">規模ランク</span><span class="v" id="company-scale-wrap">-</span></div>
+        <div class="field-row"><span class="k">会社種別</span><span class="v" id="company-type">-</span></div>
+        <div class="field-row"><span class="k">法人番号</span><span class="v mono" id="company-corpNumber">-</span></div>
+        <div class="field-row"><span class="k">従業員数</span><span class="v" id="company-employees">-</span></div>
+        <div class="field-row"><span class="k">資本金</span><span class="v" id="company-capital">-</span></div>
+      </div>
     </section>
 
-    <section class="detail-section">
-        <div class="detail-grid">
-            <div class="detail-field">
-                <div class="field-label">会社自由使用欄 1</div>
-                <div class="field-value" id="company-free1">-</div>
-            </div>
-            <div class="detail-field">
-                <div class="field-label">会社自由使用欄 2</div>
-                <div class="field-value" id="company-free2">-</div>
-            </div>
-            <div class="detail-field">
-                <div class="field-label">会社自由使用欄 3</div>
-                <div class="field-value" id="company-free3">-</div>
-            </div>
-            <div class="detail-field">
-                <div class="field-label">会社自由使用欄 4</div>
-                <div class="field-value" id="company-free4">-</div>
-            </div>
-            <div class="detail-field">
-                <div class="field-label">会社自由使用欄 5</div>
-                <div class="field-value" id="company-free5">-</div>
-            </div>
-        </div>
-    </section>
+    <div class="memo-card">
+      <div class="memo-head"><h3>メモ (クイック編集)</h3></div>
+      <div class="memo-body"><textarea id="company-memo" placeholder="ここにメモを入力してください..."></textarea></div>
+    </div>
 
-    <section class="detail-section">
-        <div class="detail-header">
-            <i data-lucide="user"></i>
-            <h2>担当者</h2>
-        </div>
-        <div class="compact-contact-list" id="company-contacts-list">
-            <!-- Associated contacts will be rendered here -->
-        </div>
+    <section class="section">
+      <div class="section-head"><h3>会社自由使用欄</h3><span class="meta">1〜5</span></div>
+      <div class="free-list">
+        <div class="free-row"><span class="k">使用欄 1</span><span class="v" id="company-free1">-</span></div>
+        <div class="free-row"><span class="k">使用欄 2</span><span class="v" id="company-free2">-</span></div>
+        <div class="free-row"><span class="k">使用欄 3</span><span class="v" id="company-free3">-</span></div>
+        <div class="free-row"><span class="k">使用欄 4</span><span class="v" id="company-free4">-</span></div>
+        <div class="free-row"><span class="k">使用欄 5</span><span class="v" id="company-free5">-</span></div>
+      </div>
     </section>
+  </div>
+
+  <div class="detail-tab-panel" id="company-tab-contacts" data-tab-panel="contacts" hidden>
+    <section class="section">
+      <div class="section-head"><h3>担当者</h3></div>
+      <div id="company-contacts-list"></div>
+    </section>
+  </div>
+
+  <div class="detail-tab-panel" id="company-tab-activity" data-tab-panel="activity" hidden>
+    <section class="section">
+      <div class="section-head"><h3>活動</h3></div>
+      <p class="empty-hint" style="padding:12px">関連活動は活動一覧から確認できます（wireframe）</p>
+    </section>
+  </div>
+
+  <div class="detail-tab-panel" id="company-tab-project" data-tab-panel="project" hidden>
+    <section class="section">
+      <div class="section-head"><h3>案件</h3></div>
+      <p class="empty-hint" style="padding:12px">関連案件は案件一覧から確認できます（wireframe）</p>
+    </section>
+  </div>
 </div>

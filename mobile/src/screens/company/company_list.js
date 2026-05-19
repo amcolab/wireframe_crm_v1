@@ -1,7 +1,17 @@
 import { mockCompanies } from '../../utils/mockData.js';
+import { setupChipFilter, getActiveChipFilter } from '../../utils/chipFilter.js';
+import { icon } from '../../utils/icons.js';
+import { bindFilterIndicator } from '../../utils/filterIndicator.js';
+
+const COMPANY_ADV_FIELDS = [
+    'adv-company-name', 'adv-company-pref', 'adv-company-industry',
+    'adv-company-biz', 'adv-company-area', 'adv-company-addr'
+];
 
 export function init() {
     renderCompanies(mockCompanies);
+    setupChipFilter('company-filter-chips', () => applyFilters());
+    bindFilterIndicator({ chipContainerId: 'company-filter-chips', fieldIds: COMPANY_ADV_FIELDS });
 
     const searchInput = document.getElementById('company-search');
     const filterBtn = document.querySelector('.filter-btn');
@@ -10,9 +20,7 @@ export function init() {
     const applyBtn = document.getElementById('apply-advanced-search');
 
     if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            applyFilters();
-        });
+        searchInput.addEventListener('input', () => applyFilters());
     }
 
     if (filterBtn && modal) {
@@ -41,11 +49,15 @@ export function init() {
         const advIndustry = document.getElementById('adv-company-industry').value;
         const advBiz = document.getElementById('adv-company-biz').value;
         const advArea = document.getElementById('adv-company-area').value;
-        const advTel = document.getElementById('adv-company-tel').value;
+        const advTelEl = document.getElementById('adv-company-tel');
+        const advTel = advTelEl ? advTelEl.value : '';
         const advAddr = document.getElementById('adv-company-addr').value.toLowerCase();
 
         const filtered = mockCompanies.filter(item => {
-            const matchesBasic = item.name.toLowerCase().includes(term) || item.industry.toLowerCase().includes(term);
+            const matchesBasic = item.name.toLowerCase().includes(term)
+                || (item.industry || '').toLowerCase().includes(term)
+                || item.tel.includes(term)
+                || item.addr.toLowerCase().includes(term);
             const matchesAdvName = !advName || item.name.toLowerCase().includes(advName);
             const matchesAdvPref = !advPref || item.pref === advPref;
             const matchesAdvIndustry = !advIndustry || item.industry === advIndustry;
@@ -53,9 +65,11 @@ export function init() {
             const matchesAdvArea = !advArea || (item.area || '') === advArea;
             const matchesAdvTel = !advTel || item.tel.includes(advTel);
             const matchesAdvAddr = !advAddr || item.addr.toLowerCase().includes(advAddr);
-            
-            return matchesBasic && matchesAdvName && matchesAdvPref && matchesAdvIndustry && 
-                   matchesAdvBiz && matchesAdvArea && matchesAdvTel && matchesAdvAddr;
+            const chipIndustry = getActiveChipFilter('company-filter-chips');
+            const matchesChip = !chipIndustry || item.industry === chipIndustry;
+
+            return matchesBasic && matchesAdvName && matchesAdvPref && matchesAdvIndustry
+                && matchesAdvBiz && matchesAdvArea && matchesAdvTel && matchesAdvAddr && matchesChip;
         });
         renderCompanies(filtered);
     }
@@ -63,37 +77,32 @@ export function init() {
 
 function renderCompanies(data) {
     const container = document.getElementById('company-items-container');
+    const countEl = document.getElementById('company-count');
     if (!container) return;
 
-    container.innerHTML = data.map(item => `
-        <div class="activity-item" onclick="window.location.hash='company-detail/${item.id}'">
-            <div class="activity-item-header">
-                <div class="activity-company">${item.name}</div>
-            </div>
-            <div class="activity-meta" style="display: flex; flex-direction: column; gap: 6px;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <div class="meta-row">
-                        <span class="meta-label">都道府県</span>
-                        <span class="meta-value">${item.pref}</span>
-                    </div>
-                    <div class="meta-row">
-                        <span class="meta-label">郵便番号</span>
-                        <span class="meta-value">${item.postal}</span>
-                    </div>
-                </div>
-                <div class="meta-row">
-                    <span class="meta-label">住所</span>
-                    <span class="meta-value">${item.addr}</span>
-                </div>
-                <div class="meta-row">
-                    <span class="meta-label">代表TEL</span>
-                    <span class="meta-value">${item.tel}</span>
-                </div>
-            </div>
-        </div>
-    `).join('');
+    if (countEl) countEl.textContent = data.length.toLocaleString('ja-JP');
 
-    if (window.lucide) {
-        window.lucide.createIcons();
-    }
+    container.innerHTML = data.map(item => `
+        <article class="co-card" onclick="window.location.hash='company-detail/${item.id}'">
+            <div class="co-card-head">
+                <div>
+                    <div class="co-name">${item.name}</div>
+                    <div class="co-id">${item.id} · ${item.industry || '—'}</div>
+                </div>
+            </div>
+            <dl class="co-grid">
+                <dt>都道府県</dt><dd>${item.pref}</dd>
+                <dt>郵便番号</dt><dd>${item.postal}</dd>
+                <dt>住所</dt><dd>${item.addr}</dd>
+                <dt>代表TEL</dt><dd class="tel">${item.tel}</dd>
+            </dl>
+            <div class="co-card-foot">
+                <span class="tag brand">${item.industryGroup || item.industry || '—'}</span>
+                <div class="quick-actions" onclick="event.stopPropagation()">
+                    <a href="tel:${item.tel}" class="qa-btn" aria-label="電話"><span class="icon">${icon('phone')}</span></a>
+                    <button type="button" class="qa-btn accent" aria-label="詳細" onclick="window.location.hash='company-detail/${item.id}'"><span class="icon">${icon('chevronRight')}</span></button>
+                </div>
+            </div>
+        </article>
+    `).join('');
 }

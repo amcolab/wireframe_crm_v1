@@ -2,18 +2,59 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SMOS Mobile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMOS Mobile — Wireframe</title>
     <link rel="stylesheet" href="/src/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="app">
-        <!-- Layout will be injected here -->
+    <div class="stage">
+        <header class="stage-head">
+            <h1>SMOS Mobile — モバイル Wireframe</h1>
+            <p id="stage-desc">
+                Production-ready iOS design · 顧客テンプレート準拠コンテンツ ·
+                UIトークンは <code>会社_mobile_hifi.html</code> / <code>crm-common.css</code> と同期。
+                画面: 会社 · 担当者 · 活動 · 案件 · 名刺スキャン · 認証。
+            </p>
+            <span class="legend"><span class="dot"></span>Interactive · iPhone 14 Pro · 390×844 · safe area aware</span>
+        </header>
+
+        <div class="frame-wrap">
+            <span class="frame-label" id="frame-label">
+                <span class="num" id="frame-num">1</span>
+                <span id="frame-label-text">読み込み中…</span>
+            </span>
+
+            <div class="iphone">
+                <div class="island" aria-hidden="true"></div>
+                <div class="screen">
+                    <div id="app"></div>
+                    <div class="home-indicator" aria-hidden="true"></div>
+                </div>
+            </div>
+        </div>
+
+        <aside class="tokens" aria-label="Design tokens">
+            <h3>Design Tokens — 会社_compact_business.html と同期</h3>
+            <div class="token-grid">
+                <div class="swatch"><div class="chip" style="background:#1F2A44"></div><span class="lab">nav-bg</span><span class="val">#1F2A44</span></div>
+                <div class="swatch"><div class="chip" style="background:#1448B6"></div><span class="lab">brand-600</span><span class="val">#1448B6</span></div>
+                <div class="swatch"><div class="chip" style="background:#1E5BD6"></div><span class="lab">brand-500</span><span class="val">#1E5BD6</span></div>
+                <div class="swatch"><div class="chip" style="background:#E25D14"></div><span class="lab">accent-500</span><span class="val">#E25D14</span></div>
+                <div class="swatch"><div class="chip" style="background:#15803D"></div><span class="lab">success</span><span class="val">#15803D</span></div>
+                <div class="swatch"><div class="chip" style="background:#B45309"></div><span class="lab">warning</span><span class="val">#B45309</span></div>
+                <div class="swatch"><div class="chip" style="background:#F4F6FA;border:1px solid #DDE1EA"></div><span class="lab">bg-page</span><span class="val">#F4F6FA</span></div>
+                <div class="swatch"><div class="chip" style="background:#FFFFFF;border:1px solid #DDE1EA"></div><span class="lab">surface</span><span class="val">#FFFFFF</span></div>
+                <div class="swatch"><div class="chip" style="background:#E2E6EE"></div><span class="lab">border</span><span class="val">#E2E6EE</span></div>
+                <div class="swatch"><div class="chip" style="background:#0E1424"></div><span class="lab">text-1</span><span class="val">#0E1424</span></div>
+                <div class="swatch"><div class="chip" style="background:#3F4A60"></div><span class="lab">text-2</span><span class="val">#3F4A60</span></div>
+                <div class="swatch"><div class="chip" style="background:#7A8499"></div><span class="lab">text-3</span><span class="val">#7A8499</span></div>
+            </div>
+        </aside>
     </div>
+
     <script type="module" src="/src/main.js"></script>
 </body>
 </html>
