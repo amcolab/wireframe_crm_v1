@@ -1,8 +1,6 @@
 import { mockContacts, mockCompanies } from '../../utils/mockData.js';
 
 export function init(id) {
-    if (window.lucide) window.lucide.createIcons();
-    
     const contact = mockContacts.find(c => c.id === id);
     if (!contact) return;
 

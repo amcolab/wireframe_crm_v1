@@ -1,44 +1,56 @@
-<div class="detail-container center-content">
-    <div class="scan-form">
-        <div class="scan-item">
-            <div class="scan-label">担当者</div>
-            <input type="text" class="scan-value" value="中谷 太輔">
-        </div>
-        <div class="scan-item">
-            <div class="scan-label">会社名</div>
-            <input type="text" class="scan-value" value="株式会社ボウルズ">
-        </div>
-        <div class="scan-item">
-            <div class="scan-label">部署</div>
-            <input type="text" class="scan-value" value="営業企画部">
-        </div>
-        <div class="scan-item">
-            <div class="scan-label">メール</div>
-            <input type="email" class="scan-value" value="nakatani@bowls.co.jp">
-        </div>
-        <div class="scan-item">
-            <div class="scan-label">会社電話</div>
-            <input type="tel" class="scan-value" value="06-6210-2765">
-        </div>
-        <div class="scan-item">
-            <div class="scan-label">会社FAX</div>
-            <input type="tel" class="scan-value" value="06-6210-2766">
-        </div>
-        <div class="scan-item">
-            <div class="scan-label">携帯</div>
-            <input type="tel" class="scan-value" value="080-1234-5678">
-        </div>
-        <div class="scan-item">
-            <div class="scan-label">郵便番号</div>
-            <input type="text" class="scan-value" value="542-0081">
-        </div>
-        <div class="scan-item no-border">
-            <div class="scan-label">住所</div>
-            <input type="text" class="scan-value" value="大阪市中央区南船場 4-12-8 関西心斎橋ビル 804">
-        </div>
+<div class="page-inner scan-page">
+  <section class="form-section scan-form-section">
+    <header class="scan-card-head">
+      <h2 class="scan-card-title">スキャン結果</h2>
+      <!-- <p class="scan-card-desc">OCR内容を確認して登録してください</p> -->
+    </header>
+    <div class="form-body scan-rows">
+      <div class="scan-row">
+        <label for="scan-name">担当者</label>
+        <input type="text" id="scan-name" class="form-control" value="中谷 太輔">
+      </div>
+      <div class="scan-row">
+        <label for="scan-company">会社名</label>
+        <input type="text" id="scan-company" class="form-control" value="株式会社ボウルズ">
+      </div>
+      <div class="scan-row">
+        <label for="scan-dept">部署</label>
+        <input type="text" id="scan-dept" class="form-control" value="営業企画部">
+      </div>
+      <div class="scan-row">
+        <label for="scan-email">メール</label>
+        <input type="email" id="scan-email" class="form-control" value="nakatani@bowls.co.jp">
+      </div>
+      <div class="scan-row">
+        <label for="scan-tel">会社電話</label>
+        <input type="tel" id="scan-tel" class="form-control" value="06-6210-2765">
+      </div>
+      <div class="scan-row">
+        <label for="scan-fax">会社FAX</label>
+        <input type="tel" id="scan-fax" class="form-control" value="06-6210-2766">
+      </div>
+      <div class="scan-row">
+        <label for="scan-mobile">携帯</label>
+        <input type="tel" id="scan-mobile" class="form-control" value="080-1234-5678">
+      </div>
+      <div class="scan-row">
+        <label for="scan-postal">郵便番号</label>
+        <input type="text" id="scan-postal" class="form-control" value="542-0081">
+      </div>
+      <div class="scan-row scan-row-addr">
+        <label for="scan-addr">住所</label>
+        <input type="text" id="scan-addr" class="form-control" value="大阪市中央区南船場 4-12-8 関西心斎橋ビル 804">
+      </div>
     </div>
+  </section>
 
-    <div style="padding: 32px 24px; width: 100%; display: flex; justify-content: center;">
-        <button class="login-btn" id="btn-register-scan" style="width: 100%; max-width: 280px; border-radius: 50px;">登録する</button>
+  <div class="scan-actions-wrap">
+    <div class="save-bar scan-save-bar">
+      <button type="button" class="btn btn-secondary" id="btn-clear-scan">クリア</button>
+      <button type="button" class="btn btn-primary accent" id="btn-register-scan">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+        登録する
+      </button>
     </div>
+  </div>
 </div>

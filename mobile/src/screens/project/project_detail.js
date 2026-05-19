@@ -40,26 +40,28 @@ export function init(id) {
     const activitiesContainer = document.getElementById('project-activities-container');
     if (activitiesContainer) {
         const relatedActivities = mockActivities.filter(a => a.company === project.company);
-        if (relatedActivities.length === 0) {
-            activitiesContainer.innerHTML = '<div style="padding: 10px; color: #666;">関連する活動はありません。</div>';
+                if (relatedActivities.length === 0) {
+            activitiesContainer.className = 'embedded-list';
+            activitiesContainer.innerHTML = '<p class="empty-hint">関連する活動はありません</p>';
         } else {
+            activitiesContainer.className = 'embedded-list';
             activitiesContainer.innerHTML = relatedActivities.map(item => `
-                <div class="activity-item" onclick="window.location.hash='activity-detail/${item.id}'">
-                    <div class="activity-item-header" style="margin-bottom: 8px;">
-                        <div class="activity-company" style="font-size: 15px; color: var(--text-primary); font-weight: 700;">${item.company}</div>
-                        <div class="activity-date" style="font-size: 11px; color: var(--text-secondary);">${item.date}</div>
+                <article class="act-card" onclick="window.location.hash='activity-detail/${item.id}'">
+                    <div class="co-card-head">
+                        <div>
+                            <div class="act-title">${item.company}</div>
+                            <div class="act-meta-line">${item.date} · ${item.type}</div>
+                        </div>
+                        <span class="tag brand">${item.type}</span>
                     </div>
-                    <div style="display: flex; gap: 10px; margin-bottom: 4px; font-size: 11px; color: var(--text-secondary);">
-                        <div>担当 <span style="color: var(--text-primary);">${item.contact}</span></div>
-                        <div>営業 <span style="color: var(--text-primary);">${item.salesRep}</span></div>
-                        <div>タイプ <span style="color: var(--text-primary);">${item.type}</span></div>
+                    <div class="act-row">
+                        <span>担当 <b>${item.contact}</b></span>
+                        <span>営業 <b>${item.salesRep}</b></span>
                     </div>
-                </div>
+                    ${item.comment ? `<p class="act-snippet">${item.comment}</p>` : ''}
+                </article>
             `).join('');
         }
     }
 
-    if (window.lucide) {
-        window.lucide.createIcons();
-    }
 }

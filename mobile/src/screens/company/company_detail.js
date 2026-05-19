@@ -1,26 +1,52 @@
-import { mockCompanies, mockContacts } from '../../utils/mockData.js';
+import { mockCompanies, mockContacts, mockActivities, mockProjects } from '../../utils/mockData.js';
 
 export function init(id) {
     const company = mockCompanies.find(c => c.id === id);
     if (company) {
         fillDetail(company);
         setupMemo(company);
+        setupSegTabs();
+        setupHeroActions(company);
         renderContacts(company.name);
+        updateRelatedCounts(company.name);
     }
 }
 
 function fillDetail(company) {
+    const heroSub = document.getElementById('company-hero-sub');
+    if (heroSub) {
+        const parts = [];
+        if (company.id) parts.push(`<span class="pill">CO-${company.id}</span>`);
+        if (company.industry) parts.push(`<span>${company.industry}</span>`);
+        if (company.type) parts.push('<span>·</span>', `<span>${company.type}</span>`);
+        heroSub.innerHTML = parts.join('') || '—';
+    }
+
+    const districtWrap = document.getElementById('company-district-wrap');
+    if (districtWrap) {
+        districtWrap.innerHTML = company.district
+            ? `<span class="chip-inline gray">${company.district}</span>`
+            : '-';
+    }
+
+    const scaleWrap = document.getElementById('company-scale-wrap');
+    if (scaleWrap) {
+        scaleWrap.innerHTML = company.scale
+            ? `<span class="chip-inline">${company.scale}</span>`
+            : '-';
+    }
+
     const fields = {
         'company-name': company.name,
+        'company-name-field': company.name,
+        'company-id': `CO-${company.id}`,
         'company-postal': company.postal,
         'company-pref': company.pref,
         'company-addr': company.addr,
         'company-tel': company.tel,
         'company-fax': company.fax,
-        'company-district': company.district,
         'company-industryGroup': company.industryGroup,
         'company-industry': company.industry,
-        'company-scale': company.scale,
         'company-type': company.type,
         'company-corpNumber': company.corpNumber,
         'company-employees': company.employees,
@@ -32,17 +58,64 @@ function fillDetail(company) {
         'company-free5': company.free5
     };
 
-    for (const [id, value] of Object.entries(fields)) {
-        const el = document.getElementById(id);
-        if (el) el.textContent = value || '-';
+    for (const [fieldId, value] of Object.entries(fields)) {
+        const el = document.getElementById(fieldId);
+        if (!el) continue;
+        if (fieldId === 'company-tel' && value) {
+            el.innerHTML = `<a href="tel:${value}" class="link mono">${value}</a>`;
+        } else {
+            el.textContent = value || '-';
+        }
     }
+}
+
+function setupHeroActions(company) {
+    const telBtn = document.querySelector('.hero-actions .ha-btn[aria-label="電話"]');
+    if (telBtn && company.tel) {
+        telBtn.addEventListener('click', () => { window.location.href = `tel:${company.tel}`; });
+    }
+}
+
+function setupSegTabs() {
+    const seg = document.getElementById('company-detail-seg');
+    if (!seg) return;
+
+    const buttons = seg.querySelectorAll('button[data-tab]');
+    const panels = document.querySelectorAll('.detail-tab-panel');
+
+    buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const tab = btn.dataset.tab;
+            buttons.forEach((b) => {
+                const active = b === btn;
+                b.classList.toggle('active', active);
+                b.setAttribute('aria-selected', active ? 'true' : 'false');
+            });
+            panels.forEach((panel) => {
+                panel.hidden = panel.dataset.tabPanel !== tab;
+            });
+        });
+    });
+}
+
+function updateRelatedCounts(companyName) {
+    const contactCnt = mockContacts.filter((c) => c.company === companyName).length;
+    const activityCnt = mockActivities.filter((a) => a.company === companyName).length;
+    const projectCnt = mockProjects.filter((p) => p.company === companyName).length;
+
+    const setCnt = (id, n) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = String(n);
+    };
+    setCnt('company-contact-cnt', contactCnt);
+    setCnt('company-activity-cnt', activityCnt);
+    setCnt('company-project-cnt', projectCnt);
 }
 
 function setupMemo(company) {
     const memoEl = document.getElementById('company-memo');
     if (!memoEl) return;
 
-    // Load from localStorage if exists, otherwise from mockData
     const savedMemo = localStorage.getItem(`memo_company_${company.id}`);
     memoEl.value = savedMemo !== null ? savedMemo : (company.memo || '');
 
@@ -55,41 +128,22 @@ function renderContacts(companyName) {
     const container = document.getElementById('company-contacts-list');
     if (!container) return;
 
-    // Filter contacts by company name
     const contacts = mockContacts.filter(c => c.company === companyName);
-    
+
     if (contacts.length === 0) {
-        container.innerHTML = '<p style="color: var(--text-secondary); font-size: 13px;">登録されている担当者はいません</p>';
+        container.innerHTML = '<p class="empty-hint">登録されている担当者はいません</p>';
         return;
     }
 
     container.innerHTML = contacts.map(c => `
-        <div class="compact-contact-item" style="display: block; padding: 16px 0; border-bottom: 1px solid var(--border-color);">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div class="compact-contact-info">
-                    <h4 style="font-size: 16px; margin-bottom: 6px; color: var(--text-primary);">${c.last} ${c.first}</h4>
-                    <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 4px;">${c.company}</p>
-                    <p style="font-size: 13px; color: var(--text-secondary);">${c.dept || ''}</p>
-                </div>
-                <div style="text-align: right; min-width: 200px;">
-                    <div style="display: flex; justify-content: flex-end; margin-bottom: 6px; font-size: 12px;">
-                        <span style="color: var(--text-secondary); width: 80px; text-align: left;">代表TEL</span>
-                        <span style="color: var(--text-primary); font-weight: 500; flex: 1; text-align: right;">${c.tel || '-'}</span>
-                    </div>
-                    <div style="display: flex; justify-content: flex-end; margin-bottom: 6px; font-size: 12px;">
-                        <span style="color: var(--text-secondary); width: 80px; text-align: left;">携帯電話</span>
-                        <span style="color: var(--text-primary); font-weight: 500; flex: 1; text-align: right;">${c.mobile || '-'}</span>
-                    </div>
-                    <div style="display: flex; justify-content: flex-end; font-size: 12px;">
-                        <span style="color: var(--text-secondary); width: 80px; text-align: left;">Email</span>
-                        <span style="color: var(--text-primary); font-weight: 500; flex: 1; text-align: right;">${c.email || '-'}</span>
-                    </div>
-                </div>
-            </div>
+        <div class="contact-block" role="button" tabindex="0" onclick="window.location.hash='contact-detail/${c.id}'">
+            <h4>${c.last} ${c.first}</h4>
+            <p class="sub">${c.company}${c.dept ? ' · ' + c.dept : ''}</p>
+            <dl class="ct-contact-grid">
+                <dt>代表TEL</dt><dd>${c.tel || '-'}</dd>
+                <dt>携帯</dt><dd>${c.mobile || '-'}</dd>
+                <dt>Email</dt><dd>${c.email || '-'}</dd>
+            </dl>
         </div>
     `).join('');
-
-    if (window.lucide) {
-        window.lucide.createIcons();
-    }
 }

@@ -1,28 +1,20 @@
 <div class="auth-screen">
-    <div class="auth-card">
-        <div class="auth-header">
-            <div class="auth-logo">
-                <svg viewBox="0 0 100 100" class="logo-svg">
-                    <path d="M50 5 L90 25 L90 75 L50 95 L10 75 L10 25 Z" fill="none" stroke="currentColor" stroke-width="4" />
-                    <path d="M50 5 L50 95 M90 25 L10 75 M10 25 L90 75" fill="none" stroke="currentColor" stroke-width="2" opacity="0.3" />
-                </svg>
-            </div>
-            <h1>SMOS</h1>
-            <p>承認が必要です</p>
-        </div>
-
-        <div class="auth-body">
-            <div class="form-group">
-                <label for="access-code">承認コードを入力してください</label>
-                <div class="input-wrapper">
-                    <input type="text" id="access-code" placeholder="0000" maxlength="4" autofocus>
-                </div>
-            </div>
-            <button id="btn-submit-code" class="auth-btn">承認する</button>
-        </div>
-        
-        <div class="auth-footer">
-            <p>バージョン 2.4.0</p>
-        </div>
-    </div>
+  <main class="auth-card" role="main">
+    <header class="auth-brand">
+      <div class="auth-brand-mark">S</div>
+      <div class="auth-brand-name">SMOS</div>
+      <div class="spacer"></div>
+      <span class="code">Mobile v2.4.0</span>
+    </header>
+    <section class="auth-body-inner">
+      <h1 class="auth-title">承認コード</h1>
+      <p class="auth-sub">承認コードを入力してください</p>
+      <div class="form-field">
+        <label for="access-code">承認コード <span class="req">*</span></label>
+        <input type="text" id="access-code" placeholder="0000" maxlength="4" autofocus>
+      </div>
+      <button type="button" id="btn-submit-code" class="btn-block">承認する</button>
+    </section>
+    <footer class="auth-footer">© 2026 SMOS</footer>
+  </main>
 </div>

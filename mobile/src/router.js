@@ -55,10 +55,9 @@ export class Router {
 
             // Update active nav item
             this.updateActiveNav(routeKey);
-            
-            // Re-initialize Lucide icons
-            if (window.lucide) {
-                window.lucide.createIcons();
+
+            if (typeof window.onAppRouteChange === 'function') {
+                window.onAppRouteChange(routeKey);
             }
         } catch (error) {
             console.error('Error loading route:', error);
@@ -66,14 +65,17 @@ export class Router {
     }
 
     updateActiveNav(routeKey) {
-        const navItems = document.querySelectorAll('.nav-item');
-        navItems.forEach(item => {
-            const section = item.getAttribute('href').substring(1);
-            if (section === routeKey) {
-                item.classList.add('active');
-            } else {
-                item.classList.remove('active');
-            }
+        const navMap = {
+            'company-detail': 'company',
+            'contact-detail': 'contact',
+            'activity-detail': 'activity',
+            'project-detail': 'project',
+            'scan-result': 'home'
+        };
+        const active = navMap[routeKey] || routeKey;
+        document.querySelectorAll('.tab-item, .nav-item').forEach(item => {
+            const section = item.getAttribute('href')?.substring(1) || item.dataset.nav;
+            item.classList.toggle('active', section === active);
         });
     }
 }
