@@ -1,6 +1,9 @@
 /**
  * Drag-to-resize table columns (CRM CP01 pattern).
  * Requires <colgroup><col></col>…</colgroup> matching thead column count.
+ *
+ * Default (chưa resize): table min-width 100% — full container.
+ * Sau khi user resize hoặc đã có width lưu: width pixel cố định, không auto-fill nữa.
  */
 export function initTableColResize(tableOrSelector, storeKey = 'smos.table.colWidths') {
   const table = typeof tableOrSelector === 'string'
@@ -19,15 +22,21 @@ export function initTableColResize(tableOrSelector, storeKey = 'smos.table.colWi
   table.dataset.colResizeInit = '1';
   const MIN_W = 28;
 
-  function parseColWidthFromAttr(col) {
-    const raw = col.getAttribute('style') || col.style.cssText || '';
-    const m = raw.match(/(?:^|;)\s*width:\s*(\d+(?:\.\d+)?)px/i);
-    if (m) return Math.round(parseFloat(m[1]));
-    const n = parseInt(col.style.width, 10);
-    return Number.isFinite(n) && n > 0 ? n : 0;
+  function isUserSized() {
+    return table.classList.contains('table--col-user-sized');
   }
 
-  function setColWidth(col, widthPx) {
+  function markUserSized() {
+    table.classList.add('table--col-user-sized');
+    table.dataset.userSized = '1';
+  }
+
+  function clearColLocks(col) {
+    col.style.minWidth = '';
+    col.style.maxWidth = '';
+  }
+
+  function setColWidthLocked(col, widthPx) {
     const px = `${Math.max(MIN_W, Math.round(widthPx))}px`;
     col.style.width = px;
     col.style.minWidth = px;
@@ -37,33 +46,22 @@ export function initTableColResize(tableOrSelector, storeKey = 'smos.table.colWi
   function readColWidthPx(col, th) {
     const fromStyle = parseInt(col.style.width, 10);
     if (Number.isFinite(fromStyle) && fromStyle > 0) return fromStyle;
-    const fromAttr = parseColWidthFromAttr(col);
-    if (fromAttr > 0) return fromAttr;
     return Math.max(MIN_W, Math.ceil(th?.getBoundingClientRect().width || 0));
   }
 
-  function getNaturalColWidth(col, th) {
-    const fromAttr = parseColWidthFromAttr(col);
-    if (fromAttr > 0) return fromAttr;
-    return Math.max(MIN_W, Math.ceil(th.getBoundingClientRect().width) || 80);
+  function lockAllColsFromDom() {
+    cols.forEach((col, i) => {
+      setColWidthLocked(col, readColWidthPx(col, ths[i]));
+    });
   }
 
-  /** Lock table width to sum of columns so other cols don't shrink/grow when container is wider. */
   function syncTableWidth() {
+    if (!isUserSized()) return;
     let total = 0;
     cols.forEach((col, i) => {
       total += readColWidthPx(col, ths[i]);
     });
-    if (total > 0) {
-      table.style.width = `${total}px`;
-    }
-  }
-
-  function lockAllColWidthsFromDom() {
-    cols.forEach((col, i) => {
-      setColWidth(col, getNaturalColWidth(col, ths[i]));
-    });
-    syncTableWidth();
+    if (total > 0) table.style.width = `${total}px`;
   }
 
   function enableResizableLayout() {
@@ -91,7 +89,7 @@ export function initTableColResize(tableOrSelector, storeKey = 'smos.table.colWi
       if (widths.some((n) => !Number.isFinite(n) || n < MIN_W)) return false;
 
       widths.forEach((widthNum, i) => {
-        setColWidth(cols[i], widthNum);
+        setColWidthLocked(cols[i], widthNum);
         total += widthNum;
       });
       if (total < 200) return false;
@@ -101,13 +99,16 @@ export function initTableColResize(tableOrSelector, storeKey = 'smos.table.colWi
     }
   }
 
-  const restored = restore();
-  if (!restored) {
-    lockAllColWidthsFromDom();
-  } else {
-    syncTableWidth();
-  }
   enableResizableLayout();
+
+  const restored = restore();
+  if (restored) {
+    markUserSized();
+    syncTableWidth();
+  } else {
+    table.style.width = '';
+    cols.forEach(clearColLocks);
+  }
 
   ths.forEach((th, idx) => {
     if (!cols[idx] || th.querySelector('.col-resizer')) return;
@@ -125,8 +126,15 @@ export function initTableColResize(tableOrSelector, storeKey = 'smos.table.colWi
     let startX = 0;
     let startW = 0;
 
+    function ensureUserSizedFromDom() {
+      if (isUserSized()) return;
+      markUserSized();
+      lockAllColsFromDom();
+    }
+
     function onDown(e) {
       const evt = e.touches ? e.touches[0] : e;
+      ensureUserSizedFromDom();
       dragging = true;
       startX = evt.clientX;
       startW = readColWidthPx(cols[idx], th);
@@ -140,7 +148,7 @@ export function initTableColResize(tableOrSelector, storeKey = 'smos.table.colWi
       if (!dragging) return;
       const evt = e.touches ? e.touches[0] : e;
       const dx = evt.clientX - startX;
-      setColWidth(cols[idx], startW + dx);
+      setColWidthLocked(cols[idx], startW + dx);
       syncTableWidth();
     }
 
@@ -164,13 +172,14 @@ export function initTableColResize(tableOrSelector, storeKey = 'smos.table.colWi
     handle.addEventListener('dblclick', (e) => {
       e.preventDefault();
       e.stopPropagation();
+      ensureUserSizedFromDom();
       cols[idx].style.width = '';
       cols[idx].style.minWidth = '';
       cols[idx].style.maxWidth = '';
       table.style.tableLayout = 'auto';
       const naturalW = th.getBoundingClientRect().width;
       table.style.tableLayout = 'fixed';
-      setColWidth(cols[idx], Math.ceil(naturalW + 8));
+      setColWidthLocked(cols[idx], Math.ceil(naturalW + 8));
       syncTableWidth();
       persist();
     });
@@ -179,12 +188,12 @@ export function initTableColResize(tableOrSelector, storeKey = 'smos.table.colWi
   });
 }
 
-/** Re-sync table width after column reorder (call from tableColReorder). */
+/** Re-sync table width after column reorder / body render (only when user-sized). */
 export function syncResizableTableWidth(tableOrSelector) {
   const table = typeof tableOrSelector === 'string'
     ? document.querySelector(tableOrSelector)
     : tableOrSelector;
-  if (!table) return;
+  if (!table?.classList.contains('table--col-user-sized')) return;
 
   const colgroup = table.querySelector('colgroup');
   const ths = table.querySelectorAll('thead tr:first-child th');

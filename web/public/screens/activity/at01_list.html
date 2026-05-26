@@ -40,15 +40,20 @@
           <div class="panel">
             <div class="company-table-wrap table-wrap">
               <table class="t" id="activityTable">
+                <colgroup>
+                  <col style="width:100px"><col style="width:80px"><col style="width:120px">
+                  <col style="width:90px"><col style="width:220px"><col style="width:100px">
+                  <col style="width:200px">
+                </colgroup>
                 <thead>
                   <tr>
-                    <th>活動日</th>
-                    <th>開始時刻</th>
-                    <th>営業担当</th>
-                    <th>タイプ</th>
-                    <th>会社名</th>
-                    <th>担当(姓)</th>
-                    <th>コメント</th>
+                    <th data-col-key="date">活動日</th>
+                    <th data-col-key="time">開始時刻</th>
+                    <th data-col-key="rep">営業担当</th>
+                    <th data-col-key="type">タイプ</th>
+                    <th data-col-key="company">会社名</th>
+                    <th data-col-key="contact">担当(姓)</th>
+                    <th data-col-key="comment">コメント</th>
                   </tr>
                 </thead>
                 <tbody id="activityTableBody"></tbody>

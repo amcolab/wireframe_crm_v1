@@ -1807,11 +1807,17 @@
   table-layout: auto;
 }
 
-/* Column resize / reorder (tables with <colgroup> + initTableColResize) */
+/* Column resize / reorder — mặc định full width container */
 .company-screen table.t.table--col-resizable {
+  width: 100%;
+  min-width: 100%;
+  table-layout: fixed;
+}
+
+/* Sau khi user đã resize (hoặc restore width đã lưu) */
+.company-screen table.t.table--col-user-sized {
   width: max-content;
   min-width: 0;
-  table-layout: fixed;
 }
 
 .company-screen table.t thead {

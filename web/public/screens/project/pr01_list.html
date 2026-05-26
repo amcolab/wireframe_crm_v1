@@ -37,9 +37,16 @@
           <div class="panel">
             <div class="company-table-wrap table-wrap">
               <table class="t" id="projectTable">
+                <colgroup>
+                  <col style="width:100px"><col style="width:100px"><col style="width:90px">
+                  <col style="width:120px"><col style="width:200px"><col style="width:100px">
+                  <col style="width:180px"><col style="width:220px"><col style="width:100px">
+                </colgroup>
                 <thead><tr>
-                  <th>話題日</th><th>フォロー予定</th><th>ステータス</th><th>営業担当</th>
-                  <th>会社名</th><th>担当(姓)</th><th>案件名</th><th>案件概要</th><th>発生動機</th>
+                  <th data-col-key="issueDate">話題日</th><th data-col-key="followDate">フォロー予定</th>
+                  <th data-col-key="status">ステータス</th><th data-col-key="rep">営業担当</th>
+                  <th data-col-key="company">会社名</th><th data-col-key="contact">担当(姓)</th>
+                  <th data-col-key="name">案件名</th><th data-col-key="summary">案件概要</th><th data-col-key="motivation">発生動機</th>
                 </tr></thead>
                 <tbody id="projectTableBody"></tbody>
               </table>

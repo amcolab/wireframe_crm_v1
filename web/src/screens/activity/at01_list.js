@@ -8,6 +8,7 @@ import {
   hasSearchConditions,
   syncSearchFiltersIndicator,
 } from '../../utils/searchFilters.js';
+import { setupResizableTable, syncResizableTableBody } from '../../utils/tableColumns.js';
 
 let state = {
   activities: [...mockActivities],
@@ -24,6 +25,10 @@ export function init() {
   console.log('Activity screen (AT01) initialized');
   bindUi();
   bindActivityTable();
+  setupResizableTable('#activityTable', {
+    orderKey: 'smos.at01.colOrder',
+    widthKey: 'smos.at01.colWidths',
+  });
   initResizer();
   const card = document.querySelector('#activity-root .company-detail');
   syncEntityDetailTabLayout(card, 'detail');
@@ -197,15 +202,17 @@ function renderActivityTable(rows) {
   tbody.innerHTML = rows.map(a => {
     const sel = String(a.id) === String(state.selectedId);
     return `<tr data-id="${escapeHtml(a.id)}" class="${sel ? 'selected' : ''}">
-      <td>${escapeHtml(a.date)}</td>
-      <td>${escapeHtml(a.time || '')}</td>
-      <td>${escapeHtml(a.rep)}</td>
-      <td><span class="${escapeHtml(a.typeClass || '')}">${escapeHtml(a.type)}</span></td>
-      <td>${escapeHtml(a.company)}</td>
-      <td class="blue-link">${escapeHtml(a.contact)}</td>
-      <td title="${escapeHtml(a.comment)}">${escapeHtml(a.comment)}</td>
+      <td data-col-key="date">${escapeHtml(a.date)}</td>
+      <td data-col-key="time">${escapeHtml(a.time || '')}</td>
+      <td data-col-key="rep">${escapeHtml(a.rep)}</td>
+      <td data-col-key="type"><span class="${escapeHtml(a.typeClass || '')}">${escapeHtml(a.type)}</span></td>
+      <td data-col-key="company">${escapeHtml(a.company)}</td>
+      <td data-col-key="contact" class="blue-link">${escapeHtml(a.contact)}</td>
+      <td data-col-key="comment" title="${escapeHtml(a.comment)}">${escapeHtml(a.comment)}</td>
     </tr>`;
   }).join('');
+
+  syncResizableTableBody('#activityTable');
 }
 
 function fillDetailForm(a) {

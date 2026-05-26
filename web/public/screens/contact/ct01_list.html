@@ -35,10 +35,19 @@
           <div class="panel">
             <div class="company-table-wrap table-wrap">
               <table class="t" id="contactTable">
+                <colgroup>
+                  <col style="width:68px"><col style="width:220px"><col style="width:120px">
+                  <col style="width:90px"><col style="width:90px"><col style="width:140px">
+                  <col style="width:120px"><col style="width:120px"><col style="width:180px">
+                  <col style="width:90px"><col style="width:90px"><col style="width:140px">
+                  <col style="width:200px">
+                </colgroup>
                 <thead><tr>
-                    <th>会社ID</th><th>会社名</th><th>部署名</th><th>担当(姓)</th><th>担当(名)</th>
-                    <th>フリガナ</th><th>TEL</th><th>携帯電話</th><th>Email</th><th>職種</th>
-                    <th>職位</th><th>役職名</th><th>住所</th>
+                    <th data-col-key="companyId">会社ID</th><th data-col-key="company">会社名</th><th data-col-key="dept">部署名</th>
+                    <th data-col-key="last">担当(姓)</th><th data-col-key="first">担当(名)</th>
+                    <th data-col-key="kana">フリガナ</th><th data-col-key="tel">TEL</th><th data-col-key="mobile">携帯電話</th>
+                    <th data-col-key="email">Email</th><th data-col-key="role">職種</th>
+                    <th data-col-key="rank">職位</th><th data-col-key="pos">役職名</th><th data-col-key="addr">住所</th>
                 </tr></thead>
                 <tbody id="contactTableBody"></tbody>
               </table>

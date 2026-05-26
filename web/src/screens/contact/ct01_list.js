@@ -16,6 +16,12 @@ import {
   syncEntityDetailTabLayout,
 } from '../../utils/entityTabTable.js';
 import { takePendingContactSearch } from '../../utils/screenNavigation.js';
+import {
+  setupResizableTable,
+  syncResizableTableBody,
+  buildColgroup,
+  buildTheadRow,
+} from '../../utils/tableColumns.js';
 
 let state = {
   contacts: [...mockContacts],
@@ -58,6 +64,10 @@ export function init() {
       if (c) renderContactProjectsList(c);
     }
   );
+  setupResizableTable('#contactTable', {
+    orderKey: 'smos.ct01.colOrder',
+    widthKey: 'smos.ct01.colWidths',
+  });
   initResizer();
   const card = document.querySelector('#contact-root .company-detail');
   syncEntityDetailTabLayout(card, 'detail');
@@ -273,21 +283,23 @@ function renderContactTable(rows) {
   tbody.innerHTML = rows.map(c => {
     const sel = String(c.id) === String(state.selectedId);
     return `<tr data-id="${escapeHtml(c.id)}" class="${sel ? 'selected' : ''}">
-      <td>${escapeHtml(c.companyId)}</td>
-      <td>${escapeHtml(c.company)}</td>
-      <td>${escapeHtml(c.dept)}</td>
-      <td class="blue-link">${escapeHtml(c.last)}</td>
-      <td>${escapeHtml(c.first)}</td>
-      <td>${escapeHtml(c.kana)}</td>
-      <td class="tel-num">${escapeHtml(c.tel)}</td>
-      <td class="tel-num">${escapeHtml(c.mobile)}</td>
-      <td>${escapeHtml(c.email)}</td>
-      <td>${escapeHtml(c.role)}</td>
-      <td>${escapeHtml(c.rank)}</td>
-      <td>${escapeHtml(c.pos)}</td>
-      <td title="${escapeHtml(c.addr)}">${escapeHtml(c.addr)}</td>
+      <td data-col-key="companyId">${escapeHtml(c.companyId)}</td>
+      <td data-col-key="company">${escapeHtml(c.company)}</td>
+      <td data-col-key="dept">${escapeHtml(c.dept)}</td>
+      <td data-col-key="last" class="blue-link">${escapeHtml(c.last)}</td>
+      <td data-col-key="first">${escapeHtml(c.first)}</td>
+      <td data-col-key="kana">${escapeHtml(c.kana)}</td>
+      <td data-col-key="tel" class="tel-num">${escapeHtml(c.tel)}</td>
+      <td data-col-key="mobile" class="tel-num">${escapeHtml(c.mobile)}</td>
+      <td data-col-key="email">${escapeHtml(c.email)}</td>
+      <td data-col-key="role">${escapeHtml(c.role)}</td>
+      <td data-col-key="rank">${escapeHtml(c.rank)}</td>
+      <td data-col-key="pos">${escapeHtml(c.pos)}</td>
+      <td data-col-key="addr" title="${escapeHtml(c.addr)}">${escapeHtml(c.addr)}</td>
     </tr>`;
   }).join('');
+
+  syncResizableTableBody('#contactTable');
 }
 
 function fillDetailForm(c) {
@@ -335,23 +347,34 @@ function renderContactActivitiesList(c) {
   const start = (state.contactActivitiesPage - 1) * size;
   const sliced = items.slice(start, Math.min(start + size, total));
 
-  let html = `<table class="t"><thead><tr>
-    <th>活動日</th><th>営業担当</th><th>タイプ</th><th>コメント</th><th>目的</th>
-  </tr></thead><tbody>`;
+  const actCols = [
+    { key: 'date', label: '活動日', width: 100 },
+    { key: 'rep', label: '営業担当', width: 120 },
+    { key: 'type', label: 'タイプ', width: 90 },
+    { key: 'comment', label: 'コメント', width: 200 },
+    { key: 'purpose', label: '目的', width: 120 },
+  ];
+  let html = `<table class="t" id="contactActivitiesTable">${buildColgroup(actCols)}${buildTheadRow(actCols)}<tbody>`;
 
   if (!sliced.length) {
     html += '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-3);">表示するデータがありません</td></tr>';
   } else {
     html += sliced.map(a => `<tr>
-      <td>${escapeHtml(a.date)}</td>
-      <td>${escapeHtml(a.rep)}</td>
-      <td><span class="${escapeHtml(a.typeClass || '')}">${escapeHtml(a.type)}</span></td>
-      <td title="${escapeHtml(a.comment)}">${escapeHtml(a.comment)}</td>
-      <td>${escapeHtml(a.purpose || '')}</td>
+      <td data-col-key="date">${escapeHtml(a.date)}</td>
+      <td data-col-key="rep">${escapeHtml(a.rep)}</td>
+      <td data-col-key="type"><span class="${escapeHtml(a.typeClass || '')}">${escapeHtml(a.type)}</span></td>
+      <td data-col-key="comment" title="${escapeHtml(a.comment)}">${escapeHtml(a.comment)}</td>
+      <td data-col-key="purpose">${escapeHtml(a.purpose || '')}</td>
     </tr>`).join('');
   }
   html += '</tbody></table>';
   wrap.innerHTML = html;
+  const actTable = wrap.querySelector('#contactActivitiesTable');
+  setupResizableTable(actTable, {
+    orderKey: 'smos.ct01.contactActivities.colOrder',
+    widthKey: 'smos.ct01.contactActivities.colWidths',
+  });
+  syncResizableTableBody(actTable);
 
   updateTabPager('contactActivities', {
     total,
@@ -385,29 +408,44 @@ function renderContactProjectsList(c) {
   const start = (state.contactProjectsPage - 1) * size;
   const sliced = items.slice(start, Math.min(start + size, total));
 
-  let html = `<table class="t"><thead><tr>
-    <th>話題日</th><th>売上日</th><th>案件ステータス</th><th>営業担当</th><th>案件名</th>
-    <th>担当(姓)</th><th>案件概要</th><th>当初確度</th><th>発生動機</th><th>引合手段</th>
-  </tr></thead><tbody>`;
+  const prCols = [
+    { key: 'issueDate', label: '話題日', width: 100 },
+    { key: 'saleDate', label: '売上日', width: 100 },
+    { key: 'status', label: '案件ステータス', width: 100 },
+    { key: 'rep', label: '営業担当', width: 120 },
+    { key: 'name', label: '案件名', width: 160 },
+    { key: 'contact', label: '担当(姓)', width: 100 },
+    { key: 'summary', label: '案件概要', width: 200 },
+    { key: 'initial', label: '当初確度', width: 90 },
+    { key: 'motivation', label: '発生動機', width: 100 },
+    { key: 'method', label: '引合手段', width: 100 },
+  ];
+  let html = `<table class="t" id="contactProjectsTable">${buildColgroup(prCols)}${buildTheadRow(prCols)}<tbody>`;
 
   if (!sliced.length) {
     html += '<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--text-3);">表示するデータがありません</td></tr>';
   } else {
     html += sliced.map(p => `<tr>
-      <td>${escapeHtml(p.issueDate || '-')}</td>
-      <td>${escapeHtml(p.saleDate || '-')}</td>
-      <td>${escapeHtml(p.status || '-')}</td>
-      <td>${escapeHtml(p.rep || '-')}</td>
-      <td>${escapeHtml(p.name || '-')}</td>
-      <td>${escapeHtml(p.contact || '-')}</td>
-      <td title="${escapeHtml(p.summary || '')}">${escapeHtml(p.summary || '')}</td>
-      <td>${escapeHtml(p.initial || '-')}</td>
-      <td>${escapeHtml(p.motivation || '-')}</td>
-      <td>${escapeHtml(p.method || '-')}</td>
+      <td data-col-key="issueDate">${escapeHtml(p.issueDate || '-')}</td>
+      <td data-col-key="saleDate">${escapeHtml(p.saleDate || '-')}</td>
+      <td data-col-key="status">${escapeHtml(p.status || '-')}</td>
+      <td data-col-key="rep">${escapeHtml(p.rep || '-')}</td>
+      <td data-col-key="name">${escapeHtml(p.name || '-')}</td>
+      <td data-col-key="contact">${escapeHtml(p.contact || '-')}</td>
+      <td data-col-key="summary" title="${escapeHtml(p.summary || '')}">${escapeHtml(p.summary || '')}</td>
+      <td data-col-key="initial">${escapeHtml(p.initial || '-')}</td>
+      <td data-col-key="motivation">${escapeHtml(p.motivation || '-')}</td>
+      <td data-col-key="method">${escapeHtml(p.method || '-')}</td>
     </tr>`).join('');
   }
   html += '</tbody></table>';
   wrap.innerHTML = html;
+  const prTable = wrap.querySelector('#contactProjectsTable');
+  setupResizableTable(prTable, {
+    orderKey: 'smos.ct01.contactProjects.colOrder',
+    widthKey: 'smos.ct01.contactProjects.colWidths',
+  });
+  syncResizableTableBody(prTable);
 
   updateTabPager('contactProjects', {
     total,
