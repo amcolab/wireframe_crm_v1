@@ -2661,12 +2661,14 @@ select.input {
 }
 
 /* company advanced search start */
-#companyAdvancedSearchCol1 .ff > label {
+#companyAdvancedSearchCol1 .ff > label,
+#companyAdvancedSearchCol1 .ff .sub > label {
   min-width: 60.02px;
 }
 
-#companyAdvancedSearchCol2 .ff > label {
-  min-width: 46.69px;
+#companyAdvancedSearchCol2 .ff > label,
+#companyAdvancedSearchCol2 .ff .sub > label {
+  min-width: 60.02px;
 }
 
 #companyAdvancedSearchCol3 .ff > label {

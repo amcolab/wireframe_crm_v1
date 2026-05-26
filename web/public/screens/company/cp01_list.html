@@ -460,8 +460,8 @@
             </button>
           </div>
 
-          <div class="modal-body" style="padding: 18px 22px;">
-            <div class="form-4col cols-3 density-roomy" style="padding:0; grid-template-columns: minmax(250px, 1fr) minmax(400px, 1fr) minmax(300px, 1fr); overflow: auto;">
+          <div class="modal-body">
+            <div class="form-4col cols-3 density-roomy" style="padding:18px 22px; grid-template-columns: minmax(350px, 1fr) minmax(400px, 1fr) minmax(300px, 1fr); overflow: auto;">
               <!-- Column 1 -->
               <div class="col" id="companyAdvancedSearchCol1">
                 <div class="ff">
@@ -473,55 +473,13 @@
                   <input name="name" class="input" type="text" placeholder="部分一致" />
                 </div>
                 <div class="ff">
-                  <label>業界</label>
-                  <div class="multi-select-dropdown" data-name="industry" data-placeholder="業界を選択">
-                    <div class="multi-select-trigger">業界を選択</div>
-                    <div class="multi-select-content">
-                      <label class="multi-select-option"><input type="checkbox" value="製造業"> 製造業</label>
-                      <label class="multi-select-option"><input type="checkbox" value="卸売業"> 卸売業</label>
-                      <label class="multi-select-option"><input type="checkbox" value="小売業"> 小売業</label>
-                      <label class="multi-select-option"><input type="checkbox" value="金融業"> 金融業</label>
-                    </div>
-                  </div>
+                  <label>代表TEL</label>
+                  <input name="tel" class="input" type="text" />
                 </div>
                 <div class="ff">
-                  <label>業種</label>
-                  <div class="multi-select-dropdown" data-name="biz" data-placeholder="業種を選択">
-                    <div class="multi-select-trigger">業種を選択</div>
-                    <div class="multi-select-content">
-                      <label class="multi-select-option"><input type="checkbox" value="金属製品"> 金属製品</label>
-                      <label class="multi-select-option"><input type="checkbox" value="化学・素材"> 化学・素材</label>
-                      <label class="multi-select-option"><input type="checkbox" value="自動車・輸送用機械"> 自動車・輸送用機械</label>
-                      <label class="multi-select-option"><input type="checkbox" value="木工・家具"> 木工・家具</label>
-                    </div>
-                  </div>
+                  <label>代表FAX</label>
+                  <input name="fax" class="input" type="text" />
                 </div>
-                <div class="ff">
-                  <label>規模ランク</label>
-                  <div class="multi-select-dropdown" data-name="scale" data-placeholder="規模を選択">
-                    <div class="multi-select-trigger">規模を選択</div>
-                    <div class="multi-select-content">
-                      <label class="multi-select-option"><input type="checkbox" value="1～30人"> 1～30人</label>
-                      <label class="multi-select-option"><input type="checkbox" value="31～100人"> 31～100人</label>
-                      <label class="multi-select-option"><input type="checkbox" value="101～300人"> 101～300人</label>
-                      <label class="multi-select-option"><input type="checkbox" value="301人以上"> 301人以上</label>
-                    </div>
-                  </div>
-                </div>
-                <div class="ff">
-                  <label>会社種別</label>
-                  <div class="multi-select-dropdown" data-name="type" data-placeholder="種別を選択">
-                    <div class="multi-select-trigger">種別を選択</div>
-                    <div class="multi-select-content">
-                      <label class="multi-select-option"><input type="checkbox" value="メーカー"> メーカー</label>
-                      <label class="multi-select-option"><input type="checkbox" value="その他"> その他</label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Column 2 -->
-              <div class="col" id="companyAdvancedSearchCol2">
                 <div class="ff">
                   <label>地区</label>
                   <div class="multi-select-dropdown" data-name="area" data-placeholder="地区を選択">
@@ -558,14 +516,56 @@
                   <label>住所</label>
                   <input name="addr" class="input" type="text" placeholder="部分一致" />
                 </div>
-                <div class="ff inline-2">
-                  <div class="sub">
-                    <label>代表TEL</label>
-                    <input name="tel" class="input" type="text" />
+              </div>
+
+              <!-- Column 2 -->
+              <div class="col" id="companyAdvancedSearchCol2">
+                <div class="ff">
+                  <label>業界</label>
+                  <div class="multi-select-dropdown" data-name="industry" data-placeholder="業界を選択">
+                    <div class="multi-select-trigger">業界を選択</div>
+                    <div class="multi-select-content">
+                      <label class="multi-select-option"><input type="checkbox" value="製造業"> 製造業</label>
+                      <label class="multi-select-option"><input type="checkbox" value="卸売業"> 卸売業</label>
+                      <label class="multi-select-option"><input type="checkbox" value="小売業"> 小売業</label>
+                      <label class="multi-select-option"><input type="checkbox" value="金融業"> 金融業</label>
+                    </div>
                   </div>
-                  <div class="sub">
-                    <label>代表FAX</label>
-                    <input name="fax" class="input" type="text" />
+                </div>
+
+                <div class="ff">
+                  <label>業種</label>
+                  <div class="multi-select-dropdown" data-name="biz" data-placeholder="業種を選択">
+                    <div class="multi-select-trigger">業種を選択</div>
+                    <div class="multi-select-content">
+                      <label class="multi-select-option"><input type="checkbox" value="金属製品"> 金属製品</label>
+                      <label class="multi-select-option"><input type="checkbox" value="化学・素材"> 化学・素材</label>
+                      <label class="multi-select-option"><input type="checkbox" value="自動車・輸送用機械"> 自動車・輸送用機械</label>
+                      <label class="multi-select-option"><input type="checkbox" value="木工・家具"> 木工・家具</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="ff">
+                  <label>規模ランク</label>
+                  <div class="multi-select-dropdown" data-name="scale" data-placeholder="規模を選択">
+                    <div class="multi-select-trigger">規模を選択</div>
+                    <div class="multi-select-content">
+                      <label class="multi-select-option"><input type="checkbox" value="1～30人"> 1～30人</label>
+                      <label class="multi-select-option"><input type="checkbox" value="31～100人"> 31～100人</label>
+                      <label class="multi-select-option"><input type="checkbox" value="101～300人"> 101～300人</label>
+                      <label class="multi-select-option"><input type="checkbox" value="301人以上"> 301人以上</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="ff">
+                  <label>会社種別</label>
+                  <div class="multi-select-dropdown" data-name="type" data-placeholder="種別を選択">
+                    <div class="multi-select-trigger">種別を選択</div>
+                    <div class="multi-select-content">
+                      <label class="multi-select-option"><input type="checkbox" value="メーカー"> メーカー</label>
+                      <label class="multi-select-option"><input type="checkbox" value="その他"> その他</label>
+                    </div>
                   </div>
                 </div>
                 <div class="ff">
