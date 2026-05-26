@@ -1791,7 +1791,7 @@
 }
 
 .company-screen table.t {
-  width: max-content;
+  width: fit-content;
   min-width: 100%;
   border-collapse: separate;
   border-spacing: 0;
@@ -1818,6 +1818,9 @@
   border-right: 1px solid #e2e8f0;
   border-bottom: none;
   white-space: nowrap;
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   line-height: 1.4;
   box-shadow:
     inset 0 -2px 0 #cbd5e1,
@@ -1913,6 +1916,7 @@
   border-right: 1px solid #f1f5f9;
   color: var(--text-1);
   white-space: nowrap;
+  max-width: 0;
   line-height: 1.2;
   text-overflow: ellipsis;
   overflow: hidden;
