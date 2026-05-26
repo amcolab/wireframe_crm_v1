@@ -2,6 +2,12 @@ import { q, escapeHtml } from '../../utils/helpers.js';
 import { mockProjects, mockActivities } from '../../utils/mockData.js';
 import { renderPageNumberButtons } from '../../utils/pager.js';
 import {
+  bindAdvancedSearchForm,
+  clearAdvancedSearch,
+  hasSearchConditions,
+  syncSearchFiltersIndicator,
+} from '../../utils/searchFilters.js';
+import {
   TAB_EMPTY,
   renderTabEmptyState,
   showTabPager,
@@ -16,6 +22,7 @@ let state = {
   selectedId: mockProjects[0]?.id ? String(mockProjects[0].id) : null,
   page: 1,
   pageSize: 25,
+  advanced: null,
   projectActivitiesPage: 1,
   projectActivitiesPageSize: 10,
 };
@@ -87,17 +94,42 @@ function bindUi() {
     });
   });
 
+  const btnProjectAdv = q('btnProjectAdvancedSearch');
+  bindAdvancedSearchForm({
+    btn: btnProjectAdv,
+    dlg: q('dlgProjectAdvancedSearch'),
+    form: q('formProjectAdvancedSearch'),
+    state,
+    onApply: applySearch,
+  });
+
+  const onProjectBasicInput = () => {
+    if (!hasProjectBasicSearch() && !hasSearchConditions(state.advanced)) {
+      syncSearchFiltersIndicator(btnProjectAdv, null);
+    }
+  };
+  ['projectSearchStatus', 'projectSearchSalesRep', 'projectSearchCompany', 'projectSearchDateFrom', 'projectSearchDateTo']
+    .forEach((id) => q(id)?.addEventListener('input', onProjectBasicInput));
+  q('projectSearchStatus')?.addEventListener('change', onProjectBasicInput);
+
   q('btnProjectSearch')?.addEventListener('click', applySearch);
   q('btnProjectClear')?.addEventListener('click', () => {
+    if (q('projectSearchStatus')) q('projectSearchStatus').value = '';
     if (q('projectSearchCompany')) q('projectSearchCompany').value = '';
     if (q('projectSearchSalesRep')) q('projectSearchSalesRep').value = '';
+    if (q('projectSearchDateFrom')) q('projectSearchDateFrom').value = '';
+    if (q('projectSearchDateTo')) q('projectSearchDateTo').value = '';
+    clearAdvancedSearch({
+      btn: btnProjectAdv,
+      form: q('formProjectAdvancedSearch'),
+      state,
+    });
     state.filtered = [...state.projects];
     state.page = 1;
     state.selectedId = state.filtered[0]?.id ? String(state.filtered[0].id) : null;
     render();
   });
   q('btnProjectNewMain')?.addEventListener('click', () => { q('dlgProjectDetail')?.showModal(); });
-  q('btnProjectAdvancedSearch')?.addEventListener('click', () => { q('dlgProjectAdvancedSearch')?.showModal(); });
   q('btnPrTabNewActivity')?.addEventListener('click', () => { q('dlgActivityDetail')?.showModal(); });
   q('btnPrDetailContactLookup')?.addEventListener('click', () => { q('dlgContactLookup')?.showModal(); });
   q('btnPrDetailContactNew')?.addEventListener('click', () => { q('dlgContactDetailNew')?.showModal(); });
@@ -123,6 +155,16 @@ function bindUi() {
     state.page = 1;
     render();
   });
+}
+
+function hasProjectBasicSearch() {
+  return !!(
+    q('projectSearchStatus')?.value
+    || q('projectSearchSalesRep')?.value?.trim()
+    || q('projectSearchCompany')?.value?.trim()
+    || q('projectSearchDateFrom')?.value
+    || q('projectSearchDateTo')?.value
+  );
 }
 
 function applySearch() {
@@ -158,6 +200,8 @@ function bindProjectTable() {
 }
 
 function render() {
+  syncSearchFiltersIndicator(q('btnProjectAdvancedSearch'), state.advanced);
+
   const total = state.filtered.length;
   const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
   if (state.page > totalPages) state.page = totalPages;

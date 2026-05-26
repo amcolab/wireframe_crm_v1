@@ -2,6 +2,12 @@ import { q, escapeHtml } from '../../utils/helpers.js';
 import { mockContacts, mockActivities, mockProjects } from '../../utils/mockData.js';
 import { renderPageNumberButtons } from '../../utils/pager.js';
 import {
+  bindAdvancedSearchForm,
+  clearAdvancedSearch,
+  hasSearchConditions,
+  syncSearchFiltersIndicator,
+} from '../../utils/searchFilters.js';
+import {
   TAB_EMPTY,
   renderTabEmptyState,
   showTabPager,
@@ -16,6 +22,7 @@ let state = {
   selectedId: mockContacts[0]?.id ? String(mockContacts[0].id) : null,
   page: 1,
   pageSize: 25,
+  advanced: null,
   contactActivitiesPage: 1,
   contactActivitiesPageSize: 10,
   contactProjectsPage: 1,
@@ -104,7 +111,23 @@ function bindUi() {
   q('btnContactNewActivity')?.addEventListener('click', () => { q('dlgActivityDetail')?.showModal(); });
   q('btnContactCreateMain')?.addEventListener('click', () => { q('dlgContactDetailNew')?.showModal(); });
   q('btnContactNewProject')?.addEventListener('click', () => { q('dlgProjectDetail')?.showModal(); });
-  q('btnContactAdvancedSearch')?.addEventListener('click', () => { q('dlgContactAdvancedSearch')?.showModal(); });
+  const btnContactAdv = q('btnContactAdvancedSearch');
+  bindAdvancedSearchForm({
+    btn: btnContactAdv,
+    dlg: q('dlgContactAdvancedSearch'),
+    form: q('formContactAdvancedSearch'),
+    state,
+    onApply: applySearch,
+  });
+
+  const onContactBasicInput = () => {
+    if (!hasContactBasicSearch() && !hasSearchConditions(state.advanced)) {
+      syncSearchFiltersIndicator(btnContactAdv, null);
+    }
+  };
+  q('contactSearchName')?.addEventListener('input', onContactBasicInput);
+  q('contactSearchCompany')?.addEventListener('input', onContactBasicInput);
+
   q('btnMainContactLookupCompany')?.addEventListener('click', () => { q('dlgCompanyLookup')?.showModal(); });
   q('btnMainContactCreateCompany')?.addEventListener('click', () => { q('dlgCompanyCreate')?.showModal(); });
   q('btnContactSave')?.addEventListener('click', () => { alert('保存しました'); });
@@ -114,6 +137,11 @@ function bindUi() {
   q('btnContactClear')?.addEventListener('click', () => {
     if (q('contactSearchName')) q('contactSearchName').value = '';
     if (q('contactSearchCompany')) q('contactSearchCompany').value = '';
+    clearAdvancedSearch({
+      btn: btnContactAdv,
+      form: q('formContactAdvancedSearch'),
+      state,
+    });
     state.filtered = [...state.contacts];
     state.page = 1;
     state.selectedId = state.filtered[0]?.id ? String(state.filtered[0].id) : null;
@@ -139,6 +167,13 @@ function bindUi() {
     state.page = 1;
     render();
   });
+}
+
+function hasContactBasicSearch() {
+  return !!(
+    q('contactSearchName')?.value?.trim()
+    || q('contactSearchCompany')?.value?.trim()
+  );
 }
 
 function applySearch() {
@@ -173,6 +208,8 @@ function bindContactTable() {
 }
 
 function render() {
+  syncSearchFiltersIndicator(q('btnContactAdvancedSearch'), state.advanced);
+
   const total = state.filtered.length;
   const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
   if (state.page > totalPages) state.page = totalPages;

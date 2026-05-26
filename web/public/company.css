@@ -2323,6 +2323,30 @@ select.input {
   align-items: center;
 }
 
+.has-search-filters {
+  position: relative;
+
+  background: var(--brand-600) !important;
+  color: #fff !important;
+  border-color: var(--brand-600) !important;
+  font-weight: 600 !important;
+
+  &:hover {
+    background: var(--brand-500) !important;
+    border-color: var(--brand-500) !important;
+  }
+  /* &::after {
+    content: "";
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--accent-500);
+  } */
+}
+
 /* ------ Standalone Pager (.pager-standalone) ------ */
 .pager-standalone {
   background: var(--surface);

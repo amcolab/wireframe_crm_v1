@@ -2,6 +2,13 @@ import { q, escapeHtml, toNum, includesPartial } from '../../utils/helpers.js';
 import { mockCompanies, mockContacts, mockActivities, mockProjects } from '../../utils/mockData.js';
 import { showToast } from '../../utils/toast.js';
 import { initTableColResize } from '../../utils/tableColResize.js';
+import {
+  readFormSearchConditions,
+  hasSearchConditions,
+  syncSearchFiltersIndicator,
+  resetFormMultiSelects,
+  clearAdvancedSearch,
+} from '../../utils/searchFilters.js';
 
 let state = {
   companies: [...mockCompanies],
@@ -78,12 +85,17 @@ function bindUi() {
 
   btnClear?.addEventListener('click', () => {
     if (inputName) inputName.value = '';
-    state.advanced = null;
     state.filtered = [...state.companies];
     state.page = 1;
     state.selectedId = state.filtered[0] ? String(state.filtered[0].id) : null;
-    if (formAdv) formAdv.reset();
+    clearAdvancedSearch({ btn: btnAdv, form: formAdv, state });
     render();
+  });
+
+  inputName?.addEventListener('input', () => {
+    if (!hasAnySearchConditions(inputName, state.advanced)) {
+      syncSearchFiltersIndicator(btnAdv, null);
+    }
   });
 
   btnAdv?.addEventListener('click', () => {
@@ -92,19 +104,17 @@ function bindUi() {
 
   btnAdvClear?.addEventListener('click', () => {
     formAdv?.reset();
-    document.querySelectorAll('.multi-select-trigger').forEach(trigger => {
-      const dropdown = trigger.closest('.multi-select-dropdown');
-      trigger.textContent = dropdown.dataset.placeholder || '選択..';
-    });
+    resetFormMultiSelects(formAdv);
   });
 
   btnAdvApply?.addEventListener('click', () => {
-    const adv = readAdvancedSearch(formAdv);
-    state.advanced = adv;
+    const adv = readFormSearchConditions(formAdv);
+    state.advanced = hasSearchConditions(adv) ? adv : null;
     const name = (inputName?.value ?? '').trim();
-    state.filtered = filterCompanies(state.companies, { ...adv, name });
+    state.filtered = filterCompanies(state.companies, { ...(state.advanced || {}), name });
     state.page = 1;
     state.selectedId = state.filtered[0] ? String(state.filtered[0].id) : null;
+    syncSearchFiltersIndicator(btnAdv, state.advanced);
     dlgAdv?.close();
     render();
   });
@@ -404,6 +414,8 @@ function bindUi() {
 }
 
 function render() {
+  syncSearchFiltersIndicator(q('btnCompanyAdvancedSearch'), state.advanced);
+
   const tbody = q('companyTableBody');
   const meta = q('companyResultMeta');
   const totalCount = q('companyTotalCount');
@@ -477,13 +489,9 @@ function filterCompanies(companies, cond) {
   });
 }
 
-function readAdvancedSearch(form) {
-  if (!form) return {};
-  const fd = new FormData(form);
-  return {
-    keyword: String(fd.get('keyword') || ''),
-    name: String(fd.get('name') || ''),
-  };
+function hasAnySearchConditions(inputName, advanced) {
+  const name = (inputName?.value ?? '').trim();
+  return !!name || hasSearchConditions(advanced);
 }
 
 function fillCreateDialog(form, selected) {
