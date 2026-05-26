@@ -85,21 +85,21 @@
         <div class="company-detail detail-tab-mode">
           <div class="panel-detail">
             <div class="panel-detail-body">
-            <div class="detail-form">
+            <div class="detail-form" style="overflow: auto;">
               <!-- Col 1 -->
-              <div class="form-col">
+              <div class="form-col" id="activityDetailCol1">
                 <div class="form-row">
                   <label>活動ID</label>
                   <input disabled id="atDetailId" type="text" value="29193" />
                 </div>
                 <div class="form-row two">
-                  <div>
+                  <div class="sub">
                     <label>活動タイプ <span class="req">*</span></label>
                     <select class="req-field-bg" id="atDetailType">
                       <option>TEL</option>
                     </select>
                   </div>
-                  <div>
+                  <div class="sub">
                     <label>目的</label>
                     <select id="atDetailPurpose">
                       <option>売り後フォロー</option>
@@ -114,7 +114,7 @@
                 </div>
                 <div class="form-row">
                   <label>担当者 <span class="req">*</span></label>
-                  <div class="search-input-group">
+                  <div class="search-input-group" style="flex: 1;">
                     <input class="req-field-bg" id="atDetailContact" style="flex: 1;" type="text"
                       value="佐藤 瑞葵 [旭川エレクトロニクスサービス株式会社]" />
                     <button class="icon-btn-inline" id="btnAtDetailContactLookup" type="button">🔍</button>
@@ -130,18 +130,18 @@
                   </select>
                 </div>
                 <div class="form-row two">
-                  <div>
+                  <div class="sub">
                     <label>案件ID</label>
                     <input id="atDetailProjectId" type="text" />
                   </div>
-                  <div>
+                  <div class="sub">
                     <label>リードID</label>
                     <input id="atDetailLeadId" type="text" />
                   </div>
                 </div>
                 <div class="form-row">
                   <label>案件名</label>
-                  <div class="search-input-group">
+                  <div class="search-input-group" style="flex: 1;">
                     <input id="atDetailProjectName" style="flex: 1;" type="text" />
                     <button class="icon-btn-inline" id="btnAtDetailProjectLookup" type="button">🔍</button>
                     <button class="btn btn-secondary" id="btnAtDetailProjectNew"
@@ -154,13 +154,13 @@
                   <input id="atDetailDate" type="date" value="2026-04-29" />
                 </div>
                 <div class="form-row two">
-                  <div>
+                  <div class="sub">
                     <label>開始時刻</label>
                     <select id="atDetailStartTime">
                       <option>10:15</option>
                     </select>
                   </div>
-                  <div>
+                  <div class="sub">
                     <label>終了時刻</label>
                     <select id="atDetailEndTime">
                       <option>-</option>
@@ -168,58 +168,61 @@
                   </div>
                 </div>
                 <div class="form-row two">
-                  <div>
+                  <div class="sub">
                     <label>活動時間</label>
                     <input disabled id="atDetailDuration" type="text" />
                   </div>
-                  <div>
+                  <div class="sub">
                     <label>面談人数</label>
                     <input id="atDetailAttendees" type="number" />
                   </div>
                 </div>
-                <div class="check-group" style="padding-top: 10px; gap: 15px;">
-                  <label class="check"><input id="atDetailFollowCompleted" type="checkbox" /> フォロー完了</label>
-                  <label class="check"><input id="atDetailHasAppt" type="checkbox" /> アポ有</label>
-                  <label class="check"><input id="atDetailIsClaim" type="checkbox" /> クレーム</label>
+                <div class="form-row" style="padding-top: 10px;">
+                  <label></label>
+                  <div>
+                    <label class="check"><input id="atDetailFollowCompleted" type="checkbox" style="margin-left: 0px;" /> フォロー完了</label>
+                    <label class="check"><input id="atDetailHasAppt" type="checkbox" /> アポ有</label>
+                    <label class="check"><input id="atDetailIsClaim" type="checkbox" /> クレーム</label>
+                  </div>
                 </div>
               </div>
               <!-- Col 2 -->
-              <div class="form-col">
+              <div class="form-col" id="activityDetailCol2">
                 <div class="form-row form-row--remark">
                   <label>コメント</label>
-                  <textarea id="atDetailComment" class="input" rows="4">wwww</textarea>
+                  <textarea id="atDetailComment" class="input" rows="4" style="flex: 1;">wwww</textarea>
                 </div>
               </div>
               <!-- Col 3 -->
-              <div class="form-col">
+              <div class="form-col" id="activityDetailCol3">
                 <div class="form-row">
                   <label>会社名</label>
-                  <div style="display:flex; gap:8px;">
+                  <div style="display:flex; gap:8px; flex:1;">
                     <input disabled id="atDetailCompanyId" style="width: 80px;" type="text" value="1141" />
                     <input disabled id="atDetailCompanyName" style="flex:1" type="text"
                       value="旭川エレクトロニクスサービス株式会社" />
                   </div>
                 </div>
                 <div class="form-row two">
-                  <div>
+                  <div class="sub">
                     <label>会社種別</label>
                     <select disabled id="atDetailCompanyType">
                       <option>その他</option>
                     </select>
                   </div>
-                  <div>
+                  <div class="sub">
                     <label>代表TEL</label>
                     <input disabled id="atDetailCompanyTel" type="text" value="077-589-2569" />
                   </div>
                 </div>
                 <div class="form-row two">
-                  <div>
+                  <div class="sub">
                     <label>業界</label>
                     <select disabled id="atDetailIndustry">
                       <option>製造業</option>
                     </select>
                   </div>
-                  <div>
+                  <div class="sub">
                     <label>規模ランク</label>
                     <select disabled id="atDetailScale">
                       <option>1人～30人</option>
@@ -231,11 +234,11 @@
                   <input disabled id="atDetailDept" type="text" value="クオリティアシュアランス部" />
                 </div>
                 <div class="form-row two">
-                  <div>
+                  <div class="sub">
                     <label>郵便番号</label>
                     <input disabled id="atDetailPostal" type="text" value="7059306" />
                   </div>
-                  <div>
+                  <div class="sub">
                     <label>都道府県</label>
                     <select disabled id="atDetailPref">
                       <option>北海道</option>
@@ -248,21 +251,21 @@
                 </div>
                 <div class="detail-audit">
                   <div class="form-row two">
-                    <div>
+                    <div class="sub">
                       <label>作成日時</label>
                       <input disabled id="atDetailCreatedAt" type="text" value="2026/04/29" />
                     </div>
-                    <div>
+                    <div class="sub">
                       <label>作成者</label>
                       <input disabled id="atDetailCreatedBy" type="text" value="中谷 太輔" />
                     </div>
                   </div>
-                  <div class="form-row two">
-                    <div>
+                  <div class="form-row two" style="margin-top: 10px;">
+                    <div class="sub">
                       <label>更新日時</label>
                       <input disabled id="atDetailUpdatedAt" type="text" />
                     </div>
-                    <div>
+                    <div class="sub">
                       <label>更新者</label>
                       <input disabled id="atDetailUpdatedBy" type="text" />
                     </div>
@@ -270,7 +273,7 @@
                 </div>
               </div>
               <!-- Col 4 -->
-              <div class="form-col">
+              <div class="form-col" id="activityDetailCol4">
                 <div class="form-row">
                   <label>活動自由使用欄1</label>
                   <input id="atDetailFree1" type="text" />
@@ -301,18 +304,18 @@
                 </div>
                 <div class="form-row attach-field">
                   <label>添付資料</label>
-                  <div class="attach-box attach-box--compact">ここにドラッグ＆ドロップ</div>
+                  <div class="attach-box attach-box--compact" style="flex: 1;">ここにドラッグ＆ドロップ</div>
                 </div>
               </div>
-              </div>
-              <div class="form-foot-split">
+            </div>
+            <div class="form-foot-split">
                 <div class="left">
                   <button class="btn btn-danger" id="btnAtDetailDelete" type="button">削除</button>
                 </div>
                 <div class="right">
                   <button class="btn btn-primary" id="btnAtDetailSave" type="button">保存</button>
                 </div>
-              </div>
+            </div>
             </div>
           </div>
         </div>

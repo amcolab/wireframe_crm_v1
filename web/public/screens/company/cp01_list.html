@@ -126,7 +126,7 @@
               <div class="panel-detail-body">
               <div class="form-4col">
                 <!-- Column 1 -->
-                <div class="col">
+                <div class="col" id="companyDetailCol1">
                   <div class="ff">
                     <label>会社ID</label>
                     <input id="companyDetailId" class="input" type="text" disabled />
@@ -190,7 +190,7 @@
                 </div>
 
                 <!-- Column 2 -->
-                <div class="col">
+                <div class="col" id="companyDetailCol2">
                   <div class="ff">
                     <label>業界</label>
                     <select id="companyDetailIndustry" class="input">
@@ -248,14 +248,14 @@
                     </div>
                   </div>
                   <div class="ff">
-                    <label>資本金（百万円）</label>
+                    <label>資本金<br/>(百万円)</label>
                     <input id="companyDetailCapital" class="input" type="text" />
                   </div>
                 </div>
 
                 <!-- Column 3 -->
-                <div class="col">
-                  <div class="ff ff-remark">
+                <div class="col" id="companyDetailCol3">
+                  <div class="ff ff-remark items-start">
                     <label>備考</label>
                     <textarea id="companyDetailRemark" class="input" rows="4"></textarea>
                   </div>
@@ -282,7 +282,7 @@
                 </div>
 
                 <!-- Column 4 -->
-                <div class="col">
+                <div class="col" id="companyDetailCol4">
                   <div class="ff"><label>会社自由使用欄1</label><input id="companyDetailFree1" class="input" type="text" /></div>
                   <div class="ff"><label>会社自由使用欄2</label><input id="companyDetailFree2" class="input" type="text" /></div>
                   <div class="ff"><label>会社自由使用欄3</label><input id="companyDetailFree3" class="input" type="text" /></div>
@@ -290,7 +290,7 @@
                   <div class="ff"><label>会社自由使用欄5</label><input id="companyDetailFree5" class="input" type="text" /></div>
                   <div class="ff"><label>会社自由使用欄6</label><input id="companyDetailFree6" class="input" type="text" /></div>
                   <div class="ff"><label>会社自由使用欄7</label><input id="companyDetailFree7" class="input" type="text" /></div>
-                  <div class="ff attach-field">
+                  <div class="ff attach-field items-start">
                     <label>添付資料 <span class="attach-count">(2件)</span></label>
                     <div class="attach-list" id="companyAttachList">
                       <div class="attach-item">
@@ -456,9 +456,9 @@
           </div>
 
           <div class="modal-body" style="padding: 18px 22px;">
-            <div class="form-4col cols-3 density-roomy" style="padding:0;">
+            <div class="form-4col cols-3 density-roomy" style="padding:0; grid-template-columns: minmax(250px, 1fr) minmax(400px, 1fr) minmax(300px, 1fr); overflow: auto;">
               <!-- Column 1 -->
-              <div class="col">
+              <div class="col" id="companyAdvancedSearchCol1">
                 <div class="ff">
                   <label>検索ワード</label>
                   <input name="keyword" class="input" type="text" placeholder="全項目から部分一致" />
@@ -516,7 +516,7 @@
               </div>
 
               <!-- Column 2 -->
-              <div class="col">
+              <div class="col" id="companyAdvancedSearchCol2">
                 <div class="ff">
                   <label>地区</label>
                   <div class="multi-select-dropdown" data-name="area" data-placeholder="地区を選択">
@@ -569,7 +569,7 @@
                     <input name="closingMonthFrom" class="input" type="text" placeholder="1" style="flex:1;" />
                     <span style="color:var(--text-3);">～</span>
                     <input name="closingMonthTo" class="input" type="text" placeholder="12" style="flex:1;" />
-                    <span style="color:var(--text-2); font-size:11px;">(月)</span>
+                    <span style="color:var(--text-2); font-size:11px; min-width: 40.33px; text-align: end;">(月)</span>
                   </div>
                 </div>
                 <div class="ff">
@@ -584,7 +584,7 @@
               </div>
 
               <!-- Column 3 -->
-              <div class="col">
+              <div class="col" id="companyAdvancedSearchCol3">
                 <div class="ff"><label>会社自由使用欄1</label><input name="free1" class="input" type="text" /></div>
                 <div class="ff"><label>会社自由使用欄2</label><input name="free2" class="input" type="text" /></div>
                 <div class="ff"><label>会社自由使用欄3</label><input name="free3" class="input" type="text" /></div>
@@ -616,9 +616,9 @@
           </div>
 
           <div class="modal-body" style="padding:0;">
-            <div class="form-4col density-roomy">
+            <div class="form-4col density-roomy" style="grid-template-columns: minmax(250px, 1fr) minmax(250px, 1fr) minmax(250px, 1fr) minmax(250px, 1fr); overflow-y: auto; overflow-x: auto;">
               <!-- Column 1 -->
-              <div class="col">
+              <div class="col" id="companyCreateCol1">
                 <div class="ff">
                   <label>会社ID</label>
                   <input name="id" id="companyCreateId" class="input" type="text" disabled placeholder="(登録後に採番)" />
@@ -677,7 +677,7 @@
               </div>
 
               <!-- Column 2 -->
-              <div class="col">
+              <div class="col" id="companyCreateCol2">
                 <div class="ff">
                   <label>業界</label>
                   <select name="industry" id="companyCreateIndustry" class="input">
@@ -735,14 +735,14 @@
                   </div>
                 </div>
                 <div class="ff">
-                  <label>資本金（百万円）</label>
+                  <label>資本金<br/>(百万円)</label>
                   <input name="capital" id="companyCreateCapital" class="input" type="text" />
                 </div>
               </div>
 
               <!-- Column 3 -->
-              <div class="col">
-                  <div class="ff ff-remark">
+              <div class="col" id="companyCreateCol3">
+                  <div class="ff ff-remark items-start">
                   <label>備考</label>
                   <textarea name="remark" id="companyCreateRemark" class="input"></textarea>
                 </div>
@@ -769,7 +769,7 @@
               </div>
 
               <!-- Column 4 -->
-              <div class="col">
+              <div class="col" id="companyCreateCol4">
                 <div class="ff"><label>会社自由使用欄1</label><input name="free1" id="companyCreateFree1" class="input" type="text" /></div>
                 <div class="ff"><label>会社自由使用欄2</label><input name="free2" id="companyCreateFree2" class="input" type="text" /></div>
                 <div class="ff"><label>会社自由使用欄3</label><input name="free3" id="companyCreateFree3" class="input" type="text" /></div>

@@ -92,33 +92,33 @@
             <section class="company-panel active" data-pr-panel="detail" role="tabpanel">
               <div class="panel-detail">
                 <div class="panel-detail-body">
-              <div class="detail-form">
+              <div class="detail-form" style="grid-template-columns: 400px 400px 1fr 300px; gap: 20px; min-width: 100%; width: max-content;">
                 <!-- Col 1 -->
-                <div class="form-col">
+                <div class="form-col" id="prDetailCol1">
                   <div class="form-row">
                     <label>案件ID</label>
                     <input disabled id="prDetailId" type="text" value="3042" />
                   </div>
                   <div class="form-row two">
-                    <div>
+                    <div class="sub">
                       <label>ステータス</label>
                       <select id="prDetailStatus">
                         <option>失注</option>
                       </select>
                     </div>
-                    <div>
+                    <div class="sub">
                       <label>フォロー予定</label>
                       <input id="prDetailFollowUp" type="date" value="2025-10-21" />
                     </div>
                   </div>
                   <div class="form-row two">
-                    <div>
+                    <div class="sub">
                       <label>当初確度</label>
                       <select id="prDetailInitialProb">
                         <option>-</option>
                       </select>
                     </div>
-                    <div>
+                    <div class="sub">
                       <label>見通確度</label>
                       <select id="prDetailForecastProb">
                         <option>見込高</option>
@@ -126,13 +126,13 @@
                     </div>
                   </div>
                   <div class="form-row two">
-                    <div>
+                    <div class="sub">
                       <label>営業担当者 <span class="req">*</span></label>
                       <select class="req-field-bg" id="prDetailSalesRep">
                         <option>鈴木 一郎 [営業部]</option>
                       </select>
                     </div>
-                    <div>
+                    <div class="sub">
                       <label>発生動機</label>
                       <select id="prDetailSource">
                         <option>引合</option>
@@ -161,33 +161,33 @@
                   </div>
                 </div>
                 <!-- Col 2 -->
-                <div class="form-col">
+                <div class="form-col" id="prDetailCol2">
                   <div class="form-row two">
-                    <div>
+                    <div class="sub">
                       <label>話題発生日</label>
                       <input id="prDetailIssueDate" type="date" value="2022-12-15" />
                     </div>
-                    <div>
+                    <div class="sub">
                       <label>案件化日</label>
                       <input id="prDetailProjectizedDate" type="date" value="2022-12-15" />
                     </div>
                   </div>
                   <div class="form-row two">
-                    <div>
+                    <div class="sub">
                       <label>受注日</label>
                       <input id="prDetailOrderDate" type="date" />
                     </div>
-                    <div>
+                    <div class="sub">
                       <label>売上日</label>
                       <input id="prDetailSalesDate" type="date" />
                     </div>
                   </div>
                   <div class="form-row two">
-                    <div>
+                    <div class="sub">
                       <label>失注日</label>
                       <input id="prDetailLossDate" type="date" value="2022-12-15" />
                     </div>
-                    <div>
+                    <div class="sub">
                       <label>リードID</label>
                       <input id="prDetailLeadId" type="text" value="3067" />
                     </div>
@@ -203,20 +203,20 @@
                     <input id="prDetailCompetitor" type="text" value="デバイス" />
                   </div>
                   <div
-                    style="margin-top: 10px; border: 1px solid #f1f5f9; padding: 12px; border-radius: 8px; background: #fafafa;">
+                    style="margin-top: 10px; border: 1px solid #f1f5f9; padding: 12px; border-radius: 8px; background: #fafafa; display: flex; flex-direction: column; gap: 10px;">
                     <div
-                      style="font-weight: 700; margin-bottom: 8px; font-size: 11px; color: #64748b; text-transform: uppercase;">
+                      style="font-weight: 700; font-size: 11px; color: #64748b; text-transform: uppercase;">
                       予定</div>
                     <div class="form-row">
                       <label>機種</label>
                       <input id="prDetailPlanModel" type="text" value="測定器" />
                     </div>
                     <div class="form-row two">
-                      <div>
+                      <div class="sub">
                         <label>台数</label>
                         <input id="prDetailPlanQuantity" type="number" value="5" />
                       </div>
-                      <div>
+                      <div class="sub">
                         <label>予定売上</label>
                         <input id="prDetailPlanSales" type="text" value="800" />
                       </div>
@@ -227,20 +227,20 @@
                     </div>
                   </div>
                   <div
-                    style="margin-top: 10px; border: 1px solid #f1f5f9; padding: 12px; border-radius: 8px; background: #fafafa;">
+                    style="margin-top: 10px; border: 1px solid #f1f5f9; padding: 12px; border-radius: 8px; background: #fafafa; display: flex; flex-direction: column; gap: 10px;">
                     <div
-                      style="font-weight: 700; margin-bottom: 8px; font-size: 11px; color: #64748b; text-transform: uppercase;">
+                      style="font-weight: 700; font-size: 11px; color: #64748b; text-transform: uppercase;">
                       実績</div>
                     <div class="form-row">
                       <label>機種</label>
                       <input id="prDetailPlanModel" type="text" value="測定器" />
                     </div>
                     <div class="form-row two">
-                      <div>
+                      <div class="sub">
                         <label>台数</label>
                         <input id="prDetailPlanQuantity" type="number" value="5" />
                       </div>
-                      <div>
+                      <div class="sub">
                         <label>売上</label>
                         <input id="prDetailPlanSales" type="text" value="800" />
                       </div>
@@ -252,7 +252,7 @@
                   </div>
                 </div>
                 <!-- Col 3 -->
-                <div class="form-col">
+                <div class="form-col" id="prDetailCol3">
                   <div class="check-group"
                     style="flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 15px; background: #f8fafc; padding: 12px; border-radius: 8px;">
                     <label class="check"><input checked id="prStage1" type="checkbox" /> ステージ1: 見積書提出</label>
@@ -260,35 +260,35 @@
                     <label class="check"><input id="prStage3" type="checkbox" /> ステージ3: 現場確認</label>
                     <label class="check"><input id="prStage4" type="checkbox" /> ステージ4: 上長確認</label>
                   </div>
-                  <div style="border-top: 1px solid #eee; padding-top: 15px;">
+                  <div style="border-top: 1px solid #eee; padding-top: 15px; display: flex; flex-direction: column; gap: 10px;">
                     <div class="form-row">
                       <label>会社名</label>
-                      <div style="display:flex; gap:8px;">
+                      <div style="display:flex; gap:8px; flex:1;">
                         <input disabled id="prDetailCompanyId" style="width: 80px;" type="text" value="1141" />
                         <input disabled id="prDetailCompanyName" style="flex:1" type="text"
                           value="旭川エレクトロニクスサービス株式会社" />
                       </div>
                     </div>
                     <div class="form-row two">
-                      <div>
+                      <div class="sub">
                         <label>会社種別</label>
                         <select disabled id="prDetailCompanyType">
                           <option>その他</option>
                         </select>
                       </div>
-                      <div>
+                      <div class="sub">
                         <label>代表TEL</label>
                         <input disabled id="prDetailCompanyTel" type="text" value="077-589-2569" />
                       </div>
                     </div>
                     <div class="form-row two">
-                      <div>
+                      <div class="sub">
                         <label>業界</label>
                         <select disabled id="prDetailIndustry">
                           <option>製造業</option>
                         </select>
                       </div>
-                      <div>
+                      <div class="sub">
                         <label>規模ランク</label>
                         <select disabled id="prDetailScale">
                           <option>1人～30人</option>
@@ -300,11 +300,11 @@
                       <input disabled id="prDetailDept" type="text" value="クオリティアシュアランス部" />
                     </div>
                     <div class="form-row two">
-                      <div>
+                      <div class="sub">
                         <label>郵便番号</label>
                         <input disabled id="prDetailPostal" type="text" value="7059306" />
                       </div>
-                      <div>
+                      <div class="sub">
                         <label>都道府県</label>
                         <select disabled id="prDetailPref">
                           <option>北海道</option>
@@ -315,23 +315,23 @@
                       <label>住所</label>
                       <input disabled id="prDetailAddress" type="text" value="北海道市東区4丁目18-30" />
                     </div>
-                    <div class="detail-audit">
+                    <div class="detail-audit" style="display: flex; flex-direction: column; gap: 10px;">
                       <div class="form-row two">
-                        <div>
+                        <div class="sub">
                           <label>作成日時</label>
                           <input disabled id="prDetailCreatedAt" type="text" value="2026/04/29" />
                         </div>
-                        <div>
+                        <div class="sub">
                           <label>作成者</label>
                           <input disabled id="prDetailCreatedBy" type="text" value="鈴木 一郎" />
                         </div>
                       </div>
                       <div class="form-row two">
-                        <div>
+                        <div class="sub">
                           <label>更新日時</label>
                           <input disabled id="prDetailUpdatedAt" type="text" />
                         </div>
-                        <div>
+                        <div class="sub">
                           <label>更新者</label>
                           <input disabled id="prDetailUpdatedBy" type="text" />
                         </div>
@@ -340,7 +340,7 @@
                   </div>
                 </div>
                 <!-- Col 4 -->
-                <div class="form-col">
+                <div class="form-col" id="prDetailCol4">
                   <div class="form-row">
                     <label>案件自由使用欄1</label>
                     <input id="prDetailFree1" type="text" />
@@ -371,7 +371,7 @@
                   </div>
                   <div class="form-row attach-field">
                     <label>添付資料</label>
-                    <div class="attach-box attach-box--compact">ここにドラッグ＆ドロップ</div>
+                    <div class="attach-box attach-box--compact" style="flex:1;">ここにドラッグ＆ドロップ</div>
                   </div>
                 </div>
               </div>

@@ -579,3 +579,7 @@
   padding: 0 10px;
   font-size: 11px;
 }
+
+.hidden {
+  display: none;
+}
