@@ -2027,10 +2027,6 @@
   min-height: 0;
 }
 
-.company-detail.detail-tab-mode .form-4col {
-  min-width: 1200px;
-}
-
 /* Table tabs — compact height */
 .company-detail.table-tab-mode {
   min-height: 0;
@@ -2636,7 +2632,7 @@ select.input {
 
 #companyDetailCol3 .ff > label,
 #companyDetailCol3 .ff .sub > label {
-  min-width: 33px;
+  min-width: 55px;
 }
 
 #companyDetailCol4 .ff > label,
