@@ -116,13 +116,21 @@
 }
 
 .blue-link {
-    color: #2563eb;
+    color: #2563eb !important;
     text-decoration: none;
     cursor: pointer;
 }
 
 .blue-link:hover {
     text-decoration: underline;
+}
+
+.btn-text-link {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    text-align: left;
 }
 
 .mini-grid-table th {
@@ -1944,13 +1952,14 @@
 }
 
 .company-screen table.t tbody tr:hover td {
-  background: #f7fbff;
+  background: #cfe5ff;
   cursor: pointer;
+  transition: background-color .12s ease;
 }
 
 .company-screen table.t tbody tr.selected td {
-  background: #e6f2ff;
-  color: #0b2a66;
+  background: #cfe5ff;
+  color: #0f172a;
 }
 
 .company-screen table.t tbody tr.selected {

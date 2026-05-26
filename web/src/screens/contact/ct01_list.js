@@ -15,6 +15,7 @@ import {
   bindTabPager,
   syncEntityDetailTabLayout,
 } from '../../utils/entityTabTable.js';
+import { takePendingContactSearch } from '../../utils/screenNavigation.js';
 
 let state = {
   contacts: [...mockContacts],
@@ -60,7 +61,19 @@ export function init() {
   initResizer();
   const card = document.querySelector('#contact-root .company-detail');
   syncEntityDetailTabLayout(card, 'detail');
+  applyPendingContactSearch();
   setTimeout(() => render(), 200);
+}
+
+function applyPendingContactSearch() {
+  const pending = takePendingContactSearch();
+  if (!pending) return;
+
+  const companyInput = q('contactSearchCompany');
+  const nameInput = q('contactSearchName');
+  if (companyInput) companyInput.value = pending.company;
+  if (pending.name && nameInput) nameInput.value = pending.name;
+  applySearch();
 }
 
 function getSelectedContact() {

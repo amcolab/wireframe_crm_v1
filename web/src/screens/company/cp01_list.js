@@ -3,6 +3,7 @@ import { mockCompanies, mockContacts, mockActivities, mockProjects } from '../..
 import { showToast } from '../../utils/toast.js';
 import { initTableColResize } from '../../utils/tableColResize.js';
 import { initTableColReorder, syncTableBodyColumnOrder } from '../../utils/tableColReorder.js';
+import { navigateToContactSearch } from '../../utils/screenNavigation.js';
 import {
   readFormSearchConditions,
   hasSearchConditions,
@@ -351,7 +352,7 @@ function bindUi() {
   // Dynamic child tables pagination helper
   const bindChildPager = (prefix, renderFn) => {
     const getSelectedCompany = () => state.companies.find(c => String(c.id) === String(state.selectedId));
-    
+
     q(`btn${prefix}FirstPage`)?.addEventListener('click', () => {
       state[`${prefix.toLowerCase()}Page`] = 1;
       const c = getSelectedCompany();
@@ -415,7 +416,24 @@ function bindUi() {
   bindChildPager('Activities', renderActivitiesList);
   bindChildPager('Projects', renderProjectsList);
 
+  bindContactsListNavigation();
   syncDetailTabLayout('detail');
+}
+
+function bindContactsListNavigation() {
+  const wrap = q('companyContactsList');
+  if (!wrap || wrap.dataset.navBound === 'true') return;
+  wrap.dataset.navBound = 'true';
+
+  wrap.addEventListener('click', (e) => {
+    const link = e.target.closest('[data-goto-contact]');
+    if (!link) return;
+    e.preventDefault();
+    e.stopPropagation();
+    navigateToContactSearch({
+      company: link.getAttribute('data-company') || '',
+    });
+  });
 }
 
 function render() {
@@ -712,7 +730,7 @@ function renderContactsList(c) {
   showTabPager(pager);
   const size = state.contactsPageSize;
   const totalPages = Math.max(1, Math.ceil(total / size));
-  
+
   if (state.contactsPage > totalPages) state.contactsPage = totalPages;
   if (state.contactsPage < 1) state.contactsPage = 1;
 
@@ -748,7 +766,9 @@ function renderContactsList(c) {
   } else {
     contactsHtml += sliced.map(m => `
       <tr>
-        <td class="blue-link">${escapeHtml(m.last)}</td>
+        <td>
+          <div type="button" class="blue-link" data-goto-contact data-company="${escapeHtml(m.company || c.name || '')}" title="担当一覧で検索">${escapeHtml(m.last)}</div>
+        </td>
         <td>${escapeHtml(m.first)}</td>
         <td>${escapeHtml(m.kana)}</td>
         <td>${escapeHtml(m.dept)}</td>
@@ -792,7 +812,7 @@ function renderActivitiesList(c) {
   showTabPager(pager);
   const size = state.activitiesPageSize;
   const totalPages = Math.max(1, Math.ceil(total / size));
-  
+
   if (state.activitiesPage > totalPages) state.activitiesPage = totalPages;
   if (state.activitiesPage < 1) state.activitiesPage = 1;
 
@@ -866,7 +886,7 @@ function renderProjectsList(c) {
   showTabPager(pager);
   const size = state.projectsPageSize;
   const totalPages = Math.max(1, Math.ceil(total / size));
-  
+
   if (state.projectsPage > totalPages) state.projectsPage = totalPages;
   if (state.projectsPage < 1) state.projectsPage = 1;
 
