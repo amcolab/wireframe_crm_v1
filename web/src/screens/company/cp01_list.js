@@ -2,6 +2,7 @@ import { q, escapeHtml, toNum, includesPartial } from '../../utils/helpers.js';
 import { mockCompanies, mockContacts, mockActivities, mockProjects } from '../../utils/mockData.js';
 import { showToast } from '../../utils/toast.js';
 import { initTableColResize } from '../../utils/tableColResize.js';
+import { initTableColReorder, syncTableBodyColumnOrder } from '../../utils/tableColReorder.js';
 import {
   readFormSearchConditions,
   hasSearchConditions,
@@ -36,6 +37,10 @@ export function init() {
   bindUi();
   bindCompanyTable();
   bindCompanyTableSort();
+  initTableColReorder('#companyTable', {
+    storeKey: 'smos.cp01.colOrder',
+    widthStoreKey: 'smos.cp01.colWidths',
+  });
   initTableColResize('#companyTable', 'smos.cp01.colWidths');
   initResizer();
 
@@ -1022,20 +1027,22 @@ function renderCompanyTable(rows) {
   tbody.innerHTML = rows.map(c => {
     const selected = String(c.id) === String(state.selectedId);
     return `<tr data-id="${escapeHtml(c.id)}" class="${selected ? 'selected' : ''}">
-      <td>${escapeHtml(c.id)}</td>
-      <td>${escapeHtml(c.name)}</td>
-      <td class="tel-num">${escapeHtml(c.tel ?? '')}</td>
-      <td>${escapeHtml(c.addr ?? '')}</td>
-      <td>${escapeHtml(c.industry ?? '')}</td>
-      <td>${escapeHtml(c.biz ?? '')}</td>
-      <td>${escapeHtml(c.scale ?? '')}</td>
-      <td>${escapeHtml(c.type ?? '')}</td>
-      <td class="num">${escapeHtml(c.employees ?? '')}</td>
-      <td>${escapeHtml(c.area ?? '')}</td>
-      <td>${escapeHtml(c.pref ?? '')}</td>
-      <td title="${escapeHtml(c.remark ?? '')}">${escapeHtml(c.remark ?? '')}</td>
+      <td data-col-key="id">${escapeHtml(c.id)}</td>
+      <td data-col-key="name">${escapeHtml(c.name)}</td>
+      <td data-col-key="tel" class="tel-num">${escapeHtml(c.tel ?? '')}</td>
+      <td data-col-key="addr">${escapeHtml(c.addr ?? '')}</td>
+      <td data-col-key="industry">${escapeHtml(c.industry ?? '')}</td>
+      <td data-col-key="biz">${escapeHtml(c.biz ?? '')}</td>
+      <td data-col-key="scale">${escapeHtml(c.scale ?? '')}</td>
+      <td data-col-key="type">${escapeHtml(c.type ?? '')}</td>
+      <td data-col-key="employees" class="num">${escapeHtml(c.employees ?? '')}</td>
+      <td data-col-key="area">${escapeHtml(c.area ?? '')}</td>
+      <td data-col-key="pref">${escapeHtml(c.pref ?? '')}</td>
+      <td data-col-key="remark" title="${escapeHtml(c.remark ?? '')}">${escapeHtml(c.remark ?? '')}</td>
     </tr>`;
   }).join('');
+
+  syncTableBodyColumnOrder(q('companyTable'));
 }
 
 function initResizer() {

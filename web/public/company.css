@@ -3221,6 +3221,57 @@ select.input {
   margin-top: 0;
 }
 
+/* Column drag reorder */
+.col-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 4px;
+  padding: 2px;
+  vertical-align: middle;
+  color: var(--text-3);
+  cursor: grab;
+  opacity: 0.45;
+  border-radius: 3px;
+  touch-action: none;
+}
+
+.col-drag-handle:hover {
+  opacity: 0.9;
+  color: var(--brand-600);
+  background: rgba(0, 82, 204, 0.08);
+}
+
+.col-drag-handle:active {
+  cursor: grabbing;
+}
+
+.company-screen table.t thead th.col-drag-source {
+  opacity: 0.55;
+}
+
+.company-screen table.t thead th.col-drop-before {
+  box-shadow: inset 3px 0 0 var(--brand-500);
+}
+
+.company-screen table.t thead th.col-drop-after {
+  box-shadow: inset -3px 0 0 var(--brand-500);
+}
+
+body.col-reordering {
+  cursor: grabbing !important;
+  user-select: none;
+}
+
+body.col-reordering * {
+  cursor: grabbing !important;
+}
+
+body.col-reordering .col-resizer {
+  pointer-events: none;
+}
+
 /* Column resize handles */
 .col-resizer {
   position: absolute;
