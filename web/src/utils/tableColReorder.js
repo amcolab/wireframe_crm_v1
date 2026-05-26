@@ -3,6 +3,8 @@
  * Keys: data-col-key or data-sort-key on <th>; matching data-col-key on <td>.
  */
 
+import { syncResizableTableWidth } from './tableColResize.js';
+
 const DEFAULT_KEY_ATTRS = ['data-col-key', 'data-sort-key'];
 
 export function getColKey(el, keyAttrs = DEFAULT_KEY_ATTRS) {
@@ -79,7 +81,10 @@ function restoreColumnOrder(table, storeKey, keyAttrs) {
     const raw = localStorage.getItem(storeKey);
     if (!raw) return;
     const order = JSON.parse(raw);
-    if (Array.isArray(order) && order.length) applyTableColumnOrder(table, order, keyAttrs);
+    if (Array.isArray(order) && order.length) {
+      applyTableColumnOrder(table, order, keyAttrs);
+      syncResizableTableWidth(table);
+    }
   } catch {
     /* ignore */
   }
@@ -107,6 +112,7 @@ function moveColumnToIndex(table, fromKey, insertIdx, { storeKey, widthStoreKey,
   applyTableColumnOrder(table, order, keyAttrs);
   persistColumnOrder(table, storeKey, keyAttrs);
   refreshWidthStore(table, widthStoreKey);
+  syncResizableTableWidth(table);
 }
 
 /**

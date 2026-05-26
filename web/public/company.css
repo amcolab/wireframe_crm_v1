@@ -1791,11 +1791,18 @@
 }
 
 .company-screen table.t {
-  width: fit-content;
+  width: 100%;
   min-width: 100%;
   border-collapse: separate;
   border-spacing: 0;
   font-size: 11px;
+  table-layout: auto;
+}
+
+/* Column resize / reorder (tables with <colgroup> + initTableColResize) */
+.company-screen table.t.table--col-resizable {
+  width: max-content;
+  min-width: 0;
   table-layout: fixed;
 }
 
@@ -1818,13 +1825,16 @@
   border-right: 1px solid #e2e8f0;
   border-bottom: none;
   white-space: nowrap;
-  max-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.4;
   box-shadow:
     inset 0 -2px 0 #cbd5e1,
     0 4px 6px -4px rgba(15, 27, 45, 0.08);
+}
+
+.company-screen table.t.table--col-resizable thead th {
+  max-width: 0;
 }
 
 .company-screen table.t thead th:first-child {
@@ -1916,10 +1926,13 @@
   border-right: 1px solid #f1f5f9;
   color: var(--text-1);
   white-space: nowrap;
-  max-width: 0;
   line-height: 1.2;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.company-screen table.t.table--col-resizable tbody td {
+  max-width: 0;
 }
 
 .company-screen table.t tbody td:last-child {
