@@ -1,5 +1,5 @@
 import { q } from './helpers.js';
-import { mockContacts } from './mockData.js';
+import { mockContacts, mockCompanies } from './mockData.js';
 import { setFormField } from './formFields.js';
 
 const COMPANY_MIRROR_IDS = [
@@ -10,7 +10,30 @@ const COMPANY_MIRROR_IDS = [
   'contactNewCompanyPostal',
   'contactNewCompanyPref',
   'contactNewCompanyAddr',
+  'contactNewCompanyCreatedAt',
+  'contactNewCompanyCreatedBy',
+  'contactNewCompanyUpdatedAt',
+  'contactNewCompanyUpdatedBy',
 ];
+
+const CONTACT_PREFILL_IDS = [
+  'contactNewDept',
+  'contactNewExt',
+  'contactNewFax',
+  'contactNewFollowDate',
+];
+
+/**
+ * @param {{ companyId?: string | number; company?: string }} contact
+ */
+export function resolveCompanyFromContact(contact) {
+  if (!contact) return null;
+  const byId = mockCompanies.find((c) => String(c.id) === String(contact.companyId));
+  if (byId) return byId;
+  const name = (contact.company ?? '').trim();
+  if (!name) return null;
+  return mockCompanies.find((c) => c.name === name) ?? null;
+}
 
 /**
  * Latest contact for company (highest id) — 部署名 prefill source.
@@ -19,7 +42,7 @@ const COMPANY_MIRROR_IDS = [
  */
 export function getLatestCompanyContactDept(companyId, contacts = mockContacts) {
   if (companyId == null || companyId === '') return '';
-  const companyContacts = contacts.filter(m => String(m.companyId) === String(companyId));
+  const companyContacts = contacts.filter((m) => String(m.companyId) === String(companyId));
   if (companyContacts.length === 0) return '';
 
   const latest = companyContacts.reduce((best, cur) => {
@@ -36,14 +59,17 @@ export function resetContactCreateForm() {
   form?.reset();
   setFormField('contactNewCompanyId', '');
   COMPANY_MIRROR_IDS.forEach((id) => setFormField(id, ''));
+  CONTACT_PREFILL_IDS.forEach((id) => setFormField(id, ''));
 }
 
 /**
- * Prefill contact create modal with company context (CP01 → 新規担当).
- * @param {Record<string, unknown> | null | undefined} company
+ * @param {Record<string, unknown>} company
  * @param {Array<{ id?: string | number; companyId?: string | number; dept?: string }>} [contacts]
+ * @param {{ fillExt?: boolean; fillAudit?: boolean; dept?: string | null }} [opts]
  */
-export function fillContactCreateFromCompany(company, contacts = mockContacts) {
+export function fillContactCreateFromCompany(company, contacts = mockContacts, opts = {}) {
+  const { fillExt = false, fillAudit = false, dept = null } = opts;
+
   if (!company) {
     resetContactCreateForm();
     return;
@@ -59,31 +85,57 @@ export function fillContactCreateFromCompany(company, contacts = mockContacts) {
   setFormField('contactNewCompanyPref', company.pref);
   setFormField('contactNewCompanyAddr', company.addr);
 
-  // 部署名 — latest contact in company list (部署名 column); empty if none.
-  setFormField('contactNewDept', getLatestCompanyContactDept(company.id, contacts));
-  // 内線 — company 代表TEL.
-  setFormField('contactNewExt', company.tel ?? '');
+  if (fillAudit) {
+    setFormField('contactNewCompanyCreatedAt', company.createdAt);
+    setFormField('contactNewCompanyCreatedBy', company.createdBy);
+    setFormField('contactNewCompanyUpdatedAt', company.updatedAt);
+    setFormField('contactNewCompanyUpdatedBy', company.updatedBy);
+  } else {
+    setFormField('contactNewCompanyCreatedAt', '');
+    setFormField('contactNewCompanyCreatedBy', '');
+    setFormField('contactNewCompanyUpdatedAt', '');
+    setFormField('contactNewCompanyUpdatedBy', '');
+  }
+
+  const deptVal = (dept ?? '').trim() || getLatestCompanyContactDept(company.id, contacts);
+  setFormField('contactNewDept', deptVal);
+
+  setFormField('contactNewExt', fillExt ? (company.tel ?? '') : '');
   setFormField('contactNewFollowDate', '');
-  setFormField('contactNewFax', company.fax ?? '');
+  setFormField('contactNewFax', '');
 }
 
 /**
- * @param {{ company?: Record<string, unknown> | null; contacts?: Array<Record<string, unknown>> }} [options]
+ * @param {{
+ *   company?: Record<string, unknown> | null;
+ *   contacts?: Array<Record<string, unknown>>;
+ *   fillExt?: boolean;
+ *   fillAudit?: boolean;
+ *   dept?: string | null;
+ * }} [options]
  */
 export function openContactCreateDialog(options = {}) {
+  const {
+    company = null,
+    contacts = mockContacts,
+    fillExt = false,
+    fillAudit = false,
+    dept = null,
+  } = options;
+
   resetContactCreateForm();
-  if (options.company) {
-    fillContactCreateFromCompany(options.company, options.contacts ?? mockContacts);
+  if (company) {
+    fillContactCreateFromCompany(company, contacts, { fillExt, fillAudit, dept });
   }
   q('dlgContactDetailNew')?.showModal();
 }
 
 /**
- * Apply company lookup selection to contact create form.
  * @param {Record<string, unknown>} company
  * @param {Array<Record<string, unknown>>} [contacts]
+ * @param {{ fillExt?: boolean; fillAudit?: boolean }} [opts]
  */
-export function applyCompanyToContactCreateForm(company, contacts = mockContacts) {
+export function applyCompanyToContactCreateForm(company, contacts = mockContacts, opts = {}) {
   if (!company) return;
-  fillContactCreateFromCompany(company, contacts);
+  fillContactCreateFromCompany(company, contacts, opts);
 }

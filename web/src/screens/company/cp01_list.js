@@ -212,7 +212,7 @@ function bindUi() {
 
   q('btnNewContact')?.addEventListener('click', () => {
     const company = state.companies.find(c => String(c.id) === String(state.selectedId)) || null;
-    openContactCreateDialog({ company });
+    openContactCreateDialog({ company, fillExt: false, fillAudit: false });
   });
 
   q('btnNewActivity')?.addEventListener('click', () => {
