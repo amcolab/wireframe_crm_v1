@@ -12,6 +12,8 @@ import {
   clearAdvancedSearch,
 } from '../../utils/searchFilters.js';
 import { openContactCreateDialog } from '../../utils/contactCreateForm.js';
+import { openActivityCreateDialog } from '../../utils/activityCreateForm.js';
+import { openProjectCreateDialog } from '../../utils/projectCreateForm.js';
 
 let state = {
   companies: [...mockCompanies],
@@ -214,11 +216,13 @@ function bindUi() {
   });
 
   q('btnNewActivity')?.addEventListener('click', () => {
-    q('dlgActivityDetail')?.showModal();
+    const company = state.companies.find(c => String(c.id) === String(state.selectedId)) || null;
+    openActivityCreateDialog({ company });
   });
 
   q('btnNewProject')?.addEventListener('click', () => {
-    q('dlgProjectDetail')?.showModal();
+    const company = state.companies.find(c => String(c.id) === String(state.selectedId)) || null;
+    openProjectCreateDialog({ company });
   });
 
   // Modal triggers inside detail modals
@@ -242,7 +246,14 @@ function bindUi() {
     openContactCreateDialog();
   });
   bindModalTrigger('btnActivityProjectLookup', 'dlgProjectLookup');
-  bindModalTrigger('btnActivityProjectNew', 'dlgProjectDetail');
+  q('btnActivityProjectNew')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const companyId = q('atDetailCompanyId')?.value?.trim();
+    const company = companyId
+      ? state.companies.find(c => String(c.id) === String(companyId))
+      : state.companies.find(c => String(c.id) === String(state.selectedId));
+    openProjectCreateDialog({ company: company || null });
+  });
 
   bindModalTrigger('btnContactCompanyLookup', 'dlgCompanyLookup');
   // dlgCompanyCreate should always reset before opening (avoid leftover values).

@@ -1,5 +1,6 @@
 import { q } from './helpers.js';
 import { mockContacts } from './mockData.js';
+import { setFormField } from './formFields.js';
 
 const COMPANY_MIRROR_IDS = [
   'contactNewCompanyType',
@@ -30,22 +31,11 @@ export function getLatestCompanyContactDept(companyId, contacts = mockContacts) 
   return (latest?.dept ?? '').trim();
 }
 
-/** @param {string} id */
-function setField(id, val) {
-  const el = q(id);
-  if (!el) return;
-  if (el.type === 'checkbox') {
-    el.checked = !!val;
-    return;
-  }
-  el.value = val ?? '';
-}
-
 export function resetContactCreateForm() {
   const form = q('formContactDetail');
   form?.reset();
-  setField('contactNewCompanyId', '');
-  COMPANY_MIRROR_IDS.forEach((id) => setField(id, ''));
+  setFormField('contactNewCompanyId', '');
+  COMPANY_MIRROR_IDS.forEach((id) => setFormField(id, ''));
 }
 
 /**
@@ -59,22 +49,22 @@ export function fillContactCreateFromCompany(company, contacts = mockContacts) {
     return;
   }
 
-  setField('contactNewCompanyId', company.id);
-  setField('contactNewCompanyName', company.name);
-  setField('contactNewCompanyType', company.type);
-  setField('contactNewCompanyTel', company.tel);
-  setField('contactNewCompanyIndustry', company.industry);
-  setField('contactNewCompanyScale', company.scale);
-  setField('contactNewCompanyPostal', company.postal);
-  setField('contactNewCompanyPref', company.pref);
-  setField('contactNewCompanyAddr', company.addr);
+  setFormField('contactNewCompanyId', company.id);
+  setFormField('contactNewCompanyName', company.name);
+  setFormField('contactNewCompanyType', company.type);
+  setFormField('contactNewCompanyTel', company.tel);
+  setFormField('contactNewCompanyIndustry', company.industry);
+  setFormField('contactNewCompanyScale', company.scale);
+  setFormField('contactNewCompanyPostal', company.postal);
+  setFormField('contactNewCompanyPref', company.pref);
+  setFormField('contactNewCompanyAddr', company.addr);
 
   // 部署名 — latest contact in company list (部署名 column); empty if none.
-  setField('contactNewDept', getLatestCompanyContactDept(company.id, contacts));
+  setFormField('contactNewDept', getLatestCompanyContactDept(company.id, contacts));
   // 内線 — company 代表TEL.
-  setField('contactNewExt', company.tel ?? '');
-  setField('contactNewFollowDate', '');
-  setField('contactNewFax', company.fax ?? '');
+  setFormField('contactNewExt', company.tel ?? '');
+  setFormField('contactNewFollowDate', '');
+  setFormField('contactNewFax', company.fax ?? '');
 }
 
 /**

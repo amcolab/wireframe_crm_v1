@@ -1040,55 +1040,55 @@
           <div class="form-row row-3col">
             <label>会社名</label>
             <div class="field-pair">
-              <input type="text" name="readonlyCompanyName" id="atDetailCompanyName" disabled />
               <input type="text" name="readonlyCompanyId" id="atDetailCompanyId" disabled />
+              <input type="text" name="readonlyCompanyName" id="atDetailCompanyName" disabled />
             </div>
           </div>
           <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr;">
             <div class="sub">
               <label>会社種別</label>
-              <select disabled>
-                <option>-</option>
+              <select id="atDetailCompanyType" disabled>
+                <option value="">-</option>
               </select>
             </div>
             <div class="sub">
               <label>代表TEL</label>
-              <input type="text" disabled />
+              <input type="text" id="atDetailCompanyTel" disabled />
             </div>
           </div>
           <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr;">
             <div class="sub">
               <label>業界</label>
-              <select disabled>
-                <option>-</option>
+              <select id="atDetailCompanyIndustry" disabled>
+                <option value="">-</option>
               </select>
             </div>
             <div class="sub">
               <label>規模ランク</label>
-              <select disabled>
-                <option>-</option>
+              <select id="atDetailCompanyScale" disabled>
+                <option value="">-</option>
               </select>
             </div>
           </div>
           <div class="form-row">
             <label>部署名</label>
-            <input type="text" disabled />
+            <input type="text" id="atDetailCompanyDept" disabled />
           </div>
           <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr;">
             <div class="sub">
               <label>郵便番号</label>
-              <input type="text" disabled />
+              <input type="text" id="atDetailCompanyPostal" disabled />
             </div>
             <div class="sub">
               <label>都道府県</label>
-              <select disabled>
-                <option>-</option>
+              <select id="atDetailCompanyPref" disabled>
+                <option value="">-</option>
               </select>
             </div>
           </div>
           <div class="form-row">
             <label>住所</label>
-            <input type="text" disabled />
+            <input type="text" id="atDetailCompanyAddr" disabled />
           </div>
 
           <div style="margin-top: 20px;">
@@ -1624,7 +1624,9 @@
           <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr;">
             <div class="sub">
               <label>会社種別</label>
-              <input type="text" id="contactNewCompanyType" disabled />
+              <select id="contactNewCompanyType" disabled>
+                <option value="">-</option>
+              </select>
             </div>
             <div class="sub">
               <label>代表TEL</label>
@@ -1634,11 +1636,15 @@
           <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr;">
             <div class="sub">
               <label>業界</label>
-              <input type="text" id="contactNewCompanyIndustry" disabled />
+              <select id="contactNewCompanyIndustry" disabled>
+                <option value="">-</option>
+              </select>
             </div>
             <div class="sub">
               <label>規模ランク</label>
-              <input type="text" id="contactNewCompanyScale" disabled />
+              <select id="contactNewCompanyScale" disabled>
+                <option value="">-</option>
+              </select>
             </div>
           </div>
           <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr;">
@@ -1648,7 +1654,9 @@
             </div>
             <div class="sub">
               <label>都道府県</label>
-              <input type="text" id="contactNewCompanyPref" disabled />
+              <select id="contactNewCompanyPref" disabled>
+                <option value="">-</option>
+              </select>
             </div>
           </div>
           <div class="form-row">
@@ -2039,44 +2047,49 @@
             <div class="form-row row-3col">
               <label>会社名</label>
               <div class="field-pair">
-                <input type="text" disabled />
-                <input type="text" disabled />
+                <input type="text" id="prDetailCompanyId" disabled />
+                <input type="text" id="prDetailCompanyName" disabled />
               </div>
             </div>
             <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr;">
               <div class="form-row">
-                <label>会社種別</label><input type="text" disabled />
+                <label>会社種別</label>
+                <select id="prDetailCompanyType" disabled>
+                  <option value="">-</option>
+                </select>
               </div>
               <div class="form-row">
-                <label style="width: 70px;">代表TEL</label><input type="text" disabled />
+                <label style="width: 70px;">代表TEL</label>
+                <input type="text" id="prDetailCompanyTel" disabled />
               </div>
             </div>
             <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr;">
               <div class="form-row">
                 <label>業界</label>
-                <select disabled>
-                  <option>-</option>
+                <select id="prDetailCompanyIndustry" disabled>
+                  <option value="">-</option>
                 </select>
               </div>
               <div class="form-row">
                 <label style="width: 70px;">規模ﾗﾝｸ</label>
-                <select disabled>
-                  <option>-</option>
+                <select id="prDetailCompanyScale" disabled>
+                  <option value="">-</option>
                 </select>
               </div>
             </div>
-            <div class="form-row"><label>部署名</label><input type="text" disabled /></div>
+            <div class="form-row"><label>部署名</label><input type="text" id="prDetailCompanyDept" disabled /></div>
             <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr;">
               <div class="form-row">
-                <label>郵便番号</label><input type="text" disabled />
+                <label>郵便番号</label><input type="text" id="prDetailCompanyPostal" disabled />
               </div>
               <div class="form-row">
-                <label style="width: 70px;">都道府県</label><select disabled>
-                <option>-</option>
-              </select>
+                <label style="width: 70px;">都道府県</label>
+                <select id="prDetailCompanyPref" disabled>
+                  <option value="">-</option>
+                </select>
               </div>
             </div>
-            <div class="form-row"><label>住所</label><input type="text" disabled /></div>
+            <div class="form-row"><label>住所</label><input type="text" id="prDetailCompanyAddr" disabled /></div>
             <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 10px;">
               <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr;">
                 <div class="form-row">

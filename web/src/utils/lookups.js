@@ -2,6 +2,8 @@ import { q, escapeHtml } from './helpers.js';
 import { mockCompanies, mockEmployees, mockProjects, mockTenants } from './mockData.js';
 import { renderPageNumberButtons } from './pager.js';
 import { applyCompanyToContactCreateForm, openContactCreateDialog } from './contactCreateForm.js';
+import { applyCompanyToActivityCreateForm } from './activityCreateForm.js';
+import { applyCompanyToProjectCreateForm } from './projectCreateForm.js';
 
 function closeShellMenus() {
   document.querySelector('.settings-menu-trigger')?.classList.remove('show-menu');
@@ -750,6 +752,8 @@ export function initGlobalLookups() {
       if (el) el.value = c.name;
     });
     applyCompanyToContactCreateForm(c);
+    applyCompanyToActivityCreateForm(c);
+    applyCompanyToProjectCreateForm(c);
     dlgLookup?.close();
   });
 

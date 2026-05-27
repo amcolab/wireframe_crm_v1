@@ -8,6 +8,8 @@ import {
   syncSearchFiltersIndicator,
 } from '../../utils/searchFilters.js';
 import { openContactCreateDialog } from '../../utils/contactCreateForm.js';
+import { openActivityCreateDialog } from '../../utils/activityCreateForm.js';
+import { openProjectCreateDialog } from '../../utils/projectCreateForm.js';
 import {
   TAB_EMPTY,
   renderTabEmptyState,
@@ -140,8 +142,8 @@ function bindUi() {
     state.selectedId = state.filtered[0]?.id ? String(state.filtered[0].id) : null;
     render();
   });
-  q('btnProjectNewMain')?.addEventListener('click', () => { q('dlgProjectDetail')?.showModal(); });
-  q('btnPrTabNewActivity')?.addEventListener('click', () => { q('dlgActivityDetail')?.showModal(); });
+  q('btnProjectNewMain')?.addEventListener('click', () => { openProjectCreateDialog(); });
+  q('btnPrTabNewActivity')?.addEventListener('click', () => { openActivityCreateDialog(); });
   q('btnPrDetailContactLookup')?.addEventListener('click', () => { q('dlgContactLookup')?.showModal(); });
   q('btnPrDetailContactNew')?.addEventListener('click', () => { openContactCreateDialog(); });
   q('btnPrDetailSave')?.addEventListener('click', () => { alert('保存しました'); });

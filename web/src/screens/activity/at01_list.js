@@ -10,6 +10,8 @@ import {
 } from '../../utils/searchFilters.js';
 import { setupResizableTable, syncResizableTableBody } from '../../utils/tableColumns.js';
 import { openContactCreateDialog } from '../../utils/contactCreateForm.js';
+import { openActivityCreateDialog } from '../../utils/activityCreateForm.js';
+import { openProjectCreateDialog } from '../../utils/projectCreateForm.js';
 
 let state = {
   activities: [...mockActivities],
@@ -83,11 +85,11 @@ function bindUi() {
     state.selectedId = state.filtered[0]?.id ?? null;
     render();
   });
-  q('btnActivityNewMain')?.addEventListener('click', () => { q('dlgActivityDetail')?.showModal(); });
+  q('btnActivityNewMain')?.addEventListener('click', () => { openActivityCreateDialog(); });
   q('btnAtDetailContactLookup')?.addEventListener('click', () => { q('dlgContactLookup')?.showModal(); });
   q('btnAtDetailContactNew')?.addEventListener('click', () => { openContactCreateDialog(); });
   q('btnAtDetailProjectLookup')?.addEventListener('click', () => { q('dlgProjectLookup')?.showModal(); });
-  q('btnAtDetailProjectNew')?.addEventListener('click', () => { q('dlgProjectDetail')?.showModal(); });
+  q('btnAtDetailProjectNew')?.addEventListener('click', () => { openProjectCreateDialog(); });
   q('btnAtDetailSave')?.addEventListener('click', () => { alert('保存しました'); });
   q('btnAtDetailDelete')?.addEventListener('click', () => { if (confirm('削除しますか？')) alert('削除しました'); });
 
