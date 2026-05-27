@@ -3047,10 +3047,8 @@ select.input {
   overflow: visible !important;
 }
 
-.section.active,
-.section-body {
+.section.active {
   overflow: visible;
-  height: auto;
   min-height: 0;
 }
 
@@ -3432,14 +3430,90 @@ body.col-resizing * {
   color: var(--text-1);
 }
 
-/* Entity detail panels — closer to CP01 form-4col */
-#contact-root .company-detail,
-#activity-root .company-detail,
-#project-root .company-detail {
-  flex: 1 1 auto;
+/* Entity list screens (CP01/CT01/AT01/PR01) — fill remaining viewport height */
+.section-body {
+  flex: 1 0 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow: visible;
+}
+
+.section-body .company-screen {
+  flex: 1 0 auto;
+  min-height: 0;
+}
+
+.section-body .company-main {
+  flex: 1 0 auto;
+  min-height: 0;
+}
+
+.section-body .company-detail {
+  flex: 1 0 auto;
+  min-height: 0;
+}
+
+.section-body .company-detail.detail-tab-mode {
+  flex: 1 0 auto;
+  min-height: 0;
+}
+
+.section-body .company-detail.detail-tab-mode .company-tabpanels,
+.section-body .company-detail.table-tab-mode .company-tabpanels {
+  flex: 1 0 auto;
+  min-height: 0;
+}
+
+.section-body .company-detail.detail-tab-mode .panel-detail {
+  flex: 1 0 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.section-body .company-detail.detail-tab-mode .panel-detail-body {
+  flex: 1 0 auto;
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.section-body .company-detail > .tabs-underline {
+  flex-shrink: 0;
+}
+
+.section-body .company-tabpanels {
+  flex: 1 0 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.section-body .company-panel.active {
+  flex: 1 0 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.section-body .company-detail.table-tab-mode .tab-table-panel {
+  flex: 1 0 auto;
+  min-height: 0;
+}
+
+.section-body .company-detail.table-tab-mode .tab-table-wrap {
+  flex: 1 0 auto;
+  min-height: 160px;
+  max-height: none;
+  overflow: auto;
+}
+
+/* Entity detail panels — closer to CP01 form-4col (CT01/AT01/PR01) */
+#contact-root .company-detail,
+#activity-root .company-detail,
+#project-root .company-detail {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r-card);
@@ -3447,34 +3521,10 @@ body.col-resizing * {
   overflow: hidden;
 }
 
-#contact-root .company-detail > .tabs-underline,
-#project-root .company-detail > .tabs-underline {
-  flex-shrink: 0;
-}
-
-#contact-root .company-tabpanels,
-#activity-root .company-tabpanels,
-#project-root .company-tabpanels {
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-#contact-root .company-panel.active,
-#project-root .company-panel.active {
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
 #contact-root .panel-detail-body .detail-form,
 #activity-root .panel-detail-body .detail-form,
 #project-root .panel-detail-body .detail-form {
-  flex: 1 1 auto;
+  flex: 1 0 auto;
   min-height: 0;
   /* overflow-y: auto;
   overflow-x: auto; */
@@ -3569,15 +3619,4 @@ body.col-resizing * {
   border-color: #e2e8f0 !important;
   cursor: not-allowed !important;
   opacity: 1;
-}
-
-#contact-root .company-panel:not([data-contact-panel="detail"]) .tab-table-panel,
-#project-root .company-panel:not([data-pr-panel="detail"]) .tab-table-panel {
-  flex: 1 1 auto;
-  min-height: 0;
-}
-
-#activity-root .company-detail > .panel-detail {
-  flex: 1 1 auto;
-  min-height: 0;
 }
