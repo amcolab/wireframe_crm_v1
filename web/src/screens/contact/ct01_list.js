@@ -1,6 +1,7 @@
 import { q, escapeHtml } from '../../utils/helpers.js';
 import { mockContacts, mockActivities, mockProjects } from '../../utils/mockData.js';
 import { renderPageNumberButtons } from '../../utils/pager.js';
+import { saleOptions, typeSaleOptions } from '../../utils/contants.js';
 import {
   bindAdvancedSearchForm,
   clearAdvancedSearch,
@@ -132,7 +133,43 @@ function bindUi() {
     });
   });
 
-  q('btnContactNewActivity')?.addEventListener('click', () => { q('dlgActivityDetail')?.showModal(); });
+  q('btnContactNewActivity')?.addEventListener('click', () => {
+    const c = getSelectedContact();
+    if (!c) {
+      alert('担当者を選択してください。');
+      return;
+    }
+
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const formattedDate = `${yyyy}/${mm}/${dd}`;
+
+    const defaultRep = saleOptions[0]?.label || '高橋健二';
+    const defaultTypeOpt = typeSaleOptions.find(opt => opt.value === 2) || { label: 'TEL' };
+    const defaultType = defaultTypeOpt.label;
+
+    const newAct = {
+      id: String(Date.now() + Math.floor(Math.random() * 1000)),
+      contactId: String(c.id),
+      projectId: '',
+      date: formattedDate,
+      time: '12:00',
+      rep: defaultRep,
+      type: defaultType,
+      typeClass: 'type-tel',
+      purpose: '',
+      company: c.company || '',
+      contact: c.last || '',
+      comment: '',
+      projectName: ''
+    };
+
+    mockActivities.unshift(newAct);
+    state.contactActivitiesPage = 1;
+    renderContactActivitiesList(c);
+  });
   q('btnContactCreateMain')?.addEventListener('click', () => {
     const selected = getSelectedContact();
     const company = resolveCompanyFromContact(selected);
@@ -199,6 +236,87 @@ function bindUi() {
     state.pageSize = parseInt(e.target.value, 10) || 25;
     state.page = 1;
     render();
+  });
+
+  const activitiesList = q('contactActivitiesList');
+  if (activitiesList) {
+    activitiesList.addEventListener('dblclick', (e) => {
+      const td = e.target.closest('td[data-col-key]');
+      if (!td) return;
+      const tr = td.closest('tr[data-id]');
+      if (!tr) return;
+
+      if (td.querySelector('input') || td.querySelector('select')) return;
+
+      startCellEditing(td, tr);
+    });
+
+    activitiesList.addEventListener('contextmenu', (e) => {
+      const td = e.target.closest('td[data-col-key]');
+      if (!td) return;
+      const tr = td.closest('tr[data-id]');
+      if (!tr) return;
+
+      e.preventDefault();
+
+      const menu = q('activitiesContextMenu');
+      if (!menu) return;
+
+      menu.style.display = 'block';
+      menu.style.left = `${e.clientX}px`;
+      menu.style.top = `${e.clientY}px`;
+
+      // Store cell context for menu actions
+      menu.dataset.clickedCellText = td.textContent.trim();
+      menu.dataset.clickedActId = tr.getAttribute('data-id');
+    });
+  }
+
+  const contextMenu = q('activitiesContextMenu');
+  if (contextMenu) {
+    contextMenu.addEventListener('click', (e) => {
+      const item = e.target.closest('.context-menu-item');
+      if (!item || item.classList.contains('disabled')) return;
+
+      const action = item.getAttribute('data-action');
+      const cellText = contextMenu.dataset.clickedCellText || '';
+      const actId = contextMenu.dataset.clickedActId || '';
+
+      if (action === 'copy') {
+        navigator.clipboard.writeText(cellText).then(() => {
+          console.log('Copied to clipboard:', cellText);
+        }).catch(() => {
+          const textArea = document.createElement("textarea");
+          textArea.value = cellText;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textArea);
+        });
+      } else if (action === 'new-activity') {
+        q('btnContactNewActivity')?.click();
+      } else if (action === 'new-project') {
+        // Trigger btnContactCreateMain first (per L26-L31) or btnContactNewProject based on what is correct
+        q('btnContactCreateMain')?.click() || q('btnContactNewProject')?.click();
+      } else if (action === 'delete-row') {
+        const c = getSelectedContact();
+        if (c && actId) {
+          const index = mockActivities.findIndex(a => String(a.id) === String(actId));
+          if (index !== -1) {
+            mockActivities.splice(index, 1);
+            renderContactActivitiesList(c);
+          }
+        }
+      }
+
+      contextMenu.style.display = 'none';
+    });
+  }
+
+  // Hide context menu when clicking outside of it
+  document.addEventListener('click', () => {
+    const menu = q('activitiesContextMenu');
+    if (menu) menu.style.display = 'none';
   });
 }
 
@@ -369,7 +487,7 @@ function renderContactActivitiesList(c) {
   if (!sliced.length) {
     html += '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-3);">表示するデータがありません</td></tr>';
   } else {
-    html += sliced.map(a => `<tr>
+    html += sliced.map(a => `<tr data-id="${escapeHtml(a.id)}">
       <td data-col-key="date">${escapeHtml(a.date)}</td>
       <td data-col-key="rep">${escapeHtml(a.rep)}</td>
       <td data-col-key="type"><span class="${escapeHtml(a.typeClass || '')}">${escapeHtml(a.type)}</span></td>
@@ -508,5 +626,108 @@ function initResizer() {
       const h = parseInt(container.style.getPropertyValue('--grid-height') || '400', 10);
       localStorage.setItem('smos.ct01.listH', String(h));
     } catch { /* ignore */ }
+  });
+}
+
+function startCellEditing(td, tr) {
+  const actId = tr.getAttribute('data-id');
+  const colKey = td.getAttribute('data-col-key');
+  const c = getSelectedContact();
+  if (!c) return;
+
+  const act = mockActivities.find(a => String(a.id) === String(actId));
+  if (!act) return;
+
+  td.innerHTML = '';
+  
+  let editor;
+  if (colKey === 'date') {
+    editor = document.createElement('input');
+    editor.type = 'date';
+    editor.className = 'input table-edit-input';
+    editor.value = act.date ? act.date.replace(/\//g, '-') : '';
+    td.appendChild(editor);
+  } else if (colKey === 'rep') {
+    editor = document.createElement('select');
+    editor.className = 'select table-edit-select';
+    saleOptions.forEach(opt => {
+      const o = document.createElement('option');
+      o.value = opt.label;
+      o.textContent = opt.label;
+      if (opt.label === act.rep) o.selected = true;
+      editor.appendChild(o);
+    });
+    td.appendChild(editor);
+  } else if (colKey === 'type') {
+    editor = document.createElement('select');
+    editor.className = 'select table-edit-select';
+    typeSaleOptions.forEach(opt => {
+      const o = document.createElement('option');
+      o.value = opt.label;
+      o.textContent = opt.label;
+      if (opt.label === act.type) o.selected = true;
+      editor.appendChild(o);
+    });
+    td.appendChild(editor);
+  } else if (colKey === 'comment' || colKey === 'purpose') {
+    editor = document.createElement('input');
+    editor.type = 'text';
+    editor.className = 'input table-edit-input';
+    editor.value = act[colKey] || '';
+    td.appendChild(editor);
+  } else {
+    renderContactActivitiesList(c);
+    return;
+  }
+
+  editor.focus();
+
+  let finished = false;
+  const saveChange = () => {
+    if (finished) return;
+    finished = true;
+
+    let newVal = editor.value;
+    if (colKey === 'date') {
+      if (newVal) {
+        newVal = newVal.replace(/-/g, '/');
+      } else {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        newVal = `${yyyy}/${mm}/${dd}`;
+      }
+      act.date = newVal;
+    } else if (colKey === 'rep') {
+      act.rep = newVal;
+    } else if (colKey === 'type') {
+      act.type = newVal;
+      const classMap = {
+        '訪問': 'type-visit',
+        'TEL': 'type-tel',
+        'メール': 'type-email',
+        'Web面談': 'type-web',
+        'その他': 'type-other'
+      };
+      act.typeClass = classMap[newVal] || 'type-other';
+    } else if (colKey === 'comment') {
+      act.comment = newVal;
+    } else if (colKey === 'purpose') {
+      act.purpose = newVal;
+    }
+
+    renderContactActivitiesList(c);
+  };
+
+  editor.addEventListener('blur', saveChange);
+  editor.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      saveChange();
+    } else if (e.key === 'Escape') {
+      finished = true;
+      renderContactActivitiesList(c);
+    }
   });
 }
