@@ -9,6 +9,7 @@ import {
   syncSearchFiltersIndicator,
 } from '../../utils/searchFilters.js';
 import { setupResizableTable, syncResizableTableBody } from '../../utils/tableColumns.js';
+import { openContactCreateDialog } from '../../utils/contactCreateForm.js';
 
 let state = {
   activities: [...mockActivities],
@@ -84,7 +85,7 @@ function bindUi() {
   });
   q('btnActivityNewMain')?.addEventListener('click', () => { q('dlgActivityDetail')?.showModal(); });
   q('btnAtDetailContactLookup')?.addEventListener('click', () => { q('dlgContactLookup')?.showModal(); });
-  q('btnAtDetailContactNew')?.addEventListener('click', () => { q('dlgContactDetailNew')?.showModal(); });
+  q('btnAtDetailContactNew')?.addEventListener('click', () => { openContactCreateDialog(); });
   q('btnAtDetailProjectLookup')?.addEventListener('click', () => { q('dlgProjectLookup')?.showModal(); });
   q('btnAtDetailProjectNew')?.addEventListener('click', () => { q('dlgProjectDetail')?.showModal(); });
   q('btnAtDetailSave')?.addEventListener('click', () => { alert('保存しました'); });

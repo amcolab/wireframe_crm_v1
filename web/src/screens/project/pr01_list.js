@@ -7,6 +7,7 @@ import {
   hasSearchConditions,
   syncSearchFiltersIndicator,
 } from '../../utils/searchFilters.js';
+import { openContactCreateDialog } from '../../utils/contactCreateForm.js';
 import {
   TAB_EMPTY,
   renderTabEmptyState,
@@ -142,7 +143,7 @@ function bindUi() {
   q('btnProjectNewMain')?.addEventListener('click', () => { q('dlgProjectDetail')?.showModal(); });
   q('btnPrTabNewActivity')?.addEventListener('click', () => { q('dlgActivityDetail')?.showModal(); });
   q('btnPrDetailContactLookup')?.addEventListener('click', () => { q('dlgContactLookup')?.showModal(); });
-  q('btnPrDetailContactNew')?.addEventListener('click', () => { q('dlgContactDetailNew')?.showModal(); });
+  q('btnPrDetailContactNew')?.addEventListener('click', () => { openContactCreateDialog(); });
   q('btnPrDetailSave')?.addEventListener('click', () => { alert('保存しました'); });
   q('btnPrDetailDelete')?.addEventListener('click', () => { if (confirm('削除しますか？')) alert('削除しました'); });
 

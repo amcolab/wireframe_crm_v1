@@ -11,6 +11,7 @@ import {
   resetFormMultiSelects,
   clearAdvancedSearch,
 } from '../../utils/searchFilters.js';
+import { openContactCreateDialog } from '../../utils/contactCreateForm.js';
 
 let state = {
   companies: [...mockCompanies],
@@ -208,7 +209,8 @@ function bindUi() {
   });
 
   q('btnNewContact')?.addEventListener('click', () => {
-    q('dlgContactDetailNew')?.showModal();
+    const company = state.companies.find(c => String(c.id) === String(state.selectedId)) || null;
+    openContactCreateDialog({ company });
   });
 
   q('btnNewActivity')?.addEventListener('click', () => {
@@ -235,7 +237,10 @@ function bindUi() {
   };
 
   bindModalTrigger('btnActivityContactLookup', 'dlgContactLookup');
-  bindModalTrigger('btnActivityContactNew', 'dlgContactDetailNew');
+  q('btnActivityContactNew')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openContactCreateDialog();
+  });
   bindModalTrigger('btnActivityProjectLookup', 'dlgProjectLookup');
   bindModalTrigger('btnActivityProjectNew', 'dlgProjectDetail');
 
@@ -261,7 +266,10 @@ function bindUi() {
   });
 
   bindModalTrigger('btnProjectContactLookup', 'dlgContactLookup');
-  bindModalTrigger('btnProjectContactNew', 'dlgContactDetailNew');
+  q('btnProjectContactNew')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openContactCreateDialog();
+  });
 
   // Save/Delete inside new modals
   const closeDialogOnAction = (btnId, dlgId, confirmMsg) => {

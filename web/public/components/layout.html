@@ -1544,17 +1544,18 @@
               <input type="text" name="firstNameKana" />
             </div>
           </div>
+          <input type="hidden" name="companyId" id="contactNewCompanyId" />
           <div class="form-row">
             <label>会社名 <span class="req">*</span></label>
             <div class="search-input-group">
-              <input type="text" name="companyName" id="contactDetailCompanyName" class="req-field-bg" style="flex:1" />
+              <input type="text" name="companyName" id="contactNewCompanyName" class="req-field-bg" style="flex:1" />
               <button type="button" id="btnContactCompanyLookup" class="icon-btn-inline">🔍</button>
               <button type="button" id="btnContactCompanyNew" class="btn btn-secondary">新規</button>
             </div>
           </div>
           <div class="form-row">
             <label>部署名</label>
-            <input type="text" name="deptName" />
+            <input type="text" name="deptName" id="contactNewDept" />
           </div>
           <div class="form-row">
             <div class="sub">
@@ -1563,13 +1564,13 @@
             </div>
             <div class="sub">
               <label>内線</label>
-              <input type="text" name="ext" />
+              <input type="text" name="ext" id="contactNewExt" />
             </div>
           </div>
           <div class="form-row">
             <div class="sub">
               <label>FAX</label>
-              <input type="text" name="fax" />
+              <input type="text" name="fax" id="contactNewFax" />
             </div>
             <div class="sub">
               <label>携帯電話</label>
@@ -1616,49 +1617,43 @@
           </div>
           <div class="form-row">
             <label>フォロー予定</label>
-            <select name="followUpDate">
-              <option>-</option>
+            <select name="followUpDate" id="contactNewFollowDate">
+              <option value="">-</option>
             </select>
           </div>
           <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr;">
             <div class="sub">
               <label>会社種別</label>
-              <input type="text" disabled />
+              <input type="text" id="contactNewCompanyType" disabled />
             </div>
             <div class="sub">
               <label>代表TEL</label>
-              <input type="text" disabled />
+              <input type="text" id="contactNewCompanyTel" disabled />
             </div>
           </div>
           <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr;">
             <div class="sub">
               <label>業界</label>
-              <select disabled>
-                <option>-</option>
-              </select>
+              <input type="text" id="contactNewCompanyIndustry" disabled />
             </div>
             <div class="sub">
               <label>規模ランク</label>
-              <select disabled>
-                <option>-</option>
-              </select>
+              <input type="text" id="contactNewCompanyScale" disabled />
             </div>
           </div>
           <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr;">
             <div class="sub">
               <label>郵便番号</label>
-              <input type="text" disabled />
+              <input type="text" id="contactNewCompanyPostal" disabled />
             </div>
             <div class="sub">
               <label>都道府県</label>
-              <select disabled>
-                <option>-</option>
-              </select>
+              <input type="text" id="contactNewCompanyPref" disabled />
             </div>
           </div>
           <div class="form-row">
             <label>住所</label>
-            <input type="text" disabled />
+            <input type="text" id="contactNewCompanyAddr" disabled />
           </div>
 
           <div style="margin-top: 20px;">

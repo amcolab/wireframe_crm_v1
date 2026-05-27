@@ -22,6 +22,7 @@ import {
   buildColgroup,
   buildTheadRow,
 } from '../../utils/tableColumns.js';
+import { openContactCreateDialog } from '../../utils/contactCreateForm.js';
 
 let state = {
   contacts: [...mockContacts],
@@ -132,7 +133,7 @@ function bindUi() {
   });
 
   q('btnContactNewActivity')?.addEventListener('click', () => { q('dlgActivityDetail')?.showModal(); });
-  q('btnContactCreateMain')?.addEventListener('click', () => { q('dlgContactDetailNew')?.showModal(); });
+  q('btnContactCreateMain')?.addEventListener('click', () => { openContactCreateDialog(); });
   q('btnContactNewProject')?.addEventListener('click', () => { q('dlgProjectDetail')?.showModal(); });
   const btnContactAdv = q('btnContactAdvancedSearch');
   bindAdvancedSearchForm({

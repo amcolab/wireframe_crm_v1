@@ -1,6 +1,7 @@
 import { q, escapeHtml } from './helpers.js';
 import { mockCompanies, mockEmployees, mockProjects, mockTenants } from './mockData.js';
 import { renderPageNumberButtons } from './pager.js';
+import { applyCompanyToContactCreateForm, openContactCreateDialog } from './contactCreateForm.js';
 
 function closeShellMenus() {
   document.querySelector('.settings-menu-trigger')?.classList.remove('show-menu');
@@ -696,15 +697,22 @@ export function initGlobalLookups() {
         ['btnContactCompanyLookup', 'dlgCompanyLookup'],
         ['btnContactCompanyNew', 'dlgCompanyCreate'],
         ['btnActivityContactLookup', 'dlgContactLookup'],
-        ['btnActivityContactNew', 'dlgContactDetailNew'],
         ['btnProjectContactLookup', 'dlgContactLookup'],
-        ['btnProjectContactNew', 'dlgContactDetailNew'],
         ['btnActivityProjectLookup', 'dlgProjectLookup'],
         ['btnMainContactLookupCompany', 'dlgCompanyLookup'], // For main screen
         ['btnMainContactCreateCompany', 'dlgCompanyCreate']  // For main screen
     ];
 
     modalTriggers.forEach(([btn, dlg]) => bindModalTrigger(btn, dlg));
+
+    q('btnActivityContactNew')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      openContactCreateDialog();
+    });
+    q('btnProjectContactNew')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      openContactCreateDialog();
+    });
 
     q('btnLookupSearch')?.addEventListener('click', (e) => {
     e.preventDefault();
@@ -730,12 +738,18 @@ export function initGlobalLookups() {
     }
     const c = tempLookupSelection;
     const fields = [
-      'contactDetailCompanyName', 'mainContactCompanyName', 'atDetailCompanyName', 'prDetailCompanyName', 'companySearchCompany'
+      'contactNewCompanyName',
+      'contactDetailCompanyName',
+      'mainContactCompanyName',
+      'atDetailCompanyName',
+      'prDetailCompanyName',
+      'companySearchCompany',
     ];
     fields.forEach(id => {
       const el = q(id);
       if (el) el.value = c.name;
     });
+    applyCompanyToContactCreateForm(c);
     dlgLookup?.close();
   });
 
