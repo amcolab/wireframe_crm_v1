@@ -126,9 +126,11 @@ function bindUi() {
   });
 
   btnCreate?.addEventListener('click', () => {
-    const selected = state.companies.find(c => String(c.id) === String(state.selectedId)) || null;
-    if (formCreate) formCreate.reset();
-    fillCreateDialog(formCreate, selected);
+    // CP01 — "会社登録" should open with empty values (no prefill from current selection).
+    if (formCreate) {
+      formCreate.reset();
+      fillCreateDialog(formCreate, null);
+    }
     if (dlgCreate?.showModal) dlgCreate.showModal();
   });
 
@@ -238,9 +240,25 @@ function bindUi() {
   bindModalTrigger('btnActivityProjectNew', 'dlgProjectDetail');
 
   bindModalTrigger('btnContactCompanyLookup', 'dlgCompanyLookup');
-  bindModalTrigger('btnContactCompanyNew', 'dlgCompanyCreate');
+  // dlgCompanyCreate should always reset before opening (avoid leftover values).
+  const openCompanyCreateDialog = () => {
+    if (formCreate) {
+      formCreate.reset();
+      fillCreateDialog(formCreate, null);
+    }
+    if (dlgCreate?.showModal) dlgCreate.showModal();
+  };
+
+  q('btnContactCompanyNew')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openCompanyCreateDialog();
+  });
+
   bindModalTrigger('btnMainContactLookupCompany', 'dlgCompanyLookup');
-  bindModalTrigger('btnMainContactCreateCompany', 'dlgCompanyCreate');
+  q('btnMainContactCreateCompany')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openCompanyCreateDialog();
+  });
 
   bindModalTrigger('btnProjectContactLookup', 'dlgContactLookup');
   bindModalTrigger('btnProjectContactNew', 'dlgContactDetailNew');
