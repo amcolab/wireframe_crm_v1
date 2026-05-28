@@ -675,3 +675,96 @@ body {
   background: #9b1818;
   border-color: #9b1818;
 }
+
+/* Inline Table Editing Styles */
+.table-edit-input,
+.table-edit-select {
+  width: 100%;
+  height: 26px;
+  font-size: 12px;
+  padding: 2px 4px;
+  margin: 0;
+  border: 1px solid var(--accent-color, var(--brand-500, #ff6600));
+  border-radius: var(--radius-sm, 4px);
+  background: var(--surface, #fff);
+  color: var(--text-primary, var(--text-1, #000));
+  box-sizing: border-box;
+}
+
+.table-edit-input:focus,
+.table-edit-select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 102, 0, 0.2);
+}
+
+/* Custom Windows-style Context Menu */
+.custom-context-menu {
+  position: fixed;
+  z-index: 10000;
+  background: linear-gradient(90deg, #f0f0f0 28px, #ffffff 28px);
+  border: 1px solid #979797;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.15);
+  padding: 2px;
+  font-family: "Segoe UI", sans-serif;
+  font-size: 12px;
+  color: #000;
+  min-width: 200px;
+  box-sizing: border-box;
+  border-radius: 2px;
+}
+
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  height: 24px;
+  cursor: default;
+  padding: 0 5px;
+  user-select: none;
+  border-radius: 2px;
+  border: 1px solid transparent; /* Constant transparent border prevents layout shifts */
+  box-sizing: border-box;
+}
+
+.context-menu-item:hover {
+  background-color: #e5f1fb;
+  border-color: #b8d6f3;
+}
+
+.context-menu-item.disabled {
+  color: #a0a0a0;
+  pointer-events: none;
+}
+
+.menu-icon-col {
+  width: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.menu-icon {
+  font-size: 14px;
+}
+
+.menu-label {
+  flex: 1;
+  padding-right: 20px;
+  white-space: nowrap;
+}
+
+.menu-shortcut {
+  color: #505050;
+  font-size: 11px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.menu-separator {
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 4px 2px 4px 34px;
+}
+
+

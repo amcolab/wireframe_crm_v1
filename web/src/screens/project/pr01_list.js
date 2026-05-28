@@ -2,6 +2,15 @@ import { q, escapeHtml } from '../../utils/helpers.js';
 import { mockProjects, mockActivities } from '../../utils/mockData.js';
 import { renderPageNumberButtons } from '../../utils/pager.js';
 import {
+  bindAdvancedSearchForm,
+  clearAdvancedSearch,
+  hasSearchConditions,
+  syncSearchFiltersIndicator,
+} from '../../utils/searchFilters.js';
+import { openContactCreateDialog } from '../../utils/contactCreateForm.js';
+import { openActivityCreateDialog } from '../../utils/activityCreateForm.js';
+import { openProjectCreateDialog } from '../../utils/projectCreateForm.js';
+import {
   TAB_EMPTY,
   renderTabEmptyState,
   showTabPager,
@@ -9,6 +18,12 @@ import {
   bindTabPager,
   syncEntityDetailTabLayout,
 } from '../../utils/entityTabTable.js';
+import {
+  setupResizableTable,
+  syncResizableTableBody,
+  buildColgroup,
+  buildTheadRow,
+} from '../../utils/tableColumns.js';
 
 let state = {
   projects: [...mockProjects],
@@ -16,6 +31,7 @@ let state = {
   selectedId: mockProjects[0]?.id ? String(mockProjects[0].id) : null,
   page: 1,
   pageSize: 25,
+  advanced: null,
   projectActivitiesPage: 1,
   projectActivitiesPageSize: 10,
 };
@@ -31,6 +47,10 @@ export function init() {
   console.log('Project screen (PR01) initialized');
   bindUi();
   bindProjectTable();
+  setupResizableTable('#projectTable', {
+    orderKey: 'smos.pr01.colOrder',
+    widthKey: 'smos.pr01.colWidths',
+  });
   bindTabPager(
     'projectActivities',
     state,
@@ -87,20 +107,45 @@ function bindUi() {
     });
   });
 
+  const btnProjectAdv = q('btnProjectAdvancedSearch');
+  bindAdvancedSearchForm({
+    btn: btnProjectAdv,
+    dlg: q('dlgProjectAdvancedSearch'),
+    form: q('formProjectAdvancedSearch'),
+    state,
+    onApply: applySearch,
+  });
+
+  const onProjectBasicInput = () => {
+    if (!hasProjectBasicSearch() && !hasSearchConditions(state.advanced)) {
+      syncSearchFiltersIndicator(btnProjectAdv, null);
+    }
+  };
+  ['projectSearchStatus', 'projectSearchSalesRep', 'projectSearchCompany', 'projectSearchDateFrom', 'projectSearchDateTo']
+    .forEach((id) => q(id)?.addEventListener('input', onProjectBasicInput));
+  q('projectSearchStatus')?.addEventListener('change', onProjectBasicInput);
+
   q('btnProjectSearch')?.addEventListener('click', applySearch);
   q('btnProjectClear')?.addEventListener('click', () => {
+    if (q('projectSearchStatus')) q('projectSearchStatus').value = '';
     if (q('projectSearchCompany')) q('projectSearchCompany').value = '';
     if (q('projectSearchSalesRep')) q('projectSearchSalesRep').value = '';
+    if (q('projectSearchDateFrom')) q('projectSearchDateFrom').value = '';
+    if (q('projectSearchDateTo')) q('projectSearchDateTo').value = '';
+    clearAdvancedSearch({
+      btn: btnProjectAdv,
+      form: q('formProjectAdvancedSearch'),
+      state,
+    });
     state.filtered = [...state.projects];
     state.page = 1;
     state.selectedId = state.filtered[0]?.id ? String(state.filtered[0].id) : null;
     render();
   });
-  q('btnProjectNewMain')?.addEventListener('click', () => { q('dlgProjectDetail')?.showModal(); });
-  q('btnProjectAdvancedSearch')?.addEventListener('click', () => { q('dlgProjectAdvancedSearch')?.showModal(); });
-  q('btnPrTabNewActivity')?.addEventListener('click', () => { q('dlgActivityDetail')?.showModal(); });
+  q('btnProjectNewMain')?.addEventListener('click', () => { openProjectCreateDialog(); });
+  q('btnPrTabNewActivity')?.addEventListener('click', () => { openActivityCreateDialog(); });
   q('btnPrDetailContactLookup')?.addEventListener('click', () => { q('dlgContactLookup')?.showModal(); });
-  q('btnPrDetailContactNew')?.addEventListener('click', () => { q('dlgContactDetailNew')?.showModal(); });
+  q('btnPrDetailContactNew')?.addEventListener('click', () => { openContactCreateDialog(); });
   q('btnPrDetailSave')?.addEventListener('click', () => { alert('保存しました'); });
   q('btnPrDetailDelete')?.addEventListener('click', () => { if (confirm('削除しますか？')) alert('削除しました'); });
 
@@ -123,6 +168,16 @@ function bindUi() {
     state.page = 1;
     render();
   });
+}
+
+function hasProjectBasicSearch() {
+  return !!(
+    q('projectSearchStatus')?.value
+    || q('projectSearchSalesRep')?.value?.trim()
+    || q('projectSearchCompany')?.value?.trim()
+    || q('projectSearchDateFrom')?.value
+    || q('projectSearchDateTo')?.value
+  );
 }
 
 function applySearch() {
@@ -158,6 +213,8 @@ function bindProjectTable() {
 }
 
 function render() {
+  syncSearchFiltersIndicator(q('btnProjectAdvancedSearch'), state.advanced);
+
   const total = state.filtered.length;
   const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
   if (state.page > totalPages) state.page = totalPages;
@@ -208,17 +265,19 @@ function renderProjectTable(rows) {
   tbody.innerHTML = rows.map(p => {
     const sel = String(p.id) === String(state.selectedId);
     return `<tr data-id="${escapeHtml(p.id)}" class="${sel ? 'selected' : ''}">
-      <td>${escapeHtml(p.issueDate || '')}</td>
-      <td>${escapeHtml(p.followDate || '')}</td>
-      <td>${escapeHtml(p.status || '')}</td>
-      <td>${escapeHtml(p.rep || '')}</td>
-      <td>${escapeHtml(p.company || '')}</td>
-      <td class="blue-link">${escapeHtml(p.contact || '')}</td>
-      <td>${escapeHtml(p.name || '')}</td>
-      <td title="${escapeHtml(p.summary || '')}">${escapeHtml(p.summary || '')}</td>
-      <td>${escapeHtml(p.motivation || '')}</td>
+      <td data-col-key="issueDate">${escapeHtml(p.issueDate || '')}</td>
+      <td data-col-key="followDate">${escapeHtml(p.followDate || '')}</td>
+      <td data-col-key="status">${escapeHtml(p.status || '')}</td>
+      <td data-col-key="rep">${escapeHtml(p.rep || '')}</td>
+      <td data-col-key="company">${escapeHtml(p.company || '')}</td>
+      <td data-col-key="contact" class="blue-link">${escapeHtml(p.contact || '')}</td>
+      <td data-col-key="name">${escapeHtml(p.name || '')}</td>
+      <td data-col-key="summary" title="${escapeHtml(p.summary || '')}">${escapeHtml(p.summary || '')}</td>
+      <td data-col-key="motivation">${escapeHtml(p.motivation || '')}</td>
     </tr>`;
   }).join('');
+
+  syncResizableTableBody('#projectTable');
 }
 
 function fillDetailForm(p) {
@@ -261,25 +320,38 @@ function renderProjectActivitiesList(p) {
   const start = (state.projectActivitiesPage - 1) * size;
   const sliced = items.slice(start, Math.min(start + size, total));
 
-  let html = `<table class="t"><thead><tr>
-    <th>活動日</th><th>営業担当</th><th>タイプ</th><th>目的</th><th>動機</th><th>担当(姓)</th><th>コメント</th>
-  </tr></thead><tbody>`;
+  const actCols = [
+    { key: 'date', label: '活動日', width: 100 },
+    { key: 'rep', label: '営業担当', width: 120 },
+    { key: 'type', label: 'タイプ', width: 90 },
+    { key: 'purpose', label: '目的', width: 120 },
+    { key: 'motivation', label: '動機', width: 100 },
+    { key: 'contact', label: '担当(姓)', width: 100 },
+    { key: 'comment', label: 'コメント', width: 200 },
+  ];
+  let html = `<table class="t" id="projectActivitiesTable">${buildColgroup(actCols)}${buildTheadRow(actCols)}<tbody>`;
 
   if (!sliced.length) {
     html += '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text-3);">表示するデータがありません</td></tr>';
   } else {
     html += sliced.map(a => `<tr>
-      <td>${escapeHtml(a.date || '-')}</td>
-      <td>${escapeHtml(a.rep || '-')}</td>
-      <td><span class="${escapeHtml(a.typeClass || '')}">${escapeHtml(a.type || '-')}</span></td>
-      <td>${escapeHtml(a.purpose || '-')}</td>
-      <td>${escapeHtml(a.motivation || '-')}</td>
-      <td>${escapeHtml(a.contact || '-')}</td>
-      <td title="${escapeHtml(a.comment || '')}">${escapeHtml(a.comment || '')}</td>
+      <td data-col-key="date">${escapeHtml(a.date || '-')}</td>
+      <td data-col-key="rep">${escapeHtml(a.rep || '-')}</td>
+      <td data-col-key="type"><span class="${escapeHtml(a.typeClass || '')}">${escapeHtml(a.type || '-')}</span></td>
+      <td data-col-key="purpose">${escapeHtml(a.purpose || '-')}</td>
+      <td data-col-key="motivation">${escapeHtml(a.motivation || '-')}</td>
+      <td data-col-key="contact">${escapeHtml(a.contact || '-')}</td>
+      <td data-col-key="comment" title="${escapeHtml(a.comment || '')}">${escapeHtml(a.comment || '')}</td>
     </tr>`).join('');
   }
   html += '</tbody></table>';
   wrap.innerHTML = html;
+  const actTable = wrap.querySelector('#projectActivitiesTable');
+  setupResizableTable(actTable, {
+    orderKey: 'smos.pr01.projectActivities.colOrder',
+    widthKey: 'smos.pr01.projectActivities.colWidths',
+  });
+  syncResizableTableBody(actTable);
 
   updateTabPager('projectActivities', {
     total,

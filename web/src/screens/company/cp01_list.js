@@ -2,6 +2,18 @@ import { q, escapeHtml, toNum, includesPartial } from '../../utils/helpers.js';
 import { mockCompanies, mockContacts, mockActivities, mockProjects } from '../../utils/mockData.js';
 import { showToast } from '../../utils/toast.js';
 import { initTableColResize } from '../../utils/tableColResize.js';
+import { initTableColReorder, syncTableBodyColumnOrder } from '../../utils/tableColReorder.js';
+import { navigateToContactSearch } from '../../utils/screenNavigation.js';
+import {
+  readFormSearchConditions,
+  hasSearchConditions,
+  syncSearchFiltersIndicator,
+  resetFormMultiSelects,
+  clearAdvancedSearch,
+} from '../../utils/searchFilters.js';
+import { openContactCreateDialog } from '../../utils/contactCreateForm.js';
+import { openActivityCreateDialog } from '../../utils/activityCreateForm.js';
+import { openProjectCreateDialog } from '../../utils/projectCreateForm.js';
 
 let state = {
   companies: [...mockCompanies],
@@ -29,6 +41,10 @@ export function init() {
   bindUi();
   bindCompanyTable();
   bindCompanyTableSort();
+  initTableColReorder('#companyTable', {
+    storeKey: 'smos.cp01.colOrder',
+    widthStoreKey: 'smos.cp01.colWidths',
+  });
   initTableColResize('#companyTable', 'smos.cp01.colWidths');
   initResizer();
 
@@ -78,12 +94,17 @@ function bindUi() {
 
   btnClear?.addEventListener('click', () => {
     if (inputName) inputName.value = '';
-    state.advanced = null;
     state.filtered = [...state.companies];
     state.page = 1;
     state.selectedId = state.filtered[0] ? String(state.filtered[0].id) : null;
-    if (formAdv) formAdv.reset();
+    clearAdvancedSearch({ btn: btnAdv, form: formAdv, state });
     render();
+  });
+
+  inputName?.addEventListener('input', () => {
+    if (!hasAnySearchConditions(inputName, state.advanced)) {
+      syncSearchFiltersIndicator(btnAdv, null);
+    }
   });
 
   btnAdv?.addEventListener('click', () => {
@@ -92,27 +113,27 @@ function bindUi() {
 
   btnAdvClear?.addEventListener('click', () => {
     formAdv?.reset();
-    document.querySelectorAll('.multi-select-trigger').forEach(trigger => {
-      const dropdown = trigger.closest('.multi-select-dropdown');
-      trigger.textContent = dropdown.dataset.placeholder || '選択..';
-    });
+    resetFormMultiSelects(formAdv);
   });
 
   btnAdvApply?.addEventListener('click', () => {
-    const adv = readAdvancedSearch(formAdv);
-    state.advanced = adv;
+    const adv = readFormSearchConditions(formAdv);
+    state.advanced = hasSearchConditions(adv) ? adv : null;
     const name = (inputName?.value ?? '').trim();
-    state.filtered = filterCompanies(state.companies, { ...adv, name });
+    state.filtered = filterCompanies(state.companies, { ...(state.advanced || {}), name });
     state.page = 1;
     state.selectedId = state.filtered[0] ? String(state.filtered[0].id) : null;
+    syncSearchFiltersIndicator(btnAdv, state.advanced);
     dlgAdv?.close();
     render();
   });
 
   btnCreate?.addEventListener('click', () => {
-    const selected = state.companies.find(c => String(c.id) === String(state.selectedId)) || null;
-    if (formCreate) formCreate.reset();
-    fillCreateDialog(formCreate, selected);
+    // CP01 — "会社登録" should open with empty values (no prefill from current selection).
+    if (formCreate) {
+      formCreate.reset();
+      fillCreateDialog(formCreate, null);
+    }
     if (dlgCreate?.showModal) dlgCreate.showModal();
   });
 
@@ -190,15 +211,18 @@ function bindUi() {
   });
 
   q('btnNewContact')?.addEventListener('click', () => {
-    q('dlgContactDetailNew')?.showModal();
+    const company = state.companies.find(c => String(c.id) === String(state.selectedId)) || null;
+    openContactCreateDialog({ company, fillExt: false, fillAudit: false });
   });
 
   q('btnNewActivity')?.addEventListener('click', () => {
-    q('dlgActivityDetail')?.showModal();
+    const company = state.companies.find(c => String(c.id) === String(state.selectedId)) || null;
+    openActivityCreateDialog({ company });
   });
 
   q('btnNewProject')?.addEventListener('click', () => {
-    q('dlgProjectDetail')?.showModal();
+    const company = state.companies.find(c => String(c.id) === String(state.selectedId)) || null;
+    openProjectCreateDialog({ company });
   });
 
   // Modal triggers inside detail modals
@@ -217,17 +241,46 @@ function bindUi() {
   };
 
   bindModalTrigger('btnActivityContactLookup', 'dlgContactLookup');
-  bindModalTrigger('btnActivityContactNew', 'dlgContactDetailNew');
+  q('btnActivityContactNew')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openContactCreateDialog();
+  });
   bindModalTrigger('btnActivityProjectLookup', 'dlgProjectLookup');
-  bindModalTrigger('btnActivityProjectNew', 'dlgProjectDetail');
+  q('btnActivityProjectNew')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const companyId = q('atDetailCompanyId')?.value?.trim();
+    const company = companyId
+      ? state.companies.find(c => String(c.id) === String(companyId))
+      : state.companies.find(c => String(c.id) === String(state.selectedId));
+    openProjectCreateDialog({ company: company || null });
+  });
 
   bindModalTrigger('btnContactCompanyLookup', 'dlgCompanyLookup');
-  bindModalTrigger('btnContactCompanyNew', 'dlgCompanyCreate');
+  // dlgCompanyCreate should always reset before opening (avoid leftover values).
+  const openCompanyCreateDialog = () => {
+    if (formCreate) {
+      formCreate.reset();
+      fillCreateDialog(formCreate, null);
+    }
+    if (dlgCreate?.showModal) dlgCreate.showModal();
+  };
+
+  q('btnContactCompanyNew')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openCompanyCreateDialog();
+  });
+
   bindModalTrigger('btnMainContactLookupCompany', 'dlgCompanyLookup');
-  bindModalTrigger('btnMainContactCreateCompany', 'dlgCompanyCreate');
+  q('btnMainContactCreateCompany')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openCompanyCreateDialog();
+  });
 
   bindModalTrigger('btnProjectContactLookup', 'dlgContactLookup');
-  bindModalTrigger('btnProjectContactNew', 'dlgContactDetailNew');
+  q('btnProjectContactNew')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openContactCreateDialog();
+  });
 
   // Save/Delete inside new modals
   const closeDialogOnAction = (btnId, dlgId, confirmMsg) => {
@@ -336,7 +389,7 @@ function bindUi() {
   // Dynamic child tables pagination helper
   const bindChildPager = (prefix, renderFn) => {
     const getSelectedCompany = () => state.companies.find(c => String(c.id) === String(state.selectedId));
-    
+
     q(`btn${prefix}FirstPage`)?.addEventListener('click', () => {
       state[`${prefix.toLowerCase()}Page`] = 1;
       const c = getSelectedCompany();
@@ -400,10 +453,29 @@ function bindUi() {
   bindChildPager('Activities', renderActivitiesList);
   bindChildPager('Projects', renderProjectsList);
 
+  bindContactsListNavigation();
   syncDetailTabLayout('detail');
 }
 
+function bindContactsListNavigation() {
+  const wrap = q('companyContactsList');
+  if (!wrap || wrap.dataset.navBound === 'true') return;
+  wrap.dataset.navBound = 'true';
+
+  wrap.addEventListener('click', (e) => {
+    const link = e.target.closest('[data-goto-contact]');
+    if (!link) return;
+    e.preventDefault();
+    e.stopPropagation();
+    navigateToContactSearch({
+      company: link.getAttribute('data-company') || '',
+    });
+  });
+}
+
 function render() {
+  syncSearchFiltersIndicator(q('btnCompanyAdvancedSearch'), state.advanced);
+
   const tbody = q('companyTableBody');
   const meta = q('companyResultMeta');
   const totalCount = q('companyTotalCount');
@@ -477,13 +549,9 @@ function filterCompanies(companies, cond) {
   });
 }
 
-function readAdvancedSearch(form) {
-  if (!form) return {};
-  const fd = new FormData(form);
-  return {
-    keyword: String(fd.get('keyword') || ''),
-    name: String(fd.get('name') || ''),
-  };
+function hasAnySearchConditions(inputName, advanced) {
+  const name = (inputName?.value ?? '').trim();
+  return !!name || hasSearchConditions(advanced);
 }
 
 function fillCreateDialog(form, selected) {
@@ -699,7 +767,7 @@ function renderContactsList(c) {
   showTabPager(pager);
   const size = state.contactsPageSize;
   const totalPages = Math.max(1, Math.ceil(total / size));
-  
+
   if (state.contactsPage > totalPages) state.contactsPage = totalPages;
   if (state.contactsPage < 1) state.contactsPage = 1;
 
@@ -735,7 +803,9 @@ function renderContactsList(c) {
   } else {
     contactsHtml += sliced.map(m => `
       <tr>
-        <td class="blue-link">${escapeHtml(m.last)}</td>
+        <td>
+          <div type="button" class="blue-link" data-goto-contact data-company="${escapeHtml(m.company || c.name || '')}" title="担当一覧で検索">${escapeHtml(m.last)}</div>
+        </td>
         <td>${escapeHtml(m.first)}</td>
         <td>${escapeHtml(m.kana)}</td>
         <td>${escapeHtml(m.dept)}</td>
@@ -779,7 +849,7 @@ function renderActivitiesList(c) {
   showTabPager(pager);
   const size = state.activitiesPageSize;
   const totalPages = Math.max(1, Math.ceil(total / size));
-  
+
   if (state.activitiesPage > totalPages) state.activitiesPage = totalPages;
   if (state.activitiesPage < 1) state.activitiesPage = 1;
 
@@ -853,7 +923,7 @@ function renderProjectsList(c) {
   showTabPager(pager);
   const size = state.projectsPageSize;
   const totalPages = Math.max(1, Math.ceil(total / size));
-  
+
   if (state.projectsPage > totalPages) state.projectsPage = totalPages;
   if (state.projectsPage < 1) state.projectsPage = 1;
 
@@ -1014,20 +1084,22 @@ function renderCompanyTable(rows) {
   tbody.innerHTML = rows.map(c => {
     const selected = String(c.id) === String(state.selectedId);
     return `<tr data-id="${escapeHtml(c.id)}" class="${selected ? 'selected' : ''}">
-      <td>${escapeHtml(c.id)}</td>
-      <td>${escapeHtml(c.name)}</td>
-      <td class="tel-num">${escapeHtml(c.tel ?? '')}</td>
-      <td>${escapeHtml(c.addr ?? '')}</td>
-      <td>${escapeHtml(c.industry ?? '')}</td>
-      <td>${escapeHtml(c.biz ?? '')}</td>
-      <td>${escapeHtml(c.scale ?? '')}</td>
-      <td>${escapeHtml(c.type ?? '')}</td>
-      <td class="num">${escapeHtml(c.employees ?? '')}</td>
-      <td>${escapeHtml(c.area ?? '')}</td>
-      <td>${escapeHtml(c.pref ?? '')}</td>
-      <td title="${escapeHtml(c.remark ?? '')}">${escapeHtml(c.remark ?? '')}</td>
+      <td data-col-key="id">${escapeHtml(c.id)}</td>
+      <td data-col-key="name">${escapeHtml(c.name)}</td>
+      <td data-col-key="tel" class="tel-num">${escapeHtml(c.tel ?? '')}</td>
+      <td data-col-key="addr">${escapeHtml(c.addr ?? '')}</td>
+      <td data-col-key="industry">${escapeHtml(c.industry ?? '')}</td>
+      <td data-col-key="biz">${escapeHtml(c.biz ?? '')}</td>
+      <td data-col-key="scale">${escapeHtml(c.scale ?? '')}</td>
+      <td data-col-key="type">${escapeHtml(c.type ?? '')}</td>
+      <td data-col-key="employees" class="num">${escapeHtml(c.employees ?? '')}</td>
+      <td data-col-key="area">${escapeHtml(c.area ?? '')}</td>
+      <td data-col-key="pref">${escapeHtml(c.pref ?? '')}</td>
+      <td data-col-key="remark" title="${escapeHtml(c.remark ?? '')}">${escapeHtml(c.remark ?? '')}</td>
     </tr>`;
   }).join('');
+
+  syncTableBodyColumnOrder(q('companyTable'));
 }
 
 function initResizer() {
