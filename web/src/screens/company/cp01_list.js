@@ -14,6 +14,7 @@ import {
 import { openContactCreateDialog } from '../../utils/contactCreateForm.js';
 import { openActivityCreateDialog } from '../../utils/activityCreateForm.js';
 import { openProjectCreateDialog } from '../../utils/projectCreateForm.js';
+import { loadColumnSettings, saveColumnSettings } from '../../utils/columnSettings.js';
 
 let state = {
   companies: [...mockCompanies],
@@ -35,17 +36,143 @@ let state = {
 
 let isReady = false;
 let companyTableBound = false;
+let columnSettingsBound = false;
+
+const COMPANY_REORDER_STORE_KEY = 'smos.cp01.colOrder';
+const COMPANY_REORDER_WIDTH_KEY = 'smos.cp01.colWidths';
+
+const COMPANY_MAIN_COLUMNS = [
+  { label: '会社ID', key: 'id', width: '68px', sortType: 'num' },
+  { label: '会社名', key: 'name', width: '260px', sortType: 'str' },
+  { label: '代表TEL', key: 'tel', width: '130px', sortType: 'str', tdClass: 'tel-num' },
+  { label: '住所', key: 'addr', width: '260px', sortType: 'str' },
+  { label: '業界', key: 'industry', width: '90px', sortType: 'str' },
+  { label: '業種', key: 'biz', width: '120px', sortType: 'str' },
+  { label: '規模ランク', key: 'scale', width: '100px', sortType: 'str' },
+  { label: '種別', key: 'type', width: '120px', sortType: 'str' },
+  { label: '従業員数', key: 'employees', width: '90px', sortType: 'num', thClass: 'num', tdClass: 'num' },
+  { label: '地区', key: 'area', width: '80px', sortType: 'str' },
+  { label: '都道府県', key: 'pref', width: '90px', sortType: 'str' },
+  { label: '会社備考', key: 'remark', width: '200px', sortType: 'str' },
+];
+
+const COMPANY_CONTACT_COLUMNS = [
+  { label: '担当(姓)', render: (m, c) => `<div type="button" class="blue-link" data-goto-contact data-company="${escapeHtml(m.company || c.name || '')}" title="担当一覧で検索">${escapeHtml(m.last)}</div>` },
+  { label: '担当(名)', render: (m) => escapeHtml(m.first) },
+  { label: 'フリガナ', render: (m) => escapeHtml(m.kana) },
+  { label: '部署名', render: (m) => escapeHtml(m.dept) },
+  { label: 'TEL', render: (m) => escapeHtml(m.tel) },
+  { label: '携帯電話', render: (m) => escapeHtml(m.mobile) },
+  { label: 'Email', render: (m) => escapeHtml(m.email) },
+  { label: '役職名', render: (m) => escapeHtml(m.pos) },
+  { label: '職位', render: (m) => escapeHtml(m.rank) },
+  { label: '担当者備考', render: (m) => `<span title="${escapeHtml(m.remark)}">${escapeHtml(m.remark)}</span>` },
+];
+
+const COMPANY_ACTIVITY_COLUMNS = [
+  { label: '活動日', render: (a) => escapeHtml(a.date) },
+  { label: '営業担当', render: (a) => escapeHtml(a.rep) },
+  { label: '担当(姓)', render: (a) => `<span class="blue-link">${escapeHtml(a.contact)}</span>` },
+  { label: 'タイプ', render: (a) => `<span class="${a.typeClass}">${escapeHtml(a.type)}</span>` },
+  { label: 'コメント', render: (a) => `<span title="${escapeHtml(a.comment)}">${escapeHtml(a.comment)}</span>`, thStyle: 'min-width: 250px;' },
+  { label: '目的', render: (a) => escapeHtml(a.purpose || '') },
+  { label: '案件名', render: (a) => escapeHtml(a.projectName || '') },
+];
+
+const COMPANY_PROJECT_COLUMNS = [
+  { label: '話題日', render: (p) => escapeHtml(p.issueDate) },
+  { label: '売上日', render: (p) => escapeHtml(p.saleDate || '') },
+  { label: 'フォロー予定', render: (p) => escapeHtml(p.followDate || '') },
+  { label: '案件ステータス', render: (p) => escapeHtml(p.status) },
+  { label: '営業担当', render: (p) => escapeHtml(p.rep) },
+  { label: '案件名', render: (p) => `<span class="blue-link">${escapeHtml(p.name)}</span>` },
+  { label: '担当(姓)', render: (p) => `<span class="blue-link">${escapeHtml(p.contact)}</span>` },
+  { label: '案件概要', render: (p) => `<span title="${escapeHtml(p.summary)}">${escapeHtml(p.summary)}</span>`, thStyle: 'min-width: 250px;' },
+  { label: '当初確度', render: (p) => escapeHtml(p.initial || '') },
+  { label: '発生動機', render: (p) => escapeHtml(p.motivation || '') },
+  { label: '引合手段', render: (p) => escapeHtml(p.method || '') },
+];
+
+function resolveColumnsForSubMenu(subVal, columnDefs) {
+  const settings = loadColumnSettings(1, subVal);
+  if (!settings.length) return columnDefs;
+  const byLabel = new Map(columnDefs.map((col) => [col.label, col]));
+  const ordered = settings
+    .filter((item) => item.visible)
+    .map((item) => byLabel.get(item.label))
+    .filter(Boolean);
+  const rest = columnDefs.filter((col) => !ordered.includes(col));
+  const merged = [...ordered, ...rest];
+  return merged.length ? merged : columnDefs;
+}
+
+function bindColumnSettingsSync() {
+  if (columnSettingsBound) return;
+  columnSettingsBound = true;
+  window.addEventListener('smos:column-settings-updated', (event) => {
+    const detail = event?.detail || {};
+    if (Number(detail.menuVal) !== 1) return;
+    render();
+  });
+}
+
+function syncCompanySettingsFromHeaderOrder() {
+  const table = q('companyTable');
+  if (!table) return;
+  const ths = Array.from(table.querySelectorAll('thead tr th[data-sort-key]'));
+  if (!ths.length) return;
+
+  const keyToLabel = new Map(COMPANY_MAIN_COLUMNS.map((col) => [col.key, col.label]));
+  const orderedVisibleLabels = ths
+    .map((th) => keyToLabel.get(th.getAttribute('data-sort-key')))
+    .filter(Boolean);
+  if (!orderedVisibleLabels.length) return;
+
+  const settings = loadColumnSettings(1, 1);
+  if (!settings.length) return;
+
+  const byLabel = new Map(settings.map((s) => [s.label, s]));
+  const orderedVisible = orderedVisibleLabels
+    .map((label) => byLabel.get(label))
+    .filter(Boolean)
+    .map((item) => ({ ...item, visible: true }));
+  const hiddenOrUnknown = settings
+    .filter((item) => !orderedVisibleLabels.includes(item.label))
+    .map((item) => ({ ...item }));
+
+  saveColumnSettings(1, 1, [...orderedVisible, ...hiddenOrUnknown]);
+}
+
+function bindCompanyTableReorderSync() {
+  const table = q('companyTable');
+  const thead = table?.querySelector('thead');
+  if (!table || !thead || table.dataset.colReorderSyncBound === '1') return;
+  table.dataset.colReorderSyncBound = '1';
+
+  const syncAfterDrop = (e) => {
+    if (!e.target.closest('th')) return;
+    window.setTimeout(() => {
+      syncCompanySettingsFromHeaderOrder();
+      render();
+    }, 0);
+  };
+
+  // Use capture phase because drop handler in tableColReorder stops bubbling.
+  thead.addEventListener('drop', syncAfterDrop, true);
+}
 
 export function init() {
   console.log('Company screen initialized');
+  bindColumnSettingsSync();
+  bindCompanyTableReorderSync();
   bindUi();
   bindCompanyTable();
   bindCompanyTableSort();
   initTableColReorder('#companyTable', {
-    storeKey: 'smos.cp01.colOrder',
-    widthStoreKey: 'smos.cp01.colWidths',
+    storeKey: COMPANY_REORDER_STORE_KEY,
+    widthStoreKey: COMPANY_REORDER_WIDTH_KEY,
   });
-  initTableColResize('#companyTable', 'smos.cp01.colWidths');
+  initTableColResize('#companyTable', COMPANY_REORDER_WIDTH_KEY);
   initResizer();
 
   // Force an initial render after a small delay to ensure everything is ready
@@ -775,20 +902,13 @@ function renderContactsList(c) {
   const actualEndIdx = Math.min(start + size, total);
   const sliced = contacts.slice(start, actualEndIdx);
 
+  const visibleColumns = resolveColumnsForSubMenu(2, COMPANY_CONTACT_COLUMNS);
+
   let contactsHtml = `
     <table class="t">
       <thead>
         <tr>
-          <th>担当(姓)</th>
-          <th>担当(名)</th>
-          <th>フリガナ</th>
-          <th>部署名</th>
-          <th>TEL</th>
-          <th>携帯電話</th>
-          <th>Email</th>
-          <th>役職名</th>
-          <th>職位</th>
-          <th>担当者備考</th>
+          ${visibleColumns.map((col) => `<th>${escapeHtml(col.label)}</th>`).join('')}
         </tr>
       </thead>
       <tbody>
@@ -797,24 +917,13 @@ function renderContactsList(c) {
   if (sliced.length === 0) {
     contactsHtml += `
       <tr>
-        <td colspan="10" style="text-align:center; padding: 20px; color: var(--text-3);">表示するデータがありません</td>
+        <td colspan="${visibleColumns.length}" style="text-align:center; padding: 20px; color: var(--text-3);">表示するデータがありません</td>
       </tr>
     `;
   } else {
     contactsHtml += sliced.map(m => `
       <tr>
-        <td>
-          <div type="button" class="blue-link" data-goto-contact data-company="${escapeHtml(m.company || c.name || '')}" title="担当一覧で検索">${escapeHtml(m.last)}</div>
-        </td>
-        <td>${escapeHtml(m.first)}</td>
-        <td>${escapeHtml(m.kana)}</td>
-        <td>${escapeHtml(m.dept)}</td>
-        <td>${escapeHtml(m.tel)}</td>
-        <td>${escapeHtml(m.mobile)}</td>
-        <td>${escapeHtml(m.email)}</td>
-        <td>${escapeHtml(m.pos)}</td>
-        <td>${escapeHtml(m.rank)}</td>
-        <td title="${escapeHtml(m.remark)}">${escapeHtml(m.remark)}</td>
+        ${visibleColumns.map((col) => `<td>${col.render(m, c)}</td>`).join('')}
       </tr>
     `).join('');
   }
@@ -857,17 +966,13 @@ function renderActivitiesList(c) {
   const actualEndIdx = Math.min(start + size, total);
   const sliced = activities.slice(start, actualEndIdx);
 
+  const visibleColumns = resolveColumnsForSubMenu(3, COMPANY_ACTIVITY_COLUMNS);
+
   let activitiesHtml = `
     <table class="t">
       <thead>
         <tr>
-          <th>活動日</th>
-          <th>営業担当</th>
-          <th>担当(姓)</th>
-          <th>タイプ</th>
-          <th style="min-width: 250px;">コメント</th>
-          <th>目的</th>
-          <th>案件名</th>
+          ${visibleColumns.map((col) => `<th${col.thStyle ? ` style="${col.thStyle}"` : ''}>${escapeHtml(col.label)}</th>`).join('')}
         </tr>
       </thead>
       <tbody>
@@ -876,19 +981,13 @@ function renderActivitiesList(c) {
   if (sliced.length === 0) {
     activitiesHtml += `
       <tr>
-        <td colspan="7" style="text-align:center; padding: 20px; color: var(--text-3);">表示するデータがありません</td>
+        <td colspan="${visibleColumns.length}" style="text-align:center; padding: 20px; color: var(--text-3);">表示するデータがありません</td>
       </tr>
     `;
   } else {
     activitiesHtml += sliced.map(a => `
       <tr>
-        <td>${escapeHtml(a.date)}</td>
-        <td>${escapeHtml(a.rep)}</td>
-        <td class="blue-link">${escapeHtml(a.contact)}</td>
-        <td><span class="${a.typeClass}">${escapeHtml(a.type)}</span></td>
-        <td title="${escapeHtml(a.comment)}">${escapeHtml(a.comment)}</td>
-        <td>${escapeHtml(a.purpose || '')}</td>
-        <td>${escapeHtml(a.projectName || '')}</td>
+        ${visibleColumns.map((col) => `<td>${col.render(a, c)}</td>`).join('')}
       </tr>
     `).join('');
   }
@@ -931,21 +1030,13 @@ function renderProjectsList(c) {
   const actualEndIdx = Math.min(start + size, total);
   const sliced = projects.slice(start, actualEndIdx);
 
+  const visibleColumns = resolveColumnsForSubMenu(4, COMPANY_PROJECT_COLUMNS);
+
   let projectsHtml = `
     <table class="t">
       <thead>
         <tr>
-          <th>話題日</th>
-          <th>売上日</th>
-          <th>フォロー予定</th>
-          <th>案件ステータス</th>
-          <th>営業担当</th>
-          <th>案件名</th>
-          <th>担当(姓)</th>
-          <th style="min-width: 250px;">案件概要</th>
-          <th>当初確度</th>
-          <th>発生動機</th>
-          <th>引合手段</th>
+          ${visibleColumns.map((col) => `<th${col.thStyle ? ` style="${col.thStyle}"` : ''}>${escapeHtml(col.label)}</th>`).join('')}
         </tr>
       </thead>
       <tbody>
@@ -954,23 +1045,13 @@ function renderProjectsList(c) {
   if (sliced.length === 0) {
     projectsHtml += `
       <tr>
-        <td colspan="11" style="text-align:center; padding: 20px; color: var(--text-3);">表示するデータがありません</td>
+        <td colspan="${visibleColumns.length}" style="text-align:center; padding: 20px; color: var(--text-3);">表示するデータがありません</td>
       </tr>
     `;
   } else {
     projectsHtml += sliced.map(p => `
       <tr>
-        <td>${escapeHtml(p.issueDate)}</td>
-        <td>${escapeHtml(p.saleDate || '')}</td>
-        <td>${escapeHtml(p.followDate || '')}</td>
-        <td>${escapeHtml(p.status)}</td>
-        <td>${escapeHtml(p.rep)}</td>
-        <td class="blue-link">${escapeHtml(p.name)}</td>
-        <td class="blue-link">${escapeHtml(p.contact)}</td>
-        <td title="${escapeHtml(p.summary)}">${escapeHtml(p.summary)}</td>
-        <td>${escapeHtml(p.initial || '')}</td>
-        <td>${escapeHtml(p.motivation || '')}</td>
-        <td>${escapeHtml(p.method || '')}</td>
+        ${visibleColumns.map((col) => `<td>${col.render(p, c)}</td>`).join('')}
       </tr>
     `).join('');
   }
@@ -1074,32 +1155,61 @@ function bindCompanyTable() {
 
 function renderCompanyTable(rows) {
   const tbody = q('companyTableBody');
-  if (!tbody) return;
+  const table = q('companyTable');
+  if (!tbody || !table) return;
+
+  const visibleColumns = resolveColumnsForSubMenu(1, COMPANY_MAIN_COLUMNS);
+  const colgroup = table.querySelector('colgroup');
+  const headRow = table.querySelector('thead tr');
+
+  if (colgroup) {
+    colgroup.innerHTML = visibleColumns
+      .map((col) => `<col style="width:${col.width}">`)
+      .join('');
+  }
+  if (headRow) {
+    headRow.innerHTML = visibleColumns
+      .map((col) => `<th data-sort-key="${col.key}" data-sort-type="${col.sortType}"${col.thClass ? ` class="${col.thClass}"` : ''}>${escapeHtml(col.label)}<span class="sort-arrow" aria-hidden="true"></span></th>`)
+      .join('');
+  }
+  try {
+    localStorage.setItem(
+      COMPANY_REORDER_STORE_KEY,
+      JSON.stringify(visibleColumns.map((col) => col.key)),
+    );
+  } catch {
+    /* ignore */
+  }
+  if (!visibleColumns.some((col) => col.key === state.sortKey)) {
+    state.sortKey = visibleColumns[0]?.key || 'id';
+    state.sortDir = (visibleColumns[0]?.sortType === 'num') ? 'desc' : 'asc';
+  }
 
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="12" style="text-align:center;padding:20px;color:var(--text-3);">表示するデータがありません</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="${visibleColumns.length}" style="text-align:center;padding:20px;color:var(--text-3);">表示するデータがありません</td></tr>`;
     return;
   }
 
   tbody.innerHTML = rows.map(c => {
     const selected = String(c.id) === String(state.selectedId);
     return `<tr data-id="${escapeHtml(c.id)}" class="${selected ? 'selected' : ''}">
-      <td data-col-key="id">${escapeHtml(c.id)}</td>
-      <td data-col-key="name">${escapeHtml(c.name)}</td>
-      <td data-col-key="tel" class="tel-num">${escapeHtml(c.tel ?? '')}</td>
-      <td data-col-key="addr">${escapeHtml(c.addr ?? '')}</td>
-      <td data-col-key="industry">${escapeHtml(c.industry ?? '')}</td>
-      <td data-col-key="biz">${escapeHtml(c.biz ?? '')}</td>
-      <td data-col-key="scale">${escapeHtml(c.scale ?? '')}</td>
-      <td data-col-key="type">${escapeHtml(c.type ?? '')}</td>
-      <td data-col-key="employees" class="num">${escapeHtml(c.employees ?? '')}</td>
-      <td data-col-key="area">${escapeHtml(c.area ?? '')}</td>
-      <td data-col-key="pref">${escapeHtml(c.pref ?? '')}</td>
-      <td data-col-key="remark" title="${escapeHtml(c.remark ?? '')}">${escapeHtml(c.remark ?? '')}</td>
+      ${visibleColumns.map((col) => {
+        const raw = c[col.key] ?? '';
+        const title = col.key === 'remark' ? ` title="${escapeHtml(raw)}"` : '';
+        const cls = col.tdClass ? ` class="${col.tdClass}"` : '';
+        return `<td data-col-key="${col.key}"${cls}${title}>${escapeHtml(raw)}</td>`;
+      }).join('')}
     </tr>`;
   }).join('');
 
-  syncTableBodyColumnOrder(q('companyTable'));
+  syncTableBodyColumnOrder(table);
+  table.dataset.colResizeInit = '0';
+  initTableColResize(table, COMPANY_REORDER_WIDTH_KEY);
+  table.dataset.colReorderInit = '0';
+  initTableColReorder(table, {
+    storeKey: COMPANY_REORDER_STORE_KEY,
+    widthStoreKey: COMPANY_REORDER_WIDTH_KEY,
+  });
 }
 
 function initResizer() {

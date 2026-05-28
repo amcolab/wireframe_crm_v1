@@ -4,6 +4,7 @@ import { renderPageNumberButtons } from './pager.js';
 import { applyCompanyToContactCreateForm, openContactCreateDialog } from './contactCreateForm.js';
 import { applyCompanyToActivityCreateForm } from './activityCreateForm.js';
 import { applyCompanyToProjectCreateForm } from './projectCreateForm.js';
+import { initColumnSettings, openColumnSettingsDialog } from './columnSettings.js';
 
 function closeShellMenus() {
   document.querySelector('.settings-menu-trigger')?.classList.remove('show-menu');
@@ -11,7 +12,7 @@ function closeShellMenus() {
 }
 
 export function initGlobalLookups() {
-
+  initColumnSettings();
 
   // Employee Master Logic
   const dlgEmployee = q('dlgEmployeeMaster');
@@ -169,6 +170,12 @@ export function initGlobalLookups() {
       });
     });
   };
+
+  q('menuColumnSettings')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeShellMenus();
+    openColumnSettingsDialog();
+  });
 
   q('menuTenantCompany')?.addEventListener('click', (e) => {
     e.stopPropagation();
