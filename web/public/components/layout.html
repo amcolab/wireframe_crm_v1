@@ -484,9 +484,9 @@
       </div>
 
       <div class="modal-body" style="padding:0;">
-        <div class="form-4col density-roomy">
+        <div class="form-4col density-roomy" style="grid-template-columns: repeat(4, minmax(250px, 1fr)); overflow:auto;">
           <!-- Column 1 -->
-          <div class="col">
+          <div class="col" id="companyCreateCol1">
             <div class="ff">
               <label>会社ID</label>
               <input name="id" id="companyCreateId" class="input" type="text" disabled placeholder="(登録後に採番)" />
@@ -545,7 +545,7 @@
           </div>
 
           <!-- Column 2 -->
-          <div class="col">
+          <div class="col" id="companyCreateCol2">
             <div class="ff">
               <label>業界</label>
               <select name="industry" id="companyCreateIndustry" class="input">
@@ -603,14 +603,14 @@
               </div>
             </div>
             <div class="ff">
-              <label>資本金（百万円）</label>
+              <label>資本金<br/>(百万円)</label>
               <input name="capital" id="companyCreateCapital" class="input" type="text" />
             </div>
           </div>
 
           <!-- Column 3 -->
-          <div class="col">
-            <div class="ff ff-remark">
+          <div class="col" id="companyCreateCol3">
+            <div class="ff ff-remark items-start">
               <label>備考</label>
               <textarea name="remark" id="companyCreateRemark" class="input"></textarea>
             </div>
@@ -637,7 +637,7 @@
           </div>
 
           <!-- Column 4 -->
-          <div class="col">
+          <div class="col" id="companyCreateCol4">
             <div class="ff"><label>会社自由使用欄1</label><input name="free1" id="companyCreateFree1" class="input" type="text" /></div>
             <div class="ff"><label>会社自由使用欄2</label><input name="free2" id="companyCreateFree2" class="input" type="text" /></div>
             <div class="ff"><label>会社自由使用欄3</label><input name="free3" id="companyCreateFree3" class="input" type="text" /></div>
@@ -675,9 +675,9 @@
       </div>
 
       <div class="modal-body" style="padding: 18px 22px;">
-        <div class="form-4col cols-3 density-roomy" style="padding:0;">
+        <div class="form-4col cols-3 density-roomy" style="padding:0; grid-template-columns: minmax(300px, 1fr) minmax(400px, 1fr) minmax(300px, 1fr); overflow:auto;">
           <!-- Column 1 (from CP02) -->
-          <div class="col">
+          <div class="col" id="companyLookupCol1">
             <div class="ff">
               <label>検索ワード</label>
               <input name="keyword" class="input" type="text" placeholder="全項目から部分一致" />
@@ -735,7 +735,7 @@
           </div>
 
           <!-- Column 2 (from CP02) -->
-          <div class="col">
+          <div class="col" id="companyLookupCol2">
             <div class="ff">
               <label>地区</label>
               <div class="multi-select-dropdown" data-name="area" data-placeholder="地区を選択">
@@ -788,7 +788,7 @@
                 <input name="closingMonthFrom" class="input" type="text" placeholder="1" style="flex:1;" />
                 <span style="color:var(--text-3);">～</span>
                 <input name="closingMonthTo" class="input" type="text" placeholder="12" style="flex:1;" />
-                <span style="color:var(--text-2); font-size:11px;">(月)</span>
+                <span style="color:var(--text-2); font-size:11px; min-width: 40.33px; text-align: end;">(月)</span>
               </div>
             </div>
             <div class="ff">
@@ -803,7 +803,7 @@
           </div>
 
           <!-- Column 3 (Free fields from screenshot) -->
-          <div class="col">
+          <div class="col" id="companyLookupCol3">
             <div class="ff"><label>会社自由使用欄1</label><input class="input" type="text" name="free1" /></div>
             <div class="ff"><label>会社自由使用欄2</label><input class="input" type="text" name="free2" /></div>
             <div class="ff"><label>会社自由使用欄3</label><input class="input" type="text" name="free3" /></div>
@@ -1366,7 +1366,7 @@
     <div class="dlg-content">
       <div class="lookup-filters">
         <div class="form-4col cols-3 density-roomy" style="padding:0;">
-          <div class="col">
+          <div class="col" id="contactLookupCol1">
             <div class="ff"><label>検索ワード</label><input class="input" type="text" placeholder="全項目から部分一致" /></div>
             <div class="ff"><label>担当者名</label><input class="input" type="text" placeholder="部分一致" /></div>
             <div class="ff"><label>フリガナ</label><input class="input" type="text" /></div>
@@ -1374,7 +1374,7 @@
             <div class="ff"><label>TEL/内線</label><input class="input" type="text" /></div>
             <div class="ff"><label>携帯番号</label><input class="input" type="text" /></div>
           </div>
-          <div class="col">
+          <div class="col" id="contactLookupCol2">
             <div class="ff"><label>会社名</label><input class="input" type="text" placeholder="部分一致" /></div>
             <div class="ff"><label>Email</label><input class="input" type="text" /></div>
             <div class="ff"><label>FAX</label><input class="input" type="text" /></div>
@@ -1391,7 +1391,7 @@
               <p style="margin:4px 0 0;font-size:11px;color:var(--text-3);">過去6ヶ月以内に活動のなかった担当者を検索</p>
             </div>
           </div>
-          <div class="col">
+          <div class="col" id="contactLookupCol3">
             <div class="ff"><label>担当者自由使用欄1</label><input class="input" type="text" /></div>
             <div class="ff"><label>担当者自由使用欄2</label><input class="input" type="text" /></div>
             <div class="ff"><label>担当者自由使用欄3</label><input class="input" type="text" /></div>
@@ -1720,7 +1720,7 @@
     <div class="dlg-content">
       <div class="lookup-filters">
         <div class="form-4col cols-3 density-roomy" style="padding:0;">
-          <div class="col">
+          <div class="col" id="projectLookupCol1">
             <div class="ff"><label>検索ワード</label><input class="input" type="text" placeholder="全項目から部分一致" /></div>
             <div class="ff"><label>案件名</label><input class="input" type="text" placeholder="部分一致" /></div>
             <div class="ff"><label>担当者名</label><input class="input" type="text" /></div>
@@ -1758,7 +1758,7 @@
               </div>
             </div>
           </div>
-          <div class="col">
+          <div class="col" id="projectLookupCol2">
             <div class="ff">
               <label>話題日</label>
               <div class="ff-range ff-range--with-type">
@@ -1791,7 +1791,7 @@
                 </div>
               </div>
             </div>
-            <div class="ff">
+            <div class="ff items-start">
               <label>ステージ</label>
               <div class="stage-checks">
                 <label><input type="checkbox" /> ステージ1：見積書提出</label>
@@ -1801,7 +1801,7 @@
               </div>
             </div>
           </div>
-          <div class="col">
+          <div class="col" id="projectLookupCol3">
             <div class="ff"><label>案件自由使用欄1</label><input class="input" type="text" /></div>
             <div class="ff"><label>案件自由使用欄2</label><input class="input" type="text" /></div>
             <div class="ff"><label>案件自由使用欄3</label><input class="input" type="text" /></div>

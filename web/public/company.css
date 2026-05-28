@@ -883,6 +883,46 @@
 
 /* activity advanced search end */
 
+/* contact lookup start */
+#contactLookupCol1 .ff > label {
+  min-width: 60.02px;
+}
+
+#contactLookupCol2 .ff > label {
+  min-width: 72.02px;
+}
+
+#contactLookupCol3 .ff > label {
+  min-width: 90.69px;
+}
+/* contact lookup end */
+
+/* project lookup start */
+#projectLookupCol1 .ff > label {
+  min-width: 60.02px;
+}
+
+#projectLookupCol2 .ff > label {
+  min-width: 60.02px;
+}
+#projectLookupCol3 .ff > label {
+  min-width: 90.69px;
+}
+/* project lookup end */
+
+/* company lookup start */
+#companyLookupCol1 .ff > label {
+  min-width: 60.02px;
+}
+
+#companyLookupCol2 .ff > label {
+  min-width: 48.02px;
+}
+#companyLookupCol3 .ff > label {
+  min-width: 90.69px;
+}
+/* company lookup end */
+
 .activity-modal-grid .sub {
   gap: var(--fc-label-gap);
 }
