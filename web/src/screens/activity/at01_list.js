@@ -2,6 +2,16 @@ import { q, escapeHtml } from '../../utils/helpers.js';
 import { mockActivities } from '../../utils/mockData.js';
 import { renderPageNumberButtons } from '../../utils/pager.js';
 import { syncEntityDetailTabLayout } from '../../utils/entityTabTable.js';
+import {
+  bindAdvancedSearchForm,
+  clearAdvancedSearch,
+  hasSearchConditions,
+  syncSearchFiltersIndicator,
+} from '../../utils/searchFilters.js';
+import { setupResizableTable, syncResizableTableBody } from '../../utils/tableColumns.js';
+import { openContactCreateDialog } from '../../utils/contactCreateForm.js';
+import { openActivityCreateDialog } from '../../utils/activityCreateForm.js';
+import { openProjectCreateDialog } from '../../utils/projectCreateForm.js';
 
 let state = {
   activities: [...mockActivities],
@@ -9,6 +19,7 @@ let state = {
   selectedId: mockActivities[0]?.id ?? null,
   page: 1,
   pageSize: 25,
+  advanced: null,
 };
 
 let tableBound = false;
@@ -17,6 +28,10 @@ export function init() {
   console.log('Activity screen (AT01) initialized');
   bindUi();
   bindActivityTable();
+  setupResizableTable('#activityTable', {
+    orderKey: 'smos.at01.colOrder',
+    widthKey: 'smos.at01.colWidths',
+  });
   initResizer();
   const card = document.querySelector('#activity-root .company-detail');
   syncEntityDetailTabLayout(card, 'detail');
@@ -35,6 +50,24 @@ function bindUi() {
   if (root?.dataset.bound) return;
   root.dataset.bound = 'true';
 
+  const btnActivityAdv = q('btnActivityAdvancedSearch');
+  bindAdvancedSearchForm({
+    btn: btnActivityAdv,
+    dlg: q('dlgActivityAdvancedSearch'),
+    form: q('formActivityAdvancedSearch'),
+    state,
+    onApply: applySearch,
+  });
+
+  const onActivityBasicInput = () => {
+    if (!hasActivityBasicSearch() && !hasSearchConditions(state.advanced)) {
+      syncSearchFiltersIndicator(btnActivityAdv, null);
+    }
+  };
+  ['activitySearchType', 'activitySearchSalesRep', 'activitySearchCompany', 'activitySearchDateFrom', 'activitySearchDateTo']
+    .forEach((id) => q(id)?.addEventListener('input', onActivityBasicInput));
+  q('activitySearchType')?.addEventListener('change', onActivityBasicInput);
+
   q('btnActivitySearch')?.addEventListener('click', applySearch);
   q('btnActivityClear')?.addEventListener('click', () => {
     if (q('activitySearchType')) q('activitySearchType').value = '';
@@ -42,17 +75,21 @@ function bindUi() {
     if (q('activitySearchCompany')) q('activitySearchCompany').value = '';
     if (q('activitySearchDateFrom')) q('activitySearchDateFrom').value = '';
     if (q('activitySearchDateTo')) q('activitySearchDateTo').value = '';
+    clearAdvancedSearch({
+      btn: btnActivityAdv,
+      form: q('formActivityAdvancedSearch'),
+      state,
+    });
     state.filtered = [...state.activities];
     state.page = 1;
     state.selectedId = state.filtered[0]?.id ?? null;
     render();
   });
-  q('btnActivityNewMain')?.addEventListener('click', () => { q('dlgActivityDetail')?.showModal(); });
-  q('btnActivityAdvancedSearch')?.addEventListener('click', () => { q('dlgActivityAdvancedSearch')?.showModal(); });
+  q('btnActivityNewMain')?.addEventListener('click', () => { openActivityCreateDialog(); });
   q('btnAtDetailContactLookup')?.addEventListener('click', () => { q('dlgContactLookup')?.showModal(); });
-  q('btnAtDetailContactNew')?.addEventListener('click', () => { q('dlgContactDetailNew')?.showModal(); });
+  q('btnAtDetailContactNew')?.addEventListener('click', () => { openContactCreateDialog(); });
   q('btnAtDetailProjectLookup')?.addEventListener('click', () => { q('dlgProjectLookup')?.showModal(); });
-  q('btnAtDetailProjectNew')?.addEventListener('click', () => { q('dlgProjectDetail')?.showModal(); });
+  q('btnAtDetailProjectNew')?.addEventListener('click', () => { openProjectCreateDialog(); });
   q('btnAtDetailSave')?.addEventListener('click', () => { alert('保存しました'); });
   q('btnAtDetailDelete')?.addEventListener('click', () => { if (confirm('削除しますか？')) alert('削除しました'); });
 
@@ -75,6 +112,16 @@ function bindUi() {
     state.page = 1;
     render();
   });
+}
+
+function hasActivityBasicSearch() {
+  return !!(
+    q('activitySearchType')?.value
+    || q('activitySearchSalesRep')?.value?.trim()
+    || q('activitySearchCompany')?.value?.trim()
+    || q('activitySearchDateFrom')?.value
+    || q('activitySearchDateTo')?.value
+  );
 }
 
 function applySearch() {
@@ -107,6 +154,8 @@ function bindActivityTable() {
 }
 
 function render() {
+  syncSearchFiltersIndicator(q('btnActivityAdvancedSearch'), state.advanced);
+
   const total = state.filtered.length;
   const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
   if (state.page > totalPages) state.page = totalPages;
@@ -156,15 +205,17 @@ function renderActivityTable(rows) {
   tbody.innerHTML = rows.map(a => {
     const sel = String(a.id) === String(state.selectedId);
     return `<tr data-id="${escapeHtml(a.id)}" class="${sel ? 'selected' : ''}">
-      <td>${escapeHtml(a.date)}</td>
-      <td>${escapeHtml(a.time || '')}</td>
-      <td>${escapeHtml(a.rep)}</td>
-      <td><span class="${escapeHtml(a.typeClass || '')}">${escapeHtml(a.type)}</span></td>
-      <td>${escapeHtml(a.company)}</td>
-      <td class="blue-link">${escapeHtml(a.contact)}</td>
-      <td title="${escapeHtml(a.comment)}">${escapeHtml(a.comment)}</td>
+      <td data-col-key="date">${escapeHtml(a.date)}</td>
+      <td data-col-key="time">${escapeHtml(a.time || '')}</td>
+      <td data-col-key="rep">${escapeHtml(a.rep)}</td>
+      <td data-col-key="type"><span class="${escapeHtml(a.typeClass || '')}">${escapeHtml(a.type)}</span></td>
+      <td data-col-key="company">${escapeHtml(a.company)}</td>
+      <td data-col-key="contact" class="blue-link">${escapeHtml(a.contact)}</td>
+      <td data-col-key="comment" title="${escapeHtml(a.comment)}">${escapeHtml(a.comment)}</td>
     </tr>`;
   }).join('');
+
+  syncResizableTableBody('#activityTable');
 }
 
 function fillDetailForm(a) {

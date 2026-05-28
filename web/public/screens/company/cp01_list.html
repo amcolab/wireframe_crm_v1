@@ -12,11 +12,11 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
           検索
         </button>
-        <button class="btn btn-secondary" id="btnCompanyAdvancedSearch">
+        <button class="btn btn-secondary" id="btnCompanyAdvancedSearch" type="button">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
           詳細検索
         </button>
-        <button class="btn btn-ghost" id="btnCompanyClear">
+        <button class="btn btn-secondary" id="btnCompanyClear">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
           クリア
         </button>
@@ -123,10 +123,10 @@
           <div class="company-tabpanels">
             <section class="company-panel active" data-company-panel="detail" role="tabpanel">
               <div class="panel-detail">
-              <div class="panel-detail-body">
-              <div class="form-4col">
+              <div class="panel-detail-body" style="overflow: hidden;">
+              <div class="form-4col" style="grid-template-columns: minmax(250px, 1fr) minmax(300px, 1fr) minmax(350px, 1fr) minmax(400px, 1fr); overflow: auto;">
                 <!-- Column 1 -->
-                <div class="col">
+                <div class="col" id="companyDetailCol1">
                   <div class="ff">
                     <label>会社ID</label>
                     <input id="companyDetailId" class="input" type="text" disabled />
@@ -190,7 +190,7 @@
                 </div>
 
                 <!-- Column 2 -->
-                <div class="col">
+                <div class="col" id="companyDetailCol2">
                   <div class="ff">
                     <label>業界</label>
                     <select id="companyDetailIndustry" class="input">
@@ -248,14 +248,14 @@
                     </div>
                   </div>
                   <div class="ff">
-                    <label>資本金（百万円）</label>
+                    <label>資本金<br/>(百万円)</label>
                     <input id="companyDetailCapital" class="input" type="text" />
                   </div>
                 </div>
 
                 <!-- Column 3 -->
-                <div class="col">
-                  <div class="ff ff-remark">
+                <div class="col" id="companyDetailCol3">
+                  <div class="ff ff-remark items-start">
                     <label>備考</label>
                     <textarea id="companyDetailRemark" class="input" rows="4"></textarea>
                   </div>
@@ -279,10 +279,15 @@
                       <input id="companyDetailUpdatedBy" class="input" type="text" disabled />
                     </div>
                   </div>
+                  <!-- ngày hoạt động cuối cùng (mới nhất) được ghi nhận cho công ty đó. bất kể do staff/user nào thực hiện. -->
+                  <div class="ff">
+                    <label>最終活動日</label>
+                    <input id="companyDetailUpdatedAt" class="input" type="text" value="2026/05/26 12:00" disabled />
+                  </div>
                 </div>
 
                 <!-- Column 4 -->
-                <div class="col">
+                <div class="col" id="companyDetailCol4">
                   <div class="ff"><label>会社自由使用欄1</label><input id="companyDetailFree1" class="input" type="text" /></div>
                   <div class="ff"><label>会社自由使用欄2</label><input id="companyDetailFree2" class="input" type="text" /></div>
                   <div class="ff"><label>会社自由使用欄3</label><input id="companyDetailFree3" class="input" type="text" /></div>
@@ -290,7 +295,7 @@
                   <div class="ff"><label>会社自由使用欄5</label><input id="companyDetailFree5" class="input" type="text" /></div>
                   <div class="ff"><label>会社自由使用欄6</label><input id="companyDetailFree6" class="input" type="text" /></div>
                   <div class="ff"><label>会社自由使用欄7</label><input id="companyDetailFree7" class="input" type="text" /></div>
-                  <div class="ff attach-field">
+                  <div class="ff attach-field items-start">
                     <label>添付資料 <span class="attach-count">(2件)</span></label>
                     <div class="attach-list" id="companyAttachList">
                       <div class="attach-item">
@@ -455,10 +460,10 @@
             </button>
           </div>
 
-          <div class="modal-body" style="padding: 18px 22px;">
-            <div class="form-4col cols-3 density-roomy" style="padding:0;">
+          <div class="modal-body">
+            <div class="form-4col cols-3 density-roomy" style="padding:18px 22px; grid-template-columns: minmax(350px, 1fr) minmax(400px, 1fr) minmax(300px, 1fr); overflow: auto;">
               <!-- Column 1 -->
-              <div class="col">
+              <div class="col" id="companyAdvancedSearchCol1">
                 <div class="ff">
                   <label>検索ワード</label>
                   <input name="keyword" class="input" type="text" placeholder="全項目から部分一致" />
@@ -468,55 +473,13 @@
                   <input name="name" class="input" type="text" placeholder="部分一致" />
                 </div>
                 <div class="ff">
-                  <label>業界</label>
-                  <div class="multi-select-dropdown" data-name="industry" data-placeholder="業界を選択">
-                    <div class="multi-select-trigger">業界を選択</div>
-                    <div class="multi-select-content">
-                      <label class="multi-select-option"><input type="checkbox" value="製造業"> 製造業</label>
-                      <label class="multi-select-option"><input type="checkbox" value="卸売業"> 卸売業</label>
-                      <label class="multi-select-option"><input type="checkbox" value="小売業"> 小売業</label>
-                      <label class="multi-select-option"><input type="checkbox" value="金融業"> 金融業</label>
-                    </div>
-                  </div>
+                  <label>代表TEL</label>
+                  <input name="tel" class="input" type="text" />
                 </div>
                 <div class="ff">
-                  <label>業種</label>
-                  <div class="multi-select-dropdown" data-name="biz" data-placeholder="業種を選択">
-                    <div class="multi-select-trigger">業種を選択</div>
-                    <div class="multi-select-content">
-                      <label class="multi-select-option"><input type="checkbox" value="金属製品"> 金属製品</label>
-                      <label class="multi-select-option"><input type="checkbox" value="化学・素材"> 化学・素材</label>
-                      <label class="multi-select-option"><input type="checkbox" value="自動車・輸送用機械"> 自動車・輸送用機械</label>
-                      <label class="multi-select-option"><input type="checkbox" value="木工・家具"> 木工・家具</label>
-                    </div>
-                  </div>
+                  <label>代表FAX</label>
+                  <input name="fax" class="input" type="text" />
                 </div>
-                <div class="ff">
-                  <label>規模ランク</label>
-                  <div class="multi-select-dropdown" data-name="scale" data-placeholder="規模を選択">
-                    <div class="multi-select-trigger">規模を選択</div>
-                    <div class="multi-select-content">
-                      <label class="multi-select-option"><input type="checkbox" value="1～30人"> 1～30人</label>
-                      <label class="multi-select-option"><input type="checkbox" value="31～100人"> 31～100人</label>
-                      <label class="multi-select-option"><input type="checkbox" value="101～300人"> 101～300人</label>
-                      <label class="multi-select-option"><input type="checkbox" value="301人以上"> 301人以上</label>
-                    </div>
-                  </div>
-                </div>
-                <div class="ff">
-                  <label>会社種別</label>
-                  <div class="multi-select-dropdown" data-name="type" data-placeholder="種別を選択">
-                    <div class="multi-select-trigger">種別を選択</div>
-                    <div class="multi-select-content">
-                      <label class="multi-select-option"><input type="checkbox" value="メーカー"> メーカー</label>
-                      <label class="multi-select-option"><input type="checkbox" value="その他"> その他</label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Column 2 -->
-              <div class="col">
                 <div class="ff">
                   <label>地区</label>
                   <div class="multi-select-dropdown" data-name="area" data-placeholder="地区を選択">
@@ -553,14 +516,56 @@
                   <label>住所</label>
                   <input name="addr" class="input" type="text" placeholder="部分一致" />
                 </div>
-                <div class="ff inline-2">
-                  <div class="sub">
-                    <label>代表TEL</label>
-                    <input name="tel" class="input" type="text" />
+              </div>
+
+              <!-- Column 2 -->
+              <div class="col" id="companyAdvancedSearchCol2">
+                <div class="ff">
+                  <label>業界</label>
+                  <div class="multi-select-dropdown" data-name="industry" data-placeholder="業界を選択">
+                    <div class="multi-select-trigger">業界を選択</div>
+                    <div class="multi-select-content">
+                      <label class="multi-select-option"><input type="checkbox" value="製造業"> 製造業</label>
+                      <label class="multi-select-option"><input type="checkbox" value="卸売業"> 卸売業</label>
+                      <label class="multi-select-option"><input type="checkbox" value="小売業"> 小売業</label>
+                      <label class="multi-select-option"><input type="checkbox" value="金融業"> 金融業</label>
+                    </div>
                   </div>
-                  <div class="sub">
-                    <label>代表FAX</label>
-                    <input name="fax" class="input" type="text" />
+                </div>
+
+                <div class="ff">
+                  <label>業種</label>
+                  <div class="multi-select-dropdown" data-name="biz" data-placeholder="業種を選択">
+                    <div class="multi-select-trigger">業種を選択</div>
+                    <div class="multi-select-content">
+                      <label class="multi-select-option"><input type="checkbox" value="金属製品"> 金属製品</label>
+                      <label class="multi-select-option"><input type="checkbox" value="化学・素材"> 化学・素材</label>
+                      <label class="multi-select-option"><input type="checkbox" value="自動車・輸送用機械"> 自動車・輸送用機械</label>
+                      <label class="multi-select-option"><input type="checkbox" value="木工・家具"> 木工・家具</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="ff">
+                  <label>規模ランク</label>
+                  <div class="multi-select-dropdown" data-name="scale" data-placeholder="規模を選択">
+                    <div class="multi-select-trigger">規模を選択</div>
+                    <div class="multi-select-content">
+                      <label class="multi-select-option"><input type="checkbox" value="1～30人"> 1～30人</label>
+                      <label class="multi-select-option"><input type="checkbox" value="31～100人"> 31～100人</label>
+                      <label class="multi-select-option"><input type="checkbox" value="101～300人"> 101～300人</label>
+                      <label class="multi-select-option"><input type="checkbox" value="301人以上"> 301人以上</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="ff">
+                  <label>会社種別</label>
+                  <div class="multi-select-dropdown" data-name="type" data-placeholder="種別を選択">
+                    <div class="multi-select-trigger">種別を選択</div>
+                    <div class="multi-select-content">
+                      <label class="multi-select-option"><input type="checkbox" value="メーカー"> メーカー</label>
+                      <label class="multi-select-option"><input type="checkbox" value="その他"> その他</label>
+                    </div>
                   </div>
                 </div>
                 <div class="ff">
@@ -569,7 +574,7 @@
                     <input name="closingMonthFrom" class="input" type="text" placeholder="1" style="flex:1;" />
                     <span style="color:var(--text-3);">～</span>
                     <input name="closingMonthTo" class="input" type="text" placeholder="12" style="flex:1;" />
-                    <span style="color:var(--text-2); font-size:11px;">(月)</span>
+                    <span style="color:var(--text-2); font-size:11px; min-width: 40.33px; text-align: end;">(月)</span>
                   </div>
                 </div>
                 <div class="ff">
@@ -584,7 +589,7 @@
               </div>
 
               <!-- Column 3 -->
-              <div class="col">
+              <div class="col" id="companyAdvancedSearchCol3">
                 <div class="ff"><label>会社自由使用欄1</label><input name="free1" class="input" type="text" /></div>
                 <div class="ff"><label>会社自由使用欄2</label><input name="free2" class="input" type="text" /></div>
                 <div class="ff"><label>会社自由使用欄3</label><input name="free3" class="input" type="text" /></div>
@@ -616,9 +621,9 @@
           </div>
 
           <div class="modal-body" style="padding:0;">
-            <div class="form-4col density-roomy">
+            <div class="form-4col density-roomy" style="grid-template-columns: minmax(250px, 1fr) minmax(250px, 1fr) minmax(250px, 1fr) minmax(250px, 1fr); overflow-y: auto; overflow-x: auto;">
               <!-- Column 1 -->
-              <div class="col">
+              <div class="col" id="companyCreateCol1">
                 <div class="ff">
                   <label>会社ID</label>
                   <input name="id" id="companyCreateId" class="input" type="text" disabled placeholder="(登録後に採番)" />
@@ -677,7 +682,7 @@
               </div>
 
               <!-- Column 2 -->
-              <div class="col">
+              <div class="col" id="companyCreateCol2">
                 <div class="ff">
                   <label>業界</label>
                   <select name="industry" id="companyCreateIndustry" class="input">
@@ -735,14 +740,14 @@
                   </div>
                 </div>
                 <div class="ff">
-                  <label>資本金（百万円）</label>
+                  <label>資本金<br/>(百万円)</label>
                   <input name="capital" id="companyCreateCapital" class="input" type="text" />
                 </div>
               </div>
 
               <!-- Column 3 -->
-              <div class="col">
-                  <div class="ff ff-remark">
+              <div class="col" id="companyCreateCol3">
+                  <div class="ff ff-remark items-start">
                   <label>備考</label>
                   <textarea name="remark" id="companyCreateRemark" class="input"></textarea>
                 </div>
@@ -769,7 +774,7 @@
               </div>
 
               <!-- Column 4 -->
-              <div class="col">
+              <div class="col" id="companyCreateCol4">
                 <div class="ff"><label>会社自由使用欄1</label><input name="free1" id="companyCreateFree1" class="input" type="text" /></div>
                 <div class="ff"><label>会社自由使用欄2</label><input name="free2" id="companyCreateFree2" class="input" type="text" /></div>
                 <div class="ff"><label>会社自由使用欄3</label><input name="free3" id="companyCreateFree3" class="input" type="text" /></div>

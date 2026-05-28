@@ -1,6 +1,9 @@
 import { q, escapeHtml } from './helpers.js';
 import { mockCompanies, mockEmployees, mockProjects, mockTenants } from './mockData.js';
 import { renderPageNumberButtons } from './pager.js';
+import { applyCompanyToContactCreateForm, openContactCreateDialog } from './contactCreateForm.js';
+import { applyCompanyToActivityCreateForm } from './activityCreateForm.js';
+import { applyCompanyToProjectCreateForm } from './projectCreateForm.js';
 
 function closeShellMenus() {
   document.querySelector('.settings-menu-trigger')?.classList.remove('show-menu');
@@ -8,12 +11,12 @@ function closeShellMenus() {
 }
 
 export function initGlobalLookups() {
-  
-  
+
+
   // Employee Master Logic
   const dlgEmployee = q('dlgEmployeeMaster');
   const employeeTbody = q('employeeMasterBody');
-  
+
   const renderEmployeeMaster = (data = mockEmployees) => {
     if (!employeeTbody) return;
     employeeTbody.innerHTML = data.map((emp, index) => `
@@ -72,7 +75,7 @@ export function initGlobalLookups() {
       const loginId = selected.querySelectorAll('td')[6].textContent;
       const secLogin = q('secLoginId');
       if (secLogin) secLogin.value = loginId;
-      
+
       // Update checkboxes based on group
       const group = selected.querySelectorAll('td')[5].textContent;
       q('chkGroupAdmin').checked = group === '管理者';
@@ -156,10 +159,10 @@ export function initGlobalLookups() {
       btn.addEventListener('click', (e) => {
         const tenantId = btn.dataset.id;
         const tenantName = mockTenants.find(t => t.id === tenantId)?.name;
-        
+
         // Show detail modal and maybe pre-fill some info
         q('dlgEmployeeDetail')?.showModal();
-        
+
         // Optional: Pre-fill some context if needed
         const title = q('dlgEmployeeDetail').querySelector('.dlg-title');
         if (title) title.textContent = `${tenantName} - 管理ユーザー作成`;
@@ -288,7 +291,7 @@ export function initGlobalLookups() {
   let tempLookupSelection = null;
   let tempContactSelection = null;
   let tempProjectSelection = null;
-  
+
   let lookupState = {
     page: 1,
     pageSize: 100,
@@ -297,7 +300,7 @@ export function initGlobalLookups() {
 
   const renderLookupResults = (filters = null) => {
     if (!lookupTbody) return;
-    
+
     if (filters) {
       lookupState.filtered = mockCompanies.filter(c => {
         if (filters.name && !c.name.includes(filters.name)) return false;
@@ -380,13 +383,13 @@ export function initGlobalLookups() {
   // Bind Pager Buttons
   q('btnLookupFirstPage')?.addEventListener('click', () => { lookupState.page = 1; renderLookupResults(); });
   q('btnLookupPrevPage')?.addEventListener('click', () => { if (lookupState.page > 1) { lookupState.page--; renderLookupResults(); } });
-  q('btnLookupNextPage')?.addEventListener('click', () => { 
+  q('btnLookupNextPage')?.addEventListener('click', () => {
     const totalPages = Math.ceil(lookupState.filtered.length / lookupState.pageSize);
-    if (lookupState.page < totalPages) { lookupState.page++; renderLookupResults(); } 
+    if (lookupState.page < totalPages) { lookupState.page++; renderLookupResults(); }
   });
-  q('btnLookupLastPage')?.addEventListener('click', () => { 
+  q('btnLookupLastPage')?.addEventListener('click', () => {
     lookupState.page = Math.ceil(lookupState.filtered.length / lookupState.pageSize);
-    renderLookupResults(); 
+    renderLookupResults();
   });
 
   q('lookupPageSelect')?.addEventListener('change', (e) => {
@@ -498,13 +501,13 @@ export function initGlobalLookups() {
   // Bind Pager Buttons for Contact Lookup
   q('btnContactLookupFirstPage')?.addEventListener('click', () => { contactLookupState.page = 1; renderContactLookupResults(); });
   q('btnContactLookupPrevPage')?.addEventListener('click', () => { if (contactLookupState.page > 1) { contactLookupState.page--; renderContactLookupResults(); } });
-  q('btnContactLookupNextPage')?.addEventListener('click', () => { 
+  q('btnContactLookupNextPage')?.addEventListener('click', () => {
     const totalPages = Math.ceil(contactLookupState.filtered.length / contactLookupState.pageSize);
-    if (contactLookupState.page < totalPages) { contactLookupState.page++; renderContactLookupResults(); } 
+    if (contactLookupState.page < totalPages) { contactLookupState.page++; renderContactLookupResults(); }
   });
-  q('btnContactLookupLastPage')?.addEventListener('click', () => { 
+  q('btnContactLookupLastPage')?.addEventListener('click', () => {
     contactLookupState.page = Math.ceil(contactLookupState.filtered.length / contactLookupState.pageSize);
-    renderContactLookupResults(); 
+    renderContactLookupResults();
   });
 
   q('contactLookupPageSelect')?.addEventListener('change', (e) => {
@@ -652,13 +655,13 @@ export function initGlobalLookups() {
   // Bind Pager Buttons for Project Lookup
   q('btnProjectLookupFirstPage')?.addEventListener('click', () => { projectLookupState.page = 1; renderProjectLookupResults(); });
   q('btnProjectLookupPrevPage')?.addEventListener('click', () => { if (projectLookupState.page > 1) { projectLookupState.page--; renderProjectLookupResults(); } });
-  q('btnProjectLookupNextPage')?.addEventListener('click', () => { 
+  q('btnProjectLookupNextPage')?.addEventListener('click', () => {
     const totalPages = Math.ceil(projectLookupState.filtered.length / projectLookupState.pageSize);
-    if (projectLookupState.page < totalPages) { projectLookupState.page++; renderProjectLookupResults(); } 
+    if (projectLookupState.page < totalPages) { projectLookupState.page++; renderProjectLookupResults(); }
   });
-  q('btnProjectLookupLastPage')?.addEventListener('click', () => { 
+  q('btnProjectLookupLastPage')?.addEventListener('click', () => {
     projectLookupState.page = Math.ceil(projectLookupState.filtered.length / projectLookupState.pageSize);
-    renderProjectLookupResults(); 
+    renderProjectLookupResults();
   });
 
   q('projectLookupPageSelect')?.addEventListener('change', (e) => {
@@ -672,41 +675,48 @@ export function initGlobalLookups() {
     renderProjectLookupResults();
   });
 
-    if (dlgProjectLookup) {
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.attributeName === 'open' && dlgProjectLookup.open) {
-                    renderProjectLookupResults();
-                    initMultiSelects();
-                }
-            });
-        });
-        observer.observe(dlgProjectLookup, { attributes: true });
-    }
+  if (dlgProjectLookup) {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'open' && dlgProjectLookup.open) {
+          renderProjectLookupResults();
+          initMultiSelects();
+        }
+      });
+    });
+    observer.observe(dlgProjectLookup, { attributes: true });
+  }
 
-    // Helper to bind modal triggers
-    const bindModalTrigger = (btnId, dlgId) => {
-        q(btnId)?.addEventListener('click', () => {
-            q(dlgId)?.showModal();
-        });
-    };
+  // Helper to bind modal triggers
+  const bindModalTrigger = (btnId, dlgId) => {
+    q(btnId)?.addEventListener('click', () => {
+      q(dlgId)?.showModal();
+    });
+  };
 
-    // Bind lookup/new buttons inside other modals or screens
-    const modalTriggers = [
-        ['btnContactCompanyLookup', 'dlgCompanyLookup'],
-        ['btnContactCompanyNew', 'dlgCompanyCreate'],
-        ['btnActivityContactLookup', 'dlgContactLookup'],
-        ['btnActivityContactNew', 'dlgContactDetailNew'],
-        ['btnProjectContactLookup', 'dlgContactLookup'],
-        ['btnProjectContactNew', 'dlgContactDetailNew'],
-        ['btnActivityProjectLookup', 'dlgProjectLookup'],
-        ['btnMainContactLookupCompany', 'dlgCompanyLookup'], // For main screen
-        ['btnMainContactCreateCompany', 'dlgCompanyCreate']  // For main screen
-    ];
+  // Bind lookup/new buttons inside other modals or screens
+  const modalTriggers = [
+    ['btnContactCompanyLookup', 'dlgCompanyLookup'],
+    ['btnContactCompanyNew', 'dlgCompanyCreate'],
+    ['btnActivityContactLookup', 'dlgContactLookup'],
+    ['btnProjectContactLookup', 'dlgContactLookup'],
+    ['btnActivityProjectLookup', 'dlgProjectLookup'],
+    ['btnMainContactLookupCompany', 'dlgCompanyLookup'], // For main screen
+    ['btnMainContactCreateCompany', 'dlgCompanyCreate']  // For main screen
+  ];
 
-    modalTriggers.forEach(([btn, dlg]) => bindModalTrigger(btn, dlg));
+  modalTriggers.forEach(([btn, dlg]) => bindModalTrigger(btn, dlg));
 
-    q('btnLookupSearch')?.addEventListener('click', (e) => {
+  q('btnActivityContactNew')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openContactCreateDialog();
+  });
+  q('btnProjectContactNew')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    openContactCreateDialog();
+  });
+
+  q('btnLookupSearch')?.addEventListener('click', (e) => {
     e.preventDefault();
     const form = q('formCompanyLookup');
     if (!form) return;
@@ -730,12 +740,20 @@ export function initGlobalLookups() {
     }
     const c = tempLookupSelection;
     const fields = [
-      'contactDetailCompanyName', 'mainContactCompanyName', 'atDetailCompanyName', 'prDetailCompanyName', 'companySearchCompany'
+      'contactNewCompanyName',
+      'contactDetailCompanyName',
+      'mainContactCompanyName',
+      'atDetailCompanyName',
+      'prDetailCompanyName',
+      'companySearchCompany',
     ];
     fields.forEach(id => {
       const el = q(id);
       if (el) el.value = c.name;
     });
+    applyCompanyToContactCreateForm(c, undefined, { fillExt: false, fillAudit: false });
+    applyCompanyToActivityCreateForm(c);
+    applyCompanyToProjectCreateForm(c);
     dlgLookup?.close();
   });
 

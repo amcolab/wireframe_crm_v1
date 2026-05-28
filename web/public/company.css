@@ -116,13 +116,21 @@
 }
 
 .blue-link {
-    color: #2563eb;
+    color: #2563eb !important;
     text-decoration: none;
     cursor: pointer;
 }
 
 .blue-link:hover {
     text-decoration: underline;
+}
+
+.btn-text-link {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    text-align: left;
 }
 
 .mini-grid-table th {
@@ -736,15 +744,18 @@
     gap: 10px;
 }
 
-.form-row {
+.form-row,
+.form-row .sub {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 6px;
 }
 
-.form-row label {
+.form-row label,
+.form-row .sub > label {
     font-size: 12px;
     color: #333;
+    flex-shrink: 0;
 }
 
 .form-row input,
@@ -775,6 +786,105 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
+}
+
+#contactDetailCol1 .form-row > label,
+#contactDetailCol1 .form-row .sub > label {
+  min-width: 48.02px;
+}
+
+#contactDetailCol3 .form-row > label,
+#contactDetailCol3 .form-row .sub > label {
+  min-width: 72.02px;
+}
+
+#contractCreateCol1 .form-row > label,
+#contractCreateCol1 .form-row .sub > label {
+  min-width: 48.02px;
+}
+
+#contractCreateCol2 .form-row > label,
+#contractCreateCol2 .form-row .sub > label {
+  min-width: 72.02px;
+}
+
+#contractCreateCol3 .form-row > label,
+#contractCreateCol3 .form-row .sub > label {
+  min-width: 33px;
+}
+
+/* contact advanced search start */
+#contactAdvancedSearchCol1 .ff > label {
+  min-width: 60.02px;
+}
+
+#contactAdvancedSearchCol2 .ff > label {
+  min-width: 72.02px;
+}
+
+#contactAdvancedSearchCol3 .ff > label {
+  min-width: 90.69px;
+}
+
+/* contact advanced search end */
+
+/* activity create modal */
+#activityCreateCol1 .form-row > label,
+#activityCreateCol1 .form-row .sub > label {
+  min-width: 68.02px;
+}
+
+#activityCreateCol2 .form-row > label,
+#activityCreateCol2 .form-row .sub > label {
+  min-width: 60.02px;
+}
+
+#activityCreateCol3 .form-row > label,
+#activityCreateCol3 .form-row .sub > label {
+  min-width: 90.69px;
+}
+
+/* end of activity create modal */
+
+/* activity detail start */
+#activityDetailCol1 .form-row > label,
+#activityDetailCol1 .form-row .sub > label {
+  min-width: 68.02px;
+}
+
+#activityDetailCol2 .form-row > label,
+#activityDetailCol2 .form-row .sub > label {
+  min-width: 60.02px;
+}
+
+#activityDetailCol3 .form-row > label,
+#activityDetailCol3 .form-row .sub > label {
+  min-width: 60.02px;
+}
+
+#activityDetailCol4 .form-row > label,
+#activityDetailCol4 .form-row .sub > label {
+  min-width: 90.69px;
+}
+/* activity detail end */
+
+/* activity advanced search start */
+#activityAdvancedSearchCol1 .ff > label {
+  min-width: 60.02px;
+}
+
+#activityAdvancedSearchCol2 .ff > label {
+  min-width: 72.02px;
+}
+
+#activityAdvancedSearchCol3 .ff > label {
+  min-width: 90.69px;
+}
+
+/* activity advanced search end */
+
+.activity-modal-grid .sub {
+  gap: var(--fc-label-gap);
 }
 
 .req {
@@ -996,7 +1106,7 @@
 
 .modal-form-grid .form-row:not(.multi-2):not(.checkbox-row) {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: stretch;
     gap: var(--fc-label-gap);
     min-width: 0;
@@ -1689,12 +1799,25 @@
 }
 
 .company-screen table.t {
-  width: max-content;
+  width: 100%;
   min-width: 100%;
   border-collapse: separate;
   border-spacing: 0;
   font-size: 11px;
+  table-layout: auto;
+}
+
+/* Column resize / reorder — mặc định full width container */
+.company-screen table.t.table--col-resizable {
+  width: 100%;
+  min-width: 100%;
   table-layout: fixed;
+}
+
+/* Sau khi user đã resize (hoặc restore width đã lưu) */
+.company-screen table.t.table--col-user-sized {
+  width: max-content;
+  min-width: 0;
 }
 
 .company-screen table.t thead {
@@ -1716,10 +1839,16 @@
   border-right: 1px solid #e2e8f0;
   border-bottom: none;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   line-height: 1.4;
   box-shadow:
     inset 0 -2px 0 #cbd5e1,
     0 4px 6px -4px rgba(15, 27, 45, 0.08);
+}
+
+.company-screen table.t.table--col-resizable thead th {
+  max-width: 0;
 }
 
 .company-screen table.t thead th:first-child {
@@ -1816,6 +1945,10 @@
   overflow: hidden;
 }
 
+.company-screen table.t.table--col-resizable tbody td {
+  max-width: 0;
+}
+
 .company-screen table.t tbody td:last-child {
   border-right: none;
 }
@@ -1825,13 +1958,14 @@
 }
 
 .company-screen table.t tbody tr:hover td {
-  background: #f7fbff;
+  background: #cfe5ff;
   cursor: pointer;
+  transition: background-color .12s ease;
 }
 
 .company-screen table.t tbody tr.selected td {
-  background: #e6f2ff;
-  color: #0b2a66;
+  background: #cfe5ff;
+  color: #0f172a;
 }
 
 .company-screen table.t tbody tr.selected {
@@ -1873,10 +2007,15 @@
   flex: 0 0 auto;
 }
 
-.company-detail.detail-tab-mode .panel-detail,
-.company-detail.detail-tab-mode .panel-detail-body {
+.company-detail.detail-tab-mode .panel-detail {
   overflow: visible;
   flex: 0 0 auto;
+}
+.company-detail.detail-tab-mode .panel-detail-body {
+  overflow-x: auto;
+  overflow-y: auto;
+  flex: 0 0 auto;
+  min-width: 0px;
 }
 
 .company-detail.detail-tab-mode .panel-detail-body {
@@ -1925,7 +2064,11 @@
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: auto;
+}
+.panel-detail-body .form-4col,
+.panel-detail-body .detail-form {
+  min-width: 980px;
 }
 
 .form-foot-split {
@@ -2094,6 +2237,7 @@ select.input {
   gap: 5px;
   white-space: nowrap;
   transition: background .12s, border-color .12s, color .12s, box-shadow .12s;
+  line-height: 1;
 }
 .btn svg {
   width: 12px;
@@ -2154,16 +2298,17 @@ select.input {
 
 /* ------ Search Header (.search-header) ------ */
 .search-header {
-  background: var(--surface);
+  /* background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r-card);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-card); */
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 12px;
+  /* padding: 8px 12px; */
   margin-bottom: 8px;
   flex-shrink: 0;
+  flex-wrap: wrap;
 }
 .search-header .screen-title {
   font-size: 14px;
@@ -2204,6 +2349,30 @@ select.input {
   display: flex;
   gap: 6px;
   align-items: center;
+}
+
+.has-search-filters {
+  position: relative;
+
+  background: var(--brand-600) !important;
+  color: #fff !important;
+  border-color: var(--brand-600) !important;
+  font-weight: 600 !important;
+
+  &:hover {
+    background: var(--brand-500) !important;
+    border-color: var(--brand-500) !important;
+  }
+  /* &::after {
+    content: "";
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--accent-500);
+  } */
 }
 
 /* ------ Standalone Pager (.pager-standalone) ------ */
@@ -2375,7 +2544,7 @@ select.input {
   --fc-pad-x: 8px;
   --fc-pad-r-sel: 24px;
   --fc-label-fs: 11px;
-  --fc-label-gap: 2px;
+  --fc-label-gap: 4px;
   --fc-row-gap: 5px;
   --fc-col-gap: 12px;
   --fc-grid-pad: 10px 12px;
@@ -2424,10 +2593,20 @@ select.input {
 }
 .form-4col .ff {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: var(--fc-label-gap);
   min-width: 0;
 }
+
+.form-4col .ff.items-start {
+  align-items: start;
+}
+
+.form-4col .ff.items-start > label,
+.form-4col .ff.items-start .sub > label {
+  height: 24px;
+}
+
 .form-4col .ff > label,
 .form-4col .ff .sub > label {
   font-size: var(--fc-label-fs);
@@ -2438,6 +2617,120 @@ select.input {
   gap: 4px;
   line-height: 1.4;
   margin-bottom: 0;
+  flex-shrink: 0;
+}
+
+#companyDetailCol1 .ff > label,
+#companyDetailCol1 .ff .sub > label {
+  min-width: 44px;
+}
+
+#companyDetailCol2 .ff > label,
+#companyDetailCol2 .ff .sub > label {
+  min-width: 55px;
+}
+
+#companyDetailCol3 .ff > label,
+#companyDetailCol3 .ff .sub > label {
+  min-width: 55px;
+}
+
+#companyDetailCol4 .ff > label,
+#companyDetailCol4 .ff .sub > label {
+  min-width: 84px;
+}
+
+#companyCreateCol1 .ff > label,
+#companyCreateCol1 .ff .sub > label {
+  min-width: 48.02px;
+}
+
+#companyCreateCol2 .ff > label,
+#companyCreateCol2 .ff .sub > label {
+  min-width: 60.02px;
+}
+
+#companyCreateCol3 .ff > label,
+#companyCreateCol3 .ff .sub > label {
+  min-width: 33px;
+}
+
+#companyCreateCol4 .ff > label,
+#companyCreateCol4 .ff .sub > label {
+  min-width: 84px;
+}
+
+/* company advanced search start */
+#companyAdvancedSearchCol1 .ff > label,
+#companyAdvancedSearchCol1 .ff .sub > label {
+  min-width: 60.02px;
+}
+
+#companyAdvancedSearchCol2 .ff > label,
+#companyAdvancedSearchCol2 .ff .sub > label {
+  min-width: 60.02px;
+}
+
+#companyAdvancedSearchCol3 .ff > label {
+  min-width: 90.69px;
+}
+
+/* company advanced search end */
+
+/* project detail start */
+#prDetailCol1 .form-row > label,
+#prDetailCol1 .form-row .sub > label {
+  min-width: 72.02px;
+}
+
+#prDetailCol2 .form-row > label,
+#prDetailCol2 .form-row .sub > label {
+  min-width: 60.02px;
+}
+#prDetailCol3 .form-row > label,
+#prDetailCol3 .form-row .sub > label {
+  min-width: 60.02px;
+}
+
+#prDetailCol4 .form-row > label,
+#prDetailCol4 .form-row .sub > label {
+  min-width: 90.69px;
+}
+
+/* project detail end */
+
+/* project advanced search start */
+#prAdvancedSearchCol1 .ff > label {
+  min-width: 60.02px;
+}
+#prAdvancedSearchCol2 .ff > label {
+  min-width: 72.02px;
+}
+
+#prAdvancedSearchCol3 .ff > label {
+  min-width: 90.69px;
+}
+
+/* project advanced search end */
+
+/* project create start */
+#prCreateCol1 .form-row > label,
+#prCreateCol1 .form-row .sub > label {
+  min-width: 72.02px;
+}
+#prCreateCol2 .form-row > label,
+#prCreateCol2 .form-row .sub > label {
+  min-width: 60.02px;
+}
+
+#prCreateCol3 .form-row > label,
+#prCreateCol3 .form-row .sub > label {
+  min-width: 48.02px;
+}
+
+#prCreateCol4 .form-row > label,
+#prCreateCol4 .form-row .sub > label {
+  min-width: 90.69px;
 }
 .form-4col .ff > label .req {
   color: var(--danger);
@@ -2528,7 +2821,7 @@ select.input {
 .form-4col .ff.inline-2 > .sub,
 .form-4col .ff.audit-2 > .sub {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: var(--fc-label-gap);
 }
 
@@ -2754,10 +3047,8 @@ select.input {
   overflow: visible !important;
 }
 
-.section.active,
-.section-body {
+.section.active {
   overflow: visible;
-  height: auto;
   min-height: 0;
 }
 
@@ -2954,6 +3245,57 @@ select.input {
   margin-top: 0;
 }
 
+/* Column drag reorder */
+.col-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 4px;
+  padding: 2px;
+  vertical-align: middle;
+  color: var(--text-3);
+  cursor: grab;
+  opacity: 0.45;
+  border-radius: 3px;
+  touch-action: none;
+}
+
+.col-drag-handle:hover {
+  opacity: 0.9;
+  color: var(--brand-600);
+  background: rgba(0, 82, 204, 0.08);
+}
+
+.col-drag-handle:active {
+  cursor: grabbing;
+}
+
+.company-screen table.t thead th.col-drag-source {
+  opacity: 0.55;
+}
+
+.company-screen table.t thead th.col-drop-before {
+  box-shadow: inset 3px 0 0 var(--brand-500);
+}
+
+.company-screen table.t thead th.col-drop-after {
+  box-shadow: inset -3px 0 0 var(--brand-500);
+}
+
+body.col-reordering {
+  cursor: grabbing !important;
+  user-select: none;
+}
+
+body.col-reordering * {
+  cursor: grabbing !important;
+}
+
+body.col-reordering .col-resizer {
+  pointer-events: none;
+}
+
 /* Column resize handles */
 .col-resizer {
   position: absolute;
@@ -3088,14 +3430,90 @@ body.col-resizing * {
   color: var(--text-1);
 }
 
-/* Entity detail panels — closer to CP01 form-4col */
-#contact-root .company-detail,
-#activity-root .company-detail,
-#project-root .company-detail {
-  flex: 1 1 auto;
+/* Entity list screens (CP01/CT01/AT01/PR01) — fill remaining viewport height */
+.section-body {
+  flex: 1 0 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow: visible;
+}
+
+.section-body .company-screen {
+  flex: 1 0 auto;
+  min-height: 0;
+}
+
+.section-body .company-main {
+  flex: 1 0 auto;
+  min-height: 0;
+}
+
+.section-body .company-detail {
+  flex: 1 0 auto;
+  min-height: 0;
+}
+
+.section-body .company-detail.detail-tab-mode {
+  flex: 1 0 auto;
+  min-height: 0;
+}
+
+.section-body .company-detail.detail-tab-mode .company-tabpanels,
+.section-body .company-detail.table-tab-mode .company-tabpanels {
+  flex: 1 0 auto;
+  min-height: 0;
+}
+
+.section-body .company-detail.detail-tab-mode .panel-detail {
+  flex: 1 0 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.section-body .company-detail.detail-tab-mode .panel-detail-body {
+  flex: 1 0 auto;
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.section-body .company-detail > .tabs-underline {
+  flex-shrink: 0;
+}
+
+.section-body .company-tabpanels {
+  flex: 1 0 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.section-body .company-panel.active {
+  flex: 1 0 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.section-body .company-detail.table-tab-mode .tab-table-panel {
+  flex: 1 0 auto;
+  min-height: 0;
+}
+
+.section-body .company-detail.table-tab-mode .tab-table-wrap {
+  flex: 1 0 auto;
+  min-height: 160px;
+  max-height: none;
+  overflow: auto;
+}
+
+/* Entity detail panels — closer to CP01 form-4col (CT01/AT01/PR01) */
+#contact-root .company-detail,
+#activity-root .company-detail,
+#project-root .company-detail {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r-card);
@@ -3103,43 +3521,21 @@ body.col-resizing * {
   overflow: hidden;
 }
 
-#contact-root .company-detail > .tabs-underline,
-#project-root .company-detail > .tabs-underline {
-  flex-shrink: 0;
-}
-
-#contact-root .company-tabpanels,
-#activity-root .company-tabpanels,
-#project-root .company-tabpanels {
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-#contact-root .company-panel.active,
-#project-root .company-panel.active {
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
 #contact-root .panel-detail-body .detail-form,
 #activity-root .panel-detail-body .detail-form,
 #project-root .panel-detail-body .detail-form {
-  flex: 1 1 auto;
+  flex: 1 0 auto;
   min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
+  /* overflow-y: auto;
+  overflow-x: auto; */
   padding: 14px 16px;
   gap: 12px 18px;
   align-content: start;
   align-items: start;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  /* grid-template-columns: repeat(4, 1fr); */
+  /* grid-template-columns: repeat(4, minmax(400px, 1fr)); */
+  grid-template-columns: minmax(400px, 1fr) minmax(290px, auto) minmax(400px, 1fr) minmax(400px, 1fr);
 }
 
 #activity-root .detail-form .form-col,
@@ -3223,15 +3619,4 @@ body.col-resizing * {
   border-color: #e2e8f0 !important;
   cursor: not-allowed !important;
   opacity: 1;
-}
-
-#contact-root .company-panel:not([data-contact-panel="detail"]) .tab-table-panel,
-#project-root .company-panel:not([data-pr-panel="detail"]) .tab-table-panel {
-  flex: 1 1 auto;
-  min-height: 0;
-}
-
-#activity-root .company-detail > .panel-detail {
-  flex: 1 1 auto;
-  min-height: 0;
 }

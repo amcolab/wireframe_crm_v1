@@ -19,7 +19,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
           詳細検索
         </button>
-        <button class="btn btn-ghost" id="btnContactClear" type="button">
+        <button class="btn btn-secondary" id="btnContactClear" type="button">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
           クリア
         </button>
@@ -35,10 +35,19 @@
           <div class="panel">
             <div class="company-table-wrap table-wrap">
               <table class="t" id="contactTable">
+                <colgroup>
+                  <col style="width:68px"><col style="width:220px"><col style="width:120px">
+                  <col style="width:90px"><col style="width:90px"><col style="width:140px">
+                  <col style="width:120px"><col style="width:120px"><col style="width:180px">
+                  <col style="width:90px"><col style="width:90px"><col style="width:140px">
+                  <col style="width:200px">
+                </colgroup>
                 <thead><tr>
-                    <th>会社ID</th><th>会社名</th><th>部署名</th><th>担当(姓)</th><th>担当(名)</th>
-                    <th>フリガナ</th><th>TEL</th><th>携帯電話</th><th>Email</th><th>職種</th>
-                    <th>職位</th><th>役職名</th><th>住所</th>
+                    <th data-col-key="companyId">会社ID</th><th data-col-key="company">会社名</th><th data-col-key="dept">部署名</th>
+                    <th data-col-key="last">担当(姓)</th><th data-col-key="first">担当(名)</th>
+                    <th data-col-key="kana">フリガナ</th><th data-col-key="tel">TEL</th><th data-col-key="mobile">携帯電話</th>
+                    <th data-col-key="email">Email</th><th data-col-key="role">職種</th>
+                    <th data-col-key="rank">職位</th><th data-col-key="pos">役職名</th><th data-col-key="addr">住所</th>
                 </tr></thead>
                 <tbody id="contactTableBody"></tbody>
               </table>
@@ -93,27 +102,27 @@
               <div class="panel-detail-body">
               <div class="detail-form">
                 <!-- Left Column: Name & Contact Info -->
-                <div class="form-col" style="flex: 1.2;">
+                <div class="form-col" style="flex: 1.2;" id="contactDetailCol1">
                   <div class="form-row">
                     <label>担当者ID</label>
                     <input id="contactDetailId" disabled type="text" />
                   </div>
                   <div class="form-row two">
-                    <div>
+                    <div class="sub">
                       <label>姓 <span class="req">*</span></label>
                       <input id="contactDetailLast" type="text" />
                     </div>
-                    <div>
+                    <div class="sub">
                       <label>名</label>
                       <input id="contactDetailFirst" type="text" />
                     </div>
                   </div>
                   <div class="form-row two">
-                    <div>
+                    <div class="sub">
                       <label>セイ</label>
                       <input id="contactDetailKana" type="text" />
                     </div>
-                    <div>
+                    <div class="sub">
                       <label>メイ</label>
                       <input type="text" />
                     </div>
@@ -135,21 +144,21 @@
                     <input id="contactDetailDept" type="text" />
                   </div>
                   <div class="form-row two">
-                    <div>
+                    <div class="sub">
                       <label>TEL</label>
                       <input id="contactDetailTel" type="text" />
                     </div>
-                    <div>
+                    <div class="sub">
                       <label>内線</label>
                       <input id="contactDetailExt" type="text" />
                     </div>
                   </div>
                   <div class="form-row two">
-                    <div>
+                    <div class="sub">
                       <label>FA</label>
                       <input type="text" value="089-5996-4084" />
                     </div>
-                    <div>
+                    <div class="sub">
                       <label>携帯電話</label>
                       <input type="text" value="070-5532-1608" />
                     </div>
@@ -165,61 +174,62 @@
                     </select>
                   </div>
                   <div class="form-row two">
-                    <div>
+                    <div class="sub">
                       <label>職位</label>
                       <select>
                         <option>次長・部長代理</option>
                       </select>
                     </div>
-                    <div>
+                    <div class="sub">
                       <label>役職名</label>
                       <input type="text" value="生産技術開発部次長" />
                     </div>
                   </div>
-                  <div class="form-row check-row" style="grid-template-columns: 1fr;">
-                    <div class="check-group" style="padding-top:10px;">
-                      <label class="check"><input type="checkbox" /> 資料禁止</label>
+                  <div class="form-row">
+                    <label></label>
+                    <div class="check-group" >
+                      <label class="check" style="width: fit-content;"><input type="checkbox" style="margin-left: 0;" /> 資料禁止</label>
                       <label class="check"><input type="checkbox" /> TEL禁止</label>
                       <label class="check"><input type="checkbox" /> TEL注意</label>
                     </div>
                   </div>
                 </div>
                 <!-- Middle Column: Remarks & Company Info -->
-                <div class="form-row" style="flex:1;">
+                <div class="form-row" style="flex:1;" id="contactDetailCol2">
                   <label>備考</label>
-                  <textarea id="contactDetailRemark" style="min-height: 150px;">社内でのシステム導入プロジェクトに参画中。</textarea>
+                  <textarea id="contactDetailRemark" style="min-height: 150px; flex: 1;">社内でのシステム導入プロジェクトに参画中。</textarea>
                 </div>
-                <div class="form-col" style="flex: 1.5;">
+                <div class="form-col" style="flex: 1.5;" id="contactDetailCol3">
                   <div class="form-row" style="margin-top: 15px;">
                     <label>フォロー予定</label>
                     <input type="date" />
                   </div>
                   <div class="form-row two">
-                    <div>
+                    <div class="sub">
                       <label>会社種別</label>
                       <input disabled="" type="text" value="その他" />
                     </div>
-                    <div>
+                    <div class="sub">
                       <label>代表TEL</label>
                       <input disabled="" type="text" value="077-589-2589" />
                     </div>
                   </div>
                   <div class="form-row two">
-                    <div>
+                    <div class="sub">
                       <label>業界</label>
                       <input disabled="" type="text" value="製造業" />
                     </div>
-                    <div>
+                    <div class="sub">
                       <label>規模ランク</label>
                       <input disabled="" type="text" value="1人～30人" />
                     </div>
                   </div>
                   <div class="form-row two">
-                    <div>
+                    <div class="sub">
                       <label>郵便番号</label>
                       <input disabled="" type="text" value="7059306" />
                     </div>
-                    <div>
+                    <div class="sub">
                       <label>都道府県</label>
                       <input disabled="" type="text" value="北海道" />
                     </div>
@@ -229,28 +239,28 @@
                     <input disabled="" type="text" value="北海道旭川市東区4丁目18-30" />
                   </div>
                   <div class="form-row two" style="margin-top: 15px;">
-                    <div>
+                    <div class="sub">
                       <label>作成日時</label>
                       <input disabled="" type="text" />
                     </div>
-                    <div>
+                    <div class="sub">
                       <label>作成者</label>
                       <input disabled="" type="text" />
                     </div>
                   </div>
                   <div class="form-row two">
-                    <div>
+                    <div class="sub">
                       <label>更新日時</label>
                       <input disabled="" type="text" />
                     </div>
-                    <div>
+                    <div class="sub">
                       <label>更新者</label>
                       <input disabled="" type="text" />
                     </div>
                   </div>
                 </div>
                 <!-- Right Column: Free fields -->
-                <div class="form-col" style="flex: 0.8;">
+                <div class="form-col" style="flex: 0.8; padding-right: 16px;" id="contactDetailCol4">
                   <div class="form-row"><label>担当者自由使用欄1</label><input type="text" /></div>
                   <div class="form-row"><label>担当者自由使用欄2</label><input type="text" /></div>
                   <div class="form-row"><label>担当者自由使用欄3</label><input type="text" /></div>
@@ -337,3 +347,35 @@
     </div>
   </div>
 </section>
+
+<!-- Custom Context Menu for Activities -->
+<div id="activitiesContextMenu" class="custom-context-menu" style="display: none;">
+  <div class="context-menu-item" data-action="copy">
+    <div class="menu-icon-col">
+      <span class="menu-icon">📋</span>
+    </div>
+    <div class="menu-label">コピー(C)</div>
+    <div class="menu-shortcut"></div>
+  </div>
+  <div class="context-menu-item disabled" data-action="paste">
+    <div class="menu-icon-col"></div>
+    <div class="menu-label">貼り付け(P)</div>
+    <div class="menu-shortcut">Ctrl+V</div>
+  </div>
+  <div class="menu-separator"></div>
+  <div class="context-menu-item" data-action="new-activity">
+    <div class="menu-icon-col"></div>
+    <div class="menu-label">新規登録-活動</div>
+    <div class="menu-shortcut"></div>
+  </div>
+  <div class="context-menu-item" data-action="new-project">
+    <div class="menu-icon-col"></div>
+    <div class="menu-label">新規登録-案件</div>
+    <div class="menu-shortcut"></div>
+  </div>
+  <div class="context-menu-item" data-action="delete-row">
+    <div class="menu-icon-col"></div>
+    <div class="menu-label">選択行の削除</div>
+    <div class="menu-shortcut"></div>
+  </div>
+</div>
