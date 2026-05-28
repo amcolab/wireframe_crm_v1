@@ -3415,6 +3415,7 @@ body.col-resizing * {
   margin-left: auto;
 }
 
+
 /* Tabulator list — match table.t in panel */
 .list-stack .tabulator-wrap {
   flex: 1;

@@ -37,6 +37,9 @@ let state = {
 let isReady = false;
 let companyTableBound = false;
 let columnSettingsBound = false;
+let companyContextMenuBound = false;
+let companyContextRowId = null;
+let companyContextCellValue = '';
 
 const COMPANY_REORDER_STORE_KEY = 'smos.cp01.colOrder';
 const COMPANY_REORDER_WIDTH_KEY = 'smos.cp01.colWidths';
@@ -263,6 +266,7 @@ function bindUi() {
     }
     if (dlgCreate?.showModal) dlgCreate.showModal();
   });
+  bindCompanyContextMenu(btnCreate);
 
   q('btnCreateCompanyOk')?.addEventListener('click', () => {
     const fd = new FormData(formCreate);
@@ -582,6 +586,100 @@ function bindUi() {
 
   bindContactsListNavigation();
   syncDetailTabLayout('detail');
+}
+
+function hideCompanyContextMenu() {
+  const menu = q('companyContextMenu');
+  if (!menu) return;
+  menu.style.display = 'none';
+  menu.setAttribute('aria-hidden', 'true');
+}
+
+function showCompanyContextMenu(x, y) {
+  const menu = q('companyContextMenu');
+  if (!menu) return;
+
+  menu.style.visibility = 'hidden';
+  menu.style.display = 'block';
+  menu.setAttribute('aria-hidden', 'false');
+
+  const rect = menu.getBoundingClientRect();
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const left = Math.min(Math.max(0, x), Math.max(0, vw - rect.width - 4));
+  const top = Math.min(Math.max(0, y), Math.max(0, vh - rect.height - 4));
+  menu.style.left = `${left}px`;
+  menu.style.top = `${top}px`;
+  menu.style.visibility = '';
+}
+
+function getCompanyCellCopyText() {
+  return companyContextCellValue || '';
+}
+
+function bindCompanyContextMenu(btnCreate) {
+  if (companyContextMenuBound) return;
+  companyContextMenuBound = true;
+
+  const table = q('companyTable');
+  const body = q('companyTableBody');
+  const menu = q('companyContextMenu');
+  const itemCopy = menu?.querySelector('[data-action="copy"]');
+  const itemCreate = menu?.querySelector('[data-action="new-company"]');
+  if (!table || !body || !menu) return;
+
+  table.addEventListener('contextmenu', (e) => {
+    const tr = e.target.closest('tbody tr[data-id]');
+    if (!tr) return;
+    e.preventDefault();
+
+    const td = e.target.closest('td');
+    companyContextCellValue = td ? (td.textContent || '').trim() : '';
+    companyContextRowId = tr.getAttribute('data-id');
+    if (companyContextRowId && companyContextRowId !== state.selectedId) {
+      state.selectedId = companyContextRowId;
+      const c = state.companies.find((x) => String(x.id) === String(state.selectedId));
+      if (c) {
+        fillDetailForm(c);
+        renderChildLists(c);
+      }
+      render();
+    }
+    showCompanyContextMenu(e.clientX, e.clientY);
+  });
+
+  itemCopy?.addEventListener('click', async () => {
+    const text = getCompanyCellCopyText();
+    if (!text) {
+      showToast('コピーできるセルがありません', 'info');
+      hideCompanyContextMenu();
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast('行データをコピーしました', 'success');
+    } catch {
+      showToast('コピーに失敗しました', 'danger');
+    }
+    hideCompanyContextMenu();
+  });
+
+  itemCreate?.addEventListener('click', () => {
+    btnCreate?.click();
+    hideCompanyContextMenu();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (menu.style.display !== 'block') return;
+    if (e.target.closest('#companyContextMenu')) return;
+    hideCompanyContextMenu();
+  });
+
+  window.addEventListener('resize', hideCompanyContextMenu);
+  window.addEventListener('scroll', hideCompanyContextMenu, true);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') hideCompanyContextMenu();
+  });
 }
 
 function bindContactsListNavigation() {

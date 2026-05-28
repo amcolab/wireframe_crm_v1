@@ -23,6 +23,8 @@ let state = {
 };
 
 let tableBound = false;
+let contextMenuBound = false;
+let contextCellText = '';
 
 export function init() {
   console.log('Activity screen (AT01) initialized');
@@ -111,6 +113,85 @@ function bindUi() {
     state.pageSize = parseInt(e.target.value, 10) || 25;
     state.page = 1;
     render();
+  });
+
+  bindActivityContextMenu();
+}
+
+function getActivityContextMenu() {
+  return q('activityContextMenu');
+}
+
+function hideActivityContextMenu() {
+  const menu = getActivityContextMenu();
+  if (!menu) return;
+  menu.style.display = 'none';
+  menu.setAttribute('aria-hidden', 'true');
+}
+
+function showActivityContextMenu(x, y) {
+  const menu = getActivityContextMenu();
+  if (!menu) return;
+  menu.style.visibility = 'hidden';
+  menu.style.display = 'block';
+  menu.setAttribute('aria-hidden', 'false');
+  const rect = menu.getBoundingClientRect();
+  const left = Math.min(Math.max(0, x), Math.max(0, window.innerWidth - rect.width - 4));
+  const top = Math.min(Math.max(0, y), Math.max(0, window.innerHeight - rect.height - 4));
+  menu.style.left = `${left}px`;
+  menu.style.top = `${top}px`;
+  menu.style.visibility = '';
+}
+
+function bindActivityContextMenu() {
+  if (contextMenuBound) return;
+  contextMenuBound = true;
+  const table = q('activityTable');
+  const menu = getActivityContextMenu();
+  if (!table || !menu) return;
+
+  table.addEventListener('contextmenu', (e) => {
+    const withinTable = e.target.closest('#activityTable');
+    if (!withinTable) return;
+    e.preventDefault();
+    const td = e.target.closest('td');
+    contextCellText = td ? (td.textContent || '').trim() : '';
+    showActivityContextMenu(e.clientX, e.clientY);
+  });
+
+  menu.addEventListener('click', async (e) => {
+    const item = e.target.closest('.context-menu-item');
+    if (!item || item.classList.contains('disabled')) return;
+    const action = item.getAttribute('data-action');
+    if (action === 'copy') {
+      if (!contextCellText) {
+        hideActivityContextMenu();
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(contextCellText);
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = contextCellText;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+    } else if (action === 'new-activity') {
+      q('btnActivityNewMain')?.click();
+    }
+    hideActivityContextMenu();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('#activityContextMenu')) return;
+    hideActivityContextMenu();
+  });
+  window.addEventListener('resize', hideActivityContextMenu);
+  window.addEventListener('scroll', hideActivityContextMenu, true);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') hideActivityContextMenu();
   });
 }
 

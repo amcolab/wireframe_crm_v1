@@ -37,6 +37,8 @@ let state = {
 };
 
 let tableBound = false;
+let contextMenuBound = false;
+let contextCellText = '';
 
 function formatDateForInput(dateStr) {
   if (!dateStr) return '';
@@ -167,6 +169,94 @@ function bindUi() {
     state.pageSize = parseInt(e.target.value, 10) || 25;
     state.page = 1;
     render();
+  });
+
+  bindProjectContextMenu();
+}
+
+function getProjectContextMenu() {
+  return q('projectContextMenu');
+}
+
+function hideProjectContextMenu() {
+  const menu = getProjectContextMenu();
+  if (!menu) return;
+  menu.style.display = 'none';
+  menu.setAttribute('aria-hidden', 'true');
+}
+
+function showProjectContextMenu(x, y) {
+  const menu = getProjectContextMenu();
+  if (!menu) return;
+  menu.style.visibility = 'hidden';
+  menu.style.display = 'block';
+  menu.setAttribute('aria-hidden', 'false');
+  const rect = menu.getBoundingClientRect();
+  const left = Math.min(Math.max(0, x), Math.max(0, window.innerWidth - rect.width - 4));
+  const top = Math.min(Math.max(0, y), Math.max(0, window.innerHeight - rect.height - 4));
+  menu.style.left = `${left}px`;
+  menu.style.top = `${top}px`;
+  menu.style.visibility = '';
+}
+
+function bindProjectContextTarget(selector) {
+  const el = q(selector);
+  if (!el || el.dataset.contextBound === '1') return;
+  el.dataset.contextBound = '1';
+  el.addEventListener('contextmenu', (e) => {
+    const td = e.target.closest('td');
+    if (!td) return;
+    e.preventDefault();
+    contextCellText = (td.textContent || '').trim();
+    showProjectContextMenu(e.clientX, e.clientY);
+  });
+}
+
+function bindProjectContextMenu() {
+  if (contextMenuBound) return;
+  contextMenuBound = true;
+  bindProjectContextTarget('projectTable');
+  bindProjectContextTarget('projectActivitiesList');
+  const menu = getProjectContextMenu();
+  if (!menu) return;
+
+  menu.addEventListener('click', async (e) => {
+    const item = e.target.closest('.context-menu-item');
+    if (!item || item.classList.contains('disabled')) return;
+    const action = item.getAttribute('data-action');
+
+    if (action === 'copy') {
+      if (!contextCellText) {
+        hideProjectContextMenu();
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(contextCellText);
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = contextCellText;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+    } else if (action === 'new-activity') {
+      q('btnPrTabNewActivity')?.click();
+    } else if (action === 'new-project') {
+      q('btnProjectNewMain')?.click();
+    }
+
+    hideProjectContextMenu();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('#projectContextMenu')) return;
+    hideProjectContextMenu();
+  });
+  window.addEventListener('resize', hideProjectContextMenu);
+  window.addEventListener('scroll', hideProjectContextMenu, true);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') hideProjectContextMenu();
   });
 }
 

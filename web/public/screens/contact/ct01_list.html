@@ -28,7 +28,7 @@
           <button class="btn btn-accent" id="btnContactCreateMain" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
             新規担当
-          </button>
+          </button>ứng
         </div>
       </div>
       <div class="company-main">
@@ -349,8 +349,8 @@
   </div>
 </section>
 
-<!-- Custom Context Menu for Activities -->
-<div id="activitiesContextMenu" class="custom-context-menu" style="display: none;">
+<!-- Shared Context Menu for Contact tables -->
+<div id="contactContextMenu" class="custom-context-menu" style="display: none;">
   <div class="context-menu-item" data-action="copy">
     <div class="menu-icon-col">
       <span class="menu-icon">📋</span>
@@ -364,6 +364,11 @@
     <div class="menu-shortcut">Ctrl+V</div>
   </div>
   <div class="menu-separator"></div>
+  <div class="context-menu-item" data-action="new-contact">
+    <div class="menu-icon-col"></div>
+    <div class="menu-label">新規登録-担当者</div>
+    <div class="menu-shortcut"></div>
+  </div>
   <div class="context-menu-item" data-action="new-activity">
     <div class="menu-icon-col"></div>
     <div class="menu-label">新規登録-活動</div>
@@ -372,11 +377,6 @@
   <div class="context-menu-item" data-action="new-project">
     <div class="menu-icon-col"></div>
     <div class="menu-label">新規登録-案件</div>
-    <div class="menu-shortcut"></div>
-  </div>
-  <div class="context-menu-item" data-action="delete-row">
-    <div class="menu-icon-col"></div>
-    <div class="menu-label">選択行の削除</div>
     <div class="menu-shortcut"></div>
   </div>
 </div>
