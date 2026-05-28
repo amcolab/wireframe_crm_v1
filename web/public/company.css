@@ -3661,3 +3661,14 @@ body.col-resizing * {
   cursor: not-allowed !important;
   opacity: 1;
 }
+
+/* Global disabled style across all forms */
+input:disabled,
+select:disabled,
+textarea:disabled {
+  color: #64748b !important;
+  background: #f1f3f5 !important;
+  border-color: #e2e8f0 !important;
+  cursor: not-allowed !important;
+  opacity: 1;
+}

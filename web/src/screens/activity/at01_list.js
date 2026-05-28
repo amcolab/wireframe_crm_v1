@@ -12,6 +12,7 @@ import { setupResizableTable, syncResizableTableBody } from '../../utils/tableCo
 import { openContactCreateDialog } from '../../utils/contactCreateForm.js';
 import { openActivityCreateDialog } from '../../utils/activityCreateForm.js';
 import { openProjectCreateDialog } from '../../utils/projectCreateForm.js';
+import { takePendingActivitySearch } from '../../utils/screenNavigation.js';
 
 let state = {
   activities: [...mockActivities],
@@ -37,7 +38,20 @@ export function init() {
   initResizer();
   const card = document.querySelector('#activity-root .company-detail');
   syncEntityDetailTabLayout(card, 'detail');
+  applyPendingActivitySearch();
   setTimeout(() => render(), 200);
+}
+
+function applyPendingActivitySearch() {
+  const pending = takePendingActivitySearch();
+  if (!pending) return;
+  const companyInput = q('activitySearchCompany');
+  const repInput = q('activitySearchSalesRep');
+  const typeSel = q('activitySearchType');
+  if (companyInput) companyInput.value = pending.company || '';
+  if (repInput) repInput.value = pending.contact || '';
+  if (typeSel) typeSel.value = pending.type || '';
+  applySearch();
 }
 
 function getSelectedActivity() {

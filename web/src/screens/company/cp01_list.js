@@ -3,7 +3,7 @@ import { mockCompanies, mockContacts, mockActivities, mockProjects } from '../..
 import { showToast } from '../../utils/toast.js';
 import { initTableColResize } from '../../utils/tableColResize.js';
 import { initTableColReorder, syncTableBodyColumnOrder } from '../../utils/tableColReorder.js';
-import { navigateToContactSearch } from '../../utils/screenNavigation.js';
+import { navigateToActivitySearch, navigateToContactSearch, navigateToProjectSearch } from '../../utils/screenNavigation.js';
 import {
   readFormSearchConditions,
   hasSearchConditions,
@@ -45,7 +45,7 @@ const COMPANY_REORDER_STORE_KEY = 'smos.cp01.colOrder';
 const COMPANY_REORDER_WIDTH_KEY = 'smos.cp01.colWidths';
 
 const COMPANY_MAIN_COLUMNS = [
-  { label: '会社ID', key: 'id', width: '68px', sortType: 'num' },
+  { label: '会社ID', key: 'id', width: '130px', sortType: 'num' },
   { label: '会社名', key: 'name', width: '260px', sortType: 'str' },
   { label: '代表TEL', key: 'tel', width: '130px', sortType: 'str', tdClass: 'tel-num' },
   { label: '住所', key: 'addr', width: '260px', sortType: 'str' },
@@ -75,8 +75,14 @@ const COMPANY_CONTACT_COLUMNS = [
 const COMPANY_ACTIVITY_COLUMNS = [
   { label: '活動日', render: (a) => escapeHtml(a.date) },
   { label: '営業担当', render: (a) => escapeHtml(a.rep) },
-  { label: '担当(姓)', render: (a) => `<span class="blue-link">${escapeHtml(a.contact)}</span>` },
-  { label: 'タイプ', render: (a) => `<span class="${a.typeClass}">${escapeHtml(a.type)}</span>` },
+  {
+    label: '担当(姓)',
+    render: (a, c) => `<span class="blue-link" data-goto-contact data-company="${escapeHtml(a.company || c.name || '')}" data-name="${escapeHtml(a.contact || '')}" title="担当一覧で検索">${escapeHtml(a.contact)}</span>`,
+  },
+  {
+    label: 'タイプ',
+    render: (a, c) => `<span class="${a.typeClass} blue-link" data-goto-activity data-company="${escapeHtml(a.company || c.name || '')}" data-contact="${escapeHtml(a.contact || '')}" data-type="${escapeHtml(a.type || '')}" title="活動一覧で検索">${escapeHtml(a.type)}</span>`,
+  },
   { label: 'コメント', render: (a) => `<span title="${escapeHtml(a.comment)}">${escapeHtml(a.comment)}</span>`, thStyle: 'min-width: 250px;' },
   { label: '目的', render: (a) => escapeHtml(a.purpose || '') },
   { label: '案件名', render: (a) => escapeHtml(a.projectName || '') },
@@ -88,8 +94,14 @@ const COMPANY_PROJECT_COLUMNS = [
   { label: 'フォロー予定', render: (p) => escapeHtml(p.followDate || '') },
   { label: '案件ステータス', render: (p) => escapeHtml(p.status) },
   { label: '営業担当', render: (p) => escapeHtml(p.rep) },
-  { label: '案件名', render: (p) => `<span class="blue-link">${escapeHtml(p.name)}</span>` },
-  { label: '担当(姓)', render: (p) => `<span class="blue-link">${escapeHtml(p.contact)}</span>` },
+  {
+    label: '案件名',
+    render: (p) => `<span class="blue-link" data-goto-project data-company="${escapeHtml(p.company || '')}" data-rep="${escapeHtml(p.rep || '')}" data-name="${escapeHtml(p.name || '')}" title="案件一覧で検索">${escapeHtml(p.name)}</span>`,
+  },
+  {
+    label: '担当(姓)',
+    render: (p) => `<span class="blue-link" data-goto-contact data-company="${escapeHtml(p.company || '')}" data-name="${escapeHtml(p.contact || '')}" title="担当一覧で検索">${escapeHtml(p.contact)}</span>`,
+  },
   { label: '案件概要', render: (p) => `<span title="${escapeHtml(p.summary)}">${escapeHtml(p.summary)}</span>`, thStyle: 'min-width: 250px;' },
   { label: '当初確度', render: (p) => escapeHtml(p.initial || '') },
   { label: '発生動機', render: (p) => escapeHtml(p.motivation || '') },
@@ -683,17 +695,40 @@ function bindCompanyContextMenu(btnCreate) {
 }
 
 function bindContactsListNavigation() {
-  const wrap = q('companyContactsList');
-  if (!wrap || wrap.dataset.navBound === 'true') return;
-  wrap.dataset.navBound = 'true';
+  const root = q('company-root');
+  if (!root || root.dataset.navBound === 'true') return;
+  root.dataset.navBound = 'true';
 
-  wrap.addEventListener('click', (e) => {
-    const link = e.target.closest('[data-goto-contact]');
-    if (!link) return;
+  root.addEventListener('click', (e) => {
+    const contactLink = e.target.closest('[data-goto-contact]');
+    if (contactLink) {
+      e.preventDefault();
+      e.stopPropagation();
+      navigateToContactSearch({
+        company: contactLink.getAttribute('data-company') || '',
+        name: contactLink.getAttribute('data-name') || '',
+      });
+      return;
+    }
+    const activityLink = e.target.closest('[data-goto-activity]');
+    if (activityLink) {
+      e.preventDefault();
+      e.stopPropagation();
+      navigateToActivitySearch({
+        company: activityLink.getAttribute('data-company') || '',
+        contact: activityLink.getAttribute('data-contact') || '',
+        type: activityLink.getAttribute('data-type') || '',
+      });
+      return;
+    }
+    const projectLink = e.target.closest('[data-goto-project]');
+    if (!projectLink) return;
     e.preventDefault();
     e.stopPropagation();
-    navigateToContactSearch({
-      company: link.getAttribute('data-company') || '',
+    navigateToProjectSearch({
+      company: projectLink.getAttribute('data-company') || '',
+      rep: projectLink.getAttribute('data-rep') || '',
+      name: projectLink.getAttribute('data-name') || '',
     });
   });
 }
@@ -1292,11 +1327,11 @@ function renderCompanyTable(rows) {
     const selected = String(c.id) === String(state.selectedId);
     return `<tr data-id="${escapeHtml(c.id)}" class="${selected ? 'selected' : ''}">
       ${visibleColumns.map((col) => {
-        const raw = c[col.key] ?? '';
-        const title = col.key === 'remark' ? ` title="${escapeHtml(raw)}"` : '';
-        const cls = col.tdClass ? ` class="${col.tdClass}"` : '';
-        return `<td data-col-key="${col.key}"${cls}${title}>${escapeHtml(raw)}</td>`;
-      }).join('')}
+      const raw = c[col.key] ?? '';
+      const title = col.key === 'remark' ? ` title="${escapeHtml(raw)}"` : '';
+      const cls = col.tdClass ? ` class="${col.tdClass}"` : '';
+      return `<td data-col-key="${col.key}"${cls}${title}>${escapeHtml(raw)}</td>`;
+    }).join('')}
     </tr>`;
   }).join('');
 

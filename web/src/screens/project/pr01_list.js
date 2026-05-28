@@ -24,6 +24,7 @@ import {
   buildColgroup,
   buildTheadRow,
 } from '../../utils/tableColumns.js';
+import { takePendingProjectSearch } from '../../utils/screenNavigation.js';
 
 let state = {
   projects: [...mockProjects],
@@ -67,7 +68,23 @@ export function init() {
   initResizer();
   const card = document.querySelector('#project-root .company-detail');
   syncEntityDetailTabLayout(card, 'detail');
+  applyPendingProjectSearch();
   setTimeout(() => render(), 200);
+}
+
+function applyPendingProjectSearch() {
+  const pending = takePendingProjectSearch();
+  if (!pending) return;
+  if (q('projectSearchCompany')) q('projectSearchCompany').value = pending.company || '';
+  if (q('projectSearchSalesRep')) q('projectSearchSalesRep').value = pending.rep || '';
+  applySearch();
+  if (pending.name) {
+    const hit = state.filtered.find((p) => String(p.name || '') === String(pending.name));
+    if (hit) {
+      state.selectedId = String(hit.id);
+      render();
+    }
+  }
 }
 
 function getSelectedProject() {
