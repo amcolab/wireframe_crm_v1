@@ -57,7 +57,7 @@
         <!-- Dropdown Menu -->
         <div class="settings-dropdown">
           <div class="dropdown-item" id="menuColumnSettings">列の設定</div>
-          <!-- <div class="dropdown-item">各種マスター</div> -->
+          <div class="dropdown-item" id="menuGeneralMaster">各種マスター</div>
           <div class="dropdown-item" id="menuTenantCompany">テナント・会社マスタ</div>
           <div class="dropdown-item" id="menuEmployeeMaster">社員マスター</div>
           <!-- <div class="dropdown-item">グループマスター</div> -->
@@ -200,6 +200,56 @@
   </form>
 </dialog>
 
+<!-- 各種マスター入力 Modal -->
+<dialog id="dlgGeneralMaster" class="dlg dlg-master-input" style="width: fit-content;">
+  <form method="dialog" class="dlg-body">
+    <div class="dlg-header">
+      <div class="dlg-title">各種マスター入力</div>
+      <button class="icon-btn" value="cancel" aria-label="close">✕</button>
+    </div>
+    <div class="dlg-content dlg-content--settings">
+      <div class="search-header search-header--multi master-input-header">
+        <div class="field">
+          <label for="generalMasterTypeSelect">項目</label>
+          <select id="generalMasterTypeSelect" class="input" style="min-width:220px;"></select>
+        </div>
+      </div>
+      <div class="master-input-grid">
+        <div class="table-wrap lookup-table-wrap settings-table-wrap" style="width: -webkit-fill-available;">
+          <table class="t lookup-table settings-table" id="generalMasterTable">
+            <colgroup>
+              <col style="width:44px">
+              <col style="width:min(260px,42vw)">
+              <col style="width:min(220px,34vw)">
+              <col style="width:68px">
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="col-no">#</th>
+                <th>名称</th>
+                <th>備考</th>
+                <th class="col-center" id="generalMasterDeleteHeader" style="display:none;">削除</th>
+              </tr>
+            </thead>
+            <tbody id="generalMasterBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="settings-dlg-foot">
+        <label class="check"><input type="checkbox" id="chkShowDeletedGeneralMaster" /> 削除済みのデータを表示</label>
+      </div>
+    </div>
+    <div class="dlg-actions dlg-actions--split">
+      <div class="dlg-actions-left">
+        <button type="button" class="btn btn-danger" id="btnGeneralMasterDeleteRow">行削除</button>
+      </div>
+      <div class="col-settings__foot-right">
+        <button type="button" class="btn btn-primary" id="btnGeneralMasterSave">登録</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
 <!-- 列の設定 Modal -->
 <dialog id="dlgColumnSettings" class="dlg dlg-wide dlg-column-settings">
   <form method="dialog" class="dlg-body">
@@ -232,7 +282,7 @@
         <div class="table-wrap lookup-table-wrap settings-table-wrap col-settings__table-wrap">
           <table class="t lookup-table settings-table col-settings-table" id="colSettingsTable">
             <colgroup>
-              <col style="width:48px">
+              <col style="width:64px">
               <col>
               <col style="width:72px">
             </colgroup>
@@ -245,14 +295,6 @@
             </thead>
             <tbody id="colSettingsBody"></tbody>
           </table>
-        </div>
-        <div class="col-settings__reorder" role="group" aria-label="列の並べ替え">
-          <button type="button" class="col-settings__move-btn" id="btnColMoveUp" title="上へ移動" aria-label="上へ移動">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-          </button>
-          <button type="button" class="col-settings__move-btn" id="btnColMoveDown" title="下へ移動" aria-label="下へ移動">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-          </button>
         </div>
       </div>
       <p class="col-settings__hint">行をクリックして選択し、右のボタンまたはキーボードの ↑↓ で並べ替えできます。</p>

@@ -124,8 +124,8 @@ function renderColumnTable() {
       const selected = idx === state.selectedIdx ? ' selected' : '';
       const hidden = !item.visible ? ' col-settings-row--hidden' : '';
       return `
-      <tr data-idx="${idx}" class="col-settings-row${selected}${hidden}" tabindex="0">
-        <td class="col-no">${idx + 1}</td>
+      <tr data-idx="${idx}" draggable="true" class="col-settings-row${selected}${hidden}" tabindex="0">
+        <td class="col-no"><span class="col-row-handle" title="ドラッグして並べ替え">⋮⋮</span>${idx + 1}</td>
         <td class="col-title">${escapeHtml(item.label)}</td>
         <td class="col-center">
           <label class="col-vis-toggle" title="${item.visible ? '非表示にする' : '表示する'}">
@@ -137,6 +137,7 @@ function renderColumnTable() {
     })
     .join('');
 
+  let dragFromIdx = -1;
   tbody.querySelectorAll('.col-settings-row').forEach((tr) => {
     const idx = Number(tr.dataset.idx);
     tr.addEventListener('click', (e) => {
@@ -150,6 +151,44 @@ function renderColumnTable() {
         state.selectedIdx = idx;
         renderColumnTable();
       }
+    });
+    tr.addEventListener('dragstart', (e) => {
+      dragFromIdx = idx;
+      tr.classList.add('is-dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    tr.addEventListener('dragend', () => {
+      dragFromIdx = -1;
+      tr.classList.remove('is-dragging');
+      tbody.querySelectorAll('.col-settings-row').forEach((r) => r.classList.remove('is-drop-target'));
+    });
+    tr.addEventListener('dragover', (e) => {
+      if (dragFromIdx < 0) return;
+      e.preventDefault();
+      const rect = tr.getBoundingClientRect();
+      const placeAfter = e.clientY > rect.top + rect.height / 2;
+      tr.classList.add('is-drop-target');
+      tr.classList.toggle('is-drop-after', placeAfter);
+      tr.classList.toggle('is-drop-before', !placeAfter);
+    });
+    tr.addEventListener('dragleave', () => {
+      tr.classList.remove('is-drop-target', 'is-drop-before', 'is-drop-after');
+    });
+    tr.addEventListener('drop', (e) => {
+      if (dragFromIdx < 0) return;
+      e.preventDefault();
+      const dragToIdx = Number(tr.dataset.idx);
+      const placeAfter = tr.classList.contains('is-drop-after');
+      tr.classList.remove('is-drop-target', 'is-drop-before', 'is-drop-after');
+      if (dragFromIdx === dragToIdx) return;
+      const next = [...state.items];
+      const [moved] = next.splice(dragFromIdx, 1);
+      const targetIdx = placeAfter ? dragToIdx + 1 : dragToIdx;
+      const insertIdx = dragFromIdx < targetIdx ? targetIdx - 1 : targetIdx;
+      next.splice(insertIdx, 0, moved);
+      state.items = next;
+      state.selectedIdx = insertIdx;
+      renderColumnTable();
     });
   });
 
