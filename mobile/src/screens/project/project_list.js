@@ -8,6 +8,14 @@ const PROJECT_ADV_FIELDS = [
     'adv-project-date-from', 'adv-project-date-to'
 ];
 
+function formatShortDate(ymd) {
+    // input: "YYYY/MM/DD" -> output: "YY/MM/DD"
+    const s = String(ymd || '').trim();
+    const m = s.match(/^(\d{4})\/(\d{2})\/(\d{2})$/);
+    if (!m) return s || '';
+    return `${m[1].slice(-2)}/${m[2]}/${m[3]}`;
+}
+
 export function init() {
     renderProjects(mockProjects);
     setupChipFilter('project-filter-chips', () => applyFilters());
@@ -22,6 +30,13 @@ export function init() {
     if (filterBtn && modal) filterBtn.addEventListener('click', () => { modal.style.display = 'flex'; });
     if (closeBtn && modal) closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
     if (applyBtn && modal) applyBtn.addEventListener('click', () => { applyFilters(); modal.style.display = 'none'; });
+
+    const prefill = localStorage.getItem('prefill_company_filter');
+    if (prefill && searchInput) {
+        searchInput.value = prefill;
+        localStorage.removeItem('prefill_company_filter');
+        applyFilters();
+    }
 
     function applyFilters() {
         const term = (searchInput?.value || '').toLowerCase();
@@ -56,22 +71,23 @@ function renderProjects(data) {
 
     container.innerHTML = data.map(item => `
         <article class="act-card" onclick="window.location.hash='project-detail/${item.id}'">
-            <div class="co-card-head">
-                <div>
-                    <div class="act-title">${item.name}</div>
-                    <div class="act-meta-line">${item.company}</div>
+            <div class="prj-grid">
+                <div class="prj-company prj-l1">${item.company}</div>
+                <div class="prj-r1"><span class="tag amber">${item.status}</span></div>
+
+                <div class="prj-name prj-l2">${item.name}</div>
+                <div class="prj-pair prj-r2">
+                    <span class="k">営業</span>
+                    <span class="v"><b>${item.salesRep || '-'}</b></span>
                 </div>
-                <span class="tag amber">${item.status}</span>
-            </div>
-            <div class="act-row">
-                <span>話題日 <b>${item.topicDate || '-'}</b></span>
-                <span>営業 <b>${item.salesRep || '-'}</b></span>
-            </div>
-            <p class="act-snippet">${item.summary || '—'}</p>
-            <div class="co-card-foot">
-                <span class="last-act">フォロー ${item.followupDate || '—'}</span>
-                <div class="quick-actions" onclick="event.stopPropagation()">
-                    <button type="button" class="qa-btn accent" aria-label="詳細" onclick="window.location.hash='project-detail/${item.id}'"><span class="icon">${icon('chevronRight')}</span></button>
+
+                <div class="prj-pair prj-l3">
+                    <span class="k">フォロー予定日</span>
+                    <span class="v mono">${formatShortDate(item.followupDate) || '-'}</span>
+                </div>
+                <div class="prj-pair prj-r3">
+                    <span class="k">話題日</span>
+                    <span class="v mono"><b>${formatShortDate(item.topicDate) || '-'}</b></span>
                 </div>
             </div>
         </article>

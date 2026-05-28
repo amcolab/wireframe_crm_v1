@@ -1,5 +1,4 @@
 import { mockCompanies } from '../../utils/mockData.js';
-import { setupChipFilter, getActiveChipFilter } from '../../utils/chipFilter.js';
 import { icon } from '../../utils/icons.js';
 import { bindFilterIndicator } from '../../utils/filterIndicator.js';
 
@@ -10,8 +9,7 @@ const COMPANY_ADV_FIELDS = [
 
 export function init() {
     renderCompanies(mockCompanies);
-    setupChipFilter('company-filter-chips', () => applyFilters());
-    bindFilterIndicator({ chipContainerId: 'company-filter-chips', fieldIds: COMPANY_ADV_FIELDS });
+    bindFilterIndicator({ fieldIds: COMPANY_ADV_FIELDS });
 
     const searchInput = document.getElementById('company-search');
     const filterBtn = document.querySelector('.filter-btn');
@@ -65,11 +63,9 @@ export function init() {
             const matchesAdvArea = !advArea || (item.area || '') === advArea;
             const matchesAdvTel = !advTel || item.tel.includes(advTel);
             const matchesAdvAddr = !advAddr || item.addr.toLowerCase().includes(advAddr);
-            const chipIndustry = getActiveChipFilter('company-filter-chips');
-            const matchesChip = !chipIndustry || item.industry === chipIndustry;
 
             return matchesBasic && matchesAdvName && matchesAdvPref && matchesAdvIndustry
-                && matchesAdvBiz && matchesAdvArea && matchesAdvTel && matchesAdvAddr && matchesChip;
+                && matchesAdvBiz && matchesAdvArea && matchesAdvTel && matchesAdvAddr;
         });
         renderCompanies(filtered);
     }
@@ -87,22 +83,20 @@ function renderCompanies(data) {
             <div class="co-card-head">
                 <div>
                     <div class="co-name">${item.name}</div>
-                    <div class="co-id">${item.id} · ${item.industry || '—'}</div>
                 </div>
             </div>
             <dl class="co-grid">
-                <dt>都道府県</dt><dd>${item.pref}</dd>
-                <dt>郵便番号</dt><dd>${item.postal}</dd>
+                <dt class="co-grid-quad-dt" aria-hidden="true"></dt>
+                <dd class="co-grid-quad">
+                    <span class="co-grid-quad-k">都道府県</span>
+                    <span class="co-grid-quad-v">${item.pref}</span>
+                    <span class="co-grid-quad-k">郵便番号</span>
+                    <span class="co-grid-quad-v">${item.postal}</span>
+                </dd>
+
                 <dt>住所</dt><dd>${item.addr}</dd>
                 <dt>代表TEL</dt><dd class="tel">${item.tel}</dd>
             </dl>
-            <div class="co-card-foot">
-                <span class="tag brand">${item.industryGroup || item.industry || '—'}</span>
-                <div class="quick-actions" onclick="event.stopPropagation()">
-                    <a href="tel:${item.tel}" class="qa-btn" aria-label="電話"><span class="icon">${icon('phone')}</span></a>
-                    <button type="button" class="qa-btn accent" aria-label="詳細" onclick="window.location.hash='company-detail/${item.id}'"><span class="icon">${icon('chevronRight')}</span></button>
-                </div>
-            </div>
         </article>
     `).join('');
 }
