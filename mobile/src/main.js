@@ -12,7 +12,7 @@ const FRAME_META = {
     'activity-detail': { num: 9, label: '活動 · 詳細', desc: '活動内容・コメント・自由使用欄。' },
     project: { num: 10, label: '案件 · 一覧', desc: '案件ステータス・話題日での検索。' },
     'project-detail': { num: 11, label: '案件 · 詳細', desc: '案件概要・関連情報。' },
-    'scan-result': { num: 12, label: '名刺スキャン · 結果', desc: 'OCR 結果の確認・登録。' }
+    'scan-result': { num: 12, label: '名刺スキャン · 結果', desc: 'OCR 結果の確認・登録先会社の選択・撮り直し / 続けて撮影。' }
 };
 
 function updatePresentation(routeKey) {
