@@ -42,6 +42,10 @@ export function init() {
         });
     }
 
+    document.getElementById('btn-new-activity')?.addEventListener('click', () => {
+        window.location.hash = 'activity-create';
+    });
+
     const prefill = localStorage.getItem('prefill_company_filter');
     if (prefill && searchInput) {
         searchInput.value = prefill;

@@ -50,6 +50,7 @@
 
     --header-h: 52px;
     --tabbar-h: 72px;
+    --fab-dock-gap: 12px;
     --btn-h: 38px;
     --safe-bottom: env(safe-area-inset-bottom, 0px);
 
@@ -2051,6 +2052,299 @@ select.form-control {
     color: var(--text-1);
     border-color: var(--border);
     min-width: 72px;
+}
+
+/* ============ Activity create form ============ */
+.activity-form-page {
+    padding: 8px 0 140px;
+    margin-bottom: 70px;
+}
+
+.activity-form-page .ctx-card {
+    margin: 0 12px 10px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    background: linear-gradient(135deg, var(--brand-50), #fff);
+    border: 1px solid var(--brand-100);
+    border-radius: 12px;
+}
+
+.activity-form-page .ctx-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    margin-bottom: 4px;
+}
+
+.activity-form-page .ctx-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-1);
+    line-height: 1.35;
+}
+
+.activity-form-page .ctx-sub {
+    margin-top: 3px;
+    font-size: 10.5px;
+    color: var(--text-3);
+}
+
+.activity-form-page .form-field .req {
+    color: var(--danger);
+    margin-left: 2px;
+}
+
+.activity-form-page .row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.activity-form-page .row-2 > div {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.activity-form-page .row-2 > div > label {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-3);
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.activity-form-page .form-control,
+.activity-form-page .form-input {
+    width: 100%;
+    height: 36px;
+    padding: 0 10px;
+    font-size: 13px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text-1);
+}
+
+.activity-form-page textarea.form-control {
+    height: auto;
+    min-height: 120px;
+    padding: 8px 10px;
+    resize: vertical;
+}
+
+.activity-form-page .form-section-comment {
+    margin-bottom: 24px;
+}
+
+.activity-form-page .form-section-comment .form-field {
+    padding-bottom: 20px;
+}
+
+.activity-form-page .form-readonly-value {
+    display: flex;
+    align-items: center;
+    height: 36px;
+    min-height: 36px;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+.activity-form-page .seg-pick {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.activity-form-page .seg-pick button {
+    min-height: 34px;
+    padding: 6px 4px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--text-2);
+    cursor: pointer;
+}
+
+.activity-form-page .seg-pick button.active {
+    border-color: var(--brand-500);
+    background: var(--brand-50);
+    color: var(--brand-700);
+}
+
+.activity-form-page .form-section-note {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-3);
+    text-transform: none;
+    letter-spacing: 0;
+    margin-left: 6px;
+}
+
+.form-readonly-section .form-section-head {
+    display: flex;
+    align-items: center;
+}
+
+.form-readonly-grid {
+    padding: 4px 0 6px;
+}
+
+.form-readonly-row {
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: 8px;
+    align-items: start;
+    padding: 6px 12px;
+    border-bottom: 1px solid var(--border-2);
+    font-size: 12px;
+}
+
+.form-readonly-row:last-child {
+    border-bottom: 0;
+}
+
+.form-readonly-row .k {
+    color: var(--text-3);
+    font-size: 10.5px;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.form-readonly-row .v {
+    color: var(--text-2);
+    font-weight: 500;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.form-readonly-row.full {
+    align-items: start;
+}
+
+.form-readonly-value {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-2);
+    background: var(--surface-2);
+    border: 1px solid var(--border-2);
+    border-radius: 8px;
+    line-height: 1.35;
+}
+
+.activity-form-page .form-check-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    padding-top: 2px;
+}
+
+.activity-form-page .form-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-2);
+    text-transform: none;
+    letter-spacing: 0;
+    cursor: pointer;
+}
+
+.activity-form-page .form-check input {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    accent-color: var(--brand-600);
+}
+
+.activity-form-page .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Floating action dock (list + form screens) */
+.page-shell--fab {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.page-shell--fab .page-inner {
+    flex: 1 1 auto;
+    padding-bottom: 8px;
+}
+
+.page-list-with-action .activity-list-body {
+    padding-bottom: 72px;
+}
+
+.page-fab-dock {
+    position: sticky;
+    bottom: calc(var(--tabbar-h) + var(--fab-dock-gap));
+    z-index: 35;
+    flex-shrink: 0;
+    margin-top: auto;
+    padding: 10px 12px 12px;
+    background: transparent;
+}
+
+.page-fab-dock .btn {
+    min-height: 36px;
+    padding: 0 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    border-radius: 10px;
+}
+
+.page-fab-dock .btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+.page-fab-dock .btn-register-activity {
+    width: 100%;
+    box-shadow: 0 4px 14px rgba(226, 93, 20, .24);
+}
+
+.page-fab-dock--dual {
+    padding: 8px 12px 12px;
+}
+
+.page-fab-dock--dual .fab-save-bar {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    gap: 8px;
+}
+
+.page-fab-dock--dual .btn-secondary {
+    min-width: 68px;
+    flex-shrink: 0;
+}
+
+.page-fab-dock--dual .btn-primary {
+    flex: 1;
 }
 
 /* ============ Scan (label + input one row) ============ */

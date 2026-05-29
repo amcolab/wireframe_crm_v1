@@ -69,6 +69,7 @@ export class Router {
             'company-detail': 'company',
             'contact-detail': 'contact',
             'activity-detail': 'activity',
+            'activity-create': 'activity',
             'project-detail': 'project',
             'scan-result': 'home'
         };
