@@ -1,9 +1,11 @@
 import { q, escapeHtml } from './helpers.js';
 import { mockCompanies, mockEmployees, mockProjects, mockTenants } from './mockData.js';
 import { renderPageNumberButtons } from './pager.js';
+import { showToast } from './toast.js';
 import { applyCompanyToContactCreateForm, openContactCreateDialog } from './contactCreateForm.js';
 import { applyCompanyToActivityCreateForm } from './activityCreateForm.js';
 import { applyCompanyToProjectCreateForm } from './projectCreateForm.js';
+import { initColumnSettings, openColumnSettingsDialog } from './columnSettings.js';
 
 function closeShellMenus() {
   document.querySelector('.settings-menu-trigger')?.classList.remove('show-menu');
@@ -11,7 +13,320 @@ function closeShellMenus() {
 }
 
 export function initGlobalLookups() {
+  initColumnSettings();
 
+  const GENERAL_MASTER_STORAGE_KEY = 'smos.generalMasters.v1';
+  const GENERAL_MASTER_DEFS = [
+    { value: 'biz', label: '業種' },
+    { value: 'industry', label: '業界' },
+    { value: 'scale', label: '規模ランク' },
+    { value: 'type', label: '種別' },
+    { value: 'role', label: '職種' },
+    { value: 'rank', label: '職位' },
+    { value: 'motivation', label: '発生動機' },
+    { value: 'purpose', label: '活動目的' },
+  ];
+  const GENERAL_MASTER_DEFAULTS = {
+    biz: [
+      { name: '機械', remark: '' },
+      { name: '電気・電子', remark: '' },
+      { name: '食品・飲料', remark: '' },
+      { name: '化学・素材', remark: '' },
+    ],
+    industry: [
+      { name: '製造業', remark: '' },
+      { name: '情報通信', remark: '' },
+      { name: '流通', remark: '' },
+    ],
+    scale: [
+      { name: '1～30名', remark: '' },
+      { name: '31～100名', remark: '' },
+      { name: '101～300名', remark: '' },
+    ],
+    type: [
+      { name: '新規', remark: '' },
+      { name: '既存', remark: '' },
+      { name: 'その他', remark: '' },
+    ],
+    role: [
+      { name: '購買', remark: '' },
+      { name: '情報システム', remark: '' },
+      { name: '経営層', remark: '' },
+    ],
+    rank: [
+      { name: '担当者', remark: '' },
+      { name: '係長', remark: '' },
+      { name: '課長', remark: '' },
+    ],
+    motivation: [
+      { name: '引合', remark: '' },
+      { name: '既存更新', remark: '' },
+      { name: '紹介', remark: '' },
+    ],
+    purpose: [
+      { name: '初回ヒアリング', remark: '' },
+      { name: '提案', remark: '' },
+      { name: 'フォロー', remark: '' },
+    ],
+  };
+  const gmState = {
+    selectedType: GENERAL_MASTER_DEFS[0].value,
+    selectedIndex: -1,
+    showDeleted: false,
+    data: null,
+  };
+
+  const cloneMaster = (v) => JSON.parse(JSON.stringify(v));
+  const gmTypeSelect = q('generalMasterTypeSelect');
+  const gmBody = q('generalMasterBody');
+  const gmDeleteHeader = q('generalMasterDeleteHeader');
+  const gmTable = q('generalMasterTable');
+
+  const readGeneralMasterStore = () => {
+    try {
+      const raw = localStorage.getItem(GENERAL_MASTER_STORAGE_KEY);
+      if (!raw) return cloneMaster(GENERAL_MASTER_DEFAULTS);
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== 'object') throw new Error('bad');
+      const next = cloneMaster(GENERAL_MASTER_DEFAULTS);
+      Object.keys(next).forEach((k) => {
+        if (Array.isArray(parsed[k])) {
+          next[k] = parsed[k].map((r) => ({
+            name: String(r.name ?? ''),
+            remark: String(r.remark ?? ''),
+            deleted: Boolean(r.deleted),
+          }));
+        }
+      });
+      return next;
+    } catch {
+      return cloneMaster(GENERAL_MASTER_DEFAULTS);
+    }
+  };
+
+  const writeGeneralMasterStore = () => {
+    localStorage.setItem(GENERAL_MASTER_STORAGE_KEY, JSON.stringify(gmState.data));
+  };
+
+  const currentRows = () => gmState.data?.[gmState.selectedType] ?? [];
+
+  const visibleRowsWithIndex = () => {
+    const rows = currentRows();
+    return rows
+      .map((row, idx) => ({ row, idx }))
+      .filter(({ row }) => gmState.showDeleted || !row.deleted);
+  };
+
+  const isBlankRow = (row) => !String(row?.name || '').trim() && !String(row?.remark || '').trim();
+
+  const renderGeneralMasterRows = () => {
+    if (!gmBody) return;
+    ensureGeneralMasterTailRow();
+    if (gmDeleteHeader) gmDeleteHeader.style.display = gmState.showDeleted ? '' : 'none';
+    const deleteCol = gmTable?.querySelector('colgroup col:last-child');
+    if (deleteCol) {
+      deleteCol.style.width = gmState.showDeleted ? '68px' : '0px';
+    }
+    const visible = visibleRowsWithIndex();
+    let dragFromPos = -1;
+    gmBody.innerHTML = visible.map(({ row, idx }, no) => `
+      <tr data-idx="${idx}" data-vpos="${no}" draggable="${(row.deleted || isBlankRow(row)) ? 'false' : 'true'}" class="master-row ${idx === gmState.selectedIndex ? 'selected' : ''} ${row.deleted ? 'is-deleted' : ''} ${isBlankRow(row) ? 'is-blank' : ''}">
+        <td class="col-no"><span class="master-row-handle" title="ドラッグして順序変更">${isBlankRow(row) ? '' : '⋮⋮'}</span>${no + 1}</td>
+        <td><input type="text" class="master-input-cell" data-field="name" data-idx="${idx}" value="${escapeHtml(row.name)}" ${row.deleted ? 'disabled' : ''}></td>
+        <td><input type="text" class="master-input-cell" data-field="remark" data-idx="${idx}" value="${escapeHtml(row.remark)}" ${row.deleted ? 'disabled' : ''}></td>
+        ${gmState.showDeleted ? `<td class="col-center"><input type="checkbox" class="master-delete-check" data-idx="${idx}" ${row.deleted ? 'checked' : ''}></td>` : ''}
+      </tr>
+    `).join('');
+
+    gmBody.querySelectorAll('tr').forEach((tr) => {
+      tr.addEventListener('click', (e) => {
+        if (e.target.closest('.master-input-cell')) return;
+        gmState.selectedIndex = Number(tr.dataset.idx);
+        renderGeneralMasterRows();
+      });
+      tr.addEventListener('dragstart', (e) => {
+        if (tr.classList.contains('is-deleted')) return;
+        dragFromPos = Number(tr.dataset.vpos);
+        tr.classList.add('is-dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      tr.addEventListener('dragend', () => {
+        tr.classList.remove('is-dragging');
+        gmBody.querySelectorAll('tr').forEach((r) => r.classList.remove('is-drop-target'));
+        dragFromPos = -1;
+      });
+      tr.addEventListener('dragover', (e) => {
+        if (dragFromPos < 0) return;
+        e.preventDefault();
+        tr.classList.add('is-drop-target');
+      });
+      tr.addEventListener('dragleave', () => {
+        tr.classList.remove('is-drop-target');
+      });
+      tr.addEventListener('drop', (e) => {
+        if (dragFromPos < 0) return;
+        e.preventDefault();
+        const dragToPos = Number(tr.dataset.vpos);
+        tr.classList.remove('is-drop-target');
+        if (dragToPos === dragFromPos) return;
+        const rows = currentRows();
+        const currVisible = visibleRowsWithIndex();
+        const fromItem = currVisible[dragFromPos];
+        const toItem = currVisible[dragToPos];
+        if (!fromItem || !toItem) return;
+        const fromIdx = fromItem.idx;
+        const toIdx = toItem.idx;
+        const [moved] = rows.splice(fromIdx, 1);
+        const insertIdx = fromIdx < toIdx ? toIdx - 1 : toIdx;
+        rows.splice(insertIdx, 0, moved);
+        gmState.selectedIndex = insertIdx;
+        renderGeneralMasterRows();
+      });
+    });
+
+    gmBody.querySelectorAll('.master-input-cell').forEach((input) => {
+      input.addEventListener('click', (e) => e.stopPropagation());
+      input.addEventListener('focus', () => {
+        gmState.selectedIndex = Number(input.dataset.idx);
+        gmBody.querySelectorAll('tr').forEach((r) => r.classList.remove('selected'));
+        input.closest('tr')?.classList.add('selected');
+      });
+      input.addEventListener('input', () => {
+        const idx = Number(input.dataset.idx);
+        const field = input.dataset.field;
+        const row = currentRows()[idx];
+        if (!row || row.deleted) return;
+        row[field] = input.value;
+        const beforeLen = currentRows().length;
+        ensureGeneralMasterTailRow();
+        if (currentRows().length > beforeLen) {
+          renderGeneralMasterRows();
+          const selector = `.master-input-cell[data-idx="${idx}"][data-field="${field}"]`;
+          const focusEl = gmBody.querySelector(selector);
+          if (focusEl) {
+            focusEl.focus();
+            const len = focusEl.value.length;
+            focusEl.setSelectionRange(len, len);
+          }
+        }
+      });
+    });
+    if (gmState.showDeleted) {
+      gmBody.querySelectorAll('.master-delete-check').forEach((check) => {
+        check.addEventListener('click', (e) => e.stopPropagation());
+        check.addEventListener('change', () => {
+          const idx = Number(check.dataset.idx);
+          const row = currentRows()[idx];
+          if (!row) return;
+          row.deleted = check.checked;
+          renderGeneralMasterRows();
+        });
+      });
+    }
+  };
+
+  const ensureGeneralMasterTailRow = () => {
+    const rows = currentRows();
+    const last = rows.filter((r) => !r.deleted).at(-1);
+    if (!last || !isBlankRow(last)) {
+      rows.push({ name: '', remark: '', deleted: false });
+    }
+  };
+
+  const openGeneralMasterDialog = () => {
+    gmState.data = readGeneralMasterStore();
+    Object.keys(gmState.data).forEach((key) => {
+      const rows = gmState.data[key];
+      if (!rows.length) rows.push({ name: '', remark: '', deleted: false });
+      const last = rows.filter((r) => !r.deleted).at(-1);
+      if (!last || !isBlankRow(last)) {
+        rows.push({ name: '', remark: '', deleted: false });
+      }
+    });
+    gmState.showDeleted = false;
+    if (q('chkShowDeletedGeneralMaster')) {
+      q('chkShowDeletedGeneralMaster').checked = false;
+    }
+    gmState.selectedType = gmTypeSelect?.value || gmState.selectedType;
+    gmState.selectedIndex = -1;
+    renderGeneralMasterRows();
+    q('dlgGeneralMaster')?.showModal();
+  };
+
+  if (gmTypeSelect && !gmTypeSelect.dataset.bound) {
+    gmTypeSelect.dataset.bound = '1';
+    gmTypeSelect.innerHTML = GENERAL_MASTER_DEFS
+      .map((x) => `<option value="${x.value}">${escapeHtml(x.label)}</option>`)
+      .join('');
+    gmTypeSelect.value = gmState.selectedType;
+    gmTypeSelect.addEventListener('change', () => {
+      gmState.selectedType = gmTypeSelect.value;
+      gmState.selectedIndex = -1;
+      renderGeneralMasterRows();
+    });
+  }
+
+  q('menuGeneralMaster')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeShellMenus();
+    openGeneralMasterDialog();
+  });
+  q('chkShowDeletedGeneralMaster')?.addEventListener('change', (e) => {
+    gmState.showDeleted = Boolean(e.target.checked);
+    gmState.selectedIndex = -1;
+    renderGeneralMasterRows();
+  });
+  q('btnGeneralMasterDeleteRow')?.addEventListener('click', () => {
+    const rows = currentRows();
+    if (!rows.length) {
+      return;
+    }
+    if (gmState.showDeleted) {
+      // In "show deleted" mode, mark the nearest last active row as deleted.
+      for (let i = rows.length - 1; i >= 0; i -= 1) {
+        const row = rows[i];
+        if (!row) continue;
+        if (row.deleted) continue;
+        if (isBlankRow(row)) continue;
+        row.deleted = true;
+        gmState.selectedIndex = i;
+        renderGeneralMasterRows();
+        return;
+      }
+      return;
+    }
+    const visible = visibleRowsWithIndex();
+    if (!visible.length) return;
+
+    // Keep one trailing blank row UX; delete the last meaningful row first.
+    let targetPos = visible.length - 1;
+    if (isBlankRow(visible[targetPos].row) && visible.length > 1) {
+      targetPos -= 1;
+    }
+    rows.splice(visible[targetPos].idx, 1);
+    ensureGeneralMasterTailRow();
+    gmState.selectedIndex = -1;
+    renderGeneralMasterRows();
+  });
+  q('btnGeneralMasterSave')?.addEventListener('click', () => {
+    if (!gmState.data) return;
+    Object.keys(gmState.data).forEach((key) => {
+      // Soft-delete: keep deleted rows for later restore/view.
+      const rows = gmState.data[key];
+      // Remove excessive blank active rows but keep single trailing blank row.
+      const active = rows.filter((r) => !r.deleted);
+      const compactActive = [];
+      active.forEach((row) => {
+        if (isBlankRow(row)) return;
+        compactActive.push(row);
+      });
+      const deleted = rows.filter((r) => r.deleted);
+      gmState.data[key] = [...compactActive, ...deleted, { name: '', remark: '', deleted: false }];
+    });
+    writeGeneralMasterStore();
+    showToast('登録が完了しました', 'success');
+    q('dlgGeneralMaster')?.close();
+  });
 
   // Employee Master Logic
   const dlgEmployee = q('dlgEmployeeMaster');
@@ -169,6 +484,12 @@ export function initGlobalLookups() {
       });
     });
   };
+
+  q('menuColumnSettings')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeShellMenus();
+    openColumnSettingsDialog();
+  });
 
   q('menuTenantCompany')?.addEventListener('click', (e) => {
     e.stopPropagation();

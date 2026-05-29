@@ -39,6 +39,8 @@ let state = {
 };
 
 let tableBound = false;
+let contextMenuBound = false;
+let contextCellText = '';
 
 export function init() {
   console.log('Contact screen (CT01) initialized');
@@ -250,74 +252,9 @@ function bindUi() {
 
       startCellEditing(td, tr);
     });
-
-    activitiesList.addEventListener('contextmenu', (e) => {
-      const td = e.target.closest('td[data-col-key]');
-      if (!td) return;
-      const tr = td.closest('tr[data-id]');
-      if (!tr) return;
-
-      e.preventDefault();
-
-      const menu = q('activitiesContextMenu');
-      if (!menu) return;
-
-      menu.style.display = 'block';
-      menu.style.left = `${e.clientX}px`;
-      menu.style.top = `${e.clientY}px`;
-
-      // Store cell context for menu actions
-      menu.dataset.clickedCellText = td.textContent.trim();
-      menu.dataset.clickedActId = tr.getAttribute('data-id');
-    });
   }
 
-  const contextMenu = q('activitiesContextMenu');
-  if (contextMenu) {
-    contextMenu.addEventListener('click', (e) => {
-      const item = e.target.closest('.context-menu-item');
-      if (!item || item.classList.contains('disabled')) return;
-
-      const action = item.getAttribute('data-action');
-      const cellText = contextMenu.dataset.clickedCellText || '';
-      const actId = contextMenu.dataset.clickedActId || '';
-
-      if (action === 'copy') {
-        navigator.clipboard.writeText(cellText).then(() => {
-          console.log('Copied to clipboard:', cellText);
-        }).catch(() => {
-          const textArea = document.createElement("textarea");
-          textArea.value = cellText;
-          document.body.appendChild(textArea);
-          textArea.select();
-          document.execCommand("copy");
-          document.body.removeChild(textArea);
-        });
-      } else if (action === 'new-activity') {
-        q('btnContactNewActivity')?.click();
-      } else if (action === 'new-project') {
-        // Trigger btnContactCreateMain first (per L26-L31) or btnContactNewProject based on what is correct
-        q('btnContactCreateMain')?.click() || q('btnContactNewProject')?.click();
-      } else if (action === 'delete-row') {
-        const c = getSelectedContact();
-        if (c && actId) {
-          const index = mockActivities.findIndex(a => String(a.id) === String(actId));
-          if (index !== -1) {
-            mockActivities.splice(index, 1);
-            renderContactActivitiesList(c);
-          }
-        }
-      }
-
-      contextMenu.style.display = 'none';
-    });
-  }
-
-  // Hide context menu when clicking outside of it
-  document.addEventListener('click', () => {
-    const menu = q('activitiesContextMenu');
-    if (menu) menu.style.display = 'none';
-  });
+  bindContactContextMenu();
 }
 
 function hasContactBasicSearch() {
@@ -325,6 +262,106 @@ function hasContactBasicSearch() {
     q('contactSearchName')?.value?.trim()
     || q('contactSearchCompany')?.value?.trim()
   );
+}
+
+function getContactContextMenu() {
+  return q('contactContextMenu');
+}
+
+function hideContactContextMenu() {
+  const menu = getContactContextMenu();
+  if (!menu) return;
+  menu.style.display = 'none';
+  menu.setAttribute('aria-hidden', 'true');
+}
+
+function showContactContextMenu(x, y) {
+  const menu = getContactContextMenu();
+  if (!menu) return;
+
+  menu.style.visibility = 'hidden';
+  menu.style.display = 'block';
+  menu.setAttribute('aria-hidden', 'false');
+  const rect = menu.getBoundingClientRect();
+  const left = Math.min(Math.max(0, x), Math.max(0, window.innerWidth - rect.width - 4));
+  const top = Math.min(Math.max(0, y), Math.max(0, window.innerHeight - rect.height - 4));
+  menu.style.left = `${left}px`;
+  menu.style.top = `${top}px`;
+  menu.style.visibility = '';
+}
+
+function bindContextTarget(selector) {
+  const el = q(selector);
+  if (!el || el.dataset.contextBound === '1') return;
+  el.dataset.contextBound = '1';
+  el.addEventListener('contextmenu', (e) => {
+    const td = e.target.closest('td');
+    if (!td) return;
+    e.preventDefault();
+    contextCellText = (td.textContent || '').trim();
+    showContactContextMenu(e.clientX, e.clientY);
+  });
+}
+
+function bindContactContextMenu() {
+  if (contextMenuBound) return;
+  contextMenuBound = true;
+
+  bindContextTarget('contactTable');
+  bindContextTarget('contactActivitiesList');
+  bindContextTarget('contactProjectsList');
+
+  const menu = getContactContextMenu();
+  if (!menu) return;
+
+  menu.addEventListener('click', async (e) => {
+    const item = e.target.closest('.context-menu-item');
+    if (!item || item.classList.contains('disabled')) return;
+    const action = item.getAttribute('data-action');
+
+    if (action === 'copy') {
+      if (!contextCellText) {
+        hideContactContextMenu();
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(contextCellText);
+      } catch {
+        const textArea = document.createElement('textarea');
+        textArea.value = contextCellText;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+    } else if (action === 'new-contact') {
+      q('btnContactCreateMain')?.click();
+    } else if (action === 'new-activity') {
+      activateContactTab('activities');
+      q('btnContactNewActivity')?.click();
+    } else if (action === 'new-project') {
+      q('btnContactNewProject')?.click();
+    }
+
+    hideContactContextMenu();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('#contactContextMenu')) return;
+    hideContactContextMenu();
+  });
+  window.addEventListener('resize', hideContactContextMenu);
+  window.addEventListener('scroll', hideContactContextMenu, true);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') hideContactContextMenu();
+  });
+}
+
+function activateContactTab(tabName) {
+  const tabBtn = document.querySelector(`[data-contact-tab="${tabName}"]`);
+  if (tabBtn) {
+    tabBtn.click();
+  }
 }
 
 function applySearch() {

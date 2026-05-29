@@ -56,8 +56,8 @@
 
         <!-- Dropdown Menu -->
         <div class="settings-dropdown">
-          <!-- <div class="dropdown-item">列の設定</div>
-          <div class="dropdown-item">各種マスター</div> -->
+          <div class="dropdown-item" id="menuColumnSettings">列の設定</div>
+          <div class="dropdown-item" id="menuGeneralMaster">各種マスター</div>
           <div class="dropdown-item" id="menuTenantCompany">テナント・会社マスタ</div>
           <div class="dropdown-item" id="menuEmployeeMaster">社員マスター</div>
           <!-- <div class="dropdown-item">グループマスター</div> -->
@@ -196,6 +196,130 @@
     <div class="dlg-actions dlg-actions--split">
       <button type="submit" class="btn btn-secondary" value="cancel">キャンセル</button>
       <button type="button" class="btn btn-primary" id="btnSaveEmployeeDetail">保存</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- 各種マスター入力 Modal -->
+<dialog id="dlgGeneralMaster" class="dlg dlg-master-input" style="width: fit-content;">
+  <form method="dialog" class="dlg-body">
+    <div class="dlg-header">
+      <div class="dlg-title">各種マスター入力</div>
+      <button class="icon-btn" value="cancel" aria-label="close">✕</button>
+    </div>
+    <div class="dlg-content dlg-content--settings">
+      <div class="search-header search-header--multi master-input-header">
+        <div class="field">
+          <label for="generalMasterTypeSelect">項目</label>
+          <select id="generalMasterTypeSelect" class="input" style="min-width:220px;"></select>
+        </div>
+      </div>
+      <div class="master-input-grid">
+        <div class="table-wrap lookup-table-wrap settings-table-wrap" style="width: -webkit-fill-available;">
+          <table class="t lookup-table settings-table" id="generalMasterTable">
+            <colgroup>
+              <col style="width:44px">
+              <col style="width:min(260px,42vw)">
+              <col style="width:min(220px,34vw)">
+              <col style="width:68px">
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="col-no">#</th>
+                <th>名称</th>
+                <th>備考</th>
+                <th class="col-center" id="generalMasterDeleteHeader" style="display:none;">削除</th>
+              </tr>
+            </thead>
+            <tbody id="generalMasterBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="settings-dlg-foot">
+        <label class="check"><input type="checkbox" id="chkShowDeletedGeneralMaster" /> 削除済みのデータを表示</label>
+      </div>
+    </div>
+    <div class="dlg-actions dlg-actions--split">
+      <div class="dlg-actions-left">
+        <button type="button" class="btn btn-danger" id="btnGeneralMasterDeleteRow">行削除</button>
+      </div>
+      <div class="col-settings__foot-right">
+        <button type="button" class="btn btn-primary" id="btnGeneralMasterSave">登録</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
+<!-- 列の設定 Modal -->
+<dialog id="dlgColumnSettings" class="dlg dlg-wide dlg-column-settings">
+  <form method="dialog" class="dlg-body">
+    <div class="dlg-header">
+      <div class="dlg-title">列の設定</div>
+      <button class="icon-btn" value="cancel" aria-label="close">✕</button>
+    </div>
+    <div class="dlg-content dlg-content--settings col-settings">
+      <div class="col-settings__toolbar">
+        <div class="col-settings__selects">
+          <div class="col-settings__field">
+            <label class="col-settings__label" for="colMenuSelect">メニュー</label>
+            <select id="colMenuSelect" class="input"></select>
+          </div>
+          <div class="col-settings__field">
+            <label class="col-settings__label" for="colSubMenuSelect">一覧</label>
+            <select id="colSubMenuSelect" class="input"></select>
+          </div>
+        </div>
+        <div class="col-settings__actions">
+          <span id="colSettingsSummary" class="col-settings__summary" aria-live="polite"></span>
+          <div class="col-settings__quick">
+            <button type="button" class="btn btn-ghost btn-sm" id="btnColShowAll">すべて表示</button>
+            <button type="button" class="btn btn-ghost btn-sm" id="btnColHideAll">すべて非表示</button>
+            <button type="button" class="btn btn-ghost btn-sm" id="btnColResetDefaults">初期値</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-settings__body">
+        <div class="table-wrap lookup-table-wrap settings-table-wrap col-settings__table-wrap">
+          <table class="t lookup-table settings-table col-settings-table" id="colSettingsTable">
+            <colgroup>
+              <col style="width:64px">
+              <col>
+              <col style="width:72px">
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="col-no">#</th>
+                <th>列タイトル</th>
+                <th class="col-center">表示</th>
+              </tr>
+            </thead>
+            <tbody id="colSettingsBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <p class="col-settings__hint">行をクリックして選択し、右のボタンまたはキーボードの ↑↓ で並べ替えできます。</p>
+      <label class="col-settings__all-toggle">
+        <input type="checkbox" id="chkColAllVisible" />
+        <span>一括チェック ON/OFF</span>
+      </label>
+      <div class="col-settings__file">
+        <label class="col-settings__file-label">ここにファイルをドラッグ＆ドロップ</label>
+        <div id="colSettingsDropzone" class="col-settings__dropzone" role="button" tabindex="0" aria-label="設定ファイルをドラッグ＆ドロップ">
+          <span id="colSettingsFileName" class="col-settings__file-name">ファイル未選択</span>
+          <button type="button" class="btn btn-secondary btn-sm" id="btnColFileBrowse">参照</button>
+        </div>
+        <input type="file" id="colSettingsFileInput" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden />
+      </div>
+    </div>
+    <div class="dlg-actions dlg-actions--split">
+      <div class="col-settings__foot-left">
+        <button type="button" class="btn btn-secondary" id="btnColImportSettings">インポート</button>
+        <button type="button" class="btn btn-secondary" id="btnColExportSettings">エクスポート</button>
+      </div>
+      <div class="col-settings__foot-right">
+        <button type="button" class="btn btn-secondary" value="cancel">キャンセル</button>
+        <button type="button" class="btn btn-primary" id="btnSaveColumnSettings">登録</button>
+      </div>
     </div>
   </form>
 </dialog>
@@ -484,9 +608,9 @@
       </div>
 
       <div class="modal-body" style="padding:0;">
-        <div class="form-4col density-roomy">
+        <div class="form-4col density-roomy" style="grid-template-columns: repeat(4, minmax(250px, 1fr)); overflow:auto;">
           <!-- Column 1 -->
-          <div class="col">
+          <div class="col" id="companyCreateCol1">
             <div class="ff">
               <label>会社ID</label>
               <input name="id" id="companyCreateId" class="input" type="text" disabled placeholder="(登録後に採番)" />
@@ -545,7 +669,7 @@
           </div>
 
           <!-- Column 2 -->
-          <div class="col">
+          <div class="col" id="companyCreateCol2">
             <div class="ff">
               <label>業界</label>
               <select name="industry" id="companyCreateIndustry" class="input">
@@ -603,14 +727,14 @@
               </div>
             </div>
             <div class="ff">
-              <label>資本金（百万円）</label>
+              <label>資本金<br/>(百万円)</label>
               <input name="capital" id="companyCreateCapital" class="input" type="text" />
             </div>
           </div>
 
           <!-- Column 3 -->
-          <div class="col">
-            <div class="ff ff-remark">
+          <div class="col" id="companyCreateCol3">
+            <div class="ff ff-remark items-start">
               <label>備考</label>
               <textarea name="remark" id="companyCreateRemark" class="input"></textarea>
             </div>
@@ -637,7 +761,7 @@
           </div>
 
           <!-- Column 4 -->
-          <div class="col">
+          <div class="col" id="companyCreateCol4">
             <div class="ff"><label>会社自由使用欄1</label><input name="free1" id="companyCreateFree1" class="input" type="text" /></div>
             <div class="ff"><label>会社自由使用欄2</label><input name="free2" id="companyCreateFree2" class="input" type="text" /></div>
             <div class="ff"><label>会社自由使用欄3</label><input name="free3" id="companyCreateFree3" class="input" type="text" /></div>
@@ -675,9 +799,9 @@
       </div>
 
       <div class="modal-body" style="padding: 18px 22px;">
-        <div class="form-4col cols-3 density-roomy" style="padding:0;">
+        <div class="form-4col cols-3 density-roomy" style="padding:0; grid-template-columns: minmax(300px, 1fr) minmax(400px, 1fr) minmax(300px, 1fr); overflow:auto;">
           <!-- Column 1 (from CP02) -->
-          <div class="col">
+          <div class="col" id="companyLookupCol1">
             <div class="ff">
               <label>検索ワード</label>
               <input name="keyword" class="input" type="text" placeholder="全項目から部分一致" />
@@ -735,7 +859,7 @@
           </div>
 
           <!-- Column 2 (from CP02) -->
-          <div class="col">
+          <div class="col" id="companyLookupCol2">
             <div class="ff">
               <label>地区</label>
               <div class="multi-select-dropdown" data-name="area" data-placeholder="地区を選択">
@@ -788,7 +912,7 @@
                 <input name="closingMonthFrom" class="input" type="text" placeholder="1" style="flex:1;" />
                 <span style="color:var(--text-3);">～</span>
                 <input name="closingMonthTo" class="input" type="text" placeholder="12" style="flex:1;" />
-                <span style="color:var(--text-2); font-size:11px;">(月)</span>
+                <span style="color:var(--text-2); font-size:11px; min-width: 40.33px; text-align: end;">(月)</span>
               </div>
             </div>
             <div class="ff">
@@ -803,7 +927,7 @@
           </div>
 
           <!-- Column 3 (Free fields from screenshot) -->
-          <div class="col">
+          <div class="col" id="companyLookupCol3">
             <div class="ff"><label>会社自由使用欄1</label><input class="input" type="text" name="free1" /></div>
             <div class="ff"><label>会社自由使用欄2</label><input class="input" type="text" name="free2" /></div>
             <div class="ff"><label>会社自由使用欄3</label><input class="input" type="text" name="free3" /></div>
@@ -1366,7 +1490,7 @@
     <div class="dlg-content">
       <div class="lookup-filters">
         <div class="form-4col cols-3 density-roomy" style="padding:0;">
-          <div class="col">
+          <div class="col" id="contactLookupCol1">
             <div class="ff"><label>検索ワード</label><input class="input" type="text" placeholder="全項目から部分一致" /></div>
             <div class="ff"><label>担当者名</label><input class="input" type="text" placeholder="部分一致" /></div>
             <div class="ff"><label>フリガナ</label><input class="input" type="text" /></div>
@@ -1374,7 +1498,7 @@
             <div class="ff"><label>TEL/内線</label><input class="input" type="text" /></div>
             <div class="ff"><label>携帯番号</label><input class="input" type="text" /></div>
           </div>
-          <div class="col">
+          <div class="col" id="contactLookupCol2">
             <div class="ff"><label>会社名</label><input class="input" type="text" placeholder="部分一致" /></div>
             <div class="ff"><label>Email</label><input class="input" type="text" /></div>
             <div class="ff"><label>FAX</label><input class="input" type="text" /></div>
@@ -1391,7 +1515,7 @@
               <p style="margin:4px 0 0;font-size:11px;color:var(--text-3);">過去6ヶ月以内に活動のなかった担当者を検索</p>
             </div>
           </div>
-          <div class="col">
+          <div class="col" id="contactLookupCol3">
             <div class="ff"><label>担当者自由使用欄1</label><input class="input" type="text" /></div>
             <div class="ff"><label>担当者自由使用欄2</label><input class="input" type="text" /></div>
             <div class="ff"><label>担当者自由使用欄3</label><input class="input" type="text" /></div>
@@ -1720,7 +1844,7 @@
     <div class="dlg-content">
       <div class="lookup-filters">
         <div class="form-4col cols-3 density-roomy" style="padding:0;">
-          <div class="col">
+          <div class="col" id="projectLookupCol1">
             <div class="ff"><label>検索ワード</label><input class="input" type="text" placeholder="全項目から部分一致" /></div>
             <div class="ff"><label>案件名</label><input class="input" type="text" placeholder="部分一致" /></div>
             <div class="ff"><label>担当者名</label><input class="input" type="text" /></div>
@@ -1758,7 +1882,7 @@
               </div>
             </div>
           </div>
-          <div class="col">
+          <div class="col" id="projectLookupCol2">
             <div class="ff">
               <label>話題日</label>
               <div class="ff-range ff-range--with-type">
@@ -1791,7 +1915,7 @@
                 </div>
               </div>
             </div>
-            <div class="ff">
+            <div class="ff items-start">
               <label>ステージ</label>
               <div class="stage-checks">
                 <label><input type="checkbox" /> ステージ1：見積書提出</label>
@@ -1801,7 +1925,7 @@
               </div>
             </div>
           </div>
-          <div class="col">
+          <div class="col" id="projectLookupCol3">
             <div class="ff"><label>案件自由使用欄1</label><input class="input" type="text" /></div>
             <div class="ff"><label>案件自由使用欄2</label><input class="input" type="text" /></div>
             <div class="ff"><label>案件自由使用欄3</label><input class="input" type="text" /></div>
