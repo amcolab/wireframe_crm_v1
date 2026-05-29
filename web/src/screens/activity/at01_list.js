@@ -12,7 +12,8 @@ import { setupResizableTable, syncResizableTableBody } from '../../utils/tableCo
 import { openContactCreateDialog } from '../../utils/contactCreateForm.js';
 import { openActivityCreateDialog } from '../../utils/activityCreateForm.js';
 import { openProjectCreateDialog } from '../../utils/projectCreateForm.js';
-import { takePendingActivitySearch } from '../../utils/screenNavigation.js';
+import { takePendingActivitySearch, bindCrossScreenLinks } from '../../utils/screenNavigation.js';
+import { createTableCellCopy } from '../../utils/tableCellCopy.js';
 
 let state = {
   activities: [...mockActivities],
@@ -25,7 +26,8 @@ let state = {
 
 let tableBound = false;
 let contextMenuBound = false;
-let contextCellText = '';
+
+const cellCopy = createTableCellCopy({ scopeSelector: '#activity-root', useToast: false });
 
 export function init() {
   console.log('Activity screen (AT01) initialized');
@@ -39,6 +41,7 @@ export function init() {
   const card = document.querySelector('#activity-root .company-detail');
   syncEntityDetailTabLayout(card, 'detail');
   applyPendingActivitySearch();
+  bindCrossScreenLinks(q('activity-root'));
   setTimeout(() => render(), 200);
 }
 
@@ -168,8 +171,10 @@ function bindActivityContextMenu() {
     const withinTable = e.target.closest('#activityTable');
     if (!withinTable) return;
     e.preventDefault();
+    const tr = e.target.closest('tbody tr[data-id]');
     const td = e.target.closest('td');
-    contextCellText = td ? (td.textContent || '').trim() : '';
+    cellCopy.setSelectedCell(tr, td, table);
+    cellCopy.highlightSelectedCell();
     showActivityContextMenu(e.clientX, e.clientY);
   });
 
@@ -178,20 +183,7 @@ function bindActivityContextMenu() {
     if (!item || item.classList.contains('disabled')) return;
     const action = item.getAttribute('data-action');
     if (action === 'copy') {
-      if (!contextCellText) {
-        hideActivityContextMenu();
-        return;
-      }
-      try {
-        await navigator.clipboard.writeText(contextCellText);
-      } catch {
-        const ta = document.createElement('textarea');
-        ta.value = contextCellText;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-      }
+      await cellCopy.copyCellText();
     } else if (action === 'new-activity') {
       q('btnActivityNewMain')?.click();
     }
@@ -204,6 +196,7 @@ function bindActivityContextMenu() {
   });
   window.addEventListener('resize', hideActivityContextMenu);
   window.addEventListener('scroll', hideActivityContextMenu, true);
+  cellCopy.bindKeyboardCopy(() => !!q('activity-root'));
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') hideActivityContextMenu();
   });
@@ -242,6 +235,7 @@ function bindActivityTable() {
     const tr = e.target.closest('tr[data-id]');
     if (!tr) return;
     state.selectedId = tr.getAttribute('data-id');
+    cellCopy.setSelectedCell(tr, e.target.closest('td'), q('activityTable'));
     const a = getSelectedActivity();
     if (a) fillDetailForm(a);
     render();
@@ -300,13 +294,17 @@ function renderActivityTable(rows) {
   tbody.innerHTML = rows.map(a => {
     const sel = String(a.id) === String(state.selectedId);
     return `<tr data-id="${escapeHtml(a.id)}" class="${sel ? 'selected' : ''}">
-      <td data-col-key="date">${escapeHtml(a.date)}</td>
-      <td data-col-key="time">${escapeHtml(a.time || '')}</td>
-      <td data-col-key="rep">${escapeHtml(a.rep)}</td>
-      <td data-col-key="type"><span class="${escapeHtml(a.typeClass || '')}">${escapeHtml(a.type)}</span></td>
-      <td data-col-key="company">${escapeHtml(a.company)}</td>
-      <td data-col-key="contact" class="blue-link">${escapeHtml(a.contact)}</td>
-      <td data-col-key="comment" title="${escapeHtml(a.comment)}">${escapeHtml(a.comment)}</td>
+      <td data-col-key="date"${cellCopy.cellClass('date', a.id, 'activityTable')}>${escapeHtml(a.date)}</td>
+      <td data-col-key="time"${cellCopy.cellClass('time', a.id, 'activityTable')}>${escapeHtml(a.time || '')}</td>
+      <td data-col-key="rep"${cellCopy.cellClass('rep', a.id, 'activityTable')}>${escapeHtml(a.rep)}</td>
+      <td data-col-key="type"${cellCopy.cellClass('type', a.id, 'activityTable')}>${escapeHtml(a.type)}</td>
+      <td data-col-key="company"${cellCopy.cellClass('company', a.id, 'activityTable')}>
+        <span class="blue-link" data-goto-company data-name="${escapeHtml(a.company || '')}" title="会社一覧で検索">${escapeHtml(a.company)}</span>
+      </td>
+      <td data-col-key="contact"${cellCopy.cellClass('contact', a.id, 'activityTable')}>
+        <span class="blue-link" data-goto-contact data-company="${escapeHtml(a.company || '')}" data-name="${escapeHtml(a.contact || '')}" title="担当一覧で検索">${escapeHtml(a.contact)}</span>
+      </td>
+      <td data-col-key="comment"${cellCopy.cellClass('comment', a.id, 'activityTable')} title="${escapeHtml(a.comment)}">${escapeHtml(a.comment)}</td>
     </tr>`;
   }).join('');
 

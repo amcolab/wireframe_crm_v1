@@ -2013,6 +2013,10 @@
   outline-offset: -1px;
 }
 
+.company-screen table.t tbody td.cell-selected {
+  box-shadow: inset 0 0 0 2px #0066cc;
+}
+
 .company-screen table.t .num {
   text-align: right;
   font-variant-numeric: tabular-nums;

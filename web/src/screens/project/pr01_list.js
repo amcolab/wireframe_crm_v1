@@ -24,7 +24,8 @@ import {
   buildColgroup,
   buildTheadRow,
 } from '../../utils/tableColumns.js';
-import { takePendingProjectSearch } from '../../utils/screenNavigation.js';
+import { takePendingProjectSearch, bindCrossScreenLinks } from '../../utils/screenNavigation.js';
+import { createTableCellCopy } from '../../utils/tableCellCopy.js';
 
 let state = {
   projects: [...mockProjects],
@@ -39,7 +40,8 @@ let state = {
 
 let tableBound = false;
 let contextMenuBound = false;
-let contextCellText = '';
+
+const cellCopy = createTableCellCopy({ scopeSelector: '#project-root', useToast: false });
 
 function formatDateForInput(dateStr) {
   if (!dateStr) return '';
@@ -69,6 +71,7 @@ export function init() {
   const card = document.querySelector('#project-root .company-detail');
   syncEntityDetailTabLayout(card, 'detail');
   applyPendingProjectSearch();
+  bindCrossScreenLinks(q('project-root'));
   setTimeout(() => render(), 200);
 }
 
@@ -217,15 +220,9 @@ function showProjectContextMenu(x, y) {
 }
 
 function bindProjectContextTarget(selector) {
-  const el = q(selector);
-  if (!el || el.dataset.contextBound === '1') return;
-  el.dataset.contextBound = '1';
-  el.addEventListener('contextmenu', (e) => {
-    const td = e.target.closest('td');
-    if (!td) return;
-    e.preventDefault();
-    contextCellText = (td.textContent || '').trim();
-    showProjectContextMenu(e.clientX, e.clientY);
+  cellCopy.bindTableTarget(selector, {
+    onClick: selector === 'projectTable' ? false : undefined,
+    onContextMenu: ({ x, y }) => showProjectContextMenu(x, y),
   });
 }
 
@@ -243,20 +240,7 @@ function bindProjectContextMenu() {
     const action = item.getAttribute('data-action');
 
     if (action === 'copy') {
-      if (!contextCellText) {
-        hideProjectContextMenu();
-        return;
-      }
-      try {
-        await navigator.clipboard.writeText(contextCellText);
-      } catch {
-        const ta = document.createElement('textarea');
-        ta.value = contextCellText;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-      }
+      await cellCopy.copyCellText();
     } else if (action === 'new-activity') {
       q('btnPrTabNewActivity')?.click();
     } else if (action === 'new-project') {
@@ -272,6 +256,7 @@ function bindProjectContextMenu() {
   });
   window.addEventListener('resize', hideProjectContextMenu);
   window.addEventListener('scroll', hideProjectContextMenu, true);
+  cellCopy.bindKeyboardCopy(() => !!q('project-root'));
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') hideProjectContextMenu();
   });
@@ -305,9 +290,13 @@ function bindProjectTable() {
   if (!tbody || tableBound) return;
   tableBound = true;
   tbody.addEventListener('click', (e) => {
+    if (e.target.closest('[data-goto-company], [data-goto-contact], [data-goto-activity], [data-goto-project]')) {
+      return;
+    }
     const tr = e.target.closest('tr[data-id]');
     if (!tr) return;
     state.selectedId = tr.getAttribute('data-id');
+    cellCopy.setSelectedCell(tr, e.target.closest('td'), q('projectTable'));
     const p = getSelectedProject();
     if (p) {
       state.selectedId = String(p.id);
@@ -372,15 +361,19 @@ function renderProjectTable(rows) {
   tbody.innerHTML = rows.map(p => {
     const sel = String(p.id) === String(state.selectedId);
     return `<tr data-id="${escapeHtml(p.id)}" class="${sel ? 'selected' : ''}">
-      <td data-col-key="issueDate">${escapeHtml(p.issueDate || '')}</td>
-      <td data-col-key="followDate">${escapeHtml(p.followDate || '')}</td>
-      <td data-col-key="status">${escapeHtml(p.status || '')}</td>
-      <td data-col-key="rep">${escapeHtml(p.rep || '')}</td>
-      <td data-col-key="company">${escapeHtml(p.company || '')}</td>
-      <td data-col-key="contact" class="blue-link">${escapeHtml(p.contact || '')}</td>
-      <td data-col-key="name">${escapeHtml(p.name || '')}</td>
-      <td data-col-key="summary" title="${escapeHtml(p.summary || '')}">${escapeHtml(p.summary || '')}</td>
-      <td data-col-key="motivation">${escapeHtml(p.motivation || '')}</td>
+      <td data-col-key="issueDate"${cellCopy.cellClass('issueDate', p.id, 'projectTable')}>${escapeHtml(p.issueDate || '')}</td>
+      <td data-col-key="followDate"${cellCopy.cellClass('followDate', p.id, 'projectTable')}>${escapeHtml(p.followDate || '')}</td>
+      <td data-col-key="status"${cellCopy.cellClass('status', p.id, 'projectTable')}>${escapeHtml(p.status || '')}</td>
+      <td data-col-key="rep"${cellCopy.cellClass('rep', p.id, 'projectTable')}>${escapeHtml(p.rep || '')}</td>
+      <td data-col-key="company"${cellCopy.cellClass('company', p.id, 'projectTable')}>
+        <span class="blue-link" data-goto-company data-name="${escapeHtml(p.company || '')}" title="会社一覧で検索">${escapeHtml(p.company || '')}</span>
+      </td>
+      <td data-col-key="contact"${cellCopy.cellClass('contact', p.id, 'projectTable')}>
+        <span class="blue-link" data-goto-contact data-company="${escapeHtml(p.company || '')}" data-name="${escapeHtml(p.contact || '')}" title="担当一覧で検索">${escapeHtml(p.contact || '')}</span>
+      </td>
+      <td data-col-key="name"${cellCopy.cellClass('name', p.id, 'projectTable')}>${escapeHtml(p.name || '')}</td>
+      <td data-col-key="summary"${cellCopy.cellClass('summary', p.id, 'projectTable')} title="${escapeHtml(p.summary || '')}">${escapeHtml(p.summary || '')}</td>
+      <td data-col-key="motivation"${cellCopy.cellClass('motivation', p.id, 'projectTable')}>${escapeHtml(p.motivation || '')}</td>
     </tr>`;
   }).join('');
 
@@ -441,14 +434,18 @@ function renderProjectActivitiesList(p) {
   if (!sliced.length) {
     html += '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text-3);">表示するデータがありません</td></tr>';
   } else {
-    html += sliced.map(a => `<tr>
-      <td data-col-key="date">${escapeHtml(a.date || '-')}</td>
-      <td data-col-key="rep">${escapeHtml(a.rep || '-')}</td>
-      <td data-col-key="type"><span class="${escapeHtml(a.typeClass || '')}">${escapeHtml(a.type || '-')}</span></td>
-      <td data-col-key="purpose">${escapeHtml(a.purpose || '-')}</td>
-      <td data-col-key="motivation">${escapeHtml(a.motivation || '-')}</td>
-      <td data-col-key="contact">${escapeHtml(a.contact || '-')}</td>
-      <td data-col-key="comment" title="${escapeHtml(a.comment || '')}">${escapeHtml(a.comment || '')}</td>
+    html += sliced.map(a => `<tr data-id="${escapeHtml(a.id)}">
+      <td data-col-key="date"${cellCopy.cellClass('date', a.id, 'projectActivitiesList')}>${escapeHtml(a.date || '-')}</td>
+      <td data-col-key="rep"${cellCopy.cellClass('rep', a.id, 'projectActivitiesList')}>${escapeHtml(a.rep || '-')}</td>
+      <td data-col-key="type"${cellCopy.cellClass('type', a.id, 'projectActivitiesList')}>
+        <span class="${escapeHtml(a.typeClass || '')} blue-link" data-goto-contact data-company="${escapeHtml(p.company || a.company || '')}" data-name="${escapeHtml(a.contact || '')}" title="担当一覧で検索">${escapeHtml(a.type || '-')}</span>
+      </td>
+      <td data-col-key="purpose"${cellCopy.cellClass('purpose', a.id, 'projectActivitiesList')}>${escapeHtml(a.purpose || '-')}</td>
+      <td data-col-key="motivation"${cellCopy.cellClass('motivation', a.id, 'projectActivitiesList')}>${escapeHtml(a.motivation || '-')}</td>
+      <td data-col-key="contact"${cellCopy.cellClass('contact', a.id, 'projectActivitiesList')}>
+        <span class="blue-link" data-goto-activity data-company="${escapeHtml(p.company || a.company || '')}" data-contact="${escapeHtml(a.contact || '')}" data-type="${escapeHtml(a.type || '')}" title="活動一覧で検索">${escapeHtml(a.contact || '-')}</span>
+      </td>
+      <td data-col-key="comment"${cellCopy.cellClass('comment', a.id, 'projectActivitiesList')} title="${escapeHtml(a.comment || '')}">${escapeHtml(a.comment || '')}</td>
     </tr>`).join('');
   }
   html += '</tbody></table>';
