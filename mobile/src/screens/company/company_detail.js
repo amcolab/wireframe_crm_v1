@@ -8,6 +8,7 @@ export function init(id) {
         setupSegTabs();
         setupHeroActions(company);
         renderContacts(company.name);
+        renderRelatedSummary(company.name);
         updateRelatedCounts(company.name);
     }
 }
@@ -146,4 +147,97 @@ function renderContacts(companyName) {
             </dl>
         </div>
     `).join('');
+}
+
+function renderRelatedSummary(companyName) {
+    const contactsWrap = document.getElementById('company-related-contacts');
+    const activitiesWrap = document.getElementById('company-related-activities');
+    const projectsWrap = document.getElementById('company-related-projects');
+    if (!contactsWrap || !activitiesWrap || !projectsWrap) return;
+
+    const contactsAllBtn = document.getElementById('company-related-contacts-all');
+    const activitiesAllBtn = document.getElementById('company-related-activities-all');
+    const projectsAllBtn = document.getElementById('company-related-projects-all');
+
+    const relatedContacts = mockContacts.filter((c) => c.company === companyName);
+    const relatedActivities = mockActivities
+        .filter((a) => a.company === companyName)
+        .slice()
+        .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    const relatedProjects = mockProjects
+        .filter((p) => p.company === companyName)
+        .slice()
+        .sort((a, b) => ((b.topicDate || b.followupDate || '')).localeCompare((a.topicDate || a.followupDate || '')));
+
+    const renderList = (wrap, items, renderItem, emptyText) => {
+        if (items.length === 0) {
+            wrap.innerHTML = `<p class="empty-hint">${emptyText}</p>`;
+            return;
+        }
+        wrap.innerHTML = items.slice(0, 5).map(renderItem).join('');
+    };
+
+    renderList(
+        contactsWrap,
+        relatedContacts,
+        (c) => `
+            <div class="rel-item" role="button" tabindex="0" onclick="window.location.hash='contact-detail/${c.id}'">
+                <div class="rel-main">
+                    <div class="rel-title">${c.last} ${c.first}</div>
+                    <div class="rel-sub">${c.dept || c.role || '—'}</div>
+                </div>
+                <div class="rel-meta">CO</div>
+            </div>
+        `,
+        '登録されている担当者はいません'
+    );
+
+    renderList(
+        activitiesWrap,
+        relatedActivities,
+        (a) => `
+            <div class="rel-item" role="button" tabindex="0" onclick="window.location.hash='activity-detail/${a.id}'">
+                <div class="rel-main">
+                    <div class="rel-title">${a.type || '—'} · ${a.contact || '—'}</div>
+                    <div class="rel-sub">${a.purpose || a.motivation || '—'}</div>
+                </div>
+                <div class="rel-meta">${a.date || ''}</div>
+            </div>
+        `,
+        '関連活動はありません'
+    );
+
+    renderList(
+        projectsWrap,
+        relatedProjects,
+        (p) => `
+            <div class="rel-item" role="button" tabindex="0" onclick="window.location.hash='project-detail/${p.id}'">
+                <div class="rel-main">
+                    <div class="rel-title">${p.name || '—'}</div>
+                    <div class="rel-sub">${p.status || '—'} · ${p.salesRep || '—'}</div>
+                </div>
+                <div class="rel-meta">${p.topicDate || ''}</div>
+            </div>
+        `,
+        '関連案件はありません'
+    );
+
+    const setupAllBtn = (btn, visible, onClick) => {
+        if (!btn) return;
+        btn.hidden = !visible;
+        if (visible) btn.onclick = onClick;
+    };
+
+    setupAllBtn(contactsAllBtn, relatedContacts.length > 5, () => {
+        localStorage.setItem('prefill_company_filter', companyName);
+        window.location.hash = 'contact';
+    });
+    setupAllBtn(activitiesAllBtn, relatedActivities.length > 5, () => {
+        localStorage.setItem('prefill_company_filter', companyName);
+        window.location.hash = 'activity';
+    });
+    setupAllBtn(projectsAllBtn, relatedProjects.length > 5, () => {
+        localStorage.setItem('prefill_company_filter', companyName);
+        window.location.hash = 'project';
+    });
 }

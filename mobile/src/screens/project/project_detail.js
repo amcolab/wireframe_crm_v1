@@ -1,5 +1,13 @@
 import { mockProjects, mockActivities } from '../../utils/mockData.js';
 
+function formatShortDate(ymd) {
+    // input: "YYYY/MM/DD" -> output: "YY/MM/DD"
+    const s = String(ymd || '').trim();
+    const m = s.match(/^(\d{4})\/(\d{2})\/(\d{2})$/);
+    if (!m) return s || '';
+    return `${m[1].slice(-2)}/${m[2]}/${m[3]}`;
+}
+
 export function init(id) {
     console.log('Project Detail initialized for ID:', id);
     const project = mockProjects.find(p => p.id === id);
@@ -39,24 +47,28 @@ export function init(id) {
     // Related Activities
     const activitiesContainer = document.getElementById('project-activities-container');
     if (activitiesContainer) {
-        const relatedActivities = mockActivities.filter(a => a.company === project.company);
-                if (relatedActivities.length === 0) {
+        const relatedActivities = mockActivities
+            .filter(a => a.company === project.company)
+            .slice()
+            .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+        if (relatedActivities.length === 0) {
             activitiesContainer.className = 'embedded-list';
             activitiesContainer.innerHTML = '<p class="empty-hint">関連する活動はありません</p>';
         } else {
             activitiesContainer.className = 'embedded-list';
-            activitiesContainer.innerHTML = relatedActivities.map(item => `
+            activitiesContainer.innerHTML = relatedActivities.slice(0, 5).map(item => `
                 <article class="act-card" onclick="window.location.hash='activity-detail/${item.id}'">
-                    <div class="co-card-head">
-                        <div>
-                            <div class="act-title">${item.company}</div>
-                            <div class="act-meta-line">${item.date} · ${item.type}</div>
-                        </div>
+                    <div class="act-top">
+                        <div class="act-title">${item.company}</div>
                         <span class="tag brand">${item.type}</span>
                     </div>
-                    <div class="act-row">
-                        <span>担当 <b>${item.contact}</b></span>
-                        <span>営業 <b>${item.salesRep}</b></span>
+                    <div class="act-mid">
+                        <div class="act-assignees">
+                            <span>担当 <b>${item.contact}</b></span>
+                            <span>営業 <b>${item.salesRep}</b></span>
+                        </div>
+                        <div class="act-date mono">${formatShortDate(item.date)}</div>
                     </div>
                     ${item.comment ? `<p class="act-snippet">${item.comment}</p>` : ''}
                 </article>

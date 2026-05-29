@@ -1,4 +1,4 @@
-import { mockContacts, mockCompanies } from '../../utils/mockData.js';
+import { mockContacts, mockCompanies, mockActivities, mockProjects } from '../../utils/mockData.js';
 
 export function init(id) {
     const contact = mockContacts.find(c => c.id === id);
@@ -10,7 +10,6 @@ export function init(id) {
     
     const fields = {
         'contact-tel': contact.tel,
-        'contact-tel2': contact.tel,
         'contact-fax': contact.fax,
         'contact-mobile': contact.mobile,
         'contact-email': contact.email,
@@ -27,6 +26,18 @@ export function init(id) {
     for (const [fieldId, value] of Object.entries(fields)) {
         const el = document.getElementById(fieldId);
         if (el) el.textContent = value || '-';
+    }
+
+    const tel2El = document.getElementById('contact-tel2');
+    if (tel2El) {
+        const v = contact.tel || '';
+        if (v) {
+            tel2El.innerHTML = `<a class="link mono" href="tel:${v}">${v}</a>`;
+            tel2El.classList.add('link');
+        } else {
+            tel2El.textContent = '-';
+            tel2El.classList.remove('link');
+        }
     }
 
     // Memo handling
@@ -55,4 +66,79 @@ export function init(id) {
             if (el) el.textContent = value || '-';
         }
     }
+
+    renderCompanyRelatedLists(contact.company);
+}
+
+function renderCompanyRelatedLists(companyName) {
+    const activitiesWrap = document.getElementById('contact-related-activities');
+    const projectsWrap = document.getElementById('contact-related-projects');
+    if (!activitiesWrap || !projectsWrap) return;
+
+    const activitiesAllBtn = document.getElementById('contact-related-activities-all');
+    const projectsAllBtn = document.getElementById('contact-related-projects-all');
+
+    const relatedActivities = mockActivities
+        .filter((a) => a.company === companyName)
+        .slice()
+        .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+    const relatedProjects = mockProjects
+        .filter((p) => p.company === companyName)
+        .slice()
+        .sort((a, b) => ((b.topicDate || b.followupDate || '')).localeCompare((a.topicDate || a.followupDate || '')));
+
+    const renderList = (wrap, items, renderItem, emptyText) => {
+        if (items.length === 0) {
+            wrap.innerHTML = `<p class="empty-hint">${emptyText}</p>`;
+            return;
+        }
+        wrap.innerHTML = items.slice(0, 5).map(renderItem).join('');
+    };
+
+    renderList(
+        activitiesWrap,
+        relatedActivities,
+        (a) => `
+            <div class="rel-item" role="button" tabindex="0" onclick="window.location.hash='activity-detail/${a.id}'">
+                <div class="rel-main">
+                    <div class="rel-title">${a.type || '—'} · ${a.contact || '—'}</div>
+                    <div class="rel-sub">${a.purpose || a.motivation || '—'}</div>
+                </div>
+                <div class="rel-meta">${a.date || ''}</div>
+            </div>
+        `,
+        '関連活動はありません'
+    );
+
+    renderList(
+        projectsWrap,
+        relatedProjects,
+        (p) => `
+            <div class="rel-item" role="button" tabindex="0" onclick="window.location.hash='project-detail/${p.id}'">
+                <div class="rel-main">
+                    <div class="rel-title">${p.name || '—'}</div>
+                    <div class="rel-sub">${p.status || '—'} · ${p.salesRep || '—'}</div>
+                </div>
+                <div class="rel-meta">${p.topicDate || ''}</div>
+            </div>
+        `,
+        '関連案件はありません'
+    );
+
+    const setupAllBtn = (btn, visible, onClick) => {
+        if (!btn) return;
+        btn.hidden = !visible;
+        if (visible) btn.onclick = onClick;
+    };
+
+    setupAllBtn(activitiesAllBtn, relatedActivities.length > 5, () => {
+        localStorage.setItem('prefill_company_filter', companyName);
+        window.location.hash = 'activity';
+    });
+
+    setupAllBtn(projectsAllBtn, relatedProjects.length > 5, () => {
+        localStorage.setItem('prefill_company_filter', companyName);
+        window.location.hash = 'project';
+    });
 }

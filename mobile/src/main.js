@@ -8,11 +8,12 @@ const FRAME_META = {
     'company-detail': { num: 5, label: '会社 · 詳細', desc: '基本情報・メモ・担当者一覧。section + field-row。' },
     contact: { num: 6, label: '担当者 · 一覧', desc: '担当者検索・詳細検索（ご無沙汰含む）。' },
     'contact-detail': { num: 7, label: '担当者 · 詳細', desc: '連絡先・メモ・自由使用欄。' },
-    activity: { num: 8, label: '活動 · 一覧', desc: '活動履歴の検索・フィルタ。' },
+    activity: { num: 8, label: '活動 · 一覧', desc: '活動履歴の検索・フィルタ・新規登録。' },
     'activity-detail': { num: 9, label: '活動 · 詳細', desc: '活動内容・コメント・自由使用欄。' },
+    'activity-create': { num: 9.5, label: '活動 · 登録', desc: '活動種別・会社・担当者・内容の登録フォーム。' },
     project: { num: 10, label: '案件 · 一覧', desc: '案件ステータス・話題日での検索。' },
     'project-detail': { num: 11, label: '案件 · 詳細', desc: '案件概要・関連情報。' },
-    'scan-result': { num: 12, label: '名刺スキャン · 結果', desc: 'OCR 結果の確認・登録。' }
+    'scan-result': { num: 12, label: '名刺スキャン · 結果', desc: 'OCR 結果の確認・登録先会社の選択・撮り直し / 続けて撮影。' }
 };
 
 function updatePresentation(routeKey) {
@@ -108,6 +109,15 @@ const routes = {
             updateHeader('活動詳細', true);
             const module = await import('./screens/activity/activity_detail.js');
             module.init(params[0]);
+        }
+    },
+    'activity-create': {
+        template: '/screens/activity/activity_create.html',
+        beforeEnter: ensureLayout,
+        init: async (params) => {
+            updateHeader('活動登録', true);
+            const module = await import('./screens/activity/activity_create.js');
+            module.init(params);
         }
     },
     'project': {

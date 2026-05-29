@@ -8,6 +8,14 @@ const ACTIVITY_ADV_FIELDS = [
     'adv-activity-date-from', 'adv-activity-date-to'
 ];
 
+function formatShortDate(ymd) {
+    // input: "YYYY/MM/DD" -> output: "YY/MM/DD"
+    const s = String(ymd || '').trim();
+    const m = s.match(/^(\d{4})\/(\d{2})\/(\d{2})$/);
+    if (!m) return s || '';
+    return `${m[1].slice(-2)}/${m[2]}/${m[3]}`;
+}
+
 export function init() {
     renderActivities(mockActivities);
     setupChipFilter('activity-filter-chips', () => applyFilters());
@@ -32,6 +40,17 @@ export function init() {
             applyFilters();
             modal.style.display = 'none';
         });
+    }
+
+    document.getElementById('btn-new-activity')?.addEventListener('click', () => {
+        window.location.hash = 'activity-create';
+    });
+
+    const prefill = localStorage.getItem('prefill_company_filter');
+    if (prefill && searchInput) {
+        searchInput.value = prefill;
+        localStorage.removeItem('prefill_company_filter');
+        applyFilters();
     }
 
     function applyFilters() {
@@ -68,24 +87,18 @@ function renderActivities(data) {
 
     container.innerHTML = data.map(item => `
         <article class="act-card" onclick="window.location.hash='activity-detail/${item.id}'">
-            <div class="co-card-head">
-                <div>
-                    <div class="act-title">${item.company}</div>
-                    <div class="act-meta-line">${item.date} · ${item.type}</div>
-                </div>
+            <div class="act-top">
+                <div class="act-title">${item.company}</div>
                 <span class="tag brand">${item.type}</span>
             </div>
-            <div class="act-row">
-                <span>担当 <b>${item.contact}</b></span>
-                <span>営業 <b>${item.salesRep}</b></span>
+            <div class="act-mid">
+                <div class="act-assignees">
+                    <span>担当 <b>${item.contact}</b></span>
+                    <span>営業 <b>${item.salesRep}</b></span>
+                </div>
+                <div class="act-date mono">${formatShortDate(item.date)}</div>
             </div>
             <p class="act-snippet">${item.comment}</p>
-            <div class="act-card-foot">
-                <span class="last-act">${item.motivation || '—'}</span>
-                <div class="quick-actions" onclick="event.stopPropagation()">
-                    <button type="button" class="qa-btn accent" aria-label="詳細" onclick="window.location.hash='activity-detail/${item.id}'"><span class="icon">${icon('chevronRight')}</span></button>
-                </div>
-            </div>
         </article>
     `).join('');
 }

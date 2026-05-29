@@ -1,4 +1,4 @@
-import { mockActivities } from '../../utils/mockData.js';
+import { mockActivities, mockCompanies, mockContacts } from '../../utils/mockData.js';
 
 export function init(id) {
     console.log('Activity Detail initialized for ID:', id);
@@ -6,10 +6,35 @@ export function init(id) {
     if (!activity) return;
 
     // Populate activity fields
-    document.getElementById('activity-company').textContent = activity.company;
+    const companyEl = document.getElementById('activity-company');
+    if (companyEl) {
+        const company = mockCompanies.find((c) => c.name === activity.company);
+        if (company?.id) {
+            companyEl.innerHTML = `<a class="link" href="#company-detail/${company.id}">${activity.company}</a>`;
+            companyEl.classList.add('link');
+        } else {
+            companyEl.textContent = activity.company || '-';
+            companyEl.classList.remove('link');
+        }
+    }
     document.getElementById('activity-date').textContent = activity.date || '-';
     document.getElementById('activity-type').textContent = activity.type || '-';
-    document.getElementById('activity-contact').textContent = activity.contact || '-';
+
+    const contactEl = document.getElementById('activity-contact');
+    if (contactEl) {
+        const name = activity.contact || '';
+        const parts = name.trim().split(/\s+/);
+        const last = parts[0] || '';
+        const first = parts.slice(1).join(' ') || '';
+        const contact = mockContacts.find((c) => c.company === activity.company && c.last === last && c.first === first);
+        if (contact?.id) {
+            contactEl.innerHTML = `<a class="link" href="#contact-detail/${contact.id}">${name}</a>`;
+            contactEl.classList.add('link');
+        } else {
+            contactEl.textContent = name || '-';
+            contactEl.classList.remove('link');
+        }
+    }
     document.getElementById('activity-salesrep').textContent = activity.salesRep || '-';
     document.getElementById('activity-motivation').textContent = activity.motivation || '-';
     document.getElementById('activity-project').textContent = activity.projectName || '-';
