@@ -1,0 +1,168 @@
+<div class="page-shell page-shell--fab">
+<div class="page-inner activity-form-page">
+  <section class="form-section">
+    <div class="form-section-head">対象会社</div>
+    <div class="form-body">
+      <div class="form-field">
+        <label for="activity-create-company">会社名<span class="req">*</span></label>
+        <select id="activity-create-company" class="form-control form-input" required>
+          <option value="">選択してください</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <section class="form-section form-readonly-section" id="activity-auto-section" hidden>
+    <div class="form-section-head">自動反映 <span class="form-section-note">読取専用</span></div>
+    <div class="form-readonly-grid">
+      <div class="form-readonly-row">
+        <span class="k">活動ID</span>
+        <span class="v" id="activity-auto-id">保存時に自動採番</span>
+      </div>
+      <div class="form-readonly-row">
+        <span class="k">会社</span>
+        <span class="v" id="activity-auto-company">—</span>
+      </div>
+      <div class="form-readonly-row">
+        <span class="k">会社種別</span>
+        <span class="v" id="activity-auto-type">—</span>
+      </div>
+      <div class="form-readonly-row">
+        <span class="k">代表TEL</span>
+        <span class="v mono" id="activity-auto-tel">—</span>
+      </div>
+      <div class="form-readonly-row">
+        <span class="k">業界</span>
+        <span class="v" id="activity-auto-industry">—</span>
+      </div>
+      <div class="form-readonly-row">
+        <span class="k">規模ランク</span>
+        <span class="v" id="activity-auto-scale">—</span>
+      </div>
+      <div class="form-readonly-row">
+        <span class="k">部署名</span>
+        <span class="v" id="activity-auto-dept">—</span>
+      </div>
+      <div class="form-readonly-row">
+        <span class="k">郵便番号</span>
+        <span class="v mono" id="activity-auto-postal">—</span>
+      </div>
+      <div class="form-readonly-row">
+        <span class="k">都道府県</span>
+        <span class="v" id="activity-auto-pref">—</span>
+      </div>
+      <div class="form-readonly-row full">
+        <span class="k">住所</span>
+        <span class="v" id="activity-auto-addr">—</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="form-section">
+    <div class="form-section-head">活動内容</div>
+    <div class="form-body">
+      <div class="form-field">
+        <label>活動タイプ<span class="req">*</span></label>
+        <div class="seg-pick" id="activity-type-pick" role="group" aria-label="活動タイプ">
+          <button type="button" class="active" data-type="電話">電話</button>
+          <button type="button" data-type="訪問">訪問</button>
+          <button type="button" data-type="メール">メール</button>
+          <button type="button" data-type="WEB商談">WEB</button>
+        </div>
+      </div>
+      <div class="form-field row-2">
+        <div>
+          <label for="activity-create-purpose">目的</label>
+          <select id="activity-create-purpose" class="form-control form-input">
+            <option value="">—</option>
+            <option>売り前フォロー</option>
+            <option>現状ヒアリング</option>
+            <option>資料送付</option>
+            <option>日程調整</option>
+          </select>
+        </div>
+        <div>
+          <label for="activity-create-motivation">動機</label>
+          <select id="activity-create-motivation" class="form-control form-input">
+            <option value="">—</option>
+            <option>展示会</option>
+            <option>HP問い合わせ</option>
+            <option>紹介</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="activity-create-contact">担当者<span class="req">*</span></label>
+        <select id="activity-create-contact" class="form-control form-input" required>
+          <option value="">選択してください</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label for="activity-create-salesrep">営業担当<span class="req">*</span></label>
+        <select id="activity-create-salesrep" class="form-control form-input" required>
+          <option value="">選択してください</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label for="activity-create-project">案件名</label>
+        <select id="activity-create-project" class="form-control form-input">
+          <option value="">選択なし</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>案件ID</label>
+        <div class="form-readonly-value" id="activity-auto-project-id">—</div>
+      </div>
+      <div class="form-field row-2">
+        <div>
+          <label for="activity-create-date">活動日<span class="req">*</span></label>
+          <input type="date" id="activity-create-date" class="form-control form-input" required>
+        </div>
+        <div>
+          <label for="activity-create-start">開始時刻<span class="req">*</span></label>
+          <input type="time" id="activity-create-start" class="form-control form-input" required>
+        </div>
+      </div>
+      <div class="form-field row-2">
+        <div>
+          <label for="activity-create-end">終了時刻</label>
+          <input type="time" id="activity-create-end" class="form-control form-input">
+        </div>
+        <div>
+          <label>活動時間</label>
+          <div class="form-readonly-value" id="activity-auto-duration">—</div>
+        </div>
+      </div>
+      <div class="form-field">
+        <label for="activity-create-attendees">面談人数</label>
+        <input type="number" id="activity-create-attendees" class="form-control form-input" min="1" placeholder="1">
+      </div>
+      <div class="form-field form-check-row">
+        <label class="form-check"><input type="checkbox" id="activity-flag-follow"> フォロー完了</label>
+        <label class="form-check"><input type="checkbox" id="activity-flag-appt"> アポ有</label>
+        <label class="form-check"><input type="checkbox" id="activity-flag-claim"> クレーム</label>
+      </div>
+    </div>
+  </section>
+
+  <section class="form-section form-section-comment">
+    <div class="form-section-head">コメント</div>
+    <div class="form-body">
+      <div class="form-field">
+        <label for="activity-create-comment" class="sr-only">コメント</label>
+        <textarea id="activity-create-comment" class="form-control form-input memo-textarea" rows="5" placeholder="活動の詳細を入力…"></textarea>
+      </div>
+    </div>
+  </section>
+</div>
+
+  <div class="page-fab-dock page-fab-dock--dual" aria-label="フォーム操作">
+    <div class="save-bar fab-save-bar">
+      <button type="button" class="btn btn-secondary" id="btn-clear-activity">クリア</button>
+      <button type="button" class="btn btn-primary accent" id="btn-submit-activity">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+        保存
+      </button>
+    </div>
+  </div>
+</div>

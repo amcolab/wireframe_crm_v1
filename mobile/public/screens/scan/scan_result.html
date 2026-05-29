@@ -10,8 +10,14 @@
         <input type="text" id="scan-name" class="form-control" value="中谷 太輔">
       </div>
       <div class="scan-row">
-        <label for="scan-company">会社名</label>
-        <input type="text" id="scan-company" class="form-control" value="株式会社ボウルズ">
+        <label for="scan-company">登録先会社</label>
+        <select id="scan-company" class="form-control" required>
+          <option value="">選択してください</option>
+        </select>
+      </div>
+      <div class="scan-row scan-row-hint">
+        <span class="scan-row-hint-spacer" aria-hidden="true"></span>
+        <p class="scan-ocr-hint" id="scan-ocr-company">名刺読取: 株式会社ボウルズ</p>
       </div>
       <div class="scan-row">
         <label for="scan-dept">部署</label>
@@ -45,6 +51,16 @@
   </section>
 
   <div class="scan-actions-wrap">
+    <div class="scan-capture-bar">
+      <button type="button" class="btn btn-outline" id="btn-retake-scan">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        撮り直す
+      </button>
+      <button type="button" class="btn btn-outline" id="btn-continue-scan">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><path d="M12 10v6M9 13h6"/></svg>
+        続けて撮影
+      </button>
+    </div>
     <div class="save-bar scan-save-bar">
       <button type="button" class="btn btn-secondary" id="btn-clear-scan">クリア</button>
       <button type="button" class="btn btn-primary accent" id="btn-register-scan">

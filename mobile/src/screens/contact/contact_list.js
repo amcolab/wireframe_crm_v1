@@ -21,6 +21,13 @@ export function init() {
     if (closeBtn && modal) closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
     if (applyBtn && modal) applyBtn.addEventListener('click', () => { applyFilters(); modal.style.display = 'none'; });
 
+    const prefill = localStorage.getItem('prefill_company_filter');
+    if (prefill && searchInput) {
+        searchInput.value = prefill;
+        localStorage.removeItem('prefill_company_filter');
+        applyFilters();
+    }
+
     function applyFilters() {
         const term = (searchInput?.value || '').toLowerCase();
         const advName = document.getElementById('adv-contact-name').value.toLowerCase();
@@ -51,21 +58,25 @@ function renderContacts(data) {
 
     container.innerHTML = data.map(item => `
         <article class="ct-card" onclick="window.location.hash='contact-detail/${item.id}'">
-            <div class="co-card-head">
-                <div>
+            <div class="ct-card-grid">
+                <div class="ct-left">
                     <div class="ct-name">${item.last} ${item.first}</div>
-                    <div class="ct-sub">${item.company}${item.dept ? ' · ' + item.dept : ''}</div>
+                    <div class="ct-sub">${item.company}</div>
+                    <div class="ct-sub">${item.dept || '—'}</div>
                 </div>
-            </div>
-            <dl class="ct-contact-grid">
-                <dt>代表TEL</dt><dd>${item.tel || '-'}</dd>
-                <dt>携帯</dt><dd>${item.mobile || '-'}</dd>
-                <dt>Email</dt><dd>${item.email || '-'}</dd>
-            </dl>
-            <div class="co-card-foot">
-                <span class="tag brand">${item.role || '—'}</span>
-                <div class="quick-actions" onclick="event.stopPropagation()">
-                    <button type="button" class="qa-btn accent" aria-label="詳細" onclick="window.location.hash='contact-detail/${item.id}'"><span class="icon">${icon('chevronRight')}</span></button>
+                <div class="ct-right" aria-label="連絡先">
+                    <div class="ct-line">
+                        <span class="ct-ico">${icon('phone')}</span>
+                        <span class="ct-val mono">${item.tel || '-'}</span>
+                    </div>
+                    <div class="ct-line">
+                        <span class="ct-ico">${icon('contact')}</span>
+                        <span class="ct-val mono">${item.mobile || '-'}</span>
+                    </div>
+                    <div class="ct-line">
+                        <span class="ct-ico">${icon('mail')}</span>
+                        <span class="ct-val">${item.email || '-'}</span>
+                    </div>
                 </div>
             </div>
         </article>
