@@ -3,7 +3,12 @@ import { mockCompanies, mockContacts, mockActivities, mockProjects } from '../..
 import { showToast } from '../../utils/toast.js';
 import { initTableColResize } from '../../utils/tableColResize.js';
 import { initTableColReorder, syncTableBodyColumnOrder } from '../../utils/tableColReorder.js';
-import { navigateToActivitySearch, navigateToContactSearch, navigateToProjectSearch } from '../../utils/screenNavigation.js';
+import {
+  navigateToActivitySearch,
+  navigateToContactSearch,
+  navigateToProjectSearch,
+  takePendingCompanySearch,
+} from '../../utils/screenNavigation.js';
 import {
   readFormSearchConditions,
   hasSearchConditions,
@@ -15,6 +20,7 @@ import { openContactCreateDialog } from '../../utils/contactCreateForm.js';
 import { openActivityCreateDialog } from '../../utils/activityCreateForm.js';
 import { openProjectCreateDialog } from '../../utils/projectCreateForm.js';
 import { loadColumnSettings, saveColumnSettings } from '../../utils/columnSettings.js';
+import { createTableCellCopy } from '../../utils/tableCellCopy.js';
 
 let state = {
   companies: [...mockCompanies],
@@ -38,8 +44,8 @@ let isReady = false;
 let companyTableBound = false;
 let columnSettingsBound = false;
 let companyContextMenuBound = false;
-let companyContextRowId = null;
-let companyContextCellValue = '';
+
+const cellCopy = createTableCellCopy({ scopeSelector: '#company-root' });
 
 const COMPANY_REORDER_STORE_KEY = 'smos.cp01.colOrder';
 const COMPANY_REORDER_WIDTH_KEY = 'smos.cp01.colWidths';
@@ -60,32 +66,34 @@ const COMPANY_MAIN_COLUMNS = [
 ];
 
 const COMPANY_CONTACT_COLUMNS = [
-  { label: '担当(姓)', render: (m, c) => `<div type="button" class="blue-link" data-goto-contact data-company="${escapeHtml(m.company || c.name || '')}" title="担当一覧で検索">${escapeHtml(m.last)}</div>` },
-  { label: '担当(名)', render: (m) => escapeHtml(m.first) },
-  { label: 'フリガナ', render: (m) => escapeHtml(m.kana) },
-  { label: '部署名', render: (m) => escapeHtml(m.dept) },
-  { label: 'TEL', render: (m) => escapeHtml(m.tel) },
-  { label: '携帯電話', render: (m) => escapeHtml(m.mobile) },
-  { label: 'Email', render: (m) => escapeHtml(m.email) },
-  { label: '役職名', render: (m) => escapeHtml(m.pos) },
-  { label: '職位', render: (m) => escapeHtml(m.rank) },
-  { label: '担当者備考', render: (m) => `<span title="${escapeHtml(m.remark)}">${escapeHtml(m.remark)}</span>` },
+  { key: 'last', label: '担当(姓)', render: (m, c) => `<div type="button" class="blue-link" data-goto-contact data-company="${escapeHtml(m.company || c.name || '')}" title="担当一覧で検索">${escapeHtml(m.last)}</div>` },
+  { key: 'first', label: '担当(名)', render: (m) => escapeHtml(m.first) },
+  { key: 'kana', label: 'フリガナ', render: (m) => escapeHtml(m.kana) },
+  { key: 'dept', label: '部署名', render: (m) => escapeHtml(m.dept) },
+  { key: 'tel', label: 'TEL', render: (m) => escapeHtml(m.tel) },
+  { key: 'mobile', label: '携帯電話', render: (m) => escapeHtml(m.mobile) },
+  { key: 'email', label: 'Email', render: (m) => escapeHtml(m.email) },
+  { key: 'pos', label: '役職名', render: (m) => escapeHtml(m.pos) },
+  { key: 'rank', label: '職位', render: (m) => escapeHtml(m.rank) },
+  { key: 'remark', label: '担当者備考', render: (m) => `<span title="${escapeHtml(m.remark)}">${escapeHtml(m.remark)}</span>` },
 ];
 
 const COMPANY_ACTIVITY_COLUMNS = [
-  { label: '活動日', render: (a) => escapeHtml(a.date) },
-  { label: '営業担当', render: (a) => escapeHtml(a.rep) },
+  { key: 'date', label: '活動日', render: (a) => escapeHtml(a.date) },
+  { key: 'rep', label: '営業担当', render: (a) => escapeHtml(a.rep) },
   {
+    key: 'contact',
     label: '担当(姓)',
     render: (a, c) => `<span class="blue-link" data-goto-contact data-company="${escapeHtml(a.company || c.name || '')}" data-name="${escapeHtml(a.contact || '')}" title="担当一覧で検索">${escapeHtml(a.contact)}</span>`,
   },
   {
+    key: 'type',
     label: 'タイプ',
     render: (a, c) => `<span class="${a.typeClass} blue-link" data-goto-activity data-company="${escapeHtml(a.company || c.name || '')}" data-contact="${escapeHtml(a.contact || '')}" data-type="${escapeHtml(a.type || '')}" title="活動一覧で検索">${escapeHtml(a.type)}</span>`,
   },
-  { label: 'コメント', render: (a) => `<span title="${escapeHtml(a.comment)}">${escapeHtml(a.comment)}</span>`, thStyle: 'min-width: 250px;' },
-  { label: '目的', render: (a) => escapeHtml(a.purpose || '') },
-  { label: '案件名', render: (a) => escapeHtml(a.projectName || '') },
+  { key: 'comment', label: 'コメント', render: (a) => `<span title="${escapeHtml(a.comment)}">${escapeHtml(a.comment)}</span>`, thStyle: 'min-width: 250px;' },
+  { key: 'purpose', label: '目的', render: (a) => escapeHtml(a.purpose || '') },
+  { key: 'projectName', label: '案件名', render: (a) => escapeHtml(a.projectName || '') },
 ];
 
 const COMPANY_PROJECT_COLUMNS = [
@@ -189,11 +197,20 @@ export function init() {
   });
   initTableColResize('#companyTable', COMPANY_REORDER_WIDTH_KEY);
   initResizer();
+  applyPendingCompanySearch();
 
   // Force an initial render after a small delay to ensure everything is ready
   setTimeout(() => {
     render();
   }, 200);
+}
+
+function applyPendingCompanySearch() {
+  const pending = takePendingCompanySearch();
+  if (!pending?.name) return;
+  const nameInput = q('companySearchName');
+  if (nameInput) nameInput.value = pending.name;
+  q('btnCompanySearch')?.click();
 }
 
 function bindUi() {
@@ -625,10 +642,6 @@ function showCompanyContextMenu(x, y) {
   menu.style.visibility = '';
 }
 
-function getCompanyCellCopyText() {
-  return companyContextCellValue || '';
-}
-
 function bindCompanyContextMenu(btnCreate) {
   if (companyContextMenuBound) return;
   companyContextMenuBound = true;
@@ -646,33 +659,30 @@ function bindCompanyContextMenu(btnCreate) {
     e.preventDefault();
 
     const td = e.target.closest('td');
-    companyContextCellValue = td ? (td.textContent || '').trim() : '';
-    companyContextRowId = tr.getAttribute('data-id');
-    if (companyContextRowId && companyContextRowId !== state.selectedId) {
-      state.selectedId = companyContextRowId;
+    cellCopy.setSelectedCell(tr, td, table);
+    const contextRowId = cellCopy.selection.rowId;
+    if (contextRowId && contextRowId !== state.selectedId) {
+      state.selectedId = contextRowId;
       const c = state.companies.find((x) => String(x.id) === String(state.selectedId));
       if (c) {
         fillDetailForm(c);
         renderChildLists(c);
       }
       render();
+    } else {
+      cellCopy.highlightSelectedCell();
     }
     showCompanyContextMenu(e.clientX, e.clientY);
   });
 
+  ['companyContactsList', 'companyActivitiesList'].forEach((targetId) => {
+    cellCopy.bindTableTarget(targetId, {
+      onContextMenu: ({ x, y }) => showCompanyContextMenu(x, y),
+    });
+  });
+
   itemCopy?.addEventListener('click', async () => {
-    const text = getCompanyCellCopyText();
-    if (!text) {
-      showToast('コピーできるセルがありません', 'info');
-      hideCompanyContextMenu();
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(text);
-      showToast('行データをコピーしました', 'success');
-    } catch {
-      showToast('コピーに失敗しました', 'danger');
-    }
+    await cellCopy.copyCellText();
     hideCompanyContextMenu();
   });
 
@@ -689,6 +699,7 @@ function bindCompanyContextMenu(btnCreate) {
 
   window.addEventListener('resize', hideCompanyContextMenu);
   window.addEventListener('scroll', hideCompanyContextMenu, true);
+  cellCopy.bindKeyboardCopy(() => !!q('company-root'));
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') hideCompanyContextMenu();
   });
@@ -1055,8 +1066,8 @@ function renderContactsList(c) {
     `;
   } else {
     contactsHtml += sliced.map(m => `
-      <tr>
-        ${visibleColumns.map((col) => `<td>${col.render(m, c)}</td>`).join('')}
+      <tr data-id="${escapeHtml(m.id)}">
+        ${visibleColumns.map((col) => `<td data-col-key="${col.key}"${cellCopy.cellClass(col.key, m.id, 'companyContactsList')}>${col.render(m, c)}</td>`).join('')}
       </tr>
     `).join('');
   }
@@ -1119,8 +1130,8 @@ function renderActivitiesList(c) {
     `;
   } else {
     activitiesHtml += sliced.map(a => `
-      <tr>
-        ${visibleColumns.map((col) => `<td>${col.render(a, c)}</td>`).join('')}
+      <tr data-id="${escapeHtml(a.id)}">
+        ${visibleColumns.map((col) => `<td data-col-key="${col.key}"${cellCopy.cellClass(col.key, a.id, 'companyActivitiesList')}>${col.render(a, c)}</td>`).join('')}
       </tr>
     `).join('');
   }
@@ -1276,6 +1287,7 @@ function bindCompanyTable() {
     const tr = e.target.closest('tr[data-id]');
     if (!tr) return;
     state.selectedId = tr.getAttribute('data-id');
+    cellCopy.setSelectedCell(tr, e.target.closest('td'), q('companyTable'));
     const c = state.companies.find(x => String(x.id) === String(state.selectedId))
       || state.filtered.find(x => String(x.id) === String(state.selectedId));
     if (c) {
@@ -1329,8 +1341,8 @@ function renderCompanyTable(rows) {
       ${visibleColumns.map((col) => {
       const raw = c[col.key] ?? '';
       const title = col.key === 'remark' ? ` title="${escapeHtml(raw)}"` : '';
-      const cls = col.tdClass ? ` class="${col.tdClass}"` : '';
-      return `<td data-col-key="${col.key}"${cls}${title}>${escapeHtml(raw)}</td>`;
+      const clsExtra = col.tdClass || '';
+      return `<td data-col-key="${col.key}"${cellCopy.cellClass(col.key, c.id, 'companyTable', clsExtra)}${title}>${escapeHtml(raw)}</td>`;
     }).join('')}
     </tr>`;
   }).join('');
