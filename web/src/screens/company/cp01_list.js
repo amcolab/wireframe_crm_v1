@@ -26,6 +26,10 @@ let state = {
   companies: [...mockCompanies],
   filtered: [...mockCompanies],
   selectedId: mockCompanies[0]?.id ?? null,
+  selectedContactId: null,
+  selectedActivityId: null,
+  selectedProjectId: null,
+  activeTableKey: 'company',
   sortKey: 'id',
   sortDir: 'desc',
   page: 1,
@@ -42,6 +46,7 @@ let state = {
 
 let isReady = false;
 let companyTableBound = false;
+let companyTableKeyboardBound = false;
 let columnSettingsBound = false;
 let companyContextMenuBound = false;
 
@@ -115,6 +120,8 @@ const COMPANY_PROJECT_COLUMNS = [
   { label: '発生動機', render: (p) => escapeHtml(p.motivation || '') },
   { label: '引合手段', render: (p) => escapeHtml(p.method || '') },
 ];
+
+const ATTACH_EMPTY_TEXT = 'ここにドラッグ&ドロップ';
 
 function resolveColumnsForSubMenu(subVal, columnDefs) {
   const settings = loadColumnSettings(1, subVal);
@@ -296,6 +303,7 @@ function bindUi() {
     if (dlgCreate?.showModal) dlgCreate.showModal();
   });
   bindCompanyContextMenu(btnCreate);
+  bindCompanyAttachmentActions();
 
   q('btnCreateCompanyOk')?.addEventListener('click', () => {
     const fd = new FormData(formCreate);
@@ -367,6 +375,11 @@ function bindUi() {
       if (btnNewContact) btnNewContact.style.display = tab === 'contacts' ? 'block' : 'none';
       if (btnNewActivity) btnNewActivity.style.display = tab === 'activities' ? 'block' : 'none';
       if (btnNewProject) btnNewProject.style.display = tab === 'projects' ? 'block' : 'none';
+
+      if (tab === 'contacts') state.activeTableKey = 'contacts';
+      else if (tab === 'activities') state.activeTableKey = 'activities';
+      else if (tab === 'projects') state.activeTableKey = 'projects';
+      else state.activeTableKey = 'company';
     });
   });
 
@@ -513,31 +526,26 @@ function bindUi() {
   });
 
   q('btnCompanyFirstPage')?.addEventListener('click', () => {
-    state.page = 1;
-    render();
+    changeCompanyPage(1);
   });
   q('btnCompanyPrevPage')?.addEventListener('click', () => {
     if (state.page > 1) {
-      state.page--;
-      render();
+      changeCompanyPage(state.page - 1);
     }
   });
   q('btnCompanyNextPage')?.addEventListener('click', () => {
     const totalPages = Math.ceil(state.filtered.length / state.pageSize);
     if (state.page < totalPages) {
-      state.page++;
-      render();
+      changeCompanyPage(state.page + 1);
     }
   });
   q('btnCompanyLastPage')?.addEventListener('click', () => {
     const totalPages = Math.ceil(state.filtered.length / state.pageSize);
-    state.page = totalPages;
-    render();
+    changeCompanyPage(totalPages);
   });
 
   q('companyPageSelect')?.addEventListener('change', (e) => {
-    state.page = parseInt(e.target.value) || 1;
-    render();
+    changeCompanyPage(parseInt(e.target.value) || 1);
   });
 
   q('companyPageSize')?.addEventListener('change', (e) => {
@@ -612,9 +620,178 @@ function bindUi() {
   bindChildPager('Contacts', renderContactsList);
   bindChildPager('Activities', renderActivitiesList);
   bindChildPager('Projects', renderProjectsList);
+  bindChildTableSelection();
 
   bindContactsListNavigation();
   syncDetailTabLayout('detail');
+}
+
+function bindCompanyAttachmentActions() {
+  const attachList = q('companyAttachList');
+  if (!attachList || attachList.dataset.bound === '1') return;
+  attachList.dataset.bound = '1';
+
+  const attachField = attachList.closest('.attach-field');
+  const addBtn = attachField?.querySelector('.dropzone.compact');
+  const countEl = attachField?.querySelector('.attach-count');
+
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.multiple = true;
+  fileInput.style.display = 'none';
+  attachField?.appendChild(fileInput);
+
+  const formatBytes = (bytes) => {
+    if (!Number.isFinite(bytes) || bytes < 1024) return `${bytes || 0} B`;
+    const kb = bytes / 1024;
+    if (kb < 1024) return `${kb.toFixed(1)} KB`;
+    return `${(kb / 1024).toFixed(1)} MB`;
+  };
+
+  const fileExt = (name) => {
+    const ext = String(name || '').split('.').pop()?.toLowerCase() || '';
+    if (!ext) return { icon: 'FILE', cls: 'other', label: 'ファイル' };
+    if (ext === 'pdf') return { icon: 'PDF', cls: 'pdf', label: 'PDFファイル' };
+    if (['xls', 'xlsx', 'csv'].includes(ext)) return { icon: 'XLS', cls: 'xls', label: 'Excelファイル' };
+    if (['doc', 'docx', 'txt', 'rtf'].includes(ext)) return { icon: 'DOC', cls: 'doc', label: '文書ファイル' };
+    if (['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext)) return { icon: 'IMG', cls: 'img', label: '画像ファイル' };
+    return { icon: ext.slice(0, 3).toUpperCase(), cls: 'other', label: 'ファイル' };
+  };
+
+  const today = () => {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    return `${y}/${m}/${d}`;
+  };
+
+  const updateAttachUiState = () => {
+    const items = attachList.querySelectorAll('.attach-item');
+    if (countEl) countEl.textContent = `(${items.length}件)`;
+
+    const empty = attachList.querySelector('.attach-empty');
+    if (!items.length) {
+      if (!empty) {
+        const el = document.createElement('div');
+        el.className = 'attach-empty';
+        el.textContent = ATTACH_EMPTY_TEXT;
+        el.style.height = '85px';
+        el.style.display = 'flex';
+        el.style.alignItems = 'center';
+        el.style.justifyContent = 'center';
+        el.style.color = 'var(--text-3)';
+        el.style.textAlign = 'center';
+        attachList.appendChild(el);
+      }
+      return;
+    }
+    empty?.remove();
+  };
+
+  const appendAttachItem = (fileName, sizeLabel, dateLabel, authorLabel = 'admin') => {
+    const info = fileExt(fileName);
+    const item = document.createElement('div');
+    item.className = 'attach-item';
+    item.innerHTML = `
+      <div class="attach-icon ${escapeHtml(info.cls)}" title="${escapeHtml(info.label)}">${escapeHtml(info.icon)}</div>
+      <div class="attach-name">
+        <a class="n" href="#" download="${escapeHtml(fileName)}" title="${escapeHtml(fileName)}">${escapeHtml(fileName)}</a>
+        <span class="meta">${escapeHtml(sizeLabel)} · ${escapeHtml(dateLabel)} · ${escapeHtml(authorLabel)}</span>
+      </div>
+      <div class="attach-actions">
+        <button class="icon-btn" type="button" title="ダウンロード">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+        </button>
+        <button class="icon-btn danger" type="button" title="削除">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m6 6 1 14h10l1-14"/></svg>
+        </button>
+      </div>
+    `;
+    attachList.appendChild(item);
+    updateAttachUiState();
+  };
+
+  const triggerDownload = (attachItem) => {
+    const link = attachItem?.querySelector('.attach-name .n');
+    if (!(link instanceof HTMLAnchorElement)) return;
+
+    const fileName = link.getAttribute('download') || link.textContent?.trim() || 'download.txt';
+    const blob = new Blob([`Mock file content for ${fileName}`], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  const processFiles = (files) => {
+    const picked = Array.from(files || []);
+    if (!picked.length) return;
+    picked.forEach((file) => {
+      appendAttachItem(file.name, formatBytes(file.size), today(), 'admin');
+    });
+  };
+
+  attachList.addEventListener('click', (e) => {
+    const target = e.target;
+    if (!(target instanceof Element)) return;
+
+    const attachItem = target.closest('.attach-item');
+    if (!attachItem) return;
+
+    const deleteBtn = target.closest('.icon-btn.danger[title="削除"]');
+    if (deleteBtn) {
+      attachItem.remove();
+      updateAttachUiState();
+      return;
+    }
+
+    const downloadBtn = target.closest('.icon-btn[title="ダウンロード"]');
+    const fileLink = target.closest('.attach-name .n');
+    if (downloadBtn || fileLink) {
+      e.preventDefault();
+      triggerDownload(attachItem);
+    }
+  });
+
+  addBtn?.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => {
+    processFiles(fileInput.files);
+    fileInput.value = '';
+  });
+
+  const setDropActive = (active) => {
+    attachList.classList.toggle('drag-over', active);
+    addBtn?.classList.toggle('drag-over', active);
+  };
+  ['dragenter', 'dragover'].forEach((eventName) => {
+    attachList.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDropActive(true);
+    });
+  });
+  ['dragleave', 'dragend'].forEach((eventName) => {
+    attachList.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const related = e.relatedTarget;
+      if (related && attachList.contains(related)) return;
+      setDropActive(false);
+    });
+  });
+  attachList.addEventListener('drop', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDropActive(false);
+    processFiles(e.dataTransfer?.files || []);
+  });
+
+  updateAttachUiState();
 }
 
 function hideCompanyContextMenu() {
@@ -660,18 +837,7 @@ function bindCompanyContextMenu(btnCreate) {
 
     const td = e.target.closest('td');
     cellCopy.setSelectedCell(tr, td, table);
-    const contextRowId = cellCopy.selection.rowId;
-    if (contextRowId && contextRowId !== state.selectedId) {
-      state.selectedId = contextRowId;
-      const c = state.companies.find((x) => String(x.id) === String(state.selectedId));
-      if (c) {
-        fillDetailForm(c);
-        renderChildLists(c);
-      }
-      render();
-    } else {
-      cellCopy.highlightSelectedCell();
-    }
+    cellCopy.highlightSelectedCell();
     showCompanyContextMenu(e.clientX, e.clientY);
   });
 
@@ -775,8 +941,7 @@ function render() {
 
   if (pageNumbers) {
     renderPageNumberButtons(pageNumbers, state.page, totalPages, (p) => {
-      state.page = p;
-      render();
+      changeCompanyPage(p);
     });
   }
 
@@ -803,6 +968,43 @@ function render() {
     fillDetailForm(selected);
     renderChildLists(selected);
   }
+}
+
+function getSelectedRowOffsetInCurrentPage(sorted) {
+  const selectedIndex = sorted.findIndex((c) => String(c.id) === String(state.selectedId));
+  if (selectedIndex < 0) return 0;
+
+  const start = (state.page - 1) * state.pageSize;
+  const end = Math.min(start + state.pageSize - 1, sorted.length - 1);
+  if (selectedIndex < start || selectedIndex > end) return 0;
+
+  return selectedIndex - start;
+}
+
+function applySelectionForPageByOffset(sorted, page, preferredOffset) {
+  const total = sorted.length;
+  if (!total) {
+    state.selectedId = null;
+    return;
+  }
+
+  const start = (page - 1) * state.pageSize;
+  const end = Math.min(start + state.pageSize - 1, total - 1);
+  const preferredIndex = start + preferredOffset;
+  const nextIndex = preferredIndex <= end ? preferredIndex : start;
+  const target = sorted[nextIndex];
+  if (target) state.selectedId = String(target.id);
+}
+
+function changeCompanyPage(nextPage) {
+  const sorted = getSortedFiltered();
+  const totalPages = Math.max(1, Math.ceil(sorted.length / state.pageSize));
+  const targetPage = Math.min(Math.max(1, nextPage), totalPages);
+  const preferredOffset = getSelectedRowOffsetInCurrentPage(sorted);
+
+  state.page = targetPage;
+  applySelectionForPageByOffset(sorted, targetPage, preferredOffset);
+  render();
 }
 
 function filterCompanies(companies, cond) {
@@ -1045,6 +1247,10 @@ function renderContactsList(c) {
   const start = (state.contactsPage - 1) * size;
   const actualEndIdx = Math.min(start + size, total);
   const sliced = contacts.slice(start, actualEndIdx);
+  const contactsPageIds = new Set(sliced.map((m) => String(m.id)));
+  if (!state.selectedContactId || !contactsPageIds.has(String(state.selectedContactId))) {
+    state.selectedContactId = sliced[0] ? String(sliced[0].id) : null;
+  }
 
   const visibleColumns = resolveColumnsForSubMenu(2, COMPANY_CONTACT_COLUMNS);
 
@@ -1066,7 +1272,7 @@ function renderContactsList(c) {
     `;
   } else {
     contactsHtml += sliced.map(m => `
-      <tr data-id="${escapeHtml(m.id)}">
+      <tr data-id="${escapeHtml(m.id)}" class="${String(m.id) === String(state.selectedContactId) ? 'selected' : ''}">
         ${visibleColumns.map((col) => `<td data-col-key="${col.key}"${cellCopy.cellClass(col.key, m.id, 'companyContactsList')}>${col.render(m, c)}</td>`).join('')}
       </tr>
     `).join('');
@@ -1109,6 +1315,10 @@ function renderActivitiesList(c) {
   const start = (state.activitiesPage - 1) * size;
   const actualEndIdx = Math.min(start + size, total);
   const sliced = activities.slice(start, actualEndIdx);
+  const activitiesPageIds = new Set(sliced.map((a) => String(a.id)));
+  if (!state.selectedActivityId || !activitiesPageIds.has(String(state.selectedActivityId))) {
+    state.selectedActivityId = sliced[0] ? String(sliced[0].id) : null;
+  }
 
   const visibleColumns = resolveColumnsForSubMenu(3, COMPANY_ACTIVITY_COLUMNS);
 
@@ -1130,7 +1340,7 @@ function renderActivitiesList(c) {
     `;
   } else {
     activitiesHtml += sliced.map(a => `
-      <tr data-id="${escapeHtml(a.id)}">
+      <tr data-id="${escapeHtml(a.id)}" class="${String(a.id) === String(state.selectedActivityId) ? 'selected' : ''}">
         ${visibleColumns.map((col) => `<td data-col-key="${col.key}"${cellCopy.cellClass(col.key, a.id, 'companyActivitiesList')}>${col.render(a, c)}</td>`).join('')}
       </tr>
     `).join('');
@@ -1173,6 +1383,10 @@ function renderProjectsList(c) {
   const start = (state.projectsPage - 1) * size;
   const actualEndIdx = Math.min(start + size, total);
   const sliced = projects.slice(start, actualEndIdx);
+  const projectsPageIds = new Set(sliced.map((p) => String(p.id)));
+  if (!state.selectedProjectId || !projectsPageIds.has(String(state.selectedProjectId))) {
+    state.selectedProjectId = sliced[0] ? String(sliced[0].id) : null;
+  }
 
   const visibleColumns = resolveColumnsForSubMenu(4, COMPANY_PROJECT_COLUMNS);
 
@@ -1194,7 +1408,7 @@ function renderProjectsList(c) {
     `;
   } else {
     projectsHtml += sliced.map(p => `
-      <tr>
+      <tr data-id="${escapeHtml(p.id)}" class="${String(p.id) === String(state.selectedProjectId) ? 'selected' : ''}">
         ${visibleColumns.map((col) => `<td>${col.render(p, c)}</td>`).join('')}
       </tr>
     `).join('');
@@ -1218,6 +1432,109 @@ function renderChildLists(c) {
   renderContactsList(c);
   renderActivitiesList(c);
   renderProjectsList(c);
+}
+
+function bindChildTableSelection() {
+  const root = q('company-root');
+  if (!root || root.dataset.childTableSelectionBound === 'true') return;
+  root.dataset.childTableSelectionBound = 'true';
+
+  root.addEventListener('click', (e) => {
+    const tr = e.target.closest('tr[data-id]');
+    if (!tr) return;
+
+    const contactsWrap = tr.closest('#companyContactsList');
+    if (contactsWrap) {
+      state.activeTableKey = 'contacts';
+      state.selectedContactId = tr.getAttribute('data-id');
+      renderContactsList(getSelectedCompany());
+      return;
+    }
+
+    const activitiesWrap = tr.closest('#companyActivitiesList');
+    if (activitiesWrap) {
+      state.activeTableKey = 'activities';
+      state.selectedActivityId = tr.getAttribute('data-id');
+      renderActivitiesList(getSelectedCompany());
+      return;
+    }
+
+    const projectsWrap = tr.closest('#companyProjectsList');
+    if (projectsWrap) {
+      state.activeTableKey = 'projects';
+      state.selectedProjectId = tr.getAttribute('data-id');
+      renderProjectsList(getSelectedCompany());
+      return;
+    }
+  });
+}
+
+function getSelectedCompany() {
+  return state.companies.find((c) => String(c.id) === String(state.selectedId)) || null;
+}
+
+function getContactsForSelectedCompany() {
+  const company = getSelectedCompany();
+  if (!company) return [];
+  return mockContacts.filter((m) => String(m.companyId) === String(company.id));
+}
+
+function getActivitiesForSelectedCompany() {
+  const company = getSelectedCompany();
+  if (!company) return [];
+  const companyContacts = mockContacts.filter((m) => String(m.companyId) === String(company.id));
+  const contactIds = companyContacts.map((m) => String(m.id));
+  return mockActivities.filter((a) => contactIds.includes(String(a.contactId)) || String(a.company) === String(company.name));
+}
+
+function getProjectsForSelectedCompany() {
+  const company = getSelectedCompany();
+  if (!company) return [];
+  const companyContacts = mockContacts.filter((m) => String(m.companyId) === String(company.id));
+  const contactIds = companyContacts.map((m) => String(m.id));
+  return mockProjects.filter((p) => contactIds.includes(String(p.contactId)) || String(p.company) === String(company.name));
+}
+
+function scrollSelectedRowInContainer(containerId, selectedId) {
+  const wrap = q(containerId);
+  if (!wrap || !selectedId) return;
+  const tr = wrap.querySelector(`tr[data-id="${CSS.escape(String(selectedId))}"]`);
+  tr?.scrollIntoView({ block: 'nearest' });
+}
+
+function moveChildSelection({
+  items,
+  selectedId,
+  setSelectedId,
+  page,
+  pageSize,
+  containerId,
+  renderFn,
+  delta,
+}) {
+  if (!items.length) return false;
+
+  let index = items.findIndex((item) => String(item.id) === String(selectedId));
+  if (index < 0) {
+    const fallbackIndex = delta > 0 ? 0 : items.length - 1;
+    setSelectedId(String(items[fallbackIndex].id));
+    renderFn();
+    requestAnimationFrame(() => scrollSelectedRowInContainer(containerId, items[fallbackIndex].id));
+    return true;
+  }
+
+  const pageStart = (page - 1) * pageSize;
+  const pageEnd = Math.min(pageStart + pageSize - 1, items.length - 1);
+  const nextIndex = index + delta;
+  if (nextIndex < pageStart || nextIndex > pageEnd) return true;
+
+  const next = items[nextIndex];
+  if (!next) return true;
+
+  setSelectedId(String(next.id));
+  renderFn();
+  requestAnimationFrame(() => scrollSelectedRowInContainer(containerId, next.id));
+  return true;
 }
 
 let companySortBound = false;
@@ -1279,6 +1596,157 @@ function bindCompanyTableSort() {
   });
 }
 
+function scrollSelectedCompanyRowIntoView() {
+  const tbody = q('companyTableBody');
+  if (!tbody || !state.selectedId) return;
+  const tr = tbody.querySelector(`tr[data-id="${CSS.escape(String(state.selectedId))}"]`);
+  if (!tr) return;
+
+  const scrollWrap = tr.closest('.company-table-wrap');
+  if (!(scrollWrap instanceof HTMLElement)) {
+    tr.scrollIntoView({ block: 'nearest' });
+    return;
+  }
+
+  const thead = scrollWrap.querySelector('thead');
+  const headerHeight = thead instanceof HTMLElement ? thead.offsetHeight : 0;
+  const rowTop = tr.offsetTop;
+  const rowBottom = rowTop + tr.offsetHeight;
+  const currentTop = scrollWrap.scrollTop;
+  const scrollbarHeight = Math.max(0, scrollWrap.offsetHeight - scrollWrap.clientHeight);
+  const edgeGap = 4;
+
+  const visibleTop = currentTop + headerHeight + edgeGap;
+  const visibleBottom = currentTop + scrollWrap.clientHeight - scrollbarHeight - edgeGap;
+
+  if (rowTop < visibleTop) {
+    scrollWrap.scrollTop = Math.max(0, rowTop - headerHeight - edgeGap);
+    return;
+  }
+  if (rowBottom > visibleBottom) {
+    scrollWrap.scrollTop = rowBottom - (scrollWrap.clientHeight - scrollbarHeight - edgeGap);
+  }
+}
+
+function selectCompanyAtSortedIndex(sorted, index) {
+  const company = sorted[index];
+  if (!company) return;
+
+  state.selectedId = String(company.id);
+  const nextPage = Math.floor(index / state.pageSize) + 1;
+  if (state.page !== nextPage) state.page = nextPage;
+
+  fillDetailForm(company);
+  renderChildLists(company);
+  render();
+  requestAnimationFrame(() => scrollSelectedCompanyRowIntoView());
+}
+
+/**
+ * @param {number} delta -1 | 1
+ * @returns {boolean} true when arrow key was handled (including at first/last row — no wrap)
+ */
+function moveCompanySelection(delta) {
+  const sorted = getSortedFiltered();
+  if (!sorted.length) return false;
+
+  let index = sorted.findIndex((c) => String(c.id) === String(state.selectedId));
+  if (index < 0) {
+    selectCompanyAtSortedIndex(sorted, delta > 0 ? 0 : sorted.length - 1);
+    return true;
+  }
+
+  const pageStart = (state.page - 1) * state.pageSize;
+  const pageEnd = Math.min(pageStart + state.pageSize - 1, sorted.length - 1);
+  const nextIndex = index + delta;
+  if (nextIndex < 0 || nextIndex >= sorted.length) {
+    return true;
+  }
+
+  // Keep keyboard selection inside the current page.
+  // At first/last row of the page, ArrowUp/ArrowDown should stay on current row.
+  if (nextIndex < pageStart || nextIndex > pageEnd) {
+    return true;
+  }
+
+  selectCompanyAtSortedIndex(sorted, nextIndex);
+  return true;
+}
+
+function shouldHandleCompanyListArrowKeys(e) {
+  if (!q('company')?.classList.contains('active')) return false;
+  if (q('dlgCompanyCreate')?.open || q('dlgCompanyAdvancedSearch')?.open || q('dlgCompanyConfirmDelete')?.open) return false;
+
+  const target = e.target;
+  if (!(target instanceof HTMLElement)) return true;
+
+  // Do not hijack arrow keys while typing/editing inputs.
+  if (target.isContentEditable) return false;
+  if (target.closest('input, textarea, select, [contenteditable="true"]')) return false;
+
+  return true;
+}
+
+function bindCompanyTableKeyboard() {
+  if (companyTableKeyboardBound) return;
+  companyTableKeyboardBound = true;
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+    if (!shouldHandleCompanyListArrowKeys(e)) return;
+    const delta = e.key === 'ArrowDown' ? 1 : -1;
+    let handled = false;
+
+    if (state.activeTableKey === 'contacts') {
+      handled = moveChildSelection({
+        items: getContactsForSelectedCompany(),
+        selectedId: state.selectedContactId,
+        setSelectedId: (id) => { state.selectedContactId = id; },
+        page: state.contactsPage,
+        pageSize: state.contactsPageSize,
+        containerId: 'companyContactsList',
+        renderFn: () => {
+          const c = getSelectedCompany();
+          if (c) renderContactsList(c);
+        },
+        delta,
+      });
+    } else if (state.activeTableKey === 'activities') {
+      handled = moveChildSelection({
+        items: getActivitiesForSelectedCompany(),
+        selectedId: state.selectedActivityId,
+        setSelectedId: (id) => { state.selectedActivityId = id; },
+        page: state.activitiesPage,
+        pageSize: state.activitiesPageSize,
+        containerId: 'companyActivitiesList',
+        renderFn: () => {
+          const c = getSelectedCompany();
+          if (c) renderActivitiesList(c);
+        },
+        delta,
+      });
+    } else if (state.activeTableKey === 'projects') {
+      handled = moveChildSelection({
+        items: getProjectsForSelectedCompany(),
+        selectedId: state.selectedProjectId,
+        setSelectedId: (id) => { state.selectedProjectId = id; },
+        page: state.projectsPage,
+        pageSize: state.projectsPageSize,
+        containerId: 'companyProjectsList',
+        renderFn: () => {
+          const c = getSelectedCompany();
+          if (c) renderProjectsList(c);
+        },
+        delta,
+      });
+    } else {
+      handled = moveCompanySelection(delta);
+    }
+
+    if (handled) e.preventDefault();
+  });
+}
+
 function bindCompanyTable() {
   const tbody = q('companyTableBody');
   if (!tbody || companyTableBound) return;
@@ -1294,8 +1762,10 @@ function bindCompanyTable() {
       fillDetailForm(c);
       renderChildLists(c);
     }
+    state.activeTableKey = 'company';
     render();
   });
+  bindCompanyTableKeyboard();
 }
 
 function renderCompanyTable(rows) {

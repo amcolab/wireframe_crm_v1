@@ -345,6 +345,25 @@ body {
   transform: none !important;
 }
 
+.btn-success {
+  background: var(--success) !important;
+  color: #fff !important;
+  border-color: var(--success) !important;
+  height: 28px;
+  padding: 0 12px;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  border-radius: var(--r);
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.btn-success:hover {
+  background: var(--success-hover) !important;
+  border-color: var(--success-hover) !important;
+  transform: none !important;
+}
+
 /* ---------- Dialogs ---------- */
 .dlg::backdrop {
   background: rgba(15, 27, 45, 0.45);

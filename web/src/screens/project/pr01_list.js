@@ -26,6 +26,7 @@ import {
 } from '../../utils/tableColumns.js';
 import { takePendingProjectSearch, bindCrossScreenLinks } from '../../utils/screenNavigation.js';
 import { createTableCellCopy } from '../../utils/tableCellCopy.js';
+import { saleOptions, typeSaleOptions } from '../../utils/contants.js';
 
 let state = {
   projects: [...mockProjects],
@@ -124,8 +125,11 @@ function bindUi() {
       });
       syncEntityDetailTabLayout(card, tab);
 
+      const showActBtns = tab === 'activities' ? 'inline-flex' : 'none';
       const btnAct = q('btnPrTabNewActivity');
-      if (btnAct) btnAct.style.display = tab === 'activities' ? 'inline-flex' : 'none';
+      const btnActQuick = q('btnPrTabNewActivityQuick');
+      if (btnAct) btnAct.style.display = showActBtns;
+      if (btnActQuick) btnActQuick.style.display = showActBtns;
     });
   });
 
@@ -165,7 +169,15 @@ function bindUi() {
     render();
   });
   q('btnProjectNewMain')?.addEventListener('click', () => { openProjectCreateDialog(); });
-  q('btnPrTabNewActivity')?.addEventListener('click', () => { openActivityCreateDialog(); });
+  q('btnPrTabNewActivity')?.addEventListener('click', () => {
+    const p = getSelectedProject();
+    if (!p) {
+      alert('案件を選択してください。');
+      return;
+    }
+    openActivityCreateDialog({ project: p });
+  });
+  q('btnPrTabNewActivityQuick')?.addEventListener('click', () => { addProjectActivityRow(); });
   q('btnPrDetailContactLookup')?.addEventListener('click', () => { q('dlgContactLookup')?.showModal(); });
   q('btnPrDetailContactNew')?.addEventListener('click', () => { openContactCreateDialog(); });
   q('btnPrDetailSave')?.addEventListener('click', () => { alert('保存しました'); });
@@ -190,6 +202,18 @@ function bindUi() {
     state.page = 1;
     render();
   });
+
+  const activitiesList = q('projectActivitiesList');
+  if (activitiesList) {
+    activitiesList.addEventListener('dblclick', (e) => {
+      const td = e.target.closest('td[data-col-key]');
+      if (!td) return;
+      const tr = td.closest('tr[data-id]');
+      if (!tr) return;
+      if (td.querySelector('input') || td.querySelector('select')) return;
+      startProjectActivityCellEditing(td, tr);
+    });
+  }
 
   bindProjectContextMenu();
 }
@@ -508,5 +532,151 @@ function initResizer() {
       const h = parseInt(container.style.getPropertyValue('--grid-height') || '400', 10);
       localStorage.setItem('smos.pr01.listH', String(h));
     } catch { /* ignore */ }
+  });
+}
+
+function addProjectActivityRow() {
+  const p = getSelectedProject();
+  if (!p) {
+    alert('案件を選択してください。');
+    return;
+  }
+
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  const formattedDate = `${yyyy}/${mm}/${dd}`;
+
+  const defaultRep = saleOptions[0]?.label || '高橋健二';
+  const defaultTypeOpt = typeSaleOptions.find(opt => opt.value === 2) || { label: 'TEL' };
+  const defaultType = defaultTypeOpt.label;
+
+  const newAct = {
+    id: String(Date.now() + Math.floor(Math.random() * 1000)),
+    contactId: p.contactId ? String(p.contactId) : '',
+    projectId: String(p.id),
+    date: formattedDate,
+    time: '12:00',
+    rep: defaultRep,
+    type: defaultType,
+    typeClass: 'type-tel',
+    purpose: '',
+    motivation: '',
+    company: p.company || '',
+    contact: p.contact || '',
+    comment: '',
+    projectName: p.name || '',
+  };
+
+  mockActivities.unshift(newAct);
+  state.projectActivitiesPage = 1;
+  renderProjectActivitiesList(p);
+}
+
+function startProjectActivityCellEditing(td, tr) {
+  const actId = tr.getAttribute('data-id');
+  const colKey = td.getAttribute('data-col-key');
+  const p = getSelectedProject();
+  if (!p) return;
+
+  const act = mockActivities.find(a => String(a.id) === String(actId));
+  if (!act) return;
+
+  td.innerHTML = '';
+
+  let editor;
+  if (colKey === 'date') {
+    editor = document.createElement('input');
+    editor.type = 'date';
+    editor.className = 'input table-edit-input';
+    editor.value = act.date ? act.date.replace(/\//g, '-') : '';
+    td.appendChild(editor);
+  } else if (colKey === 'rep') {
+    editor = document.createElement('select');
+    editor.className = 'select table-edit-select';
+    saleOptions.forEach(opt => {
+      const o = document.createElement('option');
+      o.value = opt.label;
+      o.textContent = opt.label;
+      if (opt.label === act.rep) o.selected = true;
+      editor.appendChild(o);
+    });
+    td.appendChild(editor);
+  } else if (colKey === 'type') {
+    editor = document.createElement('select');
+    editor.className = 'select table-edit-select';
+    typeSaleOptions.forEach(opt => {
+      const o = document.createElement('option');
+      o.value = opt.label;
+      o.textContent = opt.label;
+      if (opt.label === act.type) o.selected = true;
+      editor.appendChild(o);
+    });
+    td.appendChild(editor);
+  } else if (colKey === 'purpose' || colKey === 'motivation' || colKey === 'contact' || colKey === 'comment') {
+    editor = document.createElement('input');
+    editor.type = 'text';
+    editor.className = 'input table-edit-input';
+    editor.value = act[colKey] || '';
+    td.appendChild(editor);
+  } else {
+    renderProjectActivitiesList(p);
+    return;
+  }
+
+  editor.focus();
+
+  let finished = false;
+  const saveChange = () => {
+    if (finished) return;
+    finished = true;
+
+    let newVal = editor.value;
+    if (colKey === 'date') {
+      if (newVal) {
+        newVal = newVal.replace(/-/g, '/');
+      } else {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        newVal = `${yyyy}/${mm}/${dd}`;
+      }
+      act.date = newVal;
+    } else if (colKey === 'rep') {
+      act.rep = newVal;
+    } else if (colKey === 'type') {
+      act.type = newVal;
+      const classMap = {
+        '訪問': 'type-visit',
+        'TEL': 'type-tel',
+        'メール': 'type-email',
+        'Web面談': 'type-web',
+        'その他': 'type-other',
+      };
+      act.typeClass = classMap[newVal] || 'type-other';
+    } else if (colKey === 'purpose') {
+      act.purpose = newVal;
+    } else if (colKey === 'motivation') {
+      act.motivation = newVal;
+    } else if (colKey === 'contact') {
+      act.contact = newVal;
+    } else if (colKey === 'comment') {
+      act.comment = newVal;
+    }
+
+    renderProjectActivitiesList(p);
+  };
+
+  editor.addEventListener('blur', saveChange);
+  editor.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      saveChange();
+    } else if (e.key === 'Escape') {
+      finished = true;
+      renderProjectActivitiesList(p);
+    }
   });
 }

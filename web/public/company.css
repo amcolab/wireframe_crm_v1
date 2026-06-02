@@ -741,7 +741,7 @@
 .form-col {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
 }
 
 .form-row,
@@ -1409,8 +1409,8 @@
 
 .modal-dialog .lookup-table-wrap,
 .dlg-hero .lookup-table-wrap,
-.dlg .lookup-table-wrap,
-.dlg-wide .lookup-table-wrap {
+.dlg:not(#dlgColumnSettings):not(#dlgGeneralMaster):not(#dlgEmployeeMaster):not(#dlgTenantCompany) .lookup-table-wrap,
+.dlg-wide:not(#dlgColumnSettings):not(#dlgGeneralMaster):not(#dlgEmployeeMaster):not(#dlgTenantCompany) .lookup-table-wrap {
     max-height: min(320px, 40vh);
     overflow: auto;
     border: 1px solid var(--border);
@@ -1499,8 +1499,8 @@
     border-right: none;
 }
 
-.dlg-wide table.t.settings-table tbody td,
-.dlg table.t.settings-table tbody td {
+.dlg-wide table.t.settings-table:not(.col-settings-table) tbody td,
+.dlg table.t.settings-table:not(.col-settings-table) tbody td {
     padding: 4px 10px;
     border-bottom: 1px solid #f1f5f9;
     border-right: 1px solid #f1f5f9;
@@ -1509,8 +1509,8 @@
     overflow: hidden;
 }
 
-.dlg-wide table.t.settings-table tbody td:last-child,
-.dlg table.t.settings-table tbody td:last-child {
+.dlg-wide table.t.settings-table:not(.col-settings-table) tbody td:last-child,
+.dlg table.t.settings-table:not(.col-settings-table) tbody td:last-child {
     border-right: none;
 }
 
@@ -1997,11 +1997,11 @@
   background: #fbfcfd;
 }
 
-.company-screen table.t tbody tr:hover td {
+/* .company-screen table.t tbody tr:hover td {
   background: #cfe5ff;
   cursor: pointer;
   transition: background-color .12s ease;
-}
+} */
 
 .company-screen table.t tbody tr.selected td {
   background: #cfe5ff;
@@ -2655,7 +2655,8 @@ select.input {
 .form-4col .ff .sub > label {
   font-size: var(--fc-label-fs);
   font-weight: 500;
-  color: var(--text-2);
+  /* color: var(--text-2); */
+  color: #1e50a2;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -3178,6 +3179,16 @@ select.input {
   flex-direction: column;
   gap: 6px;
   margin-bottom: 6px;
+  border-radius: var(--r);
+  border: 1px solid var(--border-2);
+  padding: 6px 8px;
+  background: #fff;
+  transition: border-color 0.12s, background 0.12s;
+  min-height: 85px;
+  max-height: 85px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-3) var(--surface-2);
 }
 
 .attach-item {
@@ -3185,11 +3196,11 @@ select.input {
   grid-template-columns: 28px 1fr auto;
   align-items: center;
   gap: 8px;
-  padding: 6px 8px;
+  /* padding: 6px 8px;
   border: 1px solid var(--border-2);
   border-radius: var(--r);
   background: #fff;
-  transition: border-color 0.12s, background 0.12s;
+  transition: border-color 0.12s, background 0.12s; */
 }
 
 .attach-item:hover {
@@ -3213,6 +3224,12 @@ select.input {
 
 .attach-icon.pdf { background: #d03b3b; }
 .attach-icon.xls { background: #157f47; }
+.attach-icon.doc { background: #2c6dd7; }
+.attach-icon.img { background: #8a3fd1; }
+.attach-icon.other {
+  background: linear-gradient(135deg, #4c5568, #2d3648);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
 
 .attach-name {
   min-width: 0;
@@ -3620,8 +3637,12 @@ body.col-resizing * {
 #project-root .detail-form .form-row label {
   font-size: 12px;
   font-weight: 500;
-  color: var(--text-2);
+  color: #1e50a2;
   margin-bottom: 4px;
+}
+
+label.check {
+  color: #1e50a2;
 }
 
 #contact-root .detail-form input:not([type="checkbox"]),
