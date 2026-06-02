@@ -494,6 +494,28 @@
   color: var(--text-2);
 }
 
+/* Employee master: table fills leftover height, checkbox sticks above actions */
+#dlgEmployeeMaster .dlg-content--settings {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#dlgEmployeeMaster .dlg-content--settings > .settings-table-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  background: var(--surface);
+}
+
+#dlgEmployeeMaster .settings-dlg-foot {
+  margin-top: auto;
+  padding-top: 4px;
+}
+
 .master-table-wrap {
   flex: 1;
   min-height: 120px;
@@ -622,6 +644,9 @@
 }
 
 .dlg-column-settings .dlg-content--settings.col-settings {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
   gap: 10px;
 }
 
@@ -678,6 +703,7 @@
 
 .col-settings__body {
   display: flex;
+  flex: 1 1 auto;
   gap: 10px;
   align-items: stretch;
   min-height: 0;
@@ -687,6 +713,7 @@
   flex: 1;
   min-height: 300px;
   max-height: none;
+  height: 100%;
   overflow: auto;
   border-radius: var(--r-card);
   border: 1px solid var(--border);
@@ -718,6 +745,11 @@
 }
 
 #dlgColumnSettings #colSettingsTable.settings-table thead th {
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+#dlgEmployeeMaster #employeeMasterTable.settings-table thead th {
   padding: 4px 8px;
   font-size: 11px;
 }
@@ -790,6 +822,38 @@
 .dlg-column-settings table.col-settings-table.settings-table tbody tr.col-settings-row--hidden.selected:nth-child(even) td {
   background-color: #e0ebfa;
   color: #334155;
+}
+
+#dlgEmployeeMaster #employeeMasterTable.settings-table tbody td {
+  padding: 2px 8px;
+  font-size: 11px;
+  line-height: 1.15;
+  border-bottom: 1px solid #f1f5f9;
+  border-right: 1px solid #f1f5f9;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+#dlgEmployeeMaster #employeeMasterTable.settings-table tbody td:last-child {
+  border-right: none;
+}
+
+#dlgEmployeeMaster #employeeMasterTable.settings-table tbody tr:nth-child(even) td {
+  background: #fbfcfd;
+}
+
+#dlgEmployeeMaster #employeeMasterTable.settings-table tbody tr:hover td {
+  background: #f7fbff;
+}
+
+#dlgEmployeeMaster #employeeMasterTable.settings-table tbody tr.selected td {
+  background: #e6f2ff;
+  color: #0b2a66;
+}
+
+#dlgEmployeeMaster #employeeMasterTable.settings-table tbody tr.selected {
+  outline: 1px solid #7ab8ff;
+  outline-offset: -1px;
 }
 
 .dlg-column-settings table.col-settings-table.settings-table tbody tr.col-settings-row.selected,
@@ -949,6 +1013,48 @@
   display: flex;
   gap: 10px;
   min-height: 0;
+}
+
+#dlgGeneralMaster .dlg-content--settings {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#dlgGeneralMaster .master-input-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+#dlgGeneralMaster .master-input-grid > .settings-table-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  background: var(--surface);
+}
+
+#dlgGeneralMaster .settings-dlg-foot {
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+#dlgTenantCompany .dlg-content--settings {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#dlgTenantCompany .dlg-content--settings > .settings-table-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--r-card);
+  background: var(--surface);
 }
 
 .dlg-master-input .settings-table-wrap {

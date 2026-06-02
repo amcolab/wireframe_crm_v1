@@ -741,7 +741,7 @@
 .form-col {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
 }
 
 .form-row,
@@ -1409,8 +1409,8 @@
 
 .modal-dialog .lookup-table-wrap,
 .dlg-hero .lookup-table-wrap,
-.dlg .lookup-table-wrap,
-.dlg-wide .lookup-table-wrap {
+.dlg:not(#dlgColumnSettings):not(#dlgGeneralMaster):not(#dlgEmployeeMaster):not(#dlgTenantCompany) .lookup-table-wrap,
+.dlg-wide:not(#dlgColumnSettings):not(#dlgGeneralMaster):not(#dlgEmployeeMaster):not(#dlgTenantCompany) .lookup-table-wrap {
     max-height: min(320px, 40vh);
     overflow: auto;
     border: 1px solid var(--border);
@@ -2655,7 +2655,8 @@ select.input {
 .form-4col .ff .sub > label {
   font-size: var(--fc-label-fs);
   font-weight: 500;
-  color: var(--text-2);
+  /* color: var(--text-2); */
+  color: #1e50a2;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -3636,8 +3637,12 @@ body.col-resizing * {
 #project-root .detail-form .form-row label {
   font-size: 12px;
   font-weight: 500;
-  color: var(--text-2);
+  color: #1e50a2;
   margin-bottom: 4px;
+}
+
+label.check {
+  color: #1e50a2;
 }
 
 #contact-root .detail-form input:not([type="checkbox"]),
