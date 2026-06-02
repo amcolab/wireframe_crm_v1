@@ -1499,8 +1499,8 @@
     border-right: none;
 }
 
-.dlg-wide table.t.settings-table tbody td,
-.dlg table.t.settings-table tbody td {
+.dlg-wide table.t.settings-table:not(.col-settings-table) tbody td,
+.dlg table.t.settings-table:not(.col-settings-table) tbody td {
     padding: 4px 10px;
     border-bottom: 1px solid #f1f5f9;
     border-right: 1px solid #f1f5f9;
@@ -1509,8 +1509,8 @@
     overflow: hidden;
 }
 
-.dlg-wide table.t.settings-table tbody td:last-child,
-.dlg table.t.settings-table tbody td:last-child {
+.dlg-wide table.t.settings-table:not(.col-settings-table) tbody td:last-child,
+.dlg table.t.settings-table:not(.col-settings-table) tbody td:last-child {
     border-right: none;
 }
 
@@ -2930,11 +2930,6 @@ select.input {
   padding: 8px 10px;
   font-size: 10px;
 }
-.dropzone.compact.drag-over {
-  border-color: var(--brand-500);
-  background: #eaf2ff;
-  color: var(--brand-700);
-}
 .form-4col .dropzone.compact {
   padding: 8px 10px;
   font-size: 10px;
@@ -3193,10 +3188,6 @@ select.input {
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--text-3) var(--surface-2);
-}
-.attach-list.drag-over {
-  border-color: var(--brand-500);
-  background: #f4f8ff;
 }
 
 .attach-item {

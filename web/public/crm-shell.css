@@ -585,6 +585,42 @@
 }
 
 /* ---------- Column settings dialog ---------- */
+.dlg#dlgColumnSettings {
+  width: min(760px, calc(100vw - 24px));
+  height: min(84vh, 860px);
+  min-width: 640px;
+  min-height: 700px;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100vh - 16px);
+  overflow: hidden;
+}
+
+#dlgColumnSettings .dlg-body {
+  position: relative;
+  height: 100%;
+  max-height: none;
+  padding-bottom: 6px;
+}
+
+.col-settings__resize-handle {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  border-radius: 3px;
+  background:
+    linear-gradient(135deg, transparent 48%, #9fb0cc 49%, #9fb0cc 56%, transparent 57%),
+    linear-gradient(135deg, transparent 60%, #9fb0cc 61%, #9fb0cc 68%, transparent 69%),
+    linear-gradient(135deg, transparent 72%, #9fb0cc 73%, #9fb0cc 80%, transparent 81%);
+  opacity: 0.85;
+}
+
+.col-settings__resize-handle:hover {
+  opacity: 1;
+}
+
 .dlg-column-settings .dlg-content--settings.col-settings {
   gap: 10px;
 }
@@ -592,7 +628,7 @@
 .col-settings__toolbar {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px 16px;
 }
@@ -623,6 +659,7 @@
   align-items: flex-end;
   gap: 6px;
   margin-left: auto;
+  min-width: 220px;
 }
 
 .col-settings__summary {
@@ -648,11 +685,16 @@
 
 .col-settings__table-wrap {
   flex: 1;
-  min-height: 220px;
-  max-height: min(52vh, 420px);
+  min-height: 300px;
+  max-height: none;
+  overflow: auto;
   border-radius: var(--r-card);
   border: 1px solid var(--border);
   box-shadow: inset 0 1px 2px rgba(15, 27, 45, 0.04);
+}
+
+#dlgColumnSettings .dlg-actions {
+  padding-right: 28px;
 }
 
 .col-settings-table {
@@ -663,10 +705,25 @@
   cursor: pointer;
 }
 
-.col-settings-table tbody tr.col-settings-row td {
+/* 列の設定 — row height riêng, không dùng rule settings-table chung trong company.css */
+#dlgColumnSettings #colSettingsTable.settings-table tbody tr.col-settings-row td {
   transition: background-color 0.12s ease, color 0.12s ease;
   border-bottom: 1px solid #f1f5f9;
   border-right: 1px solid #f1f5f9;
+  padding: 2px 8px;
+  font-size: 11px;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+#dlgColumnSettings #colSettingsTable.settings-table thead th {
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+#dlgColumnSettings .col-vis-toggle {
+  height: 20px;
 }
 
 .col-settings-table tbody tr.col-settings-row td:last-child {
@@ -685,7 +742,7 @@
 }
 
 .col-settings-table .col-title {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
 }
 
@@ -841,6 +898,40 @@
   display: flex;
   gap: 8px;
   align-items: center;
+}
+
+/* ---------- Generic dialog resize handle ---------- */
+.dlg[open].dlg-resizable {
+  display: flex;
+  padding: 0;
+}
+
+.dlg.dlg-resizable .dlg-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.dlg__resize-handle {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  border-radius: 3px;
+  background:
+    linear-gradient(135deg, transparent 48%, #9fb0cc 49%, #9fb0cc 56%, transparent 57%),
+    linear-gradient(135deg, transparent 60%, #9fb0cc 61%, #9fb0cc 68%, transparent 69%),
+    linear-gradient(135deg, transparent 72%, #9fb0cc 73%, #9fb0cc 80%, transparent 81%);
+  opacity: 0.85;
+}
+
+.dlg__resize-handle:hover {
+  opacity: 1;
 }
 
 /* ---------- General master input ---------- */
