@@ -12,8 +12,86 @@ function closeShellMenus() {
   q('userMenuTrigger')?.classList.remove('active');
 }
 
+function bindResizableDialog({ dialogId, handleId, minWidth, minHeight, maxWidthOffset = 16, maxHeightOffset = 16 }) {
+  const dlg = q(dialogId);
+  const handle = q(handleId);
+  if (!dlg || !handle || dlg.dataset.resizableBound === '1') return;
+  dlg.dataset.resizableBound = '1';
+  dlg.classList.add('dlg-resizable');
+
+  handle.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startWidth = dlg.offsetWidth;
+    const startHeight = dlg.offsetHeight;
+    const sessionMinWidth = Math.min(minWidth, startWidth);
+    const sessionMinHeight = Math.min(minHeight, startHeight);
+    let nextWidth = startWidth;
+    let nextHeight = startHeight;
+    let rafId = 0;
+    let hasDragged = false;
+
+    const onMove = (moveEvent) => {
+      const dx = moveEvent.clientX - startX;
+      const dy = moveEvent.clientY - startY;
+      if (!hasDragged && Math.abs(dx) < 2 && Math.abs(dy) < 2) return;
+      hasDragged = true;
+
+      nextWidth = Math.max(sessionMinWidth, Math.min(window.innerWidth - maxWidthOffset, startWidth + dx));
+      nextHeight = Math.max(sessionMinHeight, Math.min(window.innerHeight - maxHeightOffset, startHeight + dy));
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(() => {
+        dlg.style.width = `${Math.round(nextWidth)}px`;
+        dlg.style.height = `${Math.round(nextHeight)}px`;
+        rafId = 0;
+      });
+    };
+
+    const onUp = () => {
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+        dlg.style.width = `${Math.round(nextWidth)}px`;
+        dlg.style.height = `${Math.round(nextHeight)}px`;
+        rafId = 0;
+      }
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      document.body.style.userSelect = '';
+      document.body.style.cursor = '';
+    };
+
+    document.body.style.userSelect = 'none';
+    document.body.style.cursor = 'nwse-resize';
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  });
+}
+
+function initResizableMasterDialogs() {
+  bindResizableDialog({
+    dialogId: 'dlgEmployeeMaster',
+    handleId: 'employeeMasterResizeHandle',
+    minWidth: 900,
+    minHeight: 520,
+  });
+  bindResizableDialog({
+    dialogId: 'dlgGeneralMaster',
+    handleId: 'generalMasterResizeHandle',
+    minWidth: 700,
+    minHeight: 520,
+  });
+  bindResizableDialog({
+    dialogId: 'dlgTenantCompany',
+    handleId: 'tenantCompanyResizeHandle',
+    minWidth: 860,
+    minHeight: 520,
+  });
+}
+
 export function initGlobalLookups() {
   initColumnSettings();
+  initResizableMasterDialogs();
 
   const GENERAL_MASTER_STORAGE_KEY = 'smos.generalMasters.v1';
   const GENERAL_MASTER_DEFS = [

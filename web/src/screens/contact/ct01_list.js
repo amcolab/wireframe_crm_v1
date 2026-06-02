@@ -24,6 +24,7 @@ import {
   buildTheadRow,
 } from '../../utils/tableColumns.js';
 import { openContactCreateDialog, resolveCompanyFromContact } from '../../utils/contactCreateForm.js';
+import { openActivityCreateDialog } from '../../utils/activityCreateForm.js';
 import { createTableCellCopy } from '../../utils/tableCellCopy.js';
 
 let state = {
@@ -131,50 +132,25 @@ function bindUi() {
       panels.forEach(p => p.classList.toggle('active', p.getAttribute('data-contact-panel') === tab));
       syncEntityDetailTabLayout(card, tab);
 
+      const showActBtns = tab === 'activities' ? 'inline-flex' : 'none';
       const btnNewActivity = q('btnContactNewActivity');
+      const btnNewActivityQuick = q('btnContactNewActivityQuick');
       const btnNewProject = q('btnContactNewProject');
-      if (btnNewActivity) btnNewActivity.style.display = tab === 'activities' ? 'inline-flex' : 'none';
+      if (btnNewActivity) btnNewActivity.style.display = showActBtns;
+      if (btnNewActivityQuick) btnNewActivityQuick.style.display = showActBtns;
       if (btnNewProject) btnNewProject.style.display = tab === 'projects' ? 'inline-flex' : 'none';
     });
   });
 
   q('btnContactNewActivity')?.addEventListener('click', () => {
-    const c = getSelectedContact();
-    if (!c) {
+    const selected = getSelectedContact();
+    if (!selected) {
       alert('担当者を選択してください。');
       return;
     }
-
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    const formattedDate = `${yyyy}/${mm}/${dd}`;
-
-    const defaultRep = saleOptions[0]?.label || '高橋健二';
-    const defaultTypeOpt = typeSaleOptions.find(opt => opt.value === 2) || { label: 'TEL' };
-    const defaultType = defaultTypeOpt.label;
-
-    const newAct = {
-      id: String(Date.now() + Math.floor(Math.random() * 1000)),
-      contactId: String(c.id),
-      projectId: '',
-      date: formattedDate,
-      time: '12:00',
-      rep: defaultRep,
-      type: defaultType,
-      typeClass: 'type-tel',
-      purpose: '',
-      company: c.company || '',
-      contact: c.last || '',
-      comment: '',
-      projectName: ''
-    };
-
-    mockActivities.unshift(newAct);
-    state.contactActivitiesPage = 1;
-    renderContactActivitiesList(c);
+    openActivityCreateDialog({ contact: selected });
   });
+  q('btnContactNewActivityQuick')?.addEventListener('click', () => { addContactActivityRow(); });
   q('btnContactCreateMain')?.addEventListener('click', () => {
     const selected = getSelectedContact();
     const company = resolveCompanyFromContact(selected);
@@ -321,7 +297,6 @@ function bindContactContextMenu() {
     } else if (action === 'new-contact') {
       q('btnContactCreateMain')?.click();
     } else if (action === 'new-activity') {
-      activateContactTab('activities');
       q('btnContactNewActivity')?.click();
     } else if (action === 'new-project') {
       q('btnContactNewProject')?.click();
@@ -340,13 +315,6 @@ function bindContactContextMenu() {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') hideContactContextMenu();
   });
-}
-
-function activateContactTab(tabName) {
-  const tabBtn = document.querySelector(`[data-contact-tab="${tabName}"]`);
-  if (tabBtn) {
-    tabBtn.click();
-  }
 }
 
 function applySearch() {
@@ -659,6 +627,44 @@ function initResizer() {
       localStorage.setItem('smos.ct01.listH', String(h));
     } catch { /* ignore */ }
   });
+}
+
+function addContactActivityRow() {
+  const c = getSelectedContact();
+  if (!c) {
+    alert('担当者を選択してください。');
+    return;
+  }
+
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  const formattedDate = `${yyyy}/${mm}/${dd}`;
+
+  const defaultRep = saleOptions[0]?.label || '高橋健二';
+  const defaultTypeOpt = typeSaleOptions.find(opt => opt.value === 2) || { label: 'TEL' };
+  const defaultType = defaultTypeOpt.label;
+
+  const newAct = {
+    id: String(Date.now() + Math.floor(Math.random() * 1000)),
+    contactId: String(c.id),
+    projectId: '',
+    date: formattedDate,
+    time: '12:00',
+    rep: defaultRep,
+    type: defaultType,
+    typeClass: 'type-tel',
+    purpose: '',
+    company: c.company || '',
+    contact: c.last || '',
+    comment: '',
+    projectName: '',
+  };
+
+  mockActivities.unshift(newAct);
+  state.contactActivitiesPage = 1;
+  renderContactActivitiesList(c);
 }
 
 function startCellEditing(td, tr) {

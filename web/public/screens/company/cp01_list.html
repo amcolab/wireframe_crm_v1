@@ -136,9 +136,9 @@
                     <label>会社名 <span class="req">*</span></label>
                     <div class="search-input-group">
                       <input id="companyDetailName" class="input" type="text" />
-                      <button class="icon-btn-inline" id="btnMainContactLookupCompany" type="button" title="会社検索">🔍</button>
+                      <!-- <button class="icon-btn-inline" id="btnMainContactLookupCompany" type="button" title="会社検索">🔍</button>
                       <button class="btn btn-secondary" id="btnMainContactCreateCompany" type="button"
-                        style="padding:0 10px;color:#ff6600;border-color:#ff6600;width:80px;flex-shrink:0;">新規</button>
+                        style="padding:0 10px;color:#ff6600;border-color:#ff6600;width:80px;flex-shrink:0;">新規</button> -->
                     </div>
                   </div>
                   <div class="ff">
@@ -298,42 +298,9 @@
                   <div class="ff"><label>会社自由使用欄7</label><input id="companyDetailFree7" class="input" type="text" /></div>
                   <div class="ff attach-field items-start">
                     <label>添付資料 <span class="attach-count">(2件)</span></label>
-                    <div class="attach-list" id="companyAttachList">
-                      <div class="attach-item">
-                        <div class="attach-icon pdf" title="PDFファイル">PDF</div>
-                        <div class="attach-name">
-                          <a class="n" href="#" download="会社案内_2024.pdf" title="会社案内_2024.pdf">会社案内_2024.pdf</a>
-                          <span class="meta">2.7 KB · 2024/03/15 · 山田 健一</span>
-                        </div>
-                        <div class="attach-actions">
-                          <!-- <button class="icon-btn" type="button" title="プレビュー">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z"/><circle cx="12" cy="12" r="3"/></svg>
-                          </button> -->
-                          <button class="icon-btn" type="button" title="ダウンロード">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
-                          </button>
-                          <button class="icon-btn danger" type="button" title="削除">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m6 6 1 14h10l1-14"/></svg>
-                          </button>
-                        </div>
-                      </div>
-                      <div class="attach-item">
-                        <div class="attach-icon xls" title="Excelファイル">XLS</div>
-                        <div class="attach-name">
-                          <a class="n" href="#" download="取引基本契約書_2023.xlsx" title="取引基本契約書_2023.xlsx">取引基本契約書_2023.xlsx</a>
-                          <span class="meta">5.4 KB · 2023/06/15 · 鈴木 健</span>
-                        </div>
-                        <div class="attach-actions">
-                          <button class="icon-btn" type="button" title="ダウンロード">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
-                          </button>
-                          <button class="icon-btn danger" type="button" title="削除">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m6 6 1 14h10l1-14"/></svg>
-                          </button>
-                        </div>
-                      </div>
+                    <div class="attach-list" id="companyAttachList" style="flex-grow: 1;">
                     </div>
-                    <div class="dropzone compact">＋ ファイルを追加 / ドラッグ&ドロップ</div>
+                    <div class="dropzone compact">＋</div>
                   </div>
                 </div>
               </div>

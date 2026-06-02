@@ -4,6 +4,7 @@ import { showToast } from './toast.js';
 import * as XLSX from 'xlsx';
 
 const STORAGE_PREFIX = 'smos.columnSettings';
+const DIALOG_SIZE_STORAGE_KEY = `${STORAGE_PREFIX}.dialogSize`;
 
 /** Số cột mặc định hiển thị (会社メニュー → 会社一覧) — khớp wireframe gốc */
 const DEFAULT_VISIBLE_COUNT = { '1-1': 11 };
@@ -77,6 +78,38 @@ let state = {
   items: [],
   selectedIdx: -1,
 };
+
+function loadDialogSize() {
+  try {
+    const raw = localStorage.getItem(DIALOG_SIZE_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    const width = Number(parsed?.width);
+    const height = Number(parsed?.height);
+    if (!Number.isFinite(width) || !Number.isFinite(height)) return null;
+    return { width, height };
+  } catch {
+    return null;
+  }
+}
+
+function saveDialogSize(width, height) {
+  try {
+    localStorage.setItem(DIALOG_SIZE_STORAGE_KEY, JSON.stringify({ width, height }));
+  } catch {
+    /* ignore */
+  }
+}
+
+function applyDialogSize(dlg) {
+  if (!dlg) return;
+  const saved = loadDialogSize();
+  if (!saved) return;
+  const w = Math.max(640, Math.min(window.innerWidth - 24, saved.width));
+  const h = Math.max(700, Math.min(window.innerHeight - 24, saved.height));
+  dlg.style.width = `${Math.round(w)}px`;
+  dlg.style.height = `${Math.round(h)}px`;
+}
 
 function fillSelect(select, options, selectedValue) {
   if (!select) return;
@@ -360,19 +393,33 @@ export function refreshColumnSettingsView() {
 
 export function openColumnSettingsDialog() {
   initColumnSettings();
+  const dlg = q('dlgColumnSettings');
+  applyDialogSize(dlg);
   const menuSel = q('colMenuSelect');
   if (menuSel) state.menuVal = Number(menuSel.value) || state.menuVal;
   const subSel = q('colSubMenuSelect');
   if (subSel) state.subVal = Number(subSel.value) || state.subVal;
   state.selectedIdx = 0;
   refreshColumnSettingsView();
-  q('dlgColumnSettings')?.showModal();
+  dlg?.showModal();
 }
 
 export function initColumnSettings() {
   const dlg = q('dlgColumnSettings');
   if (!dlg || dlg.dataset.colSettingsBound) return;
   dlg.dataset.colSettingsBound = '1';
+  applyDialogSize(dlg);
+
+  if (typeof ResizeObserver !== 'undefined') {
+    const ro = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      const width = entry.contentRect.width;
+      const height = entry.contentRect.height;
+      if (width > 0 && height > 0) saveDialogSize(width, height);
+    });
+    ro.observe(dlg);
+  }
 
   const menuSel = q('colMenuSelect');
   const subSel = q('colSubMenuSelect');
@@ -417,6 +464,7 @@ export function initColumnSettings() {
   const fileInput = q('colSettingsFileInput');
   const dropzone = q('colSettingsDropzone');
   const browse = q('btnColFileBrowse');
+  const resizeHandle = q('colSettingsResizeHandle');
 
   browse?.addEventListener('click', () => fileInput?.click());
   dropzone?.addEventListener('click', () => fileInput?.click());
@@ -451,13 +499,59 @@ export function initColumnSettings() {
     importFromFile(file);
   });
 
+  resizeHandle?.addEventListener('mousedown', (e) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startWidth = dlg.offsetWidth;
+    const startHeight = dlg.offsetHeight;
+    const minWidth = 640;
+    const minHeight = 700;
+    let lastWidth = startWidth;
+    let lastHeight = startHeight;
+    let rafId = 0;
+
+    const onMove = (moveEvent) => {
+      const nextWidth = Math.max(minWidth, Math.min(window.innerWidth - 16, startWidth + (moveEvent.clientX - startX)));
+      const nextHeight = Math.max(minHeight, Math.min(window.innerHeight - 16, startHeight + (moveEvent.clientY - startY)));
+      lastWidth = nextWidth;
+      lastHeight = nextHeight;
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(() => {
+        dlg.style.width = `${Math.round(lastWidth)}px`;
+        dlg.style.height = `${Math.round(lastHeight)}px`;
+        rafId = 0;
+      });
+    };
+
+    const onUp = () => {
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+        dlg.style.width = `${Math.round(lastWidth)}px`;
+        dlg.style.height = `${Math.round(lastHeight)}px`;
+        rafId = 0;
+      }
+      saveDialogSize(lastWidth, lastHeight);
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      document.body.style.userSelect = '';
+      document.body.style.cursor = '';
+    };
+
+    document.body.style.userSelect = 'none';
+    document.body.style.cursor = 'nwse-resize';
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+  });
+
   q('btnSaveColumnSettings')?.addEventListener('click', () => {
     saveColumnSettings(state.menuVal, state.subVal, state.items);
     window.dispatchEvent(
       new CustomEvent('smos:column-settings-updated', {
-        detail: { menuVal: state.menuVal, subVal: state.subVal },
+        detail: { menuVal: state.menuVal, subVal: state.subVal, items: [...state.items] },
       }),
     );
+    window.dispatchEvent(new CustomEvent('smos:column-settings-saved'));
     showToast('列の設定を保存しました');
     dlg.close();
   });
