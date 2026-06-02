@@ -1997,11 +1997,11 @@
   background: #fbfcfd;
 }
 
-.company-screen table.t tbody tr:hover td {
+/* .company-screen table.t tbody tr:hover td {
   background: #cfe5ff;
   cursor: pointer;
   transition: background-color .12s ease;
-}
+} */
 
 .company-screen table.t tbody tr.selected td {
   background: #cfe5ff;
