@@ -2930,6 +2930,11 @@ select.input {
   padding: 8px 10px;
   font-size: 10px;
 }
+.dropzone.compact.drag-over {
+  border-color: var(--brand-500);
+  background: #eaf2ff;
+  color: var(--brand-700);
+}
 .form-4col .dropzone.compact {
   padding: 8px 10px;
   font-size: 10px;
@@ -3178,6 +3183,20 @@ select.input {
   flex-direction: column;
   gap: 6px;
   margin-bottom: 6px;
+  border-radius: var(--r);
+  border: 1px solid var(--border-2);
+  padding: 6px 8px;
+  background: #fff;
+  transition: border-color 0.12s, background 0.12s;
+  min-height: 85px;
+  max-height: 85px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-3) var(--surface-2);
+}
+.attach-list.drag-over {
+  border-color: var(--brand-500);
+  background: #f4f8ff;
 }
 
 .attach-item {
@@ -3185,11 +3204,11 @@ select.input {
   grid-template-columns: 28px 1fr auto;
   align-items: center;
   gap: 8px;
-  padding: 6px 8px;
+  /* padding: 6px 8px;
   border: 1px solid var(--border-2);
   border-radius: var(--r);
   background: #fff;
-  transition: border-color 0.12s, background 0.12s;
+  transition: border-color 0.12s, background 0.12s; */
 }
 
 .attach-item:hover {
@@ -3213,6 +3232,12 @@ select.input {
 
 .attach-icon.pdf { background: #d03b3b; }
 .attach-icon.xls { background: #157f47; }
+.attach-icon.doc { background: #2c6dd7; }
+.attach-icon.img { background: #8a3fd1; }
+.attach-icon.other {
+  background: linear-gradient(135deg, #4c5568, #2d3648);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
 
 .attach-name {
   min-width: 0;
