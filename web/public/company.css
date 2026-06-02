@@ -1155,7 +1155,8 @@
 .modal-form-grid .form-row label {
     font-size: var(--fc-label-fs);
     font-weight: 500;
-    color: var(--text-2);
+    /* color: var(--text-2); */
+    color: #1e50a2;
     line-height: 1.35;
     white-space: normal;
     margin: 0;
