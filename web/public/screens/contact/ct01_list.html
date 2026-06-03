@@ -69,8 +69,8 @@
             </div>
             <select id="contactPageSize" class="pgsize-trigger" aria-label="page size">
               <option value="10">10件</option>
-              <option value="25" selected>25件</option>
-              <option value="50">50件</option>
+              <option value="25">25件</option>
+              <option value="50" selected>50件</option>
               <option value="100">100件</option>
             </select>
             <div class="meta-right">
@@ -104,7 +104,7 @@
             <section class="company-panel active" data-contact-panel="detail" role="tabpanel">
               <div class="panel-detail">
               <div class="panel-detail-body">
-              <div class="detail-form">
+              <div class="detail-form" style="grid-template-columns: 400px 400px 400px minmax(300px, 1fr); gap: 20px; min-width: 100%; width: max-content;">
                 <!-- Left Column: Name & Contact Info -->
                 <div class="form-col" style="flex: 1.2;" id="contactDetailCol1">
                   <div class="form-row">
@@ -133,14 +133,12 @@
                   </div>
                   <div class="form-row">
                     <label>会社名 <span class="req">*</span></label>
-                    <div class="search-input-group">
-                      <input id="mainContactCompanyName" type="text" value="旭川エレクトロニクスサービス株式会社" />
+                    <div class="search-input-group" style="width: 100%;">
+                    <input id="mainContactCompanyName" type="text" value="旭川エレクトロニクスサービス株式会社" />
                       <button class="icon-btn-inline" id="btnMainContactLookupCompany" type="button">🔍</button>
-                      <!-- (CP05) -->
                       <button class="btn btn-secondary" id="btnMainContactCreateCompany"
                         style="padding: 0 10px; color: #ff6600; border-color: #ff6600; width: 80px;"
                         type="button">新規</button>
-                      <!-- (CP03) -->
                     </div>
                   </div>
                   <div class="form-row">
@@ -189,22 +187,22 @@
                       <input type="text" value="生産技術開発部次長" />
                     </div>
                   </div>
-                  <div class="form-row">
+                  <!-- <div class="form-row">
                     <label></label>
                     <div class="check-group" >
                       <label class="check" style="width: fit-content;"><input type="checkbox" style="margin-left: 0;" /> 資料禁止</label>
                       <label class="check"><input type="checkbox" /> TEL禁止</label>
                       <label class="check"><input type="checkbox" /> TEL注意</label>
                     </div>
-                  </div>
+                  </div> -->
                 </div>
                 <!-- Middle Column: Remarks & Company Info -->
-                <div class="form-row" style="flex:1;" id="contactDetailCol2">
+                <div class="form-row" style="height: 100%;" id="contactDetailCol2">
                   <label>備考</label>
                   <textarea id="contactDetailRemark" style="min-height: 150px; flex: 1;">社内でのシステム導入プロジェクトに参画中。</textarea>
                 </div>
                 <div class="form-col" style="flex: 1.5;" id="contactDetailCol3">
-                  <div class="form-row" style="margin-top: 15px;">
+                  <div class="form-row">
                     <label>フォロー予定</label>
                     <input type="date" />
                   </div>
@@ -262,9 +260,17 @@
                       <input disabled="" type="text" />
                     </div>
                   </div>
+                  <div class="form-row">
+                    <label></label>
+                    <div class="check-group" >
+                      <label class="check" style="width: fit-content;"><input type="checkbox" style="margin-left: 0;" /> 資料禁止</label>
+                      <label class="check"><input type="checkbox" /> TEL禁止</label>
+                      <label class="check"><input type="checkbox" /> TEL注意</label>
+                    </div>
+                  </div>
                 </div>
                 <!-- Right Column: Free fields -->
-                <div class="form-col" style="flex: 0.8; padding-right: 16px;" id="contactDetailCol4">
+                <div class="form-col" style="flex: 0.8;" id="contactDetailCol4">
                   <div class="form-row"><label>担当者自由使用欄1</label><input type="text" /></div>
                   <div class="form-row"><label>担当者自由使用欄2</label><input type="text" /></div>
                   <div class="form-row"><label>担当者自由使用欄3</label><input type="text" /></div>
@@ -304,9 +310,9 @@
                 <span id="contactActivitiesPageTotal">/ 1</span>
               </div>
               <select id="contactActivitiesPageSize" class="pgsize-trigger" aria-label="page size">
-                <option value="10" selected>10件</option>
+                <option value="10">10件</option>
                 <option value="25">25件</option>
-                <option value="50">50件</option>
+                <option value="50" selected>50件</option>
                 <option value="100">100件</option>
               </select>
               <div class="meta-right">
@@ -334,9 +340,9 @@
                 <span id="contactProjectsPageTotal">/ 1</span>
               </div>
               <select id="contactProjectsPageSize" class="pgsize-trigger" aria-label="page size">
-                <option value="10" selected>10件</option>
+                <option value="10">10件</option>
                 <option value="25">25件</option>
-                <option value="50">50件</option>
+                <option value="50" selected>50件</option>
                 <option value="100">100件</option>
               </select>
               <div class="meta-right">

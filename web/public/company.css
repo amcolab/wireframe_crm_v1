@@ -854,7 +854,7 @@
 
 #activityDetailCol2 .form-row > label,
 #activityDetailCol2 .form-row .sub > label {
-  min-width: 60.02px;
+  min-width: 48.02px;
 }
 
 #activityDetailCol3 .form-row > label,
@@ -1155,7 +1155,8 @@
 .modal-form-grid .form-row label {
     font-size: var(--fc-label-fs);
     font-weight: 500;
-    color: var(--text-2);
+    /* color: var(--text-2); */
+    color: #1e50a2;
     line-height: 1.35;
     white-space: normal;
     margin: 0;
@@ -1870,8 +1871,8 @@
   position: sticky;
   top: 0;
   z-index: 5;
-  background: #f8fafc;
-  color: #475569;
+  background: #f0f0f0;
+  color: #282e37;
   font-weight: 600;
   font-size: 11px;
   text-align: left;
@@ -1911,6 +1912,223 @@
 .company-screen table.t thead th[data-sort-key]:hover {
   background: #eef2f8;
   padding-right: 22px;
+}
+
+/* Per-column filter row (ag-Grid floating filter style) */
+.company-screen table.t thead tr.col-filter-row th.col-filter-cell {
+  position: sticky;
+  /* top: var(--t-head-sort-h, 30px); */
+  z-index: 5;
+  padding: 3px 6px;
+  padding-bottom: 5px;
+  background: #f8fafc;
+  color: #64748b;
+  font-weight: 400;
+  border-right: 1px solid #e2e8f0;
+  border-bottom: none;
+  cursor: default;
+  user-select: auto;
+  box-shadow:
+    inset 0 -2px 0 #cbd5e1,
+    0 4px 6px -4px rgba(15, 27, 45, 0.08);
+}
+
+.company-screen table.t thead tr.col-filter-row th.col-filter-cell:last-child {
+  border-right: none;
+}
+
+.company-screen table.t thead tr.col-filter-row th .col-filter-wrap {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.company-screen table.t thead tr.col-filter-row th .col-filter-input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  height: 22px;
+  padding: 0 4px;
+  font-size: 11px;
+  line-height: 20px;
+  border: 1px solid #cbd5e1;
+  border-radius: 3px;
+  background: #fff;
+  color: #282e37;
+  box-sizing: border-box;
+}
+
+.company-screen table.t thead tr.col-filter-row th .col-filter-input::placeholder {
+  color: #94a3b8;
+}
+
+.company-screen table.t thead tr.col-filter-row th .col-filter-input:focus {
+  border-color: var(--brand-600);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(30, 80, 162, 0.12);
+}
+
+.company-screen table.t thead tr.col-filter-row th.col-filter-active .col-filter-input {
+  border-color: var(--brand-600);
+  background: #f1f5ff;
+}
+
+.company-screen table.t thead tr.col-filter-row th .col-filter-clear {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  border: none;
+  border-radius: 2px;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.company-screen table.t thead tr.col-filter-row th .col-filter-clear:hover {
+  color: #64748b;
+  background: #e2e8f0;
+}
+
+.company-screen table.t thead tr.col-filter-row th .col-filter-clear[hidden] {
+  display: none;
+}
+
+.company-screen table.t thead tr.col-filter-row th.col-filter-cell--set .col-filter-wrap--set {
+  justify-content: space-between;
+}
+
+.company-screen table.t thead tr.col-filter-row th .col-filter-set-summary {
+  flex: 1;
+  min-width: 0;
+  font-size: 10px;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 2px;
+}
+
+.company-screen table.t thead tr.col-filter-row th.col-filter-active .col-filter-set-summary {
+  color: var(--brand-700);
+  font-weight: 600;
+}
+
+.company-screen table.t thead tr.col-filter-row th .col-filter-btn {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 3px;
+  background: #fff;
+  color: #64748b;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.company-screen table.t thead tr.col-filter-row th .col-filter-btn:hover {
+  border-color: var(--brand-600);
+  color: var(--brand-600);
+  background: #f8fafc;
+}
+
+.company-screen table.t thead tr.col-filter-row th.col-filter-active .col-filter-btn {
+  border-color: var(--brand-600);
+  color: var(--brand-600);
+  background: #f1f5ff;
+}
+
+/* Set filter popup (ag-Grid set filter style) */
+.col-set-filter-popup {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: var(--r, 6px);
+  box-shadow: 0 8px 24px rgba(15, 27, 45, 0.14);
+  padding: 8px 0 6px;
+  max-height: min(320px, 50vh);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.col-set-filter-popup .col-set-filter-head {
+  padding: 0 8px 6px;
+  border-bottom: 1px solid var(--border-2, #e2e8f0);
+}
+
+.col-set-filter-popup .col-set-filter-search {
+  width: 100%;
+  height: 24px;
+  padding: 0 8px;
+  font-size: 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+
+.col-set-filter-popup .col-set-filter-search:focus {
+  border-color: var(--brand-600);
+  outline: none;
+}
+
+.col-set-filter-popup .col-set-filter-all {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: #282e37;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-2, #e2e8f0);
+}
+
+.col-set-filter-popup .col-set-filter-all input {
+  margin: 0;
+}
+
+.col-set-filter-popup .col-set-filter-list {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  padding: 4px 0;
+}
+
+.col-set-filter-popup .col-set-filter-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  margin: 0;
+  font-size: 11px;
+  color: #282e37;
+  cursor: pointer;
+}
+
+.col-set-filter-popup .col-set-filter-item:hover {
+  background: #f1f5f9;
+}
+
+.col-set-filter-popup .col-set-filter-item input {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.col-set-filter-popup .col-set-filter-item span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .company-screen table.t thead th.sort-asc,
@@ -1994,7 +2212,7 @@
 }
 
 .company-screen table.t tbody tr:nth-child(even) td {
-  background: #fbfcfd;
+  background: #f3f3f3;
 }
 
 /* .company-screen table.t tbody tr:hover td {
@@ -3089,11 +3307,10 @@ select.input {
 }
 .company-tabpanels {
   padding: 0 !important;
-  overflow: visible !important;
 }
 
 .section.active {
-  overflow: visible;
+  overflow: hidden;
   min-height: 0;
 }
 
@@ -3109,7 +3326,8 @@ select.input {
   flex-direction: column;
   height: auto;
   min-height: 0;
-  flex: 0 1 auto;
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 .company-panel .panel-body {
   padding: 10px !important;
@@ -3492,52 +3710,62 @@ body.col-resizing * {
   color: var(--text-1);
 }
 
-/* Entity list screens (CP01/CT01/AT01/PR01) — fill remaining viewport height */
+/* Entity list screens (CP01/CT01/AT01/PR01) — fill viewport; scroll inside list + detail panes */
 .section-body {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .section-body .company-screen {
-  flex: 1 0 auto;
-  min-height: 0;
-}
-
-.section-body .company-main {
-  flex: 1 0 auto;
-  min-height: 0;
-}
-
-.section-body .company-detail {
-  flex: 1 0 auto;
-  min-height: 0;
-}
-
-.section-body .company-detail.detail-tab-mode {
-  flex: 1 0 auto;
-  min-height: 0;
-}
-
-.section-body .company-detail.detail-tab-mode .company-tabpanels,
-.section-body .company-detail.table-tab-mode .company-tabpanels {
-  flex: 1 0 auto;
-  min-height: 0;
-}
-
-.section-body .company-detail.detail-tab-mode .panel-detail {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
 }
 
-.section-body .company-detail.detail-tab-mode .panel-detail-body {
-  flex: 1 0 auto;
+.section-body .company-main {
+  flex: 1 1 auto;
   min-height: 0;
-  overflow-x: auto;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.section-body .company-detail {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Override .company-detail.detail-tab-mode { flex: 0 0 auto } — pane must shrink, scroll inside body */
+.section-body .company-detail.detail-tab-mode {
+  flex: 1 1 auto !important;
+  min-height: 0;
+  height: auto;
+  max-height: none;
+  overflow: hidden;
+}
+
+.section-body .company-detail.detail-tab-mode .company-tabpanels,
+.section-body .company-detail.table-tab-mode .company-tabpanels {
+  flex: 1 1 auto !important;
+  min-height: 0;
+  overflow: hidden !important;
+}
+
+.section-body .company-detail.detail-tab-mode .panel-detail {
+  flex: 1 1 auto !important;
+  min-height: 0;
+  overflow: hidden !important;
+}
+
+.section-body .company-detail.detail-tab-mode .panel-detail-body {
+  flex: 1 1 auto !important;
+  min-height: 0;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
 }
 
 .section-body .company-detail > .tabs-underline {
@@ -3545,15 +3773,15 @@ body.col-resizing * {
 }
 
 .section-body .company-tabpanels {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: hidden !important;
 }
 
 .section-body .company-panel.active {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -3561,18 +3789,115 @@ body.col-resizing * {
 }
 
 .section-body .company-detail.table-tab-mode .tab-table-panel {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
   min-height: 0;
 }
 
 .section-body .company-detail.table-tab-mode .tab-table-wrap {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
+  min-height: 160px;
+  max-height: none;
+  overflow: auto;
+}
+
+/* Entity roots (CP01/CT01/AT01/PR01) — scroll inside list + detail, not whole page */
+#company-root,
+#contact-root,
+#activity-root,
+#project-root {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#company-root .company-screen,
+#contact-root .company-screen,
+#activity-root .company-screen,
+#project-root .company-screen {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#company-root .company-main,
+#contact-root .company-main,
+#activity-root .company-main,
+#project-root .company-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#company-root .company-detail,
+#contact-root .company-detail,
+#activity-root .company-detail,
+#project-root .company-detail {
+  flex: 1 1 auto !important;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#company-root .company-detail.detail-tab-mode .company-tabpanels,
+#contact-root .company-detail.detail-tab-mode .company-tabpanels,
+#activity-root .company-detail.detail-tab-mode .company-tabpanels,
+#project-root .company-detail.detail-tab-mode .company-tabpanels,
+#company-root .company-detail.table-tab-mode .company-tabpanels,
+#contact-root .company-detail.table-tab-mode .company-tabpanels,
+#project-root .company-detail.table-tab-mode .company-tabpanels {
+  flex: 1 1 auto !important;
+  min-height: 0;
+  overflow: hidden !important;
+}
+
+#company-root .company-detail.detail-tab-mode .panel-detail,
+#company-root .company-detail.detail-tab-mode > .panel-detail,
+#contact-root .company-detail.detail-tab-mode .panel-detail,
+#activity-root .company-detail.detail-tab-mode .panel-detail,
+#activity-root .company-detail.detail-tab-mode > .panel-detail,
+#project-root .company-detail.detail-tab-mode .panel-detail {
+  flex: 1 1 auto !important;
+  min-height: 0;
+  overflow: hidden !important;
+}
+
+#company-root .company-detail.detail-tab-mode .panel-detail-body,
+#contact-root .company-detail.detail-tab-mode .panel-detail-body,
+#activity-root .company-detail.detail-tab-mode .panel-detail-body,
+#project-root .company-detail.detail-tab-mode .panel-detail-body {
+  flex: 1 1 auto !important;
+  min-height: 0;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+}
+
+#company-root .company-panel.active,
+#contact-root .company-panel.active,
+#project-root .company-panel.active {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#company-root .company-detail.table-tab-mode .tab-table-panel,
+#contact-root .company-detail.table-tab-mode .tab-table-panel,
+#project-root .company-detail.table-tab-mode .tab-table-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+#company-root .company-detail.table-tab-mode .tab-table-wrap,
+#contact-root .company-detail.table-tab-mode .tab-table-wrap,
+#project-root .company-detail.table-tab-mode .tab-table-wrap {
+  flex: 1 1 auto;
   min-height: 160px;
   max-height: none;
   overflow: auto;
 }
 
 /* Entity detail panels — closer to CP01 form-4col (CT01/AT01/PR01) */
+#company-root .company-detail,
 #contact-root .company-detail,
 #activity-root .company-detail,
 #project-root .company-detail {

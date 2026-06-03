@@ -75,8 +75,8 @@
             </div>
             <select id="activityPageSize" class="pgsize-trigger" aria-label="page size">
               <option value="10">10件</option>
-              <option value="25" selected>25件</option>
-              <option value="50">50件</option>
+              <option value="25">25件</option>
+              <option value="50" selected>50件</option>
               <option value="100">100件</option>
             </select>
             <div class="meta-right">
@@ -90,7 +90,7 @@
         <div class="company-detail detail-tab-mode">
           <div class="panel-detail">
             <div class="panel-detail-body">
-            <div class="detail-form" style="overflow: auto;">
+              <div class="detail-form" style="grid-template-columns: 400px 400px 400px minmax(300px, 1fr); gap: 20px; min-width: 100%; width: max-content;">
               <!-- Col 1 -->
               <div class="form-col" id="activityDetailCol1">
                 <div class="form-row">
@@ -192,10 +192,10 @@
                 </div>
               </div>
               <!-- Col 2 -->
-              <div class="form-col" id="activityDetailCol2">
-                <div class="form-row form-row--remark">
+              <div class="form-col" id="activityDetailCol2" style="height: 100%;">
+                <div class="form-row form-row--remark" style="height: 100%;">
                   <label>コメント</label>
-                  <textarea id="atDetailComment" class="input" rows="4" style="flex: 1;">wwww</textarea>
+                  <textarea id="atDetailComment" class="input" rows="4" style="flex: 1; min-height: 100%;">wwww</textarea>
                 </div>
               </div>
               <!-- Col 3 -->
@@ -312,6 +312,7 @@
                   <div class="attach-box attach-box--compact" style="flex: 1;">ここにドラッグ＆ドロップ</div>
                 </div>
               </div>
+              </div>
             </div>
             <div class="form-foot-split">
                 <div class="left">
@@ -320,7 +321,6 @@
                 <div class="right">
                   <button class="btn btn-primary" id="btnAtDetailSave" type="button">保存</button>
                 </div>
-            </div>
             </div>
           </div>
         </div>
