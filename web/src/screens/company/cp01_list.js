@@ -37,11 +37,11 @@ let state = {
   advanced: null,
 
   contactsPage: 1,
-  contactsPageSize: 10,
+  contactsPageSize: 50,
   activitiesPage: 1,
-  activitiesPageSize: 10,
+  activitiesPageSize: 50,
   projectsPage: 1,
-  projectsPageSize: 10
+  projectsPageSize: 50
 };
 
 let isReady = false;
@@ -610,7 +610,7 @@ function bindUi() {
       if (c) renderFn(c);
     });
     q(`${prefix.toLowerCase()}PageSize`)?.addEventListener('change', (e) => {
-      state[`${prefix.toLowerCase()}PageSize`] = parseInt(e.target.value) || 10;
+      state[`${prefix.toLowerCase()}PageSize`] = parseInt(e.target.value) || 50;
       state[`${prefix.toLowerCase()}Page`] = 1;
       const c = getSelectedCompany();
       if (c) renderFn(c);

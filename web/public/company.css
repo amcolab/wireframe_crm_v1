@@ -3090,11 +3090,10 @@ select.input {
 }
 .company-tabpanels {
   padding: 0 !important;
-  overflow: visible !important;
 }
 
 .section.active {
-  overflow: visible;
+  overflow: hidden;
   min-height: 0;
 }
 
@@ -3110,7 +3109,8 @@ select.input {
   flex-direction: column;
   height: auto;
   min-height: 0;
-  flex: 0 1 auto;
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 .company-panel .panel-body {
   padding: 10px !important;
@@ -3493,52 +3493,62 @@ body.col-resizing * {
   color: var(--text-1);
 }
 
-/* Entity list screens (CP01/CT01/AT01/PR01) — fill remaining viewport height */
+/* Entity list screens (CP01/CT01/AT01/PR01) — fill viewport; scroll inside list + detail panes */
 .section-body {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .section-body .company-screen {
-  flex: 1 0 auto;
-  min-height: 0;
-}
-
-.section-body .company-main {
-  flex: 1 0 auto;
-  min-height: 0;
-}
-
-.section-body .company-detail {
-  flex: 1 0 auto;
-  min-height: 0;
-}
-
-.section-body .company-detail.detail-tab-mode {
-  flex: 1 0 auto;
-  min-height: 0;
-}
-
-.section-body .company-detail.detail-tab-mode .company-tabpanels,
-.section-body .company-detail.table-tab-mode .company-tabpanels {
-  flex: 1 0 auto;
-  min-height: 0;
-}
-
-.section-body .company-detail.detail-tab-mode .panel-detail {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
 }
 
-.section-body .company-detail.detail-tab-mode .panel-detail-body {
-  flex: 1 0 auto;
+.section-body .company-main {
+  flex: 1 1 auto;
   min-height: 0;
-  overflow-x: auto;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.section-body .company-detail {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Override .company-detail.detail-tab-mode { flex: 0 0 auto } — pane must shrink, scroll inside body */
+.section-body .company-detail.detail-tab-mode {
+  flex: 1 1 auto !important;
+  min-height: 0;
+  height: auto;
+  max-height: none;
+  overflow: hidden;
+}
+
+.section-body .company-detail.detail-tab-mode .company-tabpanels,
+.section-body .company-detail.table-tab-mode .company-tabpanels {
+  flex: 1 1 auto !important;
+  min-height: 0;
+  overflow: hidden !important;
+}
+
+.section-body .company-detail.detail-tab-mode .panel-detail {
+  flex: 1 1 auto !important;
+  min-height: 0;
+  overflow: hidden !important;
+}
+
+.section-body .company-detail.detail-tab-mode .panel-detail-body {
+  flex: 1 1 auto !important;
+  min-height: 0;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
 }
 
 .section-body .company-detail > .tabs-underline {
@@ -3546,15 +3556,15 @@ body.col-resizing * {
 }
 
 .section-body .company-tabpanels {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: hidden !important;
 }
 
 .section-body .company-panel.active {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -3562,18 +3572,115 @@ body.col-resizing * {
 }
 
 .section-body .company-detail.table-tab-mode .tab-table-panel {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
   min-height: 0;
 }
 
 .section-body .company-detail.table-tab-mode .tab-table-wrap {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
+  min-height: 160px;
+  max-height: none;
+  overflow: auto;
+}
+
+/* Entity roots (CP01/CT01/AT01/PR01) — scroll inside list + detail, not whole page */
+#company-root,
+#contact-root,
+#activity-root,
+#project-root {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#company-root .company-screen,
+#contact-root .company-screen,
+#activity-root .company-screen,
+#project-root .company-screen {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#company-root .company-main,
+#contact-root .company-main,
+#activity-root .company-main,
+#project-root .company-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#company-root .company-detail,
+#contact-root .company-detail,
+#activity-root .company-detail,
+#project-root .company-detail {
+  flex: 1 1 auto !important;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#company-root .company-detail.detail-tab-mode .company-tabpanels,
+#contact-root .company-detail.detail-tab-mode .company-tabpanels,
+#activity-root .company-detail.detail-tab-mode .company-tabpanels,
+#project-root .company-detail.detail-tab-mode .company-tabpanels,
+#company-root .company-detail.table-tab-mode .company-tabpanels,
+#contact-root .company-detail.table-tab-mode .company-tabpanels,
+#project-root .company-detail.table-tab-mode .company-tabpanels {
+  flex: 1 1 auto !important;
+  min-height: 0;
+  overflow: hidden !important;
+}
+
+#company-root .company-detail.detail-tab-mode .panel-detail,
+#company-root .company-detail.detail-tab-mode > .panel-detail,
+#contact-root .company-detail.detail-tab-mode .panel-detail,
+#activity-root .company-detail.detail-tab-mode .panel-detail,
+#activity-root .company-detail.detail-tab-mode > .panel-detail,
+#project-root .company-detail.detail-tab-mode .panel-detail {
+  flex: 1 1 auto !important;
+  min-height: 0;
+  overflow: hidden !important;
+}
+
+#company-root .company-detail.detail-tab-mode .panel-detail-body,
+#contact-root .company-detail.detail-tab-mode .panel-detail-body,
+#activity-root .company-detail.detail-tab-mode .panel-detail-body,
+#project-root .company-detail.detail-tab-mode .panel-detail-body {
+  flex: 1 1 auto !important;
+  min-height: 0;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+}
+
+#company-root .company-panel.active,
+#contact-root .company-panel.active,
+#project-root .company-panel.active {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#company-root .company-detail.table-tab-mode .tab-table-panel,
+#contact-root .company-detail.table-tab-mode .tab-table-panel,
+#project-root .company-detail.table-tab-mode .tab-table-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+#company-root .company-detail.table-tab-mode .tab-table-wrap,
+#contact-root .company-detail.table-tab-mode .tab-table-wrap,
+#project-root .company-detail.table-tab-mode .tab-table-wrap {
+  flex: 1 1 auto;
   min-height: 160px;
   max-height: none;
   overflow: auto;
 }
 
 /* Entity detail panels — closer to CP01 form-4col (CT01/AT01/PR01) */
+#company-root .company-detail,
 #contact-root .company-detail,
 #activity-root .company-detail,
 #project-root .company-detail {

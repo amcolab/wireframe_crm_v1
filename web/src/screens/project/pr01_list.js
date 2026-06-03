@@ -36,7 +36,7 @@ let state = {
   pageSize: 50,
   advanced: null,
   projectActivitiesPage: 1,
-  projectActivitiesPageSize: 10,
+  projectActivitiesPageSize: 50,
 };
 
 let tableBound = false;

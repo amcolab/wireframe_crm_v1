@@ -110,7 +110,7 @@ export function bindTabPager(key, state, pageKey, sizeKey, getItems, renderList)
     go();
   });
   q(`${key}PageSize`)?.addEventListener('change', (e) => {
-    state[sizeKey] = parseInt(e.target.value, 10) || 10;
+    state[sizeKey] = parseInt(e.target.value, 10) || 50;
     state[pageKey] = 1;
     go();
   });
