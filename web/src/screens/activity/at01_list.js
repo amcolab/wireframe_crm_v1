@@ -20,7 +20,7 @@ let state = {
   filtered: [...mockActivities],
   selectedId: mockActivities[0]?.id ?? null,
   page: 1,
-  pageSize: 25,
+  pageSize: 50,
   advanced: null,
 };
 
@@ -127,7 +127,7 @@ function bindUi() {
     render();
   });
   q('activityPageSize')?.addEventListener('change', (e) => {
-    state.pageSize = parseInt(e.target.value, 10) || 25;
+    state.pageSize = parseInt(e.target.value, 10) || 50;
     state.page = 1;
     render();
   });

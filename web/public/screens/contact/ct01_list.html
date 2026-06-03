@@ -69,8 +69,8 @@
             </div>
             <select id="contactPageSize" class="pgsize-trigger" aria-label="page size">
               <option value="10">10件</option>
-              <option value="25" selected>25件</option>
-              <option value="50">50件</option>
+              <option value="25">25件</option>
+              <option value="50" selected>50件</option>
               <option value="100">100件</option>
             </select>
             <div class="meta-right">
@@ -104,7 +104,7 @@
             <section class="company-panel active" data-contact-panel="detail" role="tabpanel">
               <div class="panel-detail">
               <div class="panel-detail-body">
-              <div class="detail-form">
+              <div class="detail-form" style="grid-template-columns: 400px 400px 400px minmax(300px, 1fr); gap: 20px; min-width: 100%; width: max-content;">
                 <!-- Left Column: Name & Contact Info -->
                 <div class="form-col" style="flex: 1.2;" id="contactDetailCol1">
                   <div class="form-row">
@@ -270,7 +270,7 @@
                   </div>
                 </div>
                 <!-- Right Column: Free fields -->
-                <div class="form-col" style="flex: 0.8; padding-right: 16px;" id="contactDetailCol4">
+                <div class="form-col" style="flex: 0.8;" id="contactDetailCol4">
                   <div class="form-row"><label>担当者自由使用欄1</label><input type="text" /></div>
                   <div class="form-row"><label>担当者自由使用欄2</label><input type="text" /></div>
                   <div class="form-row"><label>担当者自由使用欄3</label><input type="text" /></div>

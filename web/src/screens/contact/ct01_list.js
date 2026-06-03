@@ -32,7 +32,7 @@ let state = {
   filtered: [...mockContacts],
   selectedId: mockContacts[0]?.id ? String(mockContacts[0].id) : null,
   page: 1,
-  pageSize: 25,
+  pageSize: 50,
   advanced: null,
   contactActivitiesPage: 1,
   contactActivitiesPageSize: 10,
@@ -214,7 +214,7 @@ function bindUi() {
     render();
   });
   q('contactPageSize')?.addEventListener('change', (e) => {
-    state.pageSize = parseInt(e.target.value, 10) || 25;
+    state.pageSize = parseInt(e.target.value, 10) || 50;
     state.page = 1;
     render();
   });

@@ -33,7 +33,7 @@ let state = {
   sortKey: 'id',
   sortDir: 'desc',
   page: 1,
-  pageSize: 25,
+  pageSize: 50,
   advanced: null,
 
   contactsPage: 1,
@@ -549,7 +549,7 @@ function bindUi() {
   });
 
   q('companyPageSize')?.addEventListener('change', (e) => {
-    state.pageSize = parseInt(e.target.value) || 100;
+    state.pageSize = parseInt(e.target.value, 10) || 50;
     state.page = 1;
     render();
   });
