@@ -26,6 +26,53 @@ import {
 import { openContactCreateDialog, resolveCompanyFromContact } from '../../utils/contactCreateForm.js';
 import { openActivityCreateDialog } from '../../utils/activityCreateForm.js';
 import { createTableCellCopy } from '../../utils/tableCellCopy.js';
+import {
+  clearColumnFilters,
+  captureColumnFilterFocus,
+  restoreColumnFilterFocus,
+  mergeSetOptions,
+  filterRowsWithColumnFilters,
+  ensureEntityListFilterRow,
+  initEntityListColumnFilters,
+  createColumnFilterRefreshHandler,
+} from '../../utils/entityListColumnFilters.js';
+
+const CONTACT_SET_OPTIONS = {
+  role: ['管理', '技術', '製造', '生産管理', 'R&D', '品質', '営業', 'デザイン'],
+  rank: ['次長', '係員', '本部長', '主任', '課長', '一般', '部長', '係長'],
+};
+
+const CONTACT_MAIN_COLUMNS = [
+  { key: 'companyId', label: '会社ID' },
+  { key: 'company', label: '会社名' },
+  { key: 'dept', label: '部署名' },
+  { key: 'last', label: '担当(姓)' },
+  { key: 'first', label: '担当(名)' },
+  { key: 'kana', label: 'フリガナ' },
+  { key: 'tel', label: 'TEL' },
+  { key: 'mobile', label: '携帯電話' },
+  { key: 'email', label: 'Email' },
+  { key: 'role', label: '職種', filterType: 'set' },
+  { key: 'rank', label: '職位', filterType: 'set' },
+  { key: 'pos', label: '役職名' },
+  { key: 'addr', label: '住所' },
+];
+
+function getContactSetOptions(key) {
+  return mergeSetOptions(CONTACT_SET_OPTIONS[key] || [], state.contacts, key);
+}
+
+function getContactDisplayFiltered() {
+  return filterRowsWithColumnFilters(
+    state.filtered,
+    state.columnFilters,
+    state.columnSetFilters,
+    CONTACT_MAIN_COLUMNS,
+    getContactSetOptions,
+  );
+}
+
+let refreshContactListFromFilters;
 
 let state = {
   contacts: [...mockContacts],
@@ -34,6 +81,8 @@ let state = {
   page: 1,
   pageSize: 50,
   advanced: null,
+  columnFilters: {},
+  columnSetFilters: {},
   contactActivitiesPage: 1,
   contactActivitiesPageSize: 50,
   contactProjectsPage: 1,
@@ -74,6 +123,23 @@ export function init() {
   setupResizableTable('#contactTable', {
     orderKey: 'smos.ct01.colOrder',
     widthKey: 'smos.ct01.colWidths',
+  });
+  refreshContactListFromFilters = createColumnFilterRefreshHandler({
+    tableId: 'contactTable',
+    state,
+    getDisplayRows: getContactDisplayFiltered,
+    updatePagerAndBody: updateContactPagerAndTable,
+    onSelectionChanged: (c) => {
+      fillDetailForm(c);
+      renderChildLists(c);
+    },
+  });
+  initEntityListColumnFilters({
+    tableId: 'contactTable',
+    columns: CONTACT_MAIN_COLUMNS,
+    state,
+    getSetOptions: getContactSetOptions,
+    onRefreshList: () => refreshContactListFromFilters(),
   });
   initResizer();
   const card = document.querySelector('#contact-root .company-detail');
@@ -193,6 +259,7 @@ function bindUi() {
       form: q('formContactAdvancedSearch'),
       state,
     });
+    clearColumnFilters(state.columnFilters, state.columnSetFilters);
     state.filtered = [...state.contacts];
     state.page = 1;
     state.selectedId = state.filtered[0]?.id ? String(state.filtered[0].id) : null;
@@ -202,11 +269,11 @@ function bindUi() {
   q('btnContactFirstPage')?.addEventListener('click', () => { state.page = 1; render(); });
   q('btnContactPrevPage')?.addEventListener('click', () => { if (state.page > 1) { state.page--; render(); } });
   q('btnContactNextPage')?.addEventListener('click', () => {
-    const totalPages = Math.ceil(state.filtered.length / state.pageSize);
+    const totalPages = Math.ceil(getContactDisplayFiltered().length / state.pageSize);
     if (state.page < totalPages) { state.page++; render(); }
   });
   q('btnContactLastPage')?.addEventListener('click', () => {
-    state.page = Math.max(1, Math.ceil(state.filtered.length / state.pageSize));
+    state.page = Math.max(1, Math.ceil(getContactDisplayFiltered().length / state.pageSize));
     render();
   });
   q('contactPageSelect')?.addEventListener('change', (e) => {
@@ -353,9 +420,19 @@ function bindContactTable() {
 }
 
 function render() {
+  const filterFocus = captureColumnFilterFocus('contactTable');
   syncSearchFiltersIndicator(q('btnContactAdvancedSearch'), state.advanced);
 
-  const total = state.filtered.length;
+  ensureEntityListFilterRow(
+    q('contactTable'),
+    CONTACT_MAIN_COLUMNS,
+    state.columnFilters,
+    state.columnSetFilters,
+    getContactSetOptions,
+  );
+
+  const display = getContactDisplayFiltered();
+  const total = display.length;
   const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
   if (state.page > totalPages) state.page = totalPages;
   if (state.page < 1) state.page = 1;
@@ -385,14 +462,50 @@ function render() {
     }
   }
 
-  renderContactTable(state.filtered.slice(start, end));
+  renderContactTable(display.slice(start, end));
 
-  const selected = getSelectedContact();
+  const selected = display.find(c => String(c.id) === String(state.selectedId)) || display[0] || null;
   if (selected) {
     state.selectedId = String(selected.id);
     fillDetailForm(selected);
     renderChildLists(selected);
   }
+
+  restoreColumnFilterFocus(filterFocus, 'contactTable');
+}
+
+function updateContactPagerAndTable(display) {
+  const total = display.length;
+  const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
+  if (state.page > totalPages) state.page = totalPages;
+  if (state.page < 1) state.page = 1;
+
+  const start = (state.page - 1) * state.pageSize;
+  const end = Math.min(start + state.pageSize, total);
+
+  if (q('contactTotalCount')) q('contactTotalCount').textContent = total;
+  if (q('contactPageTotal')) q('contactPageTotal').textContent = `/ ${totalPages}`;
+  if (q('contactRangeStart')) q('contactRangeStart').textContent = total > 0 ? (start + 1) : 0;
+  if (q('contactRangeEnd')) q('contactRangeEnd').textContent = end;
+
+  renderPageNumberButtons(q('contactPageNumbers'), state.page, totalPages, (p) => {
+    state.page = p;
+    render();
+  });
+
+  const pageSelect = q('contactPageSelect');
+  if (pageSelect) {
+    pageSelect.innerHTML = '';
+    for (let p = 1; p <= totalPages; p++) {
+      const opt = document.createElement('option');
+      opt.value = String(p);
+      opt.textContent = String(p);
+      if (p === state.page) opt.selected = true;
+      pageSelect.appendChild(opt);
+    }
+  }
+
+  renderContactTable(display.slice(start, end));
 }
 
 function renderContactTable(rows) {

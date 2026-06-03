@@ -26,7 +26,51 @@ import {
 } from '../../utils/tableColumns.js';
 import { takePendingProjectSearch, bindCrossScreenLinks } from '../../utils/screenNavigation.js';
 import { createTableCellCopy } from '../../utils/tableCellCopy.js';
-import { saleOptions, typeSaleOptions } from '../../utils/contants.js';
+import { saleOptions } from '../../utils/contants.js';
+import {
+  clearColumnFilters,
+  captureColumnFilterFocus,
+  restoreColumnFilterFocus,
+  mergeSetOptions,
+  filterRowsWithColumnFilters,
+  ensureEntityListFilterRow,
+  initEntityListColumnFilters,
+  createColumnFilterRefreshHandler,
+} from '../../utils/entityListColumnFilters.js';
+
+const PROJECT_SET_OPTIONS = {
+  status: ['失注', '進行中', '受注', '提案中', '保留'],
+  rep: saleOptions.map((o) => o.label),
+  motivation: ['引合', '紹介', '展示会', '問合せ', 'その他'],
+};
+
+const PROJECT_MAIN_COLUMNS = [
+  { key: 'issueDate', label: '話題日' },
+  { key: 'followDate', label: 'フォロー予定' },
+  { key: 'status', label: 'ステータス', filterType: 'set' },
+  { key: 'rep', label: '営業担当', filterType: 'set' },
+  { key: 'company', label: '会社名' },
+  { key: 'contact', label: '担当(姓)' },
+  { key: 'name', label: '案件名' },
+  { key: 'summary', label: '案件概要' },
+  { key: 'motivation', label: '発生動機', filterType: 'set' },
+];
+
+function getProjectSetOptions(key) {
+  return mergeSetOptions(PROJECT_SET_OPTIONS[key] || [], state.projects, key);
+}
+
+function getProjectDisplayFiltered() {
+  return filterRowsWithColumnFilters(
+    state.filtered,
+    state.columnFilters,
+    state.columnSetFilters,
+    PROJECT_MAIN_COLUMNS,
+    getProjectSetOptions,
+  );
+}
+
+let refreshProjectListFromFilters;
 
 let state = {
   projects: [...mockProjects],
@@ -35,6 +79,8 @@ let state = {
   page: 1,
   pageSize: 50,
   advanced: null,
+  columnFilters: {},
+  columnSetFilters: {},
   projectActivitiesPage: 1,
   projectActivitiesPageSize: 50,
 };
@@ -56,6 +102,23 @@ export function init() {
   setupResizableTable('#projectTable', {
     orderKey: 'smos.pr01.colOrder',
     widthKey: 'smos.pr01.colWidths',
+  });
+  refreshProjectListFromFilters = createColumnFilterRefreshHandler({
+    tableId: 'projectTable',
+    state,
+    getDisplayRows: getProjectDisplayFiltered,
+    updatePagerAndBody: updateProjectPagerAndTable,
+    onSelectionChanged: (p) => {
+      fillDetailForm(p);
+      renderProjectActivitiesList(p);
+    },
+  });
+  initEntityListColumnFilters({
+    tableId: 'projectTable',
+    columns: PROJECT_MAIN_COLUMNS,
+    state,
+    getSetOptions: getProjectSetOptions,
+    onRefreshList: () => refreshProjectListFromFilters(),
   });
   bindTabPager(
     'projectActivities',
@@ -163,6 +226,7 @@ function bindUi() {
       form: q('formProjectAdvancedSearch'),
       state,
     });
+    clearColumnFilters(state.columnFilters, state.columnSetFilters);
     state.filtered = [...state.projects];
     state.page = 1;
     state.selectedId = state.filtered[0]?.id ? String(state.filtered[0].id) : null;
@@ -186,11 +250,11 @@ function bindUi() {
   q('btnProjectFirstPage')?.addEventListener('click', () => { state.page = 1; render(); });
   q('btnProjectPrevPage')?.addEventListener('click', () => { if (state.page > 1) { state.page--; render(); } });
   q('btnProjectNextPage')?.addEventListener('click', () => {
-    const totalPages = Math.ceil(state.filtered.length / state.pageSize);
+    const totalPages = Math.ceil(getProjectDisplayFiltered().length / state.pageSize);
     if (state.page < totalPages) { state.page++; render(); }
   });
   q('btnProjectLastPage')?.addEventListener('click', () => {
-    state.page = Math.max(1, Math.ceil(state.filtered.length / state.pageSize));
+    state.page = Math.max(1, Math.ceil(getProjectDisplayFiltered().length / state.pageSize));
     render();
   });
   q('projectPageSelect')?.addEventListener('change', (e) => {
@@ -333,9 +397,19 @@ function bindProjectTable() {
 }
 
 function render() {
+  const filterFocus = captureColumnFilterFocus('projectTable');
   syncSearchFiltersIndicator(q('btnProjectAdvancedSearch'), state.advanced);
 
-  const total = state.filtered.length;
+  ensureEntityListFilterRow(
+    q('projectTable'),
+    PROJECT_MAIN_COLUMNS,
+    state.columnFilters,
+    state.columnSetFilters,
+    getProjectSetOptions,
+  );
+
+  const display = getProjectDisplayFiltered();
+  const total = display.length;
   const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
   if (state.page > totalPages) state.page = totalPages;
   if (state.page < 1) state.page = 1;
@@ -365,14 +439,50 @@ function render() {
     }
   }
 
-  renderProjectTable(state.filtered.slice(start, end));
+  renderProjectTable(display.slice(start, end));
 
-  const selected = getSelectedProject();
+  const selected = display.find(p => String(p.id) === String(state.selectedId)) || display[0] || null;
   if (selected) {
     state.selectedId = String(selected.id);
     fillDetailForm(selected);
     renderProjectActivitiesList(selected);
   }
+
+  restoreColumnFilterFocus(filterFocus, 'projectTable');
+}
+
+function updateProjectPagerAndTable(display) {
+  const total = display.length;
+  const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
+  if (state.page > totalPages) state.page = totalPages;
+  if (state.page < 1) state.page = 1;
+
+  const start = (state.page - 1) * state.pageSize;
+  const end = Math.min(start + state.pageSize, total);
+
+  if (q('projectTotalCount')) q('projectTotalCount').textContent = total;
+  if (q('projectPageTotal')) q('projectPageTotal').textContent = `/ ${totalPages}`;
+  if (q('projectRangeStart')) q('projectRangeStart').textContent = total > 0 ? (start + 1) : 0;
+  if (q('projectRangeEnd')) q('projectRangeEnd').textContent = end;
+
+  renderPageNumberButtons(q('projectPageNumbers'), state.page, totalPages, (p) => {
+    state.page = p;
+    render();
+  });
+
+  const pageSelect = q('projectPageSelect');
+  if (pageSelect) {
+    pageSelect.innerHTML = '';
+    for (let p = 1; p <= totalPages; p++) {
+      const opt = document.createElement('option');
+      opt.value = String(p);
+      opt.textContent = String(p);
+      if (p === state.page) opt.selected = true;
+      pageSelect.appendChild(opt);
+    }
+  }
+
+  renderProjectTable(display.slice(start, end));
 }
 
 function renderProjectTable(rows) {

@@ -21,6 +21,14 @@ import { openActivityCreateDialog } from '../../utils/activityCreateForm.js';
 import { openProjectCreateDialog } from '../../utils/projectCreateForm.js';
 import { loadColumnSettings, saveColumnSettings } from '../../utils/columnSettings.js';
 import { createTableCellCopy } from '../../utils/tableCellCopy.js';
+import {
+  applyColumnFilters,
+  bindTableColumnFilters,
+  clearColumnFilters,
+  renderColumnFilterRow,
+  captureColumnFilterFocus,
+  restoreColumnFilterFocus,
+} from '../../utils/tableColumnFilters.js';
 
 let state = {
   companies: [...mockCompanies],
@@ -35,6 +43,8 @@ let state = {
   page: 1,
   pageSize: 50,
   advanced: null,
+  columnFilters: {},
+  columnSetFilters: {},
 
   contactsPage: 1,
   contactsPageSize: 50,
@@ -55,18 +65,41 @@ const cellCopy = createTableCellCopy({ scopeSelector: '#company-root' });
 const COMPANY_REORDER_STORE_KEY = 'smos.cp01.colOrder';
 const COMPANY_REORDER_WIDTH_KEY = 'smos.cp01.colWidths';
 
+const COMPANY_SET_OPTIONS = {
+  industry: ['製造業', '卸売業', '小売業', '金融業'],
+  biz: ['金属製品', '化学・素材', '自動車・輸送用機械', '木工・家具', 'その他製造業', 'その他'],
+  scale: ['1人～30人', '1～30人', '31～100人', '101～300人', '301人以上'],
+  type: ['メーカー', 'その他'],
+  area: ['関東', '関西', '中部', '東北', '九州', '北海道'],
+  pref: ['北海道', '東京都', '大阪府', '愛知県', '福岡県', '石川県', '香川県', '栃木県', '沖縄県', '滋賀県'],
+};
+
+function getCompanySetOptions(key) {
+  const base = COMPANY_SET_OPTIONS[key] || [];
+  const fromData = state.companies.map((c) => c[key]).filter(Boolean);
+  return [...new Set([...base, ...fromData])].sort((a, b) => a.localeCompare(b, 'ja'));
+}
+
+function getCompanySetOptionsMap() {
+  const map = {};
+  COMPANY_MAIN_COLUMNS.forEach((col) => {
+    if (col.filterType === 'set') map[col.key] = getCompanySetOptions(col.key);
+  });
+  return map;
+}
+
 const COMPANY_MAIN_COLUMNS = [
   { label: '会社ID', key: 'id', width: '130px', sortType: 'num' },
   { label: '会社名', key: 'name', width: '260px', sortType: 'str' },
   { label: '代表TEL', key: 'tel', width: '130px', sortType: 'str', tdClass: 'tel-num' },
   { label: '住所', key: 'addr', width: '260px', sortType: 'str' },
-  { label: '業界', key: 'industry', width: '90px', sortType: 'str' },
-  { label: '業種', key: 'biz', width: '120px', sortType: 'str' },
-  { label: '規模ランク', key: 'scale', width: '100px', sortType: 'str' },
-  { label: '種別', key: 'type', width: '120px', sortType: 'str' },
+  { label: '業界', key: 'industry', width: '90px', sortType: 'str', filterType: 'set' },
+  { label: '業種', key: 'biz', width: '120px', sortType: 'str', filterType: 'set' },
+  { label: '規模ランク', key: 'scale', width: '100px', sortType: 'str', filterType: 'set' },
+  { label: '種別', key: 'type', width: '120px', sortType: 'str', filterType: 'set' },
   { label: '従業員数', key: 'employees', width: '90px', sortType: 'num', thClass: 'num', tdClass: 'num' },
-  { label: '地区', key: 'area', width: '80px', sortType: 'str' },
-  { label: '都道府県', key: 'pref', width: '90px', sortType: 'str' },
+  { label: '地区', key: 'area', width: '80px', sortType: 'str', filterType: 'set' },
+  { label: '都道府県', key: 'pref', width: '90px', sortType: 'str', filterType: 'set' },
   { label: '会社備考', key: 'remark', width: '200px', sortType: 'str' },
 ];
 
@@ -198,6 +231,7 @@ export function init() {
   bindUi();
   bindCompanyTable();
   bindCompanyTableSort();
+  bindCompanyColumnFilters();
   initTableColReorder('#companyTable', {
     storeKey: COMPANY_REORDER_STORE_KEY,
     widthStoreKey: COMPANY_REORDER_WIDTH_KEY,
@@ -260,6 +294,7 @@ function bindUi() {
 
   btnClear?.addEventListener('click', () => {
     if (inputName) inputName.value = '';
+    clearColumnFilters(state.columnFilters, state.columnSetFilters);
     state.filtered = [...state.companies];
     state.page = 1;
     state.selectedId = state.filtered[0] ? String(state.filtered[0].id) : null;
@@ -910,7 +945,9 @@ function bindContactsListNavigation() {
   });
 }
 
-function render() {
+function render(options = {}) {
+  const filterFocus = captureColumnFilterFocus('companyTable');
+
   syncSearchFiltersIndicator(q('btnCompanyAdvancedSearch'), state.advanced);
 
   const tbody = q('companyTableBody');
@@ -958,16 +995,90 @@ function render() {
   }
 
   const rows = sorted.slice(start, actualEndIdx);
-  renderCompanyTable(rows);
+  renderCompanyTable(rows, { rebuildHeader: options.rebuildHeader !== false });
   updateSortHeaderUI();
 
   // CRITICAL: Always use String for ID comparison to avoid mismatches
-  const selected = state.companies.find(c => String(c.id) === String(state.selectedId)) || state.filtered[0] || null;
+  const selected = sorted.find(c => String(c.id) === String(state.selectedId)) || sorted[0] || null;
   if (selected) {
     state.selectedId = String(selected.id);
     fillDetailForm(selected);
     renderChildLists(selected);
   }
+
+  restoreColumnFilterFocus(filterFocus, 'companyTable');
+}
+
+function updateCompanyPagerAndTable(sorted) {
+  const total = sorted.length;
+  const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
+
+  if (state.page > totalPages) state.page = totalPages;
+  if (state.page < 1) state.page = 1;
+
+  const meta = q('companyResultMeta');
+  const totalCount = q('companyTotalCount');
+  const pageNumbers = q('companyPageNumbers');
+  const pageSelect = q('companyPageSelect');
+  const pageTotal = q('companyPageTotal');
+  const rangeStart = q('companyRangeStart');
+  const rangeEnd = q('companyRangeEnd');
+
+  if (meta) meta.textContent = `全 ${total} 件`;
+  if (totalCount) totalCount.textContent = total;
+  if (pageTotal) pageTotal.textContent = `/ ${totalPages}`;
+
+  const start = (state.page - 1) * state.pageSize;
+  const actualEndIdx = Math.min(start + state.pageSize, total);
+
+  if (rangeStart) rangeStart.textContent = total > 0 ? (start + 1) : 0;
+  if (rangeEnd) rangeEnd.textContent = actualEndIdx;
+
+  if (pageNumbers) {
+    renderPageNumberButtons(pageNumbers, state.page, totalPages, (p) => {
+      changeCompanyPage(p);
+    });
+  }
+
+  if (pageSelect) {
+    pageSelect.innerHTML = '';
+    for (let p = 1; p <= totalPages; p++) {
+      const opt = document.createElement('option');
+      opt.value = String(p);
+      opt.textContent = String(p);
+      if (p === state.page) opt.selected = true;
+      pageSelect.appendChild(opt);
+    }
+  }
+
+  const rows = sorted.slice(start, actualEndIdx);
+  renderCompanyTable(rows, { rebuildHeader: false });
+}
+
+/** Lightweight refresh while typing column filters — keeps input focus. */
+function refreshCompanyListFromFilters() {
+  const filterFocus = captureColumnFilterFocus('companyTable');
+  const prevSelectedId = state.selectedId;
+
+  state.page = 1;
+  const sorted = getSortedFiltered();
+
+  if (!sorted.some((c) => String(c.id) === String(state.selectedId))) {
+    state.selectedId = sorted[0] ? String(sorted[0].id) : null;
+  }
+
+  updateCompanyPagerAndTable(sorted);
+
+  const selectionChanged = String(prevSelectedId) !== String(state.selectedId);
+  if (selectionChanged) {
+    const selected = sorted.find((c) => String(c.id) === String(state.selectedId));
+    if (selected) {
+      fillDetailForm(selected);
+      renderChildLists(selected);
+    }
+  }
+
+  restoreColumnFilterFocus(filterFocus, 'companyTable');
 }
 
 function getSelectedRowOffsetInCurrentPage(sorted) {
@@ -1553,12 +1664,32 @@ function compareCompanyRows(a, b, key, type) {
 }
 
 function getSortedFiltered() {
+  const setOptionsMap = getCompanySetOptionsMap();
+  const filtered = applyColumnFilters(
+    state.filtered,
+    state.columnFilters,
+    state.columnSetFilters,
+    setOptionsMap,
+  );
   const thead = document.querySelector('.list-stack table.t thead');
-  const th = thead?.querySelector(`th[data-sort-key="${state.sortKey}"]`);
+  const th = thead?.querySelector(`tr:first-child th[data-sort-key="${state.sortKey}"]`);
   const type = th?.getAttribute('data-sort-type') || 'str';
-  return [...state.filtered].sort((a, b) => {
+  return [...filtered].sort((a, b) => {
     const r = compareCompanyRows(a, b, state.sortKey, type);
     return state.sortDir === 'asc' ? r : -r;
+  });
+}
+
+function bindCompanyColumnFilters() {
+  const table = q('companyTable');
+  if (!table) return;
+  bindTableColumnFilters(table, {
+    columns: COMPANY_MAIN_COLUMNS,
+    textFilters: state.columnFilters,
+    setFilters: state.columnSetFilters,
+    getSetOptions: getCompanySetOptions,
+    onChange: refreshCompanyListFromFilters,
+    debounceMs: 0,
   });
 }
 
@@ -1768,36 +1899,57 @@ function bindCompanyTable() {
   bindCompanyTableKeyboard();
 }
 
-function renderCompanyTable(rows) {
+function renderCompanyTable(rows, { rebuildHeader = true } = {}) {
   const tbody = q('companyTableBody');
   const table = q('companyTable');
   if (!tbody || !table) return;
 
   const visibleColumns = resolveColumnsForSubMenu(1, COMPANY_MAIN_COLUMNS);
-  const colgroup = table.querySelector('colgroup');
-  const headRow = table.querySelector('thead tr');
 
-  if (colgroup) {
-    colgroup.innerHTML = visibleColumns
-      .map((col) => `<col style="width:${col.width}">`)
-      .join('');
-  }
-  if (headRow) {
-    headRow.innerHTML = visibleColumns
-      .map((col) => `<th data-sort-key="${col.key}" data-sort-type="${col.sortType}"${col.thClass ? ` class="${col.thClass}"` : ''}>${escapeHtml(col.label)}<span class="sort-arrow" aria-hidden="true"></span></th>`)
-      .join('');
-  }
-  try {
-    localStorage.setItem(
-      COMPANY_REORDER_STORE_KEY,
-      JSON.stringify(visibleColumns.map((col) => col.key)),
-    );
-  } catch {
-    /* ignore */
-  }
-  if (!visibleColumns.some((col) => col.key === state.sortKey)) {
-    state.sortKey = visibleColumns[0]?.key || 'id';
-    state.sortDir = (visibleColumns[0]?.sortType === 'num') ? 'desc' : 'asc';
+  if (rebuildHeader) {
+    const colgroup = table.querySelector('colgroup');
+    const headRow = table.querySelector('thead tr:first-child');
+
+    if (colgroup) {
+      colgroup.innerHTML = visibleColumns
+        .map((col) => `<col style="width:${col.width}">`)
+        .join('');
+    }
+    if (headRow) {
+      headRow.innerHTML = visibleColumns
+        .map((col) => `<th data-sort-key="${col.key}" data-sort-type="${col.sortType}"${col.thClass ? ` class="${col.thClass}"` : ''}>${escapeHtml(col.label)}<span class="sort-arrow" aria-hidden="true"></span></th>`)
+        .join('');
+    }
+    const thead = table.querySelector('thead');
+    if (thead) {
+      renderColumnFilterRow(
+        thead,
+        visibleColumns,
+        state.columnFilters,
+        state.columnSetFilters,
+        getCompanySetOptions,
+      );
+    }
+    try {
+      localStorage.setItem(
+        COMPANY_REORDER_STORE_KEY,
+        JSON.stringify(visibleColumns.map((col) => col.key)),
+      );
+    } catch {
+      /* ignore */
+    }
+    if (!visibleColumns.some((col) => col.key === state.sortKey)) {
+      state.sortKey = visibleColumns[0]?.key || 'id';
+      state.sortDir = (visibleColumns[0]?.sortType === 'num') ? 'desc' : 'asc';
+    }
+
+    table.dataset.colResizeInit = '0';
+    initTableColResize(table, COMPANY_REORDER_WIDTH_KEY);
+    table.dataset.colReorderInit = '0';
+    initTableColReorder(table, {
+      storeKey: COMPANY_REORDER_STORE_KEY,
+      widthStoreKey: COMPANY_REORDER_WIDTH_KEY,
+    });
   }
 
   if (!rows.length) {
@@ -1818,13 +1970,6 @@ function renderCompanyTable(rows) {
   }).join('');
 
   syncTableBodyColumnOrder(table);
-  table.dataset.colResizeInit = '0';
-  initTableColResize(table, COMPANY_REORDER_WIDTH_KEY);
-  table.dataset.colReorderInit = '0';
-  initTableColReorder(table, {
-    storeKey: COMPANY_REORDER_STORE_KEY,
-    widthStoreKey: COMPANY_REORDER_WIDTH_KEY,
-  });
 }
 
 function initResizer() {
