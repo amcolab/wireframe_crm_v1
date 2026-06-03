@@ -70,8 +70,13 @@ async function setupDashboardLayout() {
   const appContainer = document.querySelector('#app');
   // Only inject layout if it's not already there
   if (!document.querySelector('#dashboard-container')) {
-    const response = await fetch('/components/layout.html');
-    const layoutHtml = await response.text();
+    const base = import.meta.env.BASE_URL;
+    const response = await fetch(`${base}components/layout.html`);
+    // Vite: public/images/* → dist/images/* (URL gốc /images/, không có prefix public/)
+    const layoutHtml = (await response.text()).replace(
+      /src="(?:public\/|\/)?images\//g,
+      `src="${base}images/`
+    );
     appContainer.innerHTML = layoutHtml;
 
     // Show the dashboard container
