@@ -14,14 +14,60 @@ import { openActivityCreateDialog } from '../../utils/activityCreateForm.js';
 import { openProjectCreateDialog } from '../../utils/projectCreateForm.js';
 import { takePendingActivitySearch, bindCrossScreenLinks } from '../../utils/screenNavigation.js';
 import { createTableCellCopy } from '../../utils/tableCellCopy.js';
+import {
+  clearColumnFilters,
+  captureColumnFilterFocus,
+  restoreColumnFilterFocus,
+  mergeSetOptions,
+  filterRowsWithColumnFilters,
+  ensureEntityListFilterRow,
+  initEntityListColumnFilters,
+  createColumnFilterRefreshHandler,
+} from '../../utils/entityListColumnFilters.js';
+import { saleOptions } from '../../utils/contants.js';
+
+const ACTIVITY_SET_OPTIONS = {
+  rep: saleOptions.map((o) => o.label),
+};
+
+const ACTIVITY_MAIN_COLUMNS = [
+  { key: 'date', label: '活動日' },
+  { key: 'time', label: '開始時刻' },
+  { key: 'rep', label: '営業担当', filterType: 'set' },
+  { key: 'type', label: 'タイプ', filterType: 'set' },
+  { key: 'company', label: '会社名' },
+  { key: 'contact', label: '担当(姓)' },
+  { key: 'comment', label: 'コメント' },
+];
+
+function getActivitySetOptions(key) {
+  if (key === 'type') {
+    return mergeSetOptions(['TEL', '訪問', 'メール'], state.activities, key);
+  }
+  return mergeSetOptions(ACTIVITY_SET_OPTIONS[key] || [], state.activities, key);
+}
+
+function getActivityDisplayFiltered() {
+  return filterRowsWithColumnFilters(
+    state.filtered,
+    state.columnFilters,
+    state.columnSetFilters,
+    ACTIVITY_MAIN_COLUMNS,
+    getActivitySetOptions,
+  );
+}
+
+let refreshActivityListFromFilters;
 
 let state = {
   activities: [...mockActivities],
   filtered: [...mockActivities],
   selectedId: mockActivities[0]?.id ?? null,
   page: 1,
-  pageSize: 25,
+  pageSize: 50,
   advanced: null,
+  columnFilters: {},
+  columnSetFilters: {},
 };
 
 let tableBound = false;
@@ -36,6 +82,20 @@ export function init() {
   setupResizableTable('#activityTable', {
     orderKey: 'smos.at01.colOrder',
     widthKey: 'smos.at01.colWidths',
+  });
+  refreshActivityListFromFilters = createColumnFilterRefreshHandler({
+    tableId: 'activityTable',
+    state,
+    getDisplayRows: getActivityDisplayFiltered,
+    updatePagerAndBody: updateActivityPagerAndTable,
+    onSelectionChanged: (a) => fillDetailForm(a),
+  });
+  initEntityListColumnFilters({
+    tableId: 'activityTable',
+    columns: ACTIVITY_MAIN_COLUMNS,
+    state,
+    getSetOptions: getActivitySetOptions,
+    onRefreshList: () => refreshActivityListFromFilters(),
   });
   initResizer();
   const card = document.querySelector('#activity-root .company-detail');
@@ -99,6 +159,7 @@ function bindUi() {
       form: q('formActivityAdvancedSearch'),
       state,
     });
+    clearColumnFilters(state.columnFilters, state.columnSetFilters);
     state.filtered = [...state.activities];
     state.page = 1;
     state.selectedId = state.filtered[0]?.id ?? null;
@@ -115,11 +176,11 @@ function bindUi() {
   q('btnActivityFirstPage')?.addEventListener('click', () => { state.page = 1; render(); });
   q('btnActivityPrevPage')?.addEventListener('click', () => { if (state.page > 1) { state.page--; render(); } });
   q('btnActivityNextPage')?.addEventListener('click', () => {
-    const totalPages = Math.ceil(state.filtered.length / state.pageSize);
+    const totalPages = Math.ceil(getActivityDisplayFiltered().length / state.pageSize);
     if (state.page < totalPages) { state.page++; render(); }
   });
   q('btnActivityLastPage')?.addEventListener('click', () => {
-    state.page = Math.max(1, Math.ceil(state.filtered.length / state.pageSize));
+    state.page = Math.max(1, Math.ceil(getActivityDisplayFiltered().length / state.pageSize));
     render();
   });
   q('activityPageSelect')?.addEventListener('change', (e) => {
@@ -127,7 +188,7 @@ function bindUi() {
     render();
   });
   q('activityPageSize')?.addEventListener('change', (e) => {
-    state.pageSize = parseInt(e.target.value, 10) || 25;
+    state.pageSize = parseInt(e.target.value, 10) || 50;
     state.page = 1;
     render();
   });
@@ -243,9 +304,19 @@ function bindActivityTable() {
 }
 
 function render() {
+  const filterFocus = captureColumnFilterFocus('activityTable');
   syncSearchFiltersIndicator(q('btnActivityAdvancedSearch'), state.advanced);
 
-  const total = state.filtered.length;
+  ensureEntityListFilterRow(
+    q('activityTable'),
+    ACTIVITY_MAIN_COLUMNS,
+    state.columnFilters,
+    state.columnSetFilters,
+    getActivitySetOptions,
+  );
+
+  const display = getActivityDisplayFiltered();
+  const total = display.length;
   const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
   if (state.page > totalPages) state.page = totalPages;
   if (state.page < 1) state.page = 1;
@@ -275,13 +346,49 @@ function render() {
     }
   }
 
-  renderActivityTable(state.filtered.slice(start, end));
+  renderActivityTable(display.slice(start, end));
 
-  const selected = getSelectedActivity();
+  const selected = display.find(a => String(a.id) === String(state.selectedId)) || display[0] || null;
   if (selected) {
     state.selectedId = String(selected.id);
     fillDetailForm(selected);
   }
+
+  restoreColumnFilterFocus(filterFocus, 'activityTable');
+}
+
+function updateActivityPagerAndTable(display) {
+  const total = display.length;
+  const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
+  if (state.page > totalPages) state.page = totalPages;
+  if (state.page < 1) state.page = 1;
+
+  const start = (state.page - 1) * state.pageSize;
+  const end = Math.min(start + state.pageSize, total);
+
+  if (q('activityTotalCount')) q('activityTotalCount').textContent = total;
+  if (q('activityPageTotal')) q('activityPageTotal').textContent = `/ ${totalPages}`;
+  if (q('activityRangeStart')) q('activityRangeStart').textContent = total > 0 ? (start + 1) : 0;
+  if (q('activityRangeEnd')) q('activityRangeEnd').textContent = end;
+
+  renderPageNumberButtons(q('activityPageNumbers'), state.page, totalPages, (p) => {
+    state.page = p;
+    render();
+  });
+
+  const pageSelect = q('activityPageSelect');
+  if (pageSelect) {
+    pageSelect.innerHTML = '';
+    for (let p = 1; p <= totalPages; p++) {
+      const opt = document.createElement('option');
+      opt.value = String(p);
+      opt.textContent = String(p);
+      if (p === state.page) opt.selected = true;
+      pageSelect.appendChild(opt);
+    }
+  }
+
+  renderActivityTable(display.slice(start, end));
 }
 
 function renderActivityTable(rows) {

@@ -67,8 +67,8 @@
             </div>
             <select id="projectPageSize" class="pgsize-trigger" aria-label="page size">
               <option value="10">10件</option>
-              <option value="25" selected>25件</option>
-              <option value="50">50件</option>
+              <option value="25">25件</option>
+              <option value="50" selected>50件</option>
               <option value="100">100件</option>
             </select>
             <div class="meta-right">
@@ -102,7 +102,7 @@
             <section class="company-panel active" data-pr-panel="detail" role="tabpanel">
               <div class="panel-detail">
                 <div class="panel-detail-body">
-              <div class="detail-form" style="grid-template-columns: 400px 400px 1fr 300px; gap: 20px; min-width: 100%; width: max-content;">
+              <div class="detail-form" style="grid-template-columns: 400px 400px 400px minmax(300px, 1fr); gap: 20px; min-width: 100%; width: max-content;">
                 <!-- Col 1 -->
                 <div class="form-col" id="prDetailCol1">
                   <div class="form-row">
@@ -155,7 +155,7 @@
                   </div>
                   <div class="form-row">
                     <label>担当者名 <span class="req">*</span></label>
-                    <div class="search-input-group">
+                    <div class="search-input-group" style="flex: 1;">
                       <input class="req-field-bg" id="prDetailContact" style="flex: 1;" type="text"
                         value="佐藤 瑞葵 [旭川エレクトロニクスサービス株式会社]" />
                       <button class="icon-btn-inline" id="btnPrDetailContactLookup" type="button">🔍</button>
@@ -197,33 +197,41 @@
                       <label>失注日</label>
                       <input id="prDetailLossDate" type="date" value="2022-12-15" />
                     </div>
-                    <div class="sub">
+                    <!-- <div class="sub">
                       <label>リードID</label>
                       <input id="prDetailLeadId" type="text" value="3067" />
+                    </div> -->
+                  </div>
+                  <div class="form-row two">
+                    <div class="sub">
+                      <label>引合手段</label>
+                      <select id="prDetailInquiryMethod">
+                        <option>SNS</option>
+                      </select>
                     </div>
-                  </div>
-                  <div class="form-row">
-                    <label>引合手段</label>
-                    <select id="prDetailInquiryMethod">
-                      <option>SNS</option>
-                    </select>
-                  </div>
-                  <div class="form-row">
-                    <label>競合会社</label>
-                    <input id="prDetailCompetitor" type="text" value="デバイス" />
+                    <div class="sub">
+                      <label>競合会社</label>
+                      <input id="prDetailCompetitor" type="text" value="デバイス" />
+                    </div>
                   </div>
                   <div
                     style="margin-top: 10px; border: 1px solid #f1f5f9; padding: 12px; border-radius: 8px; background: #fafafa; display: flex; flex-direction: column; gap: 10px;">
                     <div
                       style="font-weight: 700; font-size: 11px; color: #64748b; text-transform: uppercase;">
                       予定</div>
-                    <div class="form-row">
-                      <label>機種</label>
-                      <input id="prDetailPlanModel" type="text" value="測定器" />
+                    <div class="form-row two">
+                      <div class="sub">
+                        <label>製品                        </label>
+                        <input id="prDetailPlanModel" type="text" value="測定器" />
+                      </div>
+                      <div class="sub">
+                        <label>予定時期</label>
+                        <input id="prDetailPlanDate" type="date" value="2026-12-28" />
+                      </div>
                     </div>
                     <div class="form-row two">
                       <div class="sub">
-                        <label>台数</label>
+                        <label>数量</label>
                         <input id="prDetailPlanQuantity" type="number" value="5" />
                       </div>
                       <div class="sub">
@@ -231,40 +239,38 @@
                         <input id="prDetailPlanSales" type="text" value="800" />
                       </div>
                     </div>
-                    <div class="form-row">
-                      <label>予定時期</label>
-                      <input id="prDetailPlanDate" type="date" value="2026-12-28" />
-                    </div>
                   </div>
                   <div
                     style="margin-top: 10px; border: 1px solid #f1f5f9; padding: 12px; border-radius: 8px; background: #fafafa; display: flex; flex-direction: column; gap: 10px;">
                     <div
                       style="font-weight: 700; font-size: 11px; color: #64748b; text-transform: uppercase;">
                       実績</div>
-                    <div class="form-row">
-                      <label>機種</label>
-                      <input id="prDetailPlanModel" type="text" value="測定器" />
+                    <div class="form-row two">
+                      <div class="sub">    
+                        <label>製品</label>
+                        <input id="prDetailPlanModel" type="text" value="測定器" />
+                      </div>
+                      <div class="sub">
+                        <label>売上時期</label>
+                        <input id="prDetailPlanDate" type="date" value="2026-12-28" />
+                      </div>
                     </div>
                     <div class="form-row two">
                       <div class="sub">
-                        <label>台数</label>
+                        <label>数量</label>
                         <input id="prDetailPlanQuantity" type="number" value="5" />
                       </div>
                       <div class="sub">
-                        <label>売上</label>
+                        <label>結果売上</label>
                         <input id="prDetailPlanSales" type="text" value="800" />
                       </div>
-                    </div>
-                    <div class="form-row">
-                      <label>売上時期</label>
-                      <input id="prDetailPlanDate" type="date" value="2026-12-28" />
                     </div>
                   </div>
                 </div>
                 <!-- Col 3 -->
                 <div class="form-col" id="prDetailCol3">
                   <div class="check-group"
-                    style="flex-direction: column; align-items: flex-start; gap: 8px; margin-bottom: 15px; background: #f8fafc; padding: 12px; border-radius: 8px;">
+                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 15px; background: #f8fafc; padding: 12px; border-radius: 8px;">
                     <label class="check"><input checked id="prStage1" type="checkbox" /> ステージ1: 見積書提出</label>
                     <label class="check"><input checked id="prStage2" type="checkbox" /> ステージ2: 仕様打合せ</label>
                     <label class="check"><input id="prStage3" type="checkbox" /> ステージ3: 現場確認</label>
@@ -415,9 +421,9 @@
                     <span id="projectActivitiesPageTotal">/ 1</span>
                   </div>
                   <select id="projectActivitiesPageSize" class="pgsize-trigger" aria-label="page size">
-                    <option value="10" selected>10件</option>
+                    <option value="10">10件</option>
                     <option value="25">25件</option>
-                    <option value="50">50件</option>
+                    <option value="50" selected>50件</option>
                     <option value="100">100件</option>
                   </select>
                   <div class="meta-right">

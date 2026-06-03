@@ -17,18 +17,29 @@ export function getColKey(el, keyAttrs = DEFAULT_KEY_ATTRS) {
 }
 
 export function getTableColumnOrder(table, keyAttrs = DEFAULT_KEY_ATTRS) {
-  const row = table?.querySelector('thead tr');
+  const row = table?.querySelector('thead tr:first-child');
   if (!row) return [];
   return [...row.querySelectorAll('th')].map((th) => getColKey(th, keyAttrs)).filter(Boolean);
 }
 
+function reorderKeyedRowCells(row, orderKeys, keyAttr) {
+  if (!row) return;
+  const cells = [...row.querySelectorAll(`th[${keyAttr}], td[${keyAttr}]`)];
+  if (!cells.length) return;
+  const byKey = new Map(cells.map((cell) => [cell.getAttribute(keyAttr), cell]));
+  orderKeys.forEach((key) => {
+    const cell = byKey.get(key);
+    if (cell) row.appendChild(cell);
+  });
+}
+
 /**
- * Reorder <col>, <th>, and body <td data-col-key> to match orderKeys.
+ * Reorder <col>, <th>, filter row, and body <td data-col-key> to match orderKeys.
  */
 export function applyTableColumnOrder(table, orderKeys, keyAttrs = DEFAULT_KEY_ATTRS) {
   if (!table || !orderKeys?.length) return;
 
-  const theadRow = table.querySelector('thead tr');
+  const theadRow = table.querySelector('thead tr:first-child');
   const colgroup = table.querySelector('colgroup');
   if (!theadRow || !colgroup) return;
 
@@ -52,6 +63,8 @@ export function applyTableColumnOrder(table, orderKeys, keyAttrs = DEFAULT_KEY_A
     if (th) theadRow.appendChild(th);
     if (col) colgroup.appendChild(col);
   });
+
+  reorderKeyedRowCells(table.querySelector('thead tr.col-filter-row'), orderKeys, 'data-filter-key');
 
   table.querySelectorAll('tbody tr').forEach((tr) => {
     const cells = [...tr.querySelectorAll('td[data-col-key]')];
