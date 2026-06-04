@@ -51,22 +51,37 @@
   </section>
 
   <div class="scan-actions-wrap">
-    <div class="scan-capture-bar">
-      <button type="button" class="btn btn-outline" id="btn-retake-scan">
+    <div class="scan-actions-card">
+      <button type="button" class="btn btn-outline scan-retake-btn" id="btn-retake-scan">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
         撮り直す
       </button>
-      <button type="button" class="btn btn-outline" id="btn-continue-scan">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><path d="M12 10v6M9 13h6"/></svg>
-        続けて撮影
+      <div class="save-bar scan-save-bar">
+        <button type="button" class="btn btn-secondary" id="btn-clear-scan">クリア</button>
+        <button type="button" class="btn btn-primary accent" id="btn-register-scan">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+          登録する
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="scan-register-modal" class="modal-overlay modal-overlay--dialog" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="scan-register-modal-title">
+  <div class="modal-content modal-content--dialog">
+    <div class="modal-header">
+      <h3 id="scan-register-modal-title">登録完了</h3>
+      <button type="button" class="close-modal-btn" id="close-scan-register-modal" aria-label="閉じる">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
       </button>
     </div>
-    <div class="save-bar scan-save-bar">
-      <button type="button" class="btn btn-secondary" id="btn-clear-scan">クリア</button>
-      <button type="button" class="btn btn-primary accent" id="btn-register-scan">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
-        登録する
-      </button>
+    <div class="modal-body scan-register-modal-body">
+      <p class="scan-register-message" id="scan-register-message">「中谷 太輔」を株式会社ボウルズに登録しました。</p>
+      <p class="scan-register-hint">次の操作を選んでください。</p>
+    </div>
+    <div class="modal-footer scan-register-modal-footer">
+      <button type="button" class="btn btn-secondary btn-block" id="btn-scan-modal-home">ホームへ</button>
+      <button type="button" class="btn btn-primary accent btn-block" id="btn-scan-modal-continue">続けて撮影</button>
     </div>
   </div>
 </div>

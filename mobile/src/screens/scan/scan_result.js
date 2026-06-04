@@ -153,18 +153,35 @@ function validateForRegister() {
     return true;
 }
 
-function registerContact({ thenContinue = false } = {}) {
+function getRegisterModal() {
+    return document.getElementById('scan-register-modal');
+}
+
+function openRegisterModal(name, companyName) {
+    const modal = getRegisterModal();
+    const message = document.getElementById('scan-register-message');
+    if (message) {
+        message.textContent = `「${name}」を${companyName}に登録しました。`;
+    }
+    if (modal) modal.style.display = 'flex';
+}
+
+function closeRegisterModal() {
+    const modal = getRegisterModal();
+    if (modal) modal.style.display = 'none';
+}
+
+function continueAfterRegister() {
+    presetIndex = (presetIndex + 1) % SCAN_PRESETS.length;
+    applyPreset(presetIndex);
+    document.getElementById('scan-name')?.focus();
+}
+
+function registerContact() {
     if (!validateForRegister()) return false;
 
     const { companyName, 'scan-name': name } = getFormValues();
-    alert(`「${name}」を${companyName}に登録しました`);
-
-    if (thenContinue) {
-        presetIndex = (presetIndex + 1) % SCAN_PRESETS.length;
-        applyPreset(presetIndex);
-        document.getElementById('scan-name')?.focus();
-    }
-
+    openRegisterModal(name, companyName);
     return true;
 }
 
@@ -202,8 +219,19 @@ export function init() {
         applyPreset(presetIndex);
     });
 
-    document.getElementById('btn-continue-scan')?.addEventListener('click', () => {
-        if (!registerContact({ thenContinue: true })) return;
+    document.getElementById('close-scan-register-modal')?.addEventListener('click', closeRegisterModal);
+    getRegisterModal()?.addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeRegisterModal();
+    });
+
+    document.getElementById('btn-scan-modal-home')?.addEventListener('click', () => {
+        closeRegisterModal();
+        window.location.hash = 'home';
+    });
+
+    document.getElementById('btn-scan-modal-continue')?.addEventListener('click', () => {
+        closeRegisterModal();
+        continueAfterRegister();
         simulateCapture('次の名刺を撮影します（ワイヤーフレーム）');
     });
 }
