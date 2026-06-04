@@ -1494,11 +1494,19 @@ body {
     outline: none;
 }
 
-.memo-body textarea:focus,
-.memo-textarea:focus {
+.memo-body textarea:not(.memo-readonly):focus,
+.memo-textarea:not(.memo-readonly):focus {
     border-color: var(--brand-500);
     background: #fff;
     box-shadow: 0 0 0 3px rgba(30, 91, 214, .12);
+}
+
+.memo-readonly {
+    resize: none;
+    cursor: default;
+    pointer-events: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .contact-block {

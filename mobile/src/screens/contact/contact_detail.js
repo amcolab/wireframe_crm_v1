@@ -1,5 +1,17 @@
 import { mockContacts, mockCompanies, mockActivities, mockProjects } from '../../utils/mockData.js';
 
+function setPhoneLink(el, value) {
+    if (!el) return;
+    const v = value || '';
+    if (v) {
+        el.innerHTML = `<a class="link mono" href="tel:${v}">${v}</a>`;
+        el.classList.add('link');
+    } else {
+        el.textContent = '-';
+        el.classList.remove('link');
+    }
+}
+
 export function init(id) {
     const contact = mockContacts.find(c => c.id === id);
     if (!contact) return;
@@ -9,9 +21,7 @@ export function init(id) {
     if (nameEl) nameEl.textContent = `${contact.last} ${contact.first}`;
     
     const fields = {
-        'contact-tel': contact.tel,
         'contact-fax': contact.fax,
-        'contact-mobile': contact.mobile,
         'contact-email': contact.email,
         'contact-job-category': contact.jobCategory,
         'contact-position': contact.position,
@@ -28,26 +38,13 @@ export function init(id) {
         if (el) el.textContent = value || '-';
     }
 
-    const tel2El = document.getElementById('contact-tel2');
-    if (tel2El) {
-        const v = contact.tel || '';
-        if (v) {
-            tel2El.innerHTML = `<a class="link mono" href="tel:${v}">${v}</a>`;
-            tel2El.classList.add('link');
-        } else {
-            tel2El.textContent = '-';
-            tel2El.classList.remove('link');
-        }
-    }
+    setPhoneLink(document.getElementById('contact-tel2'), contact.tel);
+    setPhoneLink(document.getElementById('contact-mobile'), contact.mobile);
 
-    // Memo handling
-    const memoKey = `memo_contact_${id}`;
     const memoEl = document.getElementById('contact-memo');
     if (memoEl) {
-        memoEl.value = localStorage.getItem(memoKey) || contact.memo || '';
-        memoEl.addEventListener('input', (e) => {
-            localStorage.setItem(memoKey, e.target.value);
-        });
+        const saved = localStorage.getItem(`memo_contact_${id}`);
+        memoEl.value = saved !== null ? saved : (contact.memo || '');
     }
 
     // Populate company fields
