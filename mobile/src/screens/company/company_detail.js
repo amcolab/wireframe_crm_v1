@@ -119,10 +119,6 @@ function setupMemo(company) {
 
     const savedMemo = localStorage.getItem(`memo_company_${company.id}`);
     memoEl.value = savedMemo !== null ? savedMemo : (company.memo || '');
-
-    memoEl.addEventListener('input', (e) => {
-        localStorage.setItem(`memo_company_${company.id}`, e.target.value);
-    });
 }
 
 function renderContacts(companyName) {

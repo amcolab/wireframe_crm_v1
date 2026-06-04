@@ -93,7 +93,7 @@ function renderActivities(data) {
             </div>
             <div class="act-mid">
                 <div class="act-assignees">
-                    <span>担当 <b>${item.contact}</b></span>
+                    <span>担当 &nbsp;&nbsp;<b>${item.contact}</b></span>
                     <span>営業 <b>${item.salesRep}</b></span>
                 </div>
                 <div class="act-date mono">${formatShortDate(item.date)}</div>

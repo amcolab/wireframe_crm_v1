@@ -35,13 +35,9 @@ export function init(id) {
     document.getElementById('project-free4').textContent = project.free4 || '-';
     document.getElementById('project-free5').textContent = project.free5 || '-';
 
-    // Summary handling
     const summaryEl = document.getElementById('project-summary');
     if (summaryEl) {
         summaryEl.value = project.summary || '';
-        summaryEl.addEventListener('input', (e) => {
-            console.log('Summary updated:', e.target.value);
-        });
     }
 
     // Related Activities

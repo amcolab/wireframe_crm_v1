@@ -49,14 +49,9 @@ export function init(id) {
     document.getElementById('activity-free4').textContent = activity.free4 || '-';
     document.getElementById('activity-free5').textContent = activity.free5 || '-';
 
-    // Comment handling
     const commentEl = document.getElementById('activity-comment');
     if (commentEl) {
-        const savedComment = localStorage.getItem(`comment_activity_${activity.id}`);
-        commentEl.value = savedComment !== null ? savedComment : (activity.comment || '');
-        
-        commentEl.addEventListener('input', (e) => {
-            localStorage.setItem(`comment_activity_${activity.id}`, e.target.value);
-        });
+        const saved = localStorage.getItem(`comment_activity_${activity.id}`);
+        commentEl.value = saved !== null ? saved : (activity.comment || '');
     }
 }
