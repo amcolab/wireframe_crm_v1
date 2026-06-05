@@ -32,7 +32,7 @@ import {
   ensureContextMenuDismiss,
   bindContextMenuActions,
 } from '../../utils/entityContextMenu.js';
-import { saleOptions } from '../../utils/contants.js';
+import { saleOptions, typeSaleOptions } from '../../utils/contants.js';
 import {
   clearColumnFilters,
   captureColumnFilterFocus,
