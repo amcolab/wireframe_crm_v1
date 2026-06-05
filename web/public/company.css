@@ -763,7 +763,7 @@
 .form-row textarea {
     border: 1px solid #cbd5e1;
     padding: 8px 10px;
-    font-size: 13px;
+    font-size: 12px;
     border-radius: 6px;
     transition: all 0.2s ease;
     color: #334155;
@@ -1844,7 +1844,7 @@
   min-width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  font-size: 11px;
+  font-size: 12px;
   table-layout: auto;
 }
 
@@ -1874,7 +1874,7 @@
   background: #f0f0f0;
   color: #282e37;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 12px;
   text-align: left;
   padding: 6px 10px;
   border-right: 1px solid #e2e8f0;
@@ -2802,20 +2802,20 @@ select.input {
 /* ------ Form 4-Column Layout (.form-4col) ------ */
 .form-4col {
   --fc-h: 24px;
-  --fc-fs: 11px;
+  --fc-fs: 12px;
   --fc-pad-x: 8px;
   --fc-pad-r-sel: 24px;
-  --fc-label-fs: 11px;
+  --fc-label-fs: 12px;
   --fc-label-gap: 4px;
   --fc-row-gap: 5px;
   --fc-col-gap: 12px;
   --fc-grid-pad: 10px 12px;
   --fc-textarea-h: 180px;
-  --fc-check-fs: 11px;
+  --fc-check-fs: 12px;
   --fc-chev-size: 10px;
   --fc-chev-pad: 7px;
   --fc-drop-pad: 18px 14px;
-  --fc-drop-fs: 11px;
+  --fc-drop-fs: 12px;
   --fc-inline-gap: 8px;
   --fc-cols: 4;
 
