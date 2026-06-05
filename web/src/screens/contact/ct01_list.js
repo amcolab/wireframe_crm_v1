@@ -313,6 +313,12 @@ function bindUi() {
   }
 
   bindContactContextMenu();
+
+  cellCopy.bindOutsideClear({
+    root,
+    ignoreSelectors: ['#contactTable', '#contactActivitiesList', '#contactProjectsList', '#contactContextMenu'],
+    isActive: () => !!q('contact-root'),
+  });
 }
 
 function hasContactBasicSearch() {
@@ -386,7 +392,37 @@ function bindContactTable() {
       renderChildLists(c);
     }
     render();
+    cellCopy.highlightSelectedCell();
   });
+
+  if (tbody.dataset.keyboardBound !== '1') {
+    tbody.dataset.keyboardBound = '1';
+    document.addEventListener('keydown', (e) => {
+      if (!q('contact-root')) return;
+      if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+      if (e.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+
+      const rows = Array.from(tbody.querySelectorAll('tr[data-id]'));
+      if (!rows.length) return;
+
+      const currentIdx = rows.findIndex((row) => String(row.getAttribute('data-id')) === String(state.selectedId));
+      let nextIdx = currentIdx >= 0 ? currentIdx : 0;
+      if (e.key === 'ArrowUp') nextIdx = Math.max(0, nextIdx - 1);
+      if (e.key === 'ArrowDown') nextIdx = Math.min(rows.length - 1, nextIdx + 1);
+      if (nextIdx === currentIdx) return;
+
+      e.preventDefault();
+      state.selectedId = rows[nextIdx].getAttribute('data-id');
+      cellCopy.clearSelection();
+      const selected = getSelectedContact();
+      if (selected) {
+        state.selectedId = String(selected.id);
+        fillDetailForm(selected);
+        renderChildLists(selected);
+      }
+      render();
+    });
+  }
 }
 
 function render() {

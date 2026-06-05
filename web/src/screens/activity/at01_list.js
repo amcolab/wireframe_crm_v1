@@ -198,6 +198,12 @@ function bindUi() {
   });
 
   bindActivityContextMenu();
+
+  cellCopy.bindOutsideClear({
+    root,
+    ignoreSelectors: ['#activityTable', '#activityContextMenu'],
+    isActive: () => !!q('activity-root'),
+  });
 }
 
 function bindActivityContextMenu() {
@@ -268,7 +274,34 @@ function bindActivityTable() {
     const a = getSelectedActivity();
     if (a) fillDetailForm(a);
     render();
+    cellCopy.highlightSelectedCell();
   });
+
+  if (tbody.dataset.keyboardBound !== '1') {
+    tbody.dataset.keyboardBound = '1';
+    document.addEventListener('keydown', (e) => {
+      if (!q('activity-root')) return;
+      if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+      if (e.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+
+      const rows = Array.from(tbody.querySelectorAll('tr[data-id]'));
+      if (!rows.length) return;
+
+      const currentIdx = rows.findIndex((row) => String(row.getAttribute('data-id')) === String(state.selectedId));
+      let nextIdx = currentIdx >= 0 ? currentIdx : 0;
+      if (e.key === 'ArrowUp') nextIdx = Math.max(0, nextIdx - 1);
+      if (e.key === 'ArrowDown') nextIdx = Math.min(rows.length - 1, nextIdx + 1);
+      if (nextIdx === currentIdx) return;
+
+      e.preventDefault();
+      state.selectedId = rows[nextIdx].getAttribute('data-id');
+      // Row navigation should not keep prior copied-cell highlight.
+      cellCopy.clearSelection();
+      const selected = getSelectedActivity();
+      if (selected) fillDetailForm(selected);
+      render();
+    });
+  }
 }
 
 function render() {

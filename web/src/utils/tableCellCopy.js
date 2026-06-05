@@ -1,5 +1,11 @@
 import { showToast } from './toast.js';
 
+export function isEventFromSelectors(event, selectors) {
+  const path = event.composedPath?.() ?? [];
+  const nodes = path.length ? path : [event.target];
+  return selectors.some((selector) => nodes.some((node) => node instanceof Element && node.matches?.(selector)));
+}
+
 export function shouldSkipCellCopyShortcut() {
   const active = document.activeElement;
   if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT' || active.isContentEditable)) {
@@ -66,6 +72,16 @@ export function createTableCellCopy(options = {}) {
   function cellClass(colKey, rowId, containerId, extra = '') {
     const classes = [extra, isSelected(colKey, rowId, containerId) ? 'cell-selected' : ''].filter(Boolean);
     return classes.length ? ` class="${classes.join(' ')}"` : '';
+  }
+
+  function clearSelection() {
+    const container = getContainer();
+    container?.querySelectorAll('td.cell-selected').forEach((el) => el.classList.remove('cell-selected'));
+    selection.cellValue = '';
+    selection.containerId = null;
+    selection.rowId = null;
+    selection.colKey = null;
+    selection.cellIndex = -1;
   }
 
   async function copyCellText() {
@@ -145,15 +161,28 @@ export function createTableCellCopy(options = {}) {
     });
   }
 
+  function bindOutsideClear({ root, ignoreSelectors = [], isActive }) {
+    if (!root || root.dataset.cellSelectionDismissBound === '1') return;
+    root.dataset.cellSelectionDismissBound = '1';
+
+    document.addEventListener('click', (e) => {
+      if (isActive?.() === false) return;
+      if (isEventFromSelectors(e, ignoreSelectors)) return;
+      clearSelection();
+    });
+  }
+
   return {
     selection,
     setSelectedCell,
     highlightSelectedCell,
     isSelected,
     cellClass,
+    clearSelection,
     copyCellText,
     bindKeyboardCopy,
     bindTableTarget,
+    bindOutsideClear,
     getCellValue: () => selection.cellValue,
   };
 }

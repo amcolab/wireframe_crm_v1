@@ -437,6 +437,18 @@ function bindUi() {
     openProjectCreateDialog({ company });
   });
 
+  cellCopy.bindOutsideClear({
+    root,
+    ignoreSelectors: [
+      '#companyTable',
+      '#companyContactsList',
+      '#companyActivitiesList',
+      '#companyProjectsList',
+      '#companyContextMenu',
+    ],
+    isActive: () => !!q('company-root'),
+  });
+
   // Modal triggers inside detail modals
   const bindModalTrigger = (btnId, dlgId) => {
     const btn = q(btnId);
@@ -1839,7 +1851,11 @@ function bindCompanyTableKeyboard() {
       handled = moveCompanySelection(delta);
     }
 
-    if (handled) e.preventDefault();
+    if (handled) {
+      // Row navigation should not keep prior copied-cell highlight.
+      cellCopy.clearSelection();
+      e.preventDefault();
+    }
   });
 }
 
@@ -1860,6 +1876,7 @@ function bindCompanyTable() {
     }
     state.activeTableKey = 'company';
     render();
+    cellCopy.highlightSelectedCell();
   });
   bindCompanyTableKeyboard();
 }
