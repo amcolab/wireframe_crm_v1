@@ -2212,7 +2212,7 @@
 }
 
 .company-screen table.t tbody tr:nth-child(even) td {
-  background: #f3f3f3;
+  background: #dededeff;
 }
 
 /* .company-screen table.t tbody tr:hover td {
