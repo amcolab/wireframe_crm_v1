@@ -25,7 +25,14 @@ import {
 } from '../../utils/tableColumns.js';
 import { openContactCreateDialog, resolveCompanyFromContact } from '../../utils/contactCreateForm.js';
 import { openActivityCreateDialog } from '../../utils/activityCreateForm.js';
+import { openProjectCreateDialog } from '../../utils/projectCreateForm.js';
 import { createTableCellCopy } from '../../utils/tableCellCopy.js';
+import {
+  hideContextMenu,
+  showContextMenu,
+  ensureContextMenuDismiss,
+  bindContextMenuActions,
+} from '../../utils/entityContextMenu.js';
 import {
   clearColumnFilters,
   captureColumnFilterFocus,
@@ -89,8 +96,6 @@ let state = {
   contactProjectsPageSize: 50,
 };
 
-let tableBound = false;
-let contextMenuBound = false;
 
 const cellCopy = createTableCellCopy({ scopeSelector: '#contact-root', useToast: false });
 
@@ -227,7 +232,14 @@ function bindUi() {
       dept: selected?.dept ?? null,
     });
   });
-  q('btnContactNewProject')?.addEventListener('click', () => { q('dlgProjectDetail')?.showModal(); });
+  q('btnContactNewProject')?.addEventListener('click', () => {
+    const selected = getSelectedContact();
+    if (!selected) {
+      alert('担当者を選択してください。');
+      return;
+    }
+    openProjectCreateDialog({ contact: selected });
+  });
   const btnContactAdv = q('btnContactAdvancedSearch');
   bindAdvancedSearchForm({
     btn: btnContactAdv,
@@ -301,6 +313,12 @@ function bindUi() {
   }
 
   bindContactContextMenu();
+
+  cellCopy.bindOutsideClear({
+    root,
+    ignoreSelectors: ['#contactTable', '#contactActivitiesList', '#contactProjectsList', '#contactContextMenu'],
+    isActive: () => !!q('contact-root'),
+  });
 }
 
 function hasContactBasicSearch() {
@@ -310,55 +328,23 @@ function hasContactBasicSearch() {
   );
 }
 
-function getContactContextMenu() {
-  return q('contactContextMenu');
-}
-
-function hideContactContextMenu() {
-  const menu = getContactContextMenu();
-  if (!menu) return;
-  menu.style.display = 'none';
-  menu.setAttribute('aria-hidden', 'true');
-}
-
-function showContactContextMenu(x, y) {
-  const menu = getContactContextMenu();
-  if (!menu) return;
-
-  menu.style.visibility = 'hidden';
-  menu.style.display = 'block';
-  menu.setAttribute('aria-hidden', 'false');
-  const rect = menu.getBoundingClientRect();
-  const left = Math.min(Math.max(0, x), Math.max(0, window.innerWidth - rect.width - 4));
-  const top = Math.min(Math.max(0, y), Math.max(0, window.innerHeight - rect.height - 4));
-  menu.style.left = `${left}px`;
-  menu.style.top = `${top}px`;
-  menu.style.visibility = '';
-}
-
 function bindContextTarget(selector) {
+  const menu = q('contactContextMenu');
   cellCopy.bindTableTarget(selector, {
     onClick: selector === 'contactTable' ? false : undefined,
-    onContextMenu: ({ x, y }) => showContactContextMenu(x, y),
+    onContextMenu: ({ x, y }) => showContextMenu(menu, x, y),
   });
 }
 
 function bindContactContextMenu() {
-  if (contextMenuBound) return;
-  contextMenuBound = true;
-
   bindContextTarget('contactTable');
   bindContextTarget('contactActivitiesList');
   bindContextTarget('contactProjectsList');
 
-  const menu = getContactContextMenu();
+  const menu = q('contactContextMenu');
   if (!menu) return;
 
-  menu.addEventListener('click', async (e) => {
-    const item = e.target.closest('.context-menu-item');
-    if (!item || item.classList.contains('disabled')) return;
-    const action = item.getAttribute('data-action');
-
+  bindContextMenuActions(menu, async (action) => {
     if (action === 'copy') {
       await cellCopy.copyCellText();
     } else if (action === 'new-contact') {
@@ -368,20 +354,10 @@ function bindContactContextMenu() {
     } else if (action === 'new-project') {
       q('btnContactNewProject')?.click();
     }
-
-    hideContactContextMenu();
   });
 
-  document.addEventListener('click', (e) => {
-    if (e.target.closest('#contactContextMenu')) return;
-    hideContactContextMenu();
-  });
-  window.addEventListener('resize', hideContactContextMenu);
-  window.addEventListener('scroll', hideContactContextMenu, true);
+  ensureContextMenuDismiss('contactContextMenu', () => hideContextMenu(menu));
   cellCopy.bindKeyboardCopy(() => !!q('contact-root'));
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') hideContactContextMenu();
-  });
 }
 
 function applySearch() {
@@ -399,8 +375,8 @@ function applySearch() {
 
 function bindContactTable() {
   const tbody = q('contactTableBody');
-  if (!tbody || tableBound) return;
-  tableBound = true;
+  if (!tbody || tbody.dataset.clickBound === '1') return;
+  tbody.dataset.clickBound = '1';
   tbody.addEventListener('click', (e) => {
     if (e.target.closest('[data-goto-company], [data-goto-contact], [data-goto-activity], [data-goto-project]')) {
       return;
@@ -416,7 +392,37 @@ function bindContactTable() {
       renderChildLists(c);
     }
     render();
+    cellCopy.highlightSelectedCell();
   });
+
+  if (tbody.dataset.keyboardBound !== '1') {
+    tbody.dataset.keyboardBound = '1';
+    document.addEventListener('keydown', (e) => {
+      if (!q('contact-root')) return;
+      if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+      if (e.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+
+      const rows = Array.from(tbody.querySelectorAll('tr[data-id]'));
+      if (!rows.length) return;
+
+      const currentIdx = rows.findIndex((row) => String(row.getAttribute('data-id')) === String(state.selectedId));
+      let nextIdx = currentIdx >= 0 ? currentIdx : 0;
+      if (e.key === 'ArrowUp') nextIdx = Math.max(0, nextIdx - 1);
+      if (e.key === 'ArrowDown') nextIdx = Math.min(rows.length - 1, nextIdx + 1);
+      if (nextIdx === currentIdx) return;
+
+      e.preventDefault();
+      state.selectedId = rows[nextIdx].getAttribute('data-id');
+      cellCopy.clearSelection();
+      const selected = getSelectedContact();
+      if (selected) {
+        state.selectedId = String(selected.id);
+        fillDetailForm(selected);
+        renderChildLists(selected);
+      }
+      render();
+    });
+  }
 }
 
 function render() {
