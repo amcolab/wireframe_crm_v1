@@ -25,6 +25,7 @@ import {
 } from '../../utils/tableColumns.js';
 import { openContactCreateDialog, resolveCompanyFromContact } from '../../utils/contactCreateForm.js';
 import { openActivityCreateDialog } from '../../utils/activityCreateForm.js';
+import { openProjectCreateDialog } from '../../utils/projectCreateForm.js';
 import { createTableCellCopy } from '../../utils/tableCellCopy.js';
 import {
   clearColumnFilters,
@@ -227,7 +228,14 @@ function bindUi() {
       dept: selected?.dept ?? null,
     });
   });
-  q('btnContactNewProject')?.addEventListener('click', () => { q('dlgProjectDetail')?.showModal(); });
+  q('btnContactNewProject')?.addEventListener('click', () => {
+    const selected = getSelectedContact();
+    if (!selected) {
+      alert('担当者を選択してください。');
+      return;
+    }
+    openProjectCreateDialog({ contact: selected });
+  });
   const btnContactAdv = q('btnContactAdvancedSearch');
   bindAdvancedSearchForm({
     btn: btnContactAdv,
