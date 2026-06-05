@@ -5,6 +5,8 @@ import * as XLSX from 'xlsx';
 
 const STORAGE_PREFIX = 'smos.columnSettings';
 const DIALOG_SIZE_STORAGE_KEY = `${STORAGE_PREFIX}.dialogSize`;
+const DIALOG_MIN_WIDTH = 400;
+const DIALOG_MIN_HEIGHT = 700;
 
 /** Số cột mặc định hiển thị (会社メニュー → 会社一覧) — khớp wireframe gốc */
 const DEFAULT_VISIBLE_COUNT = { '1-1': 11 };
@@ -104,11 +106,15 @@ function saveDialogSize(width, height) {
 function applyDialogSize(dlg) {
   if (!dlg) return;
   const saved = loadDialogSize();
-  if (!saved) return;
-  const w = Math.max(640, Math.min(window.innerWidth - 24, saved.width));
-  const h = Math.max(700, Math.min(window.innerHeight - 24, saved.height));
-  dlg.style.width = `${Math.round(w)}px`;
-  dlg.style.height = `${Math.round(h)}px`;
+  if (saved) {
+    const w = Math.max(DIALOG_MIN_WIDTH, Math.min(window.innerWidth - 24, saved.width));
+    const h = Math.max(DIALOG_MIN_HEIGHT, Math.min(window.innerHeight - 24, saved.height));
+    dlg.style.width = `${Math.round(w)}px`;
+    dlg.style.height = `${Math.round(h)}px`;
+    return;
+  }
+  dlg.style.width = `${DIALOG_MIN_WIDTH}px`;
+  dlg.style.removeProperty('height');
 }
 
 function fillSelect(select, options, selectedValue) {
@@ -505,8 +511,8 @@ export function initColumnSettings() {
     const startY = e.clientY;
     const startWidth = dlg.offsetWidth;
     const startHeight = dlg.offsetHeight;
-    const minWidth = 640;
-    const minHeight = 700;
+    const minWidth = DIALOG_MIN_WIDTH;
+    const minHeight = DIALOG_MIN_HEIGHT;
     let lastWidth = startWidth;
     let lastHeight = startHeight;
     let rafId = 0;
