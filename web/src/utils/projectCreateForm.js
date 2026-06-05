@@ -1,6 +1,6 @@
 import { q } from './helpers.js';
 import { mockContacts } from './mockData.js';
-import { getLatestCompanyContactDept } from './contactCreateForm.js';
+import { getLatestCompanyContactDept, resolveCompanyFromContact } from './contactCreateForm.js';
 import { setFormField } from './formFields.js';
 
 const PROJECT_COMPANY_MIRROR_IDS = [
@@ -42,12 +42,37 @@ export function fillProjectCreateFromCompany(company, contacts = mockContacts) {
 }
 
 /**
- * @param {{ company?: Record<string, unknown> | null; contacts?: Array<Record<string, unknown>> }} [options]
+ * @param {{ companyId?: string | number; company?: string; last?: string; dept?: string }} contact
+ * @param {Array<Record<string, unknown>>} [contacts]
+ */
+export function fillProjectCreateFromContact(contact, contacts = mockContacts) {
+  if (!contact) return;
+
+  const company = resolveCompanyFromContact(contact);
+  if (company) {
+    fillProjectCreateFromCompany(company, contacts);
+    const dept = (contact.dept ?? '').trim();
+    if (dept) setFormField('prDetailCompanyDept', dept);
+  }
+
+  const contactName = (contact.last ?? '').trim();
+  if (contactName) setFormField('prDetailContact', contactName);
+}
+
+/**
+ * @param {{
+ *   company?: Record<string, unknown> | null;
+ *   contact?: Record<string, unknown> | null;
+ *   contacts?: Array<Record<string, unknown>>;
+ * }} [options]
  */
 export function openProjectCreateDialog(options = {}) {
   resetProjectCreateForm();
-  if (options.company) {
-    fillProjectCreateFromCompany(options.company, options.contacts ?? mockContacts);
+  const contacts = options.contacts ?? mockContacts;
+  if (options.contact) {
+    fillProjectCreateFromContact(options.contact, contacts);
+  } else if (options.company) {
+    fillProjectCreateFromCompany(options.company, contacts);
   }
   q('dlgProjectDetail')?.showModal();
 }

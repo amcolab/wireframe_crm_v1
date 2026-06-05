@@ -15,7 +15,7 @@
             <path d="M9 21v-7h6v7" />
           </svg>
         </div> -->
-        <img src="/images/company.png" alt="会社" class="icon-box" style="width: 24px; height: 24px; object-fit: contain; object-position: center;" />
+        <img src="/images/company.png" alt="会社" class="icon-box" style="width: 32px; height: 32px; object-fit: contain; object-position: center;" />
         <span class="sidebar-label">会社</span>
       </div>
       <div class="sidebar-item" data-section="contact">
@@ -25,7 +25,7 @@
             <path d="M5 20c1-3.5 4-5.5 7-5.5s6 2 7 5.5" />
           </svg>
         </div> -->
-        <img src="/images/contact.png" alt="担当" class="icon-box" style="width: 24px; height: 24px; object-fit: contain; object-position: center;" />
+        <img src="/images/contact.png" alt="担当" class="icon-box" style="width: 32px; height: 32px; object-fit: contain; object-position: center;" />
         <span class="sidebar-label">担当</span>
       </div>
       <div class="sidebar-item" data-section="activity">
@@ -34,7 +34,7 @@
             <path d="M3 12h4l3-7 4 14 3-7h4" />
           </svg>
         </div> -->
-        <img src="/images/activity.png" alt="活動" class="icon-box" style="width: 24px; height: 24px; object-fit: contain; object-position: center;" />
+        <img src="/images/activity.png" alt="活動" class="icon-box" style="width: 32px; height: 32px; object-fit: contain; object-position: center;" />
         <span class="sidebar-label">活動</span>
       </div>
       <div class="sidebar-item" data-section="project">
@@ -44,7 +44,7 @@
             <path d="M8 6V4h8v2" />
           </svg>
         </div> -->
-        <img src="/images/project.png" alt="会社" class="icon-box" style="width: 24px; height: 24px; object-fit: contain; object-position: center;" />
+        <img src="/images/project.png" alt="会社" class="icon-box" style="width: 32px; height: 32px; object-fit: contain; object-position: center;" />
         <span class="sidebar-label">案件</span>
       </div>
     </nav>
@@ -291,7 +291,7 @@
             <colgroup>
               <col style="width:64px">
               <col>
-              <col style="width:72px">
+              <col style="width:84px">
             </colgroup>
             <thead>
               <tr>
@@ -2122,12 +2122,15 @@
 
           <!-- Planned Block -->
           <div class="form-section">
-            <div class="form-section-title">予定</div>
-            <div class="form-row"><label>機種</label><input type="text" /></div>
-            <div class="form-row"><label>台数</label><input type="text" style="width: 100px;" /></div>
             <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr;">
               <div class="sub">
-                <label>予定時期</label>
+                <label>予定製品</label><input type="text" />
+              </div>
+              <div class="sub">
+                <label>予定時期</label><input type="text" style="width: 100px;" />
+              </div>
+              <div class="sub">
+                <label>予定数量</label>
                 <select>
                   <option>-</option>
                 </select>
@@ -2140,18 +2143,21 @@
 
           <!-- Actual Block -->
           <div class="form-section">
-            <div class="form-section-title">実績</div>
-            <div class="form-row"><label>機種</label><input type="text" /></div>
-            <div class="form-row"><label>台数</label><input type="text" style="width: 100px;" /></div>
             <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr;">
               <div class="sub">
-                <label>売上時期</label>
+                <label>売上製品</label><input type="text" />
+              </div>
+              <div class="sub">
+                <label>売上時期</label><input type="text" style="width: 100px;" />
+              </div>
+              <div class="sub">
+                <label>売上数量</label>
                 <select>
                   <option>-</option>
                 </select>
               </div>
               <div class="sub">
-                <label style="width: 70px;">売上</label>
+                <label style="width: 70px;">売上結果</label>
                 <input type="text" />
               </div>
             </div>
@@ -2161,7 +2167,7 @@
         <!-- Column 3: Stages & Company Info -->
         <div class="form-col" id="prCreateCol3">
           <div style="margin-bottom: 15px;">
-            <div class="stage-checks">
+            <div class="stage-checks" style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; background: #f8fafc; padding: 12px; border-radius: 8px;">
               <label style="font-size: 11px; display: flex; align-items: center; gap: 5px; white-space: nowrap; color: #1e50a2;">
                 <input type="checkbox" style="margin: 0;" /> ｽﾃｰｼﾞ1: 見積提出
               </label>
