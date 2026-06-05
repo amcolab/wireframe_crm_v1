@@ -22,6 +22,12 @@ import { openProjectCreateDialog } from '../../utils/projectCreateForm.js';
 import { loadColumnSettings, saveColumnSettings } from '../../utils/columnSettings.js';
 import { createTableCellCopy } from '../../utils/tableCellCopy.js';
 import {
+  hideContextMenu,
+  showContextMenu,
+  ensureContextMenuDismiss,
+  bindContextMenuActions,
+} from '../../utils/entityContextMenu.js';
+import {
   applyColumnFilters,
   bindTableColumnFilters,
   clearColumnFilters,
@@ -55,10 +61,8 @@ let state = {
 };
 
 let isReady = false;
-let companyTableBound = false;
 let companyTableKeyboardBound = false;
 let columnSettingsBound = false;
-let companyContextMenuBound = false;
 
 const cellCopy = createTableCellCopy({ scopeSelector: '#company-root' });
 
@@ -829,81 +833,42 @@ function bindCompanyAttachmentActions() {
   updateAttachUiState();
 }
 
-function hideCompanyContextMenu() {
-  const menu = q('companyContextMenu');
-  if (!menu) return;
-  menu.style.display = 'none';
-  menu.setAttribute('aria-hidden', 'true');
-}
-
-function showCompanyContextMenu(x, y) {
-  const menu = q('companyContextMenu');
-  if (!menu) return;
-
-  menu.style.visibility = 'hidden';
-  menu.style.display = 'block';
-  menu.setAttribute('aria-hidden', 'false');
-
-  const rect = menu.getBoundingClientRect();
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const left = Math.min(Math.max(0, x), Math.max(0, vw - rect.width - 4));
-  const top = Math.min(Math.max(0, y), Math.max(0, vh - rect.height - 4));
-  menu.style.left = `${left}px`;
-  menu.style.top = `${top}px`;
-  menu.style.visibility = '';
-}
-
 function bindCompanyContextMenu(btnCreate) {
-  if (companyContextMenuBound) return;
-  companyContextMenuBound = true;
-
   const table = q('companyTable');
   const body = q('companyTableBody');
   const menu = q('companyContextMenu');
-  const itemCopy = menu?.querySelector('[data-action="copy"]');
-  const itemCreate = menu?.querySelector('[data-action="new-company"]');
   if (!table || !body || !menu) return;
 
-  table.addEventListener('contextmenu', (e) => {
-    const tr = e.target.closest('tbody tr[data-id]');
-    if (!tr) return;
-    e.preventDefault();
+  if (table.dataset.contextMenuBound !== '1') {
+    table.dataset.contextMenuBound = '1';
+    table.addEventListener('contextmenu', (e) => {
+      const tr = e.target.closest('tbody tr[data-id]');
+      if (!tr) return;
+      e.preventDefault();
 
-    const td = e.target.closest('td');
-    cellCopy.setSelectedCell(tr, td, table);
-    cellCopy.highlightSelectedCell();
-    showCompanyContextMenu(e.clientX, e.clientY);
-  });
+      const td = e.target.closest('td');
+      cellCopy.setSelectedCell(tr, td, table);
+      cellCopy.highlightSelectedCell();
+      showContextMenu(menu, e.clientX, e.clientY);
+    });
+  }
 
   ['companyContactsList', 'companyActivitiesList'].forEach((targetId) => {
     cellCopy.bindTableTarget(targetId, {
-      onContextMenu: ({ x, y }) => showCompanyContextMenu(x, y),
+      onContextMenu: ({ x, y }) => showContextMenu(menu, x, y),
     });
   });
 
-  itemCopy?.addEventListener('click', async () => {
-    await cellCopy.copyCellText();
-    hideCompanyContextMenu();
+  bindContextMenuActions(menu, async (action) => {
+    if (action === 'copy') {
+      await cellCopy.copyCellText();
+    } else if (action === 'new-company') {
+      btnCreate?.click();
+    }
   });
 
-  itemCreate?.addEventListener('click', () => {
-    btnCreate?.click();
-    hideCompanyContextMenu();
-  });
-
-  document.addEventListener('click', (e) => {
-    if (menu.style.display !== 'block') return;
-    if (e.target.closest('#companyContextMenu')) return;
-    hideCompanyContextMenu();
-  });
-
-  window.addEventListener('resize', hideCompanyContextMenu);
-  window.addEventListener('scroll', hideCompanyContextMenu, true);
+  ensureContextMenuDismiss('companyContextMenu', () => hideContextMenu(menu));
   cellCopy.bindKeyboardCopy(() => !!q('company-root'));
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') hideCompanyContextMenu();
-  });
 }
 
 function bindContactsListNavigation() {
@@ -1880,8 +1845,8 @@ function bindCompanyTableKeyboard() {
 
 function bindCompanyTable() {
   const tbody = q('companyTableBody');
-  if (!tbody || companyTableBound) return;
-  companyTableBound = true;
+  if (!tbody || tbody.dataset.clickBound === '1') return;
+  tbody.dataset.clickBound = '1';
   tbody.addEventListener('click', (e) => {
     const tr = e.target.closest('tr[data-id]');
     if (!tr) return;

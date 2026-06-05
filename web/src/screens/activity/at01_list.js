@@ -15,6 +15,12 @@ import { openProjectCreateDialog } from '../../utils/projectCreateForm.js';
 import { takePendingActivitySearch, bindCrossScreenLinks } from '../../utils/screenNavigation.js';
 import { createTableCellCopy } from '../../utils/tableCellCopy.js';
 import {
+  hideContextMenu,
+  showContextMenu,
+  ensureContextMenuDismiss,
+  bindContextMenuActions,
+} from '../../utils/entityContextMenu.js';
+import {
   clearColumnFilters,
   captureColumnFilterFocus,
   restoreColumnFilterFocus,
@@ -70,8 +76,6 @@ let state = {
   columnSetFilters: {},
 };
 
-let tableBound = false;
-let contextMenuBound = false;
 
 const cellCopy = createTableCellCopy({ scopeSelector: '#activity-root', useToast: false });
 
@@ -196,71 +200,35 @@ function bindUi() {
   bindActivityContextMenu();
 }
 
-function getActivityContextMenu() {
-  return q('activityContextMenu');
-}
-
-function hideActivityContextMenu() {
-  const menu = getActivityContextMenu();
-  if (!menu) return;
-  menu.style.display = 'none';
-  menu.setAttribute('aria-hidden', 'true');
-}
-
-function showActivityContextMenu(x, y) {
-  const menu = getActivityContextMenu();
-  if (!menu) return;
-  menu.style.visibility = 'hidden';
-  menu.style.display = 'block';
-  menu.setAttribute('aria-hidden', 'false');
-  const rect = menu.getBoundingClientRect();
-  const left = Math.min(Math.max(0, x), Math.max(0, window.innerWidth - rect.width - 4));
-  const top = Math.min(Math.max(0, y), Math.max(0, window.innerHeight - rect.height - 4));
-  menu.style.left = `${left}px`;
-  menu.style.top = `${top}px`;
-  menu.style.visibility = '';
-}
-
 function bindActivityContextMenu() {
-  if (contextMenuBound) return;
-  contextMenuBound = true;
   const table = q('activityTable');
-  const menu = getActivityContextMenu();
+  const menu = q('activityContextMenu');
   if (!table || !menu) return;
 
-  table.addEventListener('contextmenu', (e) => {
-    const withinTable = e.target.closest('#activityTable');
-    if (!withinTable) return;
-    e.preventDefault();
-    const tr = e.target.closest('tbody tr[data-id]');
-    const td = e.target.closest('td');
-    cellCopy.setSelectedCell(tr, td, table);
-    cellCopy.highlightSelectedCell();
-    showActivityContextMenu(e.clientX, e.clientY);
-  });
+  if (table.dataset.contextMenuBound !== '1') {
+    table.dataset.contextMenuBound = '1';
+    table.addEventListener('contextmenu', (e) => {
+      const withinTable = e.target.closest('#activityTable');
+      if (!withinTable) return;
+      e.preventDefault();
+      const tr = e.target.closest('tbody tr[data-id]');
+      const td = e.target.closest('td');
+      cellCopy.setSelectedCell(tr, td, table);
+      cellCopy.highlightSelectedCell();
+      showContextMenu(menu, e.clientX, e.clientY);
+    });
+  }
 
-  menu.addEventListener('click', async (e) => {
-    const item = e.target.closest('.context-menu-item');
-    if (!item || item.classList.contains('disabled')) return;
-    const action = item.getAttribute('data-action');
+  bindContextMenuActions(menu, async (action) => {
     if (action === 'copy') {
       await cellCopy.copyCellText();
     } else if (action === 'new-activity') {
       q('btnActivityNewMain')?.click();
     }
-    hideActivityContextMenu();
   });
 
-  document.addEventListener('click', (e) => {
-    if (e.target.closest('#activityContextMenu')) return;
-    hideActivityContextMenu();
-  });
-  window.addEventListener('resize', hideActivityContextMenu);
-  window.addEventListener('scroll', hideActivityContextMenu, true);
+  ensureContextMenuDismiss('activityContextMenu', () => hideContextMenu(menu));
   cellCopy.bindKeyboardCopy(() => !!q('activity-root'));
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') hideActivityContextMenu();
-  });
 }
 
 function hasActivityBasicSearch() {
@@ -290,8 +258,8 @@ function applySearch() {
 
 function bindActivityTable() {
   const tbody = q('activityTableBody');
-  if (!tbody || tableBound) return;
-  tableBound = true;
+  if (!tbody || tbody.dataset.clickBound === '1') return;
+  tbody.dataset.clickBound = '1';
   tbody.addEventListener('click', (e) => {
     const tr = e.target.closest('tr[data-id]');
     if (!tr) return;

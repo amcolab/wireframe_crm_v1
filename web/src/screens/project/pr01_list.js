@@ -26,6 +26,12 @@ import {
 } from '../../utils/tableColumns.js';
 import { takePendingProjectSearch, bindCrossScreenLinks } from '../../utils/screenNavigation.js';
 import { createTableCellCopy } from '../../utils/tableCellCopy.js';
+import {
+  hideContextMenu,
+  showContextMenu,
+  ensureContextMenuDismiss,
+  bindContextMenuActions,
+} from '../../utils/entityContextMenu.js';
 import { saleOptions } from '../../utils/contants.js';
 import {
   clearColumnFilters,
@@ -85,8 +91,6 @@ let state = {
   projectActivitiesPageSize: 50,
 };
 
-let tableBound = false;
-let contextMenuBound = false;
 
 const cellCopy = createTableCellCopy({ scopeSelector: '#project-root', useToast: false });
 
@@ -282,51 +286,22 @@ function bindUi() {
   bindProjectContextMenu();
 }
 
-function getProjectContextMenu() {
-  return q('projectContextMenu');
-}
-
-function hideProjectContextMenu() {
-  const menu = getProjectContextMenu();
-  if (!menu) return;
-  menu.style.display = 'none';
-  menu.setAttribute('aria-hidden', 'true');
-}
-
-function showProjectContextMenu(x, y) {
-  const menu = getProjectContextMenu();
-  if (!menu) return;
-  menu.style.visibility = 'hidden';
-  menu.style.display = 'block';
-  menu.setAttribute('aria-hidden', 'false');
-  const rect = menu.getBoundingClientRect();
-  const left = Math.min(Math.max(0, x), Math.max(0, window.innerWidth - rect.width - 4));
-  const top = Math.min(Math.max(0, y), Math.max(0, window.innerHeight - rect.height - 4));
-  menu.style.left = `${left}px`;
-  menu.style.top = `${top}px`;
-  menu.style.visibility = '';
-}
-
 function bindProjectContextTarget(selector) {
+  const menu = q('projectContextMenu');
   cellCopy.bindTableTarget(selector, {
     onClick: selector === 'projectTable' ? false : undefined,
-    onContextMenu: ({ x, y }) => showProjectContextMenu(x, y),
+    onContextMenu: ({ x, y }) => showContextMenu(menu, x, y),
   });
 }
 
 function bindProjectContextMenu() {
-  if (contextMenuBound) return;
-  contextMenuBound = true;
   bindProjectContextTarget('projectTable');
   bindProjectContextTarget('projectActivitiesList');
-  const menu = getProjectContextMenu();
+
+  const menu = q('projectContextMenu');
   if (!menu) return;
 
-  menu.addEventListener('click', async (e) => {
-    const item = e.target.closest('.context-menu-item');
-    if (!item || item.classList.contains('disabled')) return;
-    const action = item.getAttribute('data-action');
-
+  bindContextMenuActions(menu, async (action) => {
     if (action === 'copy') {
       await cellCopy.copyCellText();
     } else if (action === 'new-activity') {
@@ -334,20 +309,10 @@ function bindProjectContextMenu() {
     } else if (action === 'new-project') {
       q('btnProjectNewMain')?.click();
     }
-
-    hideProjectContextMenu();
   });
 
-  document.addEventListener('click', (e) => {
-    if (e.target.closest('#projectContextMenu')) return;
-    hideProjectContextMenu();
-  });
-  window.addEventListener('resize', hideProjectContextMenu);
-  window.addEventListener('scroll', hideProjectContextMenu, true);
+  ensureContextMenuDismiss('projectContextMenu', () => hideContextMenu(menu));
   cellCopy.bindKeyboardCopy(() => !!q('project-root'));
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') hideProjectContextMenu();
-  });
 }
 
 function hasProjectBasicSearch() {
@@ -375,8 +340,8 @@ function applySearch() {
 
 function bindProjectTable() {
   const tbody = q('projectTableBody');
-  if (!tbody || tableBound) return;
-  tableBound = true;
+  if (!tbody || tbody.dataset.clickBound === '1') return;
+  tbody.dataset.clickBound = '1';
   tbody.addEventListener('click', (e) => {
     if (e.target.closest('[data-goto-company], [data-goto-contact], [data-goto-activity], [data-goto-project]')) {
       return;
