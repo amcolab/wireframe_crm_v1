@@ -264,13 +264,13 @@
                 <!-- Col 3 -->
                 <div class="form-col" id="prDetailCol3">
                   <div class="check-group"
-                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 15px; background: #f8fafc; padding: 12px; border-radius: 8px;">
+                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; background: #f8fafc; padding: 12px; border-radius: 8px;">
                     <label class="check"><input checked id="prStage1" type="checkbox" /> ステージ1: 見積書提出</label>
                     <label class="check"><input checked id="prStage2" type="checkbox" /> ステージ2: 仕様打合せ</label>
                     <label class="check"><input id="prStage3" type="checkbox" /> ステージ3: 現場確認</label>
                     <label class="check"><input id="prStage4" type="checkbox" /> ステージ4: 上長確認</label>
                   </div>
-                  <div style="display: flex; flex-direction: column; gap: 10px;">
+                  <div style="display: flex; flex-direction: column; gap: 5px;">
                     <div class="form-row">
                       <label>会社名</label>
                       <div style="display:flex; gap:8px; flex:1;">
@@ -325,7 +325,7 @@
                       <label>住所</label>
                       <input disabled id="prDetailAddress" type="text" value="北海道市東区4丁目18-30" />
                     </div>
-                    <div class="detail-audit" style="display: flex; flex-direction: column; gap: 10px; padding-top: 15px;">
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
                       <div class="form-row two">
                         <div class="sub">
                           <label>作成日時</label>
@@ -379,9 +379,11 @@
                     <label>案件自由使用欄7</label>
                     <input id="prDetailFree7" type="text" />
                   </div>
-                  <div class="form-row attach-field">
+                  <div class="form-row attach-field items-start">
                     <label>添付資料</label>
-                    <div class="attach-box attach-box--compact" style="flex:1;">ここにドラッグ＆ドロップ</div>
+                    <div class="attach-list" id="projectDetailAttachList" style="flex-grow: 1;">
+                    </div>
+                    <div class="dropzone compact">＋</div>
                   </div>
                 </div>
               </div>

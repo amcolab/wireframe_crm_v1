@@ -6,6 +6,7 @@ import { applyCompanyToContactCreateForm, openContactCreateDialog } from './cont
 import { applyCompanyToActivityCreateForm } from './activityCreateForm.js';
 import { applyCompanyToProjectCreateForm } from './projectCreateForm.js';
 import { initColumnSettings, openColumnSettingsDialog } from './columnSettings.js';
+import { bindAttachFields } from './attachField.js';
 
 function closeShellMenus() {
   document.querySelector('.settings-menu-trigger')?.classList.remove('show-menu');
@@ -92,6 +93,11 @@ function initResizableMasterDialogs() {
 export function initGlobalLookups() {
   initColumnSettings();
   initResizableMasterDialogs();
+  bindAttachFields([
+    'companyCreateAttachList',
+    'activityDlgAttachList',
+    'projectDlgAttachList',
+  ]);
 
   const GENERAL_MASTER_STORAGE_KEY = 'smos.generalMasters.v1';
   const GENERAL_MASTER_DEFS = [

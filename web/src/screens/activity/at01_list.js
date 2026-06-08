@@ -1,4 +1,5 @@
 import { q, escapeHtml } from '../../utils/helpers.js';
+import { bindAttachField } from '../../utils/attachField.js';
 import { mockActivities } from '../../utils/mockData.js';
 import { renderPageNumberButtons } from '../../utils/pager.js';
 import { syncEntityDetailTabLayout } from '../../utils/entityTabTable.js';
@@ -102,6 +103,7 @@ export function init() {
     onRefreshList: () => refreshActivityListFromFilters(),
   });
   initResizer();
+  bindAttachField('activityDetailAttachList');
   const card = document.querySelector('#activity-root .company-detail');
   syncEntityDetailTabLayout(card, 'detail');
   applyPendingActivitySearch();

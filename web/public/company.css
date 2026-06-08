@@ -2000,51 +2000,23 @@
   display: none;
 }
 
-.company-screen table.t thead tr.col-filter-row th.col-filter-cell--set .col-filter-wrap--set {
-  justify-content: space-between;
-}
-
-.company-screen table.t thead tr.col-filter-row th .col-filter-set-summary {
-  flex: 1;
-  min-width: 0;
-  font-size: 10px;
-  color: #64748b;
-  white-space: nowrap;
+.company-screen table.t thead tr.col-filter-row th .col-filter-input--set,
+.company-screen table.t thead tr.col-filter-row th .col-filter-input--date {
+  cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-left: 2px;
+  white-space: nowrap;
 }
 
-.company-screen table.t thead tr.col-filter-row th.col-filter-active .col-filter-set-summary {
+.company-screen table.t thead tr.col-filter-row th .col-filter-input--set::placeholder,
+.company-screen table.t thead tr.col-filter-row th .col-filter-input--date::placeholder {
+  color: #94a3b8;
+}
+
+.company-screen table.t thead tr.col-filter-row th.col-filter-active .col-filter-input--set,
+.company-screen table.t thead tr.col-filter-row th.col-filter-active .col-filter-input--date {
   color: var(--brand-700);
-  font-weight: 600;
-}
-
-.company-screen table.t thead tr.col-filter-row th .col-filter-btn {
-  flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  padding: 0;
-  border: 1px solid #cbd5e1;
-  border-radius: 3px;
-  background: #fff;
-  color: #64748b;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.company-screen table.t thead tr.col-filter-row th .col-filter-btn:hover {
-  border-color: var(--brand-600);
-  color: var(--brand-600);
-  background: #f8fafc;
-}
-
-.company-screen table.t thead tr.col-filter-row th.col-filter-active .col-filter-btn {
-  border-color: var(--brand-600);
-  color: var(--brand-600);
-  background: #f1f5ff;
+  font-weight: 500;
 }
 
 /* Set filter popup (ag-Grid set filter style) */
@@ -2129,6 +2101,44 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.col-date-filter-popup {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: var(--r, 6px);
+  box-shadow: 0 8px 24px rgba(15, 27, 45, 0.14);
+  padding: 8px 10px;
+}
+
+.col-date-filter-popup .col-date-filter-range {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.col-date-filter-popup .col-date-filter-from,
+.col-date-filter-popup .col-date-filter-to {
+  flex: 1;
+  min-width: 0;
+  height: 26px;
+  padding: 0 6px;
+  font-size: 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+
+.col-date-filter-popup .col-date-filter-from:focus,
+.col-date-filter-popup .col-date-filter-to:focus {
+  border-color: var(--brand-600);
+  outline: none;
+}
+
+.col-date-filter-popup .col-date-filter-sep {
+  flex-shrink: 0;
+  color: #64748b;
+  font-size: 11px;
 }
 
 .company-screen table.t thead th.sort-asc,
@@ -2890,17 +2900,17 @@ select.input {
 
 #companyDetailCol2 .ff > label,
 #companyDetailCol2 .ff .sub > label {
-  min-width: 55px;
+  min-width: 60.02px;
 }
 
 #companyDetailCol3 .ff > label,
 #companyDetailCol3 .ff .sub > label {
-  min-width: 55px;
+  min-width: 60.02px;
 }
 
 #companyDetailCol4 .ff > label,
 #companyDetailCol4 .ff .sub > label {
-  min-width: 84px;
+  min-width: 90.69px;
 }
 
 #companyCreateCol1 .ff > label,
@@ -2920,7 +2930,7 @@ select.input {
 
 #companyCreateCol4 .ff > label,
 #companyCreateCol4 .ff .sub > label {
-  min-width: 84px;
+  min-width: 90.69px;
 }
 
 /* company advanced search start */
@@ -4035,10 +4045,14 @@ body.col-resizing * {
   margin-top: 8px;
 }
 
-#activity-root .detail-form .attach-box--compact,
-#project-root .detail-form .attach-box--compact {
-  min-height: 72px;
-  height: auto;
+.form-row.attach-field.items-start,
+.ff.attach-field.items-start {
+  align-items: flex-start;
+}
+
+.form-row.attach-field.items-start > label,
+.ff.attach-field.items-start > label {
+  padding-top: 4px;
 }
 
 #contact-root .detail-form .form-row label,
