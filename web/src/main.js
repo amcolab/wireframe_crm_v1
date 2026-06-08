@@ -63,6 +63,17 @@ const routes = {
       const module = await import('./screens/project/pr01_list.js');
       if (module.init) module.init();
     }
+  },
+  'tenant': {
+    template: '/screens/settings/tn01_list.html',
+    container: '#router-view',
+    beforeEnter: async () => {
+      await setupDashboardLayout();
+    },
+    init: async () => {
+      const module = await import('./screens/settings/tn01_list.js');
+      if (module.init) module.init();
+    }
   }
 };
 
@@ -102,7 +113,8 @@ async function setupDashboardLayout() {
         'company': '会社 (CP01)',
         'contact': '担当 (CT01)',
         'activity': '活動 (AT01)',
-        'project': '案件 (PR01)'
+        'project': '案件 (PR01)',
+        'tenant': 'テナント・会社マスタ (TN01)'
       };
       const name = screenNames[hash] || '会社 (CP01)';
       const crumbEl = document.querySelector('#topbarCurrentScreen');
