@@ -346,9 +346,9 @@
           <div class="col">
             <div class="ff"><label style="width: 164px;">テナント名 (会社名) <span class="req">*</span></label><input id="tenantDetailName" class="input" type="text" placeholder="例: 株式会社 〇〇" /></div>
             <div class="ff"><label style="width: 164px;">承認コード (ログインコード) <span class="req">*</span></label><input id="tenantDetailCode" class="input" type="text" placeholder="例: AB-1234-X" /></div>
-            <div class="ff">
+            <!-- <div class="ff">
               <div class="check-row"><label><input type="checkbox" id="tenantDetailActive" checked /> 有効なテナントとして登録する</label></div>
-            </div>
+            </div> -->
           </div>
         </div>
       </fieldset>
@@ -387,6 +387,67 @@
     <div class="dlg-actions dlg-actions--split">
       <button type="button" class="btn btn-secondary" value="cancel">キャンセル</button>
       <button type="button" class="btn btn-primary" id="btnSaveTenantDetail">システムを有効化する</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- テナント初期管理ユーザー Modal -->
+<dialog id="dlgTenantAdminAccount" class="dlg dlg-narrow">
+  <form method="dialog" class="dlg-body" id="formTenantAdminAccount">
+    <div class="dlg-header">
+      <div class="dlg-title" id="tenantAdminDlgTitle">初期管理ユーザー</div>
+      <button class="icon-btn" value="cancel" aria-label="close">✕</button>
+    </div>
+    <div class="dlg-content">
+      <fieldset style="border-radius: 8px;">
+        <legend style="font-size: 12px; font-weight: 700;">テナント情報</legend>
+        <div class="form-4col cols-1 density-roomy">
+          <div class="col">
+            <div class="ff"><label style="width: 164px;">テナントID</label><input id="tenantAdminTenantId" class="input" type="text" readonly /></div>
+            <div class="ff"><label style="width: 164px;">会社名</label><input id="tenantAdminCompanyName" class="input" type="text" readonly /></div>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset style="border-radius: 8px; margin-top: 10px;">
+        <legend style="font-size: 12px; font-weight: 700;">アカウント情報</legend>
+        <div class="form-4col cols-2 density-roomy master-form-grid">
+          <div class="col">
+            <div class="ff"><label style="min-width: 60.02px;">社員コード</label><input id="tenantAdminCode" class="input" type="text" readonly /></div>
+            <div class="ff"><label style="min-width: 60.02px;">社員名</label><input id="tenantAdminName" class="input" type="text" readonly /></div>
+            <div class="ff"><label style="min-width: 60.02px;">フリガナ</label><input id="tenantAdminKana" class="input" type="text" readonly /></div>
+            <div class="ff">
+              <label style="min-width: 60.02px;">部署</label>
+              <select id="tenantAdminDept" class="input" disabled>
+                <option value="">(未選択)</option>
+                <option value="企画部">企画部</option>
+                <option value="営業部">営業部</option>
+                <option value="技術部">技術部</option>
+                <option value="管理部">管理部</option>
+              </select>
+            </div>
+          </div>
+          <div class="col">
+            <div class="ff">
+              <label style="width: 71.28px;">所属グループ</label>
+              <input id="tenantAdminGroup" class="input" type="text" readonly />
+            </div>
+            <div class="ff"><label style="width: 71.28px;">ログインID</label><input id="tenantAdminLogin" class="input" type="text" readonly /></div>
+            <div class="ff ff-password-view">
+              <label style="width: 71.28px;">パスワード</label>
+              <div class="input-password-wrap">
+                <input id="tenantAdminPassword" class="input" type="password" readonly autocomplete="off" />
+                <button type="button" class="toggle-pw" id="btnTenantAdminTogglePw" aria-label="パスワードを表示" title="パスワードを表示">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1.5 12s4-7.5 10.5-7.5S22.5 12 22.5 12s-4 7.5-10.5 7.5S1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="ff"><label style="width: 71.28px;">作成日時</label><input id="tenantAdminCreatedAt" class="input" type="text" readonly /></div>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+    <div class="dlg-actions dlg-actions--split">
+      <button type="submit" class="btn btn-secondary" value="cancel">閉じる</button>
     </div>
   </form>
 </dialog>
