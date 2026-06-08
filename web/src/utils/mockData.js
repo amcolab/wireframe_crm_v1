@@ -358,17 +358,32 @@ export const mockEmployees = [
   { id: '1027', name: '田中花子', kana: 'タナカハナコ', dept: '営業部', group: '一般ユーザー', login: 'demo4', password: '****' }
 ];
 
+const TENANT_ADMIN_SAMPLES = [
+  { code: '2001', name: '山田 太郎', kana: 'ヤマダ タロウ', dept: '管理部', group: '管理者', login: 'admin_t001', password: 'Admin@2026', email: 'admin@kensetsu-daiichi.jp', status: '有効', createdAt: '2026/01/10 09:05', lastLogin: '2026/06/07 18:22' },
+  { code: '2002', name: '佐藤 花子', kana: 'サトウ ハナコ', dept: '管理部', group: '管理者', login: 'admin_t002', password: 'Sunrise#88', email: 'admin@sunrise-mfg.jp', status: '有効', createdAt: '2026/02/15 10:35', lastLogin: '2026/06/06 09:10' },
+  null,
+  { code: '2004', name: '鈴木 一郎', kana: 'スズキ イチロウ', dept: '企画部', group: '管理者', login: 'admin_t004', password: 'Hokuriku$12', email: 'admin@hokuriku-logi.jp', status: '有効', createdAt: '2026/03/12 11:25', lastLogin: '2026/06/05 14:40' },
+  { code: '2005', name: '高橋 健二', kana: 'タカハシ ケンジ', dept: '管理部', group: '管理者', login: 'admin_t005', password: 'Mirai!2026', email: 'admin@mirai-kensetsu.jp', status: '有効', createdAt: '2026/03/18 16:50', lastLogin: '2026/06/04 11:05' },
+  null,
+  { code: '2007', name: '田中 美咲', kana: 'タナカ ミサキ', dept: '技術部', group: '管理者', login: 'admin_t007', password: 'Smart@5521', email: 'admin@smart-factory.jp', status: '有効', createdAt: '2026/04/01 13:35', lastLogin: '2026/06/08 08:15' },
+  { code: '2008', name: '伊藤 誠', kana: 'イトウ マコト', dept: '管理部', group: '管理者', login: 'admin_t008', password: 'Green#6632', email: 'admin@green-energy.jp', status: '有効', createdAt: '2026/04/08 10:05', lastLogin: '2026/06/03 16:30' },
+  { code: '2009', name: '渡辺 直樹', kana: 'ワタナベ ナオキ', dept: '営業部', group: '管理者', login: 'admin_t009', password: 'Tokyo$7743', email: 'admin@tokyo-medical.jp', status: '有効', createdAt: '2026/04/12 15:25', lastLogin: '2026/06/07 10:00' },
+  null,
+  { code: '2011', name: '小林 裕子', kana: 'コバヤシ ユウコ', dept: '管理部', group: '管理者', login: 'admin_t011', password: 'Shinetsu!96', email: 'admin@shinetsu-sys.jp', status: '有効', createdAt: '2026/04/20 14:20', lastLogin: '2026/06/02 13:45' },
+  { code: '2012', name: '加藤 修', kana: 'カトウ オサム', dept: '管理部', group: '管理者', login: 'admin_t012', password: 'Kyushu@1076', email: 'admin@kyushu-transport.jp', status: '有効', createdAt: '2026/04/25 11:45', lastLogin: '2026/06/01 09:20' },
+];
+
 export const mockTenants = [
-  { id: 'T001', name: '株式会社 建設第一', loginCode: 'KH-8821-X', isActive: true, createdAt: '2026/01/10 09:00' },
-  { id: 'T002', name: 'サンライズ製造株式会社', loginCode: 'SR-1102-Y', isActive: true, createdAt: '2026/02/15 10:30' },
-  { id: 'T003', name: 'テックソリューションズ', loginCode: 'TS-9943-Z', isActive: false, createdAt: '2026/03/05 14:00' },
-  { id: 'T004', name: '北陸物流株式会社', loginCode: 'HK-2201-A', isActive: true, createdAt: '2026/03/12 11:20' },
-  { id: 'T005', name: 'みらい建設工業', loginCode: 'MK-3302-B', isActive: true, createdAt: '2026/03/18 16:45' },
-  { id: 'T006', name: '太平洋商事', loginCode: 'TH-4410-C', isActive: false, createdAt: '2026/03/22 09:10' },
-  { id: 'T007', name: 'スマートファクトリー株式会社', loginCode: 'SF-5521-D', isActive: true, createdAt: '2026/04/01 13:30' },
-  { id: 'T008', name: 'グリーンエナジー開発', loginCode: 'GE-6632-E', isActive: true, createdAt: '2026/04/08 10:00' },
-  { id: 'T009', name: '東京メディカルサプライ', loginCode: 'TM-7743-F', isActive: true, createdAt: '2026/04/12 15:20' },
-  { id: 'T010', name: '大阪フードサービス', loginCode: 'OF-8854-G', isActive: false, createdAt: '2026/04/15 08:50' },
-  { id: 'T011', name: '信越システム開発', loginCode: 'SS-9965-H', isActive: true, createdAt: '2026/04/20 14:15' },
-  { id: 'T012', name: '九州運輸グループ', loginCode: 'KU-1076-I', isActive: true, createdAt: '2026/04/25 11:40' },
+  { id: 'T001', name: '株式会社 建設第一', loginCode: 'KH-8821-X', isActive: true, createdAt: '2026/01/10 09:00', adminUser: TENANT_ADMIN_SAMPLES[0] },
+  { id: 'T002', name: 'サンライズ製造株式会社', loginCode: 'SR-1102-Y', isActive: true, createdAt: '2026/02/15 10:30', adminUser: TENANT_ADMIN_SAMPLES[1] },
+  { id: 'T003', name: 'テックソリューションズ', loginCode: 'TS-9943-Z', isActive: false, createdAt: '2026/03/05 14:00', adminUser: TENANT_ADMIN_SAMPLES[2] },
+  { id: 'T004', name: '北陸物流株式会社', loginCode: 'HK-2201-A', isActive: true, createdAt: '2026/03/12 11:20', adminUser: TENANT_ADMIN_SAMPLES[3] },
+  { id: 'T005', name: 'みらい建設工業', loginCode: 'MK-3302-B', isActive: true, createdAt: '2026/03/18 16:45', adminUser: TENANT_ADMIN_SAMPLES[4] },
+  { id: 'T006', name: '太平洋商事', loginCode: 'TH-4410-C', isActive: false, createdAt: '2026/03/22 09:10', adminUser: TENANT_ADMIN_SAMPLES[5] },
+  { id: 'T007', name: 'スマートファクトリー株式会社', loginCode: 'SF-5521-D', isActive: true, createdAt: '2026/04/01 13:30', adminUser: TENANT_ADMIN_SAMPLES[6] },
+  { id: 'T008', name: 'グリーンエナジー開発', loginCode: 'GE-6632-E', isActive: true, createdAt: '2026/04/08 10:00', adminUser: TENANT_ADMIN_SAMPLES[7] },
+  { id: 'T009', name: '東京メディカルサプライ', loginCode: 'TM-7743-F', isActive: true, createdAt: '2026/04/12 15:20', adminUser: TENANT_ADMIN_SAMPLES[8] },
+  { id: 'T010', name: '大阪フードサービス', loginCode: 'OF-8854-G', isActive: false, createdAt: '2026/04/15 08:50', adminUser: TENANT_ADMIN_SAMPLES[9] },
+  { id: 'T011', name: '信越システム開発', loginCode: 'SS-9965-H', isActive: true, createdAt: '2026/04/20 14:15', adminUser: TENANT_ADMIN_SAMPLES[10] },
+  { id: 'T012', name: '九州運輸グループ', loginCode: 'KU-1076-I', isActive: true, createdAt: '2026/04/25 11:40', adminUser: TENANT_ADMIN_SAMPLES[11] },
 ];

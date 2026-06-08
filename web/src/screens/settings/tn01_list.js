@@ -2,12 +2,18 @@ import { q, escapeHtml, includesPartial } from '../../utils/helpers.js';
 import { mockTenants } from '../../utils/mockData.js';
 import { renderPageNumberButtons } from '../../utils/pager.js';
 
+const EYE_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1.5 12s4-7.5 10.5-7.5S22.5 12 22.5 12s-4 7.5-10.5 7.5S1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+const EYE_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1.5 12s4-7.5 10.5-7.5c2 0 3.7.45 5.1 1.1"/><path d="M22.5 12s-1.55 2.9-4.6 5"/><path d="m6.5 6.5 11 11"/><path d="M14.1 14.1A3 3 0 0 1 9.9 9.9"/></svg>';
+const PASSWORD_MASK = '********';
+
 let state = {
   tenants: [...mockTenants],
   filtered: [...mockTenants],
   page: 1,
   pageSize: 50,
 };
+
+let currentAdminPassword = '';
 
 function getDisplayRows() {
   return state.filtered;
@@ -60,6 +66,59 @@ function formatNow() {
   return `${y}/${m}/${d} ${h}:${min}`;
 }
 
+function setReadonlyField(id, value) {
+  const el = q(id);
+  if (!el) return;
+  if (el.tagName === 'SELECT') {
+    el.value = value ?? '';
+    return;
+  }
+  el.value = value ?? '';
+}
+
+function setPasswordFieldVisible(visible) {
+  const input = q('tenantAdminPassword');
+  const btn = q('btnTenantAdminTogglePw');
+  if (!input || !btn) return;
+
+  const hasPassword = !!currentAdminPassword;
+  input.type = visible && hasPassword ? 'text' : 'password';
+  input.value = visible && hasPassword ? currentAdminPassword : (hasPassword ? PASSWORD_MASK : '—');
+  input.dataset.visible = visible ? '1' : '0';
+
+  btn.innerHTML = visible ? EYE_OFF : EYE_ON;
+  const label = visible ? 'パスワードを非表示' : 'パスワードを表示';
+  btn.setAttribute('aria-label', label);
+  btn.setAttribute('title', label);
+  btn.disabled = !hasPassword;
+}
+
+function resetPasswordField(password) {
+  currentAdminPassword = password || '';
+  setPasswordFieldVisible(false);
+}
+
+function openTenantAdminAccountDialog(tenant) {
+  if (!tenant?.adminUser) return;
+
+  const admin = tenant.adminUser;
+  const title = q('tenantAdminDlgTitle');
+  if (title) title.textContent = `${tenant.name} - 初期管理ユーザー`;
+
+  setReadonlyField('tenantAdminTenantId', tenant.id);
+  setReadonlyField('tenantAdminCompanyName', tenant.name);
+  setReadonlyField('tenantAdminCode', admin.code);
+  setReadonlyField('tenantAdminName', admin.name);
+  setReadonlyField('tenantAdminKana', admin.kana);
+  setReadonlyField('tenantAdminDept', admin.dept);
+  setReadonlyField('tenantAdminGroup', admin.group);
+  setReadonlyField('tenantAdminLogin', admin.login);
+  resetPasswordField(admin.password);
+  setReadonlyField('tenantAdminCreatedAt', admin.createdAt);
+
+  q('dlgTenantAdminAccount')?.showModal();
+}
+
 function saveTenantCreate() {
   const name = q('tenantDetailName')?.value?.trim() || '';
   const code = q('tenantDetailCode')?.value?.trim() || '';
@@ -99,6 +158,13 @@ function bindTableActions() {
   });
 
   tbody.addEventListener('click', (e) => {
+    const adminBtn = e.target.closest('.btnViewTenantAdmin');
+    if (adminBtn) {
+      const tenant = state.tenants.find((t) => t.id === adminBtn.dataset.id);
+      if (tenant) openTenantAdminAccountDialog(tenant);
+      return;
+    }
+
     const btn = e.target.closest('.btnCreateTenantUser');
     if (!btn) return;
     const tenantId = btn.dataset.id;
@@ -162,6 +228,20 @@ function bindUi() {
   });
 
   bindTableActions();
+
+  const togglePw = q('btnTenantAdminTogglePw');
+  if (togglePw && togglePw.dataset.bound !== '1') {
+    togglePw.dataset.bound = '1';
+    togglePw.addEventListener('click', () => {
+      const input = q('tenantAdminPassword');
+      const visible = input?.dataset.visible === '1';
+      setPasswordFieldVisible(!visible);
+    });
+  }
+
+  q('dlgTenantAdminAccount')?.addEventListener('close', () => {
+    resetPasswordField('');
+  });
 }
 
 function renderTableBody(rows) {
@@ -169,11 +249,16 @@ function renderTableBody(rows) {
   if (!tbody) return;
 
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="6" class="text-muted" style="text-align:center;padding:24px;">該当データがありません</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="text-muted" style="text-align:center;padding:24px;">該当データがありません</td></tr>';
     return;
   }
 
-  tbody.innerHTML = rows.map((t) => `
+  tbody.innerHTML = rows.map((t) => {
+    const adminCell = t.adminUser
+      ? `<button type="button" class="btn btn-secondary btn-sm btnViewTenantAdmin" data-id="${escapeHtml(t.id)}" title="${escapeHtml(t.adminUser.name)}">詳細</button>`
+      : '<span class="text-muted">未作成</span>';
+
+    return `
     <tr data-id="${escapeHtml(t.id)}">
       <td class="blue-link">${escapeHtml(t.id)}</td>
       <td>${escapeHtml(t.name)}</td>
@@ -185,8 +270,10 @@ function renderTableBody(rows) {
         </select>
       </td>
       <td class="text-muted">${escapeHtml(t.createdAt)}</td>
+      <td class="col-center">${adminCell}</td>
     </tr>
-  `).join('');
+  `;
+  }).join('');
 }
 
 function renderPager(total) {
