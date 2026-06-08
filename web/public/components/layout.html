@@ -332,47 +332,6 @@
   </form>
 </dialog>
 
-<!-- テナント・会社マスタ Modal -->
-<dialog id="dlgTenantCompany" class="dlg dlg-wide">
-  <form method="dialog" class="dlg-body">
-    <div class="dlg-header">
-      <div class="dlg-title">テナント・会社マスタ <span class="badge badge-admin">システム管理者専用</span></div>
-      <button class="icon-btn" value="cancel" aria-label="close">✕</button>
-    </div>
-    <div class="dlg-content dlg-content--settings">
-      <p class="dlg-note">ここで登録した会社に対して、最初の管理ユーザーを発行してください。</p>
-      <div class="table-wrap lookup-table-wrap settings-table-wrap">
-        <table class="t lookup-table settings-table" id="tenantCompanyTable">
-            <colgroup>
-              <col style="width:88px">
-              <col style="width:min(220px,28vw)">
-              <col style="width:120px">
-              <col style="width:88px">
-              <col style="width:140px">
-              <col style="width:120px">
-            </colgroup>
-            <thead>
-              <tr>
-                <th>テナントID</th>
-                <th>会社名</th>
-                <th>承認コード</th>
-                <th class="col-center">状態</th>
-                <th>作成日時</th>
-                <th class="col-center">操作</th>
-              </tr>
-            </thead>
-            <tbody id="tenantCompanyBody"></tbody>
-        </table>
-      </div>
-    </div>
-    <div class="dlg-actions dlg-actions--split">
-      <button type="button" class="btn btn-accent" id="btnTenantNew">+ 新規テナント登録</button>
-      <button type="submit" class="btn btn-secondary" value="cancel">閉じる</button>
-    </div>
-    <div id="tenantCompanyResizeHandle" class="dlg__resize-handle" role="presentation" aria-hidden="true"></div>
-  </form>
-</dialog>
-
 <!-- テナント詳細 Modal -->
 <dialog id="dlgTenantDetail" class="dlg dlg-narrow">
   <form method="dialog" class="dlg-body" id="formTenantDetail">
@@ -381,15 +340,49 @@
       <button class="icon-btn" value="cancel" aria-label="close">✕</button>
     </div>
     <div class="dlg-content">
-      <div class="form-4col cols-1 density-roomy">
-        <div class="col">
-          <div class="ff"><label>テナント名 (会社名) <span class="req">*</span></label><input id="tenantDetailName" class="input" type="text" placeholder="例: 株式会社 〇〇" /></div>
-          <div class="ff"><label>承認コード (ログインコード) <span class="req">*</span></label><input id="tenantDetailCode" class="input" type="text" placeholder="例: AB-1234-X" /></div>
-          <div class="ff">
-            <div class="check-row"><label><input type="checkbox" id="tenantDetailActive" checked /> 有効なテナントとして登録する</label></div>
+      <fieldset style="border-radius: 8px;">
+        <legend style="font-size: 12px; font-weight: 700;">テナント情報</legend>
+        <div class="form-4col cols-1 density-roomy">
+          <div class="col">
+            <div class="ff"><label style="width: 164px;">テナント名 (会社名) <span class="req">*</span></label><input id="tenantDetailName" class="input" type="text" placeholder="例: 株式会社 〇〇" /></div>
+            <div class="ff"><label style="width: 164px;">承認コード (ログインコード) <span class="req">*</span></label><input id="tenantDetailCode" class="input" type="text" placeholder="例: AB-1234-X" /></div>
+            <div class="ff">
+              <div class="check-row"><label><input type="checkbox" id="tenantDetailActive" checked /> 有効なテナントとして登録する</label></div>
+            </div>
           </div>
         </div>
-      </div>
+      </fieldset>
+      <fieldset style="border-radius: 8px; margin-top: 10px;">
+        <legend style="font-size: 12px; font-weight: 700;">管理者情報</legend>
+        <div class="form-4col cols-2 density-roomy master-form-grid">
+          <div class="col">
+            <!-- <div class="ff"><label>社員コード <span class="req">*</span></label><input id="empDetailCode" class="input" type="text" placeholder="例: 1028" readonly /></div> -->
+            <div class="ff"><label style="width: 48.02px;">社員名 <span class="req">*</span></label><input id="empDetailName" class="input" type="text" placeholder="例: 山田 太郎" /></div>
+            <div class="ff"><label style="width: 48.02px;">フリガナ</label><input id="empDetailKana" class="input" type="text" placeholder="例: ヤマダ タロウ" /></div>
+            <div class="ff">
+              <label style="width: 48.02px;">部署</label>
+              <select id="empDetailDept" class="input">
+                <option value="">(未選択)</option>
+                <option value="企画部">企画部</option>
+                <option value="営業部">営業部</option>
+                <option value="技術部">技術部</option>
+                <option value="管理部">管理部</option>
+              </select>
+            </div>
+          </div>
+          <div class="col">
+            <div class="ff">
+              <label style="width: 71.28px;">所属グループ</label>
+              <input id="empDetailGroup" class="input" type="text" placeholder="例: user123" value="管理者" readonly />
+              <!-- <select id="empDetailGroup" class="input">
+              <option value="一般ユーザー">一般ユーザー</option>
+              <option value="管理者">管理者</option></select> -->
+            </div>
+            <div class="ff"><label style="width: 71.28px;">ログインID <span class="req">*</span></label><input id="empDetailLogin" class="input" type="text" placeholder="例: user123" /></div>
+            <div class="ff"><label style="width: 71.28px;">パスワード <span class="req">*</span></label><input id="empDetailPassword" class="input" type="password" /></div>
+          </div>
+        </div>
+      </fieldset>
     </div>
     <div class="dlg-actions dlg-actions--split">
       <button type="button" class="btn btn-secondary" value="cancel">キャンセル</button>

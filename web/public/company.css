@@ -1410,8 +1410,8 @@
 
 .modal-dialog .lookup-table-wrap,
 .dlg-hero .lookup-table-wrap,
-.dlg:not(#dlgColumnSettings):not(#dlgGeneralMaster):not(#dlgEmployeeMaster):not(#dlgTenantCompany) .lookup-table-wrap,
-.dlg-wide:not(#dlgColumnSettings):not(#dlgGeneralMaster):not(#dlgEmployeeMaster):not(#dlgTenantCompany) .lookup-table-wrap {
+.dlg:not(#dlgColumnSettings):not(#dlgGeneralMaster):not(#dlgEmployeeMaster) .lookup-table-wrap,
+.dlg-wide:not(#dlgColumnSettings):not(#dlgGeneralMaster):not(#dlgEmployeeMaster) .lookup-table-wrap {
     max-height: min(320px, 40vh);
     overflow: auto;
     border: 1px solid var(--border);
@@ -1478,12 +1478,14 @@
 
 /* Settings master dialogs — CP01 list chrome */
 .dlg-wide table.t.settings-table,
-.dlg table.t.settings-table {
+.dlg table.t.settings-table,
+.tenant-screen table.t.settings-table {
     table-layout: fixed;
 }
 
 .dlg-wide table.t.settings-table thead th,
-.dlg table.t.settings-table thead th {
+.dlg table.t.settings-table thead th,
+.tenant-screen table.t.settings-table thead th {
     background: #f8fafc;
     color: #475569;
     font-size: 11px;
@@ -1496,12 +1498,14 @@
 }
 
 .dlg-wide table.t.settings-table thead th:last-child,
-.dlg table.t.settings-table thead th:last-child {
+.dlg table.t.settings-table thead th:last-child,
+.tenant-screen table.t.settings-table thead th:last-child {
     border-right: none;
 }
 
 .dlg-wide table.t.settings-table:not(.col-settings-table) tbody td,
-.dlg table.t.settings-table:not(.col-settings-table) tbody td {
+.dlg table.t.settings-table:not(.col-settings-table) tbody td,
+.tenant-screen table.t.settings-table:not(.col-settings-table) tbody td {
     padding: 4px 10px;
     border-bottom: 1px solid #f1f5f9;
     border-right: 1px solid #f1f5f9;
@@ -1511,17 +1515,20 @@
 }
 
 .dlg-wide table.t.settings-table:not(.col-settings-table) tbody td:last-child,
-.dlg table.t.settings-table:not(.col-settings-table) tbody td:last-child {
+.dlg table.t.settings-table:not(.col-settings-table) tbody td:last-child,
+.tenant-screen table.t.settings-table:not(.col-settings-table) tbody td:last-child {
     border-right: none;
 }
 
 .dlg-wide table.t.settings-table tbody tr:nth-child(even) td,
-.dlg table.t.settings-table tbody tr:nth-child(even) td {
+.dlg table.t.settings-table tbody tr:nth-child(even) td,
+.tenant-screen table.t.settings-table tbody tr:nth-child(even) td {
     background: #fbfcfd;
 }
 
 .dlg-wide table.t.settings-table tbody tr:hover td,
-.dlg table.t.settings-table tbody tr:hover td {
+.dlg table.t.settings-table tbody tr:hover td,
+.tenant-screen table.t.settings-table tbody tr:hover td {
     background: #f7fbff;
     cursor: pointer;
 }
@@ -1551,7 +1558,12 @@
 }
 
 .dlg-wide table.t.settings-table thead th.col-center,
-.dlg table.t.settings-table thead th.col-center {
+.dlg table.t.settings-table thead th.col-center,
+.tenant-screen table.t.settings-table thead th.col-center {
+    text-align: center;
+}
+
+.tenant-screen table.t.settings-table .col-center {
     text-align: center;
 }
 

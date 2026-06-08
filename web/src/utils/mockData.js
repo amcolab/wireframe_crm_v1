@@ -361,5 +361,14 @@ export const mockEmployees = [
 export const mockTenants = [
   { id: 'T001', name: '株式会社 建設第一', loginCode: 'KH-8821-X', isActive: true, createdAt: '2026/01/10 09:00' },
   { id: 'T002', name: 'サンライズ製造株式会社', loginCode: 'SR-1102-Y', isActive: true, createdAt: '2026/02/15 10:30' },
-  { id: 'T003', name: 'テックソリューションズ', loginCode: 'TS-9943-Z', isActive: false, createdAt: '2026/03/05 14:00' }
+  { id: 'T003', name: 'テックソリューションズ', loginCode: 'TS-9943-Z', isActive: false, createdAt: '2026/03/05 14:00' },
+  { id: 'T004', name: '北陸物流株式会社', loginCode: 'HK-2201-A', isActive: true, createdAt: '2026/03/12 11:20' },
+  { id: 'T005', name: 'みらい建設工業', loginCode: 'MK-3302-B', isActive: true, createdAt: '2026/03/18 16:45' },
+  { id: 'T006', name: '太平洋商事', loginCode: 'TH-4410-C', isActive: false, createdAt: '2026/03/22 09:10' },
+  { id: 'T007', name: 'スマートファクトリー株式会社', loginCode: 'SF-5521-D', isActive: true, createdAt: '2026/04/01 13:30' },
+  { id: 'T008', name: 'グリーンエナジー開発', loginCode: 'GE-6632-E', isActive: true, createdAt: '2026/04/08 10:00' },
+  { id: 'T009', name: '東京メディカルサプライ', loginCode: 'TM-7743-F', isActive: true, createdAt: '2026/04/12 15:20' },
+  { id: 'T010', name: '大阪フードサービス', loginCode: 'OF-8854-G', isActive: false, createdAt: '2026/04/15 08:50' },
+  { id: 'T011', name: '信越システム開発', loginCode: 'SS-9965-H', isActive: true, createdAt: '2026/04/20 14:15' },
+  { id: 'T012', name: '九州運輸グループ', loginCode: 'KU-1076-I', isActive: true, createdAt: '2026/04/25 11:40' },
 ];

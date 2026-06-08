@@ -1,5 +1,5 @@
 import { q, escapeHtml } from './helpers.js';
-import { mockCompanies, mockEmployees, mockProjects, mockTenants } from './mockData.js';
+import { mockCompanies, mockEmployees, mockProjects } from './mockData.js';
 import { renderPageNumberButtons } from './pager.js';
 import { showToast } from './toast.js';
 import { applyCompanyToContactCreateForm, openContactCreateDialog } from './contactCreateForm.js';
@@ -80,12 +80,6 @@ function initResizableMasterDialogs() {
     dialogId: 'dlgGeneralMaster',
     handleId: 'generalMasterResizeHandle',
     minWidth: 700,
-    minHeight: 520,
-  });
-  bindResizableDialog({
-    dialogId: 'dlgTenantCompany',
-    handleId: 'tenantCompanyResizeHandle',
-    minWidth: 860,
     minHeight: 520,
   });
 }
@@ -522,53 +516,6 @@ export function initGlobalLookups() {
     q('dlgEmployeeDetail')?.close();
   });
 
-  // Tenant Master Logic (System Admin Only)
-  const renderTenants = () => {
-    const tbody = q('tenantCompanyBody');
-    if (!tbody) return;
-    tbody.innerHTML = mockTenants.map(t => `
-      <tr data-id="${escapeHtml(t.id)}">
-        <td class="blue-link">${escapeHtml(t.id)}</td>
-        <td>${escapeHtml(t.name)}</td>
-        <td><code class="tenant-code">${escapeHtml(t.loginCode)}</code></td>
-        <td class="col-center">
-          <select class="input status-select ${t.isActive ? 'status-active' : 'status-inactive'}" data-id="${escapeHtml(t.id)}">
-            <option value="true" ${t.isActive ? 'selected' : ''}>有効</option>
-            <option value="false" ${!t.isActive ? 'selected' : ''}>無効</option>
-          </select>
-        </td>
-        <td class="text-muted">${escapeHtml(t.createdAt)}</td>
-        <td class="col-center">
-          <button type="button" class="btn btn-secondary btn-sm btnCreateTenantUser" data-id="${escapeHtml(t.id)}">+ ユーザー作成</button>
-        </td>
-      </tr>
-    `).join('');
-
-    // Bind click events to status change
-    tbody.querySelectorAll('.status-select').forEach(sel => {
-      sel.addEventListener('change', () => {
-        const val = sel.value === 'true';
-        sel.classList.toggle('status-active', val);
-        sel.classList.toggle('status-inactive', !val);
-      });
-    });
-
-    // Bind click events to new buttons
-    tbody.querySelectorAll('.btnCreateTenantUser').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const tenantId = btn.dataset.id;
-        const tenantName = mockTenants.find(t => t.id === tenantId)?.name;
-
-        // Show detail modal and maybe pre-fill some info
-        q('dlgEmployeeDetail')?.showModal();
-
-        // Optional: Pre-fill some context if needed
-        const title = q('dlgEmployeeDetail').querySelector('.dlg-title');
-        if (title) title.textContent = `${tenantName} - 管理ユーザー作成`;
-      });
-    });
-  };
-
   q('menuColumnSettings')?.addEventListener('click', (e) => {
     e.stopPropagation();
     closeShellMenus();
@@ -578,17 +525,7 @@ export function initGlobalLookups() {
   q('menuTenantCompany')?.addEventListener('click', (e) => {
     e.stopPropagation();
     closeShellMenus();
-    renderTenants();
-    q('dlgTenantCompany')?.showModal();
-  });
-
-  q('btnTenantNew')?.addEventListener('click', () => {
-    q('dlgTenantDetail')?.showModal();
-  });
-
-  q('btnSaveTenantDetail')?.addEventListener('click', () => {
-    alert('新しいテナントを有効化しました。');
-    q('dlgTenantDetail')?.close();
+    window.location.hash = 'tenant';
   });
   const updateMultiSelectTrigger = (dropdown) => {
     if (!dropdown) return;
