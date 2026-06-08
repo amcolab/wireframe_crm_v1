@@ -26,15 +26,15 @@ export function buildSetOptionsMap(columns, getSetOptions) {
   return map;
 }
 
-export function filterRowsWithColumnFilters(rows, textFilters, setFilters, columns, getSetOptions) {
+export function filterRowsWithColumnFilters(rows, textFilters, setFilters, columns, getSetOptions, dateFilters = {}) {
   const setOptionsMap = buildSetOptionsMap(columns, getSetOptions);
-  return applyColumnFilters(rows, textFilters, setFilters, setOptionsMap);
+  return applyColumnFilters(rows, textFilters, setFilters, setOptionsMap, dateFilters);
 }
 
-export function ensureEntityListFilterRow(table, columns, textFilters, setFilters, getSetOptions) {
+export function ensureEntityListFilterRow(table, columns, textFilters, setFilters, getSetOptions, dateFilters = {}) {
   const thead = table?.querySelector('thead');
   if (!thead) return;
-  renderColumnFilterRow(thead, columns, textFilters, setFilters, getSetOptions);
+  renderColumnFilterRow(thead, columns, textFilters, setFilters, getSetOptions, dateFilters);
 }
 
 export function initEntityListColumnFilters({
@@ -46,11 +46,19 @@ export function initEntityListColumnFilters({
 }) {
   const table = document.getElementById(tableId);
   if (!table) return;
-  ensureEntityListFilterRow(table, columns, state.columnFilters, state.columnSetFilters, getSetOptions);
+  ensureEntityListFilterRow(
+    table,
+    columns,
+    state.columnFilters,
+    state.columnSetFilters,
+    getSetOptions,
+    state.columnDateFilters ?? {},
+  );
   bindTableColumnFilters(table, {
     columns,
     textFilters: state.columnFilters,
     setFilters: state.columnSetFilters,
+    dateFilters: state.columnDateFilters ?? {},
     getSetOptions,
     onChange: onRefreshList,
     debounceMs: 0,

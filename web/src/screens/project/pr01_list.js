@@ -1,4 +1,5 @@
 import { q, escapeHtml } from '../../utils/helpers.js';
+import { bindAttachField } from '../../utils/attachField.js';
 import { mockProjects, mockActivities } from '../../utils/mockData.js';
 import { renderPageNumberButtons } from '../../utils/pager.js';
 import {
@@ -51,12 +52,12 @@ const PROJECT_SET_OPTIONS = {
 };
 
 const PROJECT_MAIN_COLUMNS = [
-  { key: 'issueDate', label: '話題日' },
-  { key: 'followDate', label: 'フォロー予定' },
+  { key: 'issueDate', label: '話題日', filterType: 'date' },
+  { key: 'followDate', label: 'フォロー予定', filterType: 'date' },
   { key: 'status', label: 'ステータス', filterType: 'set' },
   { key: 'rep', label: '営業担当', filterType: 'set' },
-  { key: 'company', label: '会社名' },
-  { key: 'contact', label: '担当(姓)' },
+  { key: 'company', label: '会社名', filterType: 'set' },
+  { key: 'contact', label: '担当(姓)', filterType: 'set' },
   { key: 'name', label: '案件名' },
   { key: 'summary', label: '案件概要' },
   { key: 'motivation', label: '発生動機', filterType: 'set' },
@@ -73,6 +74,7 @@ function getProjectDisplayFiltered() {
     state.columnSetFilters,
     PROJECT_MAIN_COLUMNS,
     getProjectSetOptions,
+    state.columnDateFilters,
   );
 }
 
@@ -87,6 +89,7 @@ let state = {
   advanced: null,
   columnFilters: {},
   columnSetFilters: {},
+  columnDateFilters: {},
   projectActivitiesPage: 1,
   projectActivitiesPageSize: 50,
 };
@@ -136,6 +139,7 @@ export function init() {
     }
   );
   initResizer();
+  bindAttachField('projectDetailAttachList');
   const card = document.querySelector('#project-root .company-detail');
   syncEntityDetailTabLayout(card, 'detail');
   applyPendingProjectSearch();
@@ -230,7 +234,7 @@ function bindUi() {
       form: q('formProjectAdvancedSearch'),
       state,
     });
-    clearColumnFilters(state.columnFilters, state.columnSetFilters);
+    clearColumnFilters(state.columnFilters, state.columnSetFilters, state.columnDateFilters);
     state.filtered = [...state.projects];
     state.page = 1;
     state.selectedId = state.filtered[0]?.id ? String(state.filtered[0].id) : null;
@@ -408,6 +412,7 @@ function render() {
     state.columnFilters,
     state.columnSetFilters,
     getProjectSetOptions,
+    state.columnDateFilters,
   );
 
   const display = getProjectDisplayFiltered();

@@ -617,7 +617,7 @@
       </div>
 
       <div class="modal-body" style="padding:0;">
-        <div class="form-4col density-roomy" style="grid-template-columns: repeat(4, minmax(250px, 1fr)); overflow:auto;">
+        <div class="form-4col density-roomy" style="grid-template-columns: repeat(4, minmax(350px, 1fr)); overflow:auto;">
           <!-- Column 1 -->
           <div class="col" id="companyCreateCol1">
             <div class="ff">
@@ -778,11 +778,11 @@
             <div class="ff"><label>会社自由使用欄5</label><input name="free5" id="companyCreateFree5" class="input" type="text" /></div>
             <div class="ff"><label>会社自由使用欄6</label><input name="free6" id="companyCreateFree6" class="input" type="text" /></div>
             <div class="ff"><label>会社自由使用欄7</label><input name="free7" id="companyCreateFree7" class="input" type="text" /></div>
-            <div class="ff" style="flex:1; min-height:100px; display:flex; flex-direction:column;">
+            <div class="ff attach-field items-start">
               <label>添付資料</label>
-              <div class="dropzone" style="flex:1; display:flex; align-items:center; justify-content:center; border-radius:4px; margin-bottom:8px;">
-                ここにドラッグ＆ドロップ
+              <div class="attach-list" id="companyCreateAttachList" style="flex-grow: 1;">
               </div>
+              <div class="dropzone compact">＋</div>
             </div>
           </div>
         </div>
@@ -1261,9 +1261,11 @@
           <div class="form-row"><label>活動自由使用欄5</label><input type="text" /></div>
           <div class="form-row"><label>活動自由使用欄6</label><input type="text" /></div>
           <div class="form-row"><label>活動自由使用欄7</label><input type="text" /></div>
-          <div class="form-row">
+          <div class="form-row attach-field items-start">
             <label>添付資料</label>
-            <div class="attach-box">ここにドラッグ＆ドロップ</div>
+            <div class="attach-list" id="activityDlgAttachList" style="flex-grow: 1;">
+            </div>
+            <div class="dropzone compact" style="height: fit-content;">＋</div>
           </div>
         </div>
       </div>
@@ -2166,7 +2168,7 @@
 
         <!-- Column 3: Stages & Company Info -->
         <div class="form-col" id="prCreateCol3">
-          <div style="margin-bottom: 15px;">
+          <div>
             <div class="stage-checks" style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; background: #f8fafc; padding: 12px; border-radius: 8px;">
               <label style="font-size: 11px; display: flex; align-items: center; gap: 5px; white-space: nowrap; color: #1e50a2;">
                 <input type="checkbox" style="margin: 0;" /> ｽﾃｰｼﾞ1: 見積提出
@@ -2229,7 +2231,7 @@
               </div>
             </div>
             <div class="form-row"><label>住所</label><input type="text" id="prDetailCompanyAddr" disabled /></div>
-            <div style="margin-top: 15px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; flex-direction: column; gap: 10px;">
               <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr;">
                 <div class="form-row">
                   <label>作成日時</label><input type="text" disabled />
@@ -2265,11 +2267,11 @@
           <div class="form-row"><label>自由使用欄5</label><input type="text" /></div>
           <div class="form-row"><label>自由使用欄6</label><input type="text" /></div>
           <div class="form-row"><label>自由使用欄7</label><input type="text" /></div>
-          <div class="form-row vertical" style="margin-top: 10px;">
+          <div class="form-row attach-field items-start" style="margin-top: 10px;">
             <label>添付資料</label>
-            <div class="attach-box"
-              style="height: 120px; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #999; font-size: 11px; background: #fafafa;">
-              ここにドラッグ＆ドロップ</div>
+            <div class="attach-list" id="projectDlgAttachList" style="flex-grow: 1;">
+            </div>
+            <div class="dropzone compact" style="height: fit-content;">＋</div>
           </div>
         </div>
       </div>
