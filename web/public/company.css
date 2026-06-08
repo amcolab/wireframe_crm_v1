@@ -2890,17 +2890,17 @@ select.input {
 
 #companyDetailCol2 .ff > label,
 #companyDetailCol2 .ff .sub > label {
-  min-width: 55px;
+  min-width: 60.02px;
 }
 
 #companyDetailCol3 .ff > label,
 #companyDetailCol3 .ff .sub > label {
-  min-width: 55px;
+  min-width: 60.02px;
 }
 
 #companyDetailCol4 .ff > label,
 #companyDetailCol4 .ff .sub > label {
-  min-width: 84px;
+  min-width: 90.69px;
 }
 
 #companyCreateCol1 .ff > label,
@@ -2920,7 +2920,7 @@ select.input {
 
 #companyCreateCol4 .ff > label,
 #companyCreateCol4 .ff .sub > label {
-  min-width: 84px;
+  min-width: 90.69px;
 }
 
 /* company advanced search start */
@@ -4035,10 +4035,14 @@ body.col-resizing * {
   margin-top: 8px;
 }
 
-#activity-root .detail-form .attach-box--compact,
-#project-root .detail-form .attach-box--compact {
-  min-height: 72px;
-  height: auto;
+.form-row.attach-field.items-start,
+.ff.attach-field.items-start {
+  align-items: flex-start;
+}
+
+.form-row.attach-field.items-start > label,
+.ff.attach-field.items-start > label {
+  padding-top: 4px;
 }
 
 #contact-root .detail-form .form-row label,

@@ -1,4 +1,5 @@
 import { q, escapeHtml } from '../../utils/helpers.js';
+import { bindAttachField } from '../../utils/attachField.js';
 import { mockProjects, mockActivities } from '../../utils/mockData.js';
 import { renderPageNumberButtons } from '../../utils/pager.js';
 import {
@@ -136,6 +137,7 @@ export function init() {
     }
   );
   initResizer();
+  bindAttachField('projectDetailAttachList');
   const card = document.querySelector('#project-root .company-detail');
   syncEntityDetailTabLayout(card, 'detail');
   applyPendingProjectSearch();
