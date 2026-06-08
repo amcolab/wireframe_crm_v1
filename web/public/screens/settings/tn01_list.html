@@ -1,0 +1,95 @@
+<section class="section active" id="tenant">
+  <div class="section-body" id="tenant-root">
+    <div class="company-screen tenant-screen">
+      <div class="search-header search-header--multi">
+        <div class="screen-title">
+          テナント・会社マスタ <span class="code">(TN01)</span>
+          <span class="badge badge-admin">システム管理者専用</span>
+        </div>
+        <div class="field">
+          <label for="tenantSearchId">テナントID</label>
+          <input id="tenantSearchId" class="input" type="text" placeholder="部分一致" style="width:min(120px,18vw)" />
+        </div>
+        <div class="field">
+          <label for="tenantSearchName">会社名</label>
+          <input id="tenantSearchName" class="input" type="text" placeholder="部分一致" style="width:min(220px,28vw)" />
+        </div>
+        <div class="field">
+          <label for="tenantSearchStatus">状態</label>
+          <select id="tenantSearchStatus" class="input" style="width:100px">
+            <option value="">-</option>
+            <option value="true">有効</option>
+            <option value="false">無効</option>
+          </select>
+        </div>
+        <button class="btn btn-secondary" id="btnTenantSearch" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          検索
+        </button>
+        <button class="btn btn-secondary" id="btnTenantClear" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          クリア
+        </button>
+        <div class="right">
+          <button class="btn btn-accent" id="btnTenantNew" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+            新規テナント登録
+          </button>
+        </div>
+      </div>
+
+      <p class="tenant-screen-note">ここで登録した会社に対して、最初の管理ユーザーを発行してください。</p>
+
+      <div class="company-main tenant-main">
+        <div class="list-stack">
+          <div class="panel">
+            <div class="company-table-wrap table-wrap">
+              <table class="t lookup-table settings-table" id="tenantCompanyTable">
+                <colgroup>
+                  <col style="width:88px">
+                  <col style="width:min(220px,28vw)">
+                  <col style="width:120px">
+                  <col style="width:88px">
+                  <col style="width:140px">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>テナントID</th>
+                    <th>会社名</th>
+                    <th>承認コード</th>
+                    <th class="col-center">状態</th>
+                    <th>作成日時</th>
+                  </tr>
+                </thead>
+                <tbody id="tenantCompanyBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="pager-standalone">
+            <div class="pages">
+              <button class="pg-btn" id="btnTenantFirstPage" type="button" title="最初へ">«</button>
+              <button class="pg-btn" id="btnTenantPrevPage" type="button" title="前へ">‹</button>
+              <div id="tenantPageNumbers" class="page-numbers" style="display:inline-flex;gap:3px;"></div>
+              <button class="pg-btn" id="btnTenantNextPage" type="button" title="次へ">›</button>
+              <button class="pg-btn" id="btnTenantLastPage" type="button" title="最後へ">»</button>
+            </div>
+            <div class="page-jump">
+              <span>Page</span>
+              <select id="tenantPageSelect" class="mini" aria-label="page select"></select>
+              <span id="tenantPageTotal">/ 1</span>
+            </div>
+            <select id="tenantPageSize" class="pgsize-trigger" aria-label="page size">
+              <option value="10">10件</option>
+              <option value="25">25件</option>
+              <option value="50" selected>50件</option>
+              <option value="100">100件</option>
+            </select>
+            <div class="meta-right">
+              全 <span id="tenantTotalCount">0</span>件 <span id="tenantRangeStart">0</span> - <span id="tenantRangeEnd">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
