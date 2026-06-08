@@ -1069,6 +1069,59 @@
   vertical-align: middle;
 }
 
+.form-4col .ff.ff-password-view {
+  align-items: center;
+}
+
+.form-4col .ff.ff-password-view > label {
+  flex-shrink: 0;
+}
+
+.ff-password-view .input-password-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.ff-password-view .input-password-wrap .input {
+  width: 100%;
+  padding-right: 32px;
+  box-sizing: border-box;
+}
+
+.ff-password-view .toggle-pw {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 4px;
+}
+
+.ff-password-view .toggle-pw:hover:not(:disabled) {
+  color: #0e1424;
+  background: #eef2f8;
+}
+
+.ff-password-view .toggle-pw:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.ff-password-view .toggle-pw svg {
+  width: 15px;
+  height: 15px;
+}
+
 .dlg-master-input .settings-table-wrap {
   width: fit-content;
   max-width: min(700px, 86vw);
