@@ -1,4 +1,4 @@
-import { mockProjects, mockActivities } from '../../utils/mockData.js';
+import { mockProjects, mockActivities, mockCompanies, mockContacts } from '../../utils/mockData.js';
 
 function formatShortDate(ymd) {
     // input: "YYYY/MM/DD" -> output: "YY/MM/DD"
@@ -14,7 +14,17 @@ export function init(id) {
     if (!project) return;
 
     // Populate project fields
-    document.getElementById('project-company').textContent = project.company;
+    const companyEl = document.getElementById('project-company');
+    if (companyEl) {
+        const company = mockCompanies.find((c) => c.name === project.company);
+        if (company?.id) {
+            companyEl.innerHTML = `<a class="link" href="#company-detail/${company.id}">${project.company}</a>`;
+            companyEl.classList.add('link');
+        } else {
+            companyEl.textContent = project.company || '-';
+            companyEl.classList.remove('link');
+        }
+    }
     document.getElementById('project-topic-date').textContent = project.topicDate || '-';
     document.getElementById('project-followup-date').textContent = project.followupDate || '-';
     document.getElementById('project-status').textContent = project.status || '-';
@@ -23,7 +33,34 @@ export function init(id) {
     document.getElementById('project-name').textContent = project.name || '-';
     document.getElementById('project-initial-accuracy').textContent = project.initialAccuracy || '-';
     document.getElementById('project-revised-accuracy').textContent = project.revisedAccuracy || '-';
-    document.getElementById('project-contact-name').textContent = project.contactName || '-';
+    const contactEl = document.getElementById('project-contact-name');
+    if (contactEl) {
+        const name = (project.contactName || '').trim();
+        let contact = project.contactId
+            ? mockContacts.find((c) => c.id === project.contactId)
+            : null;
+        if (!contact && name) {
+            contact = mockContacts.find(
+                (c) => c.company === project.company && `${c.last} ${c.first}` === name
+            );
+            if (!contact) {
+                const parts = name.split(/\s+/);
+                const last = parts[0] || '';
+                const first = parts.slice(1).join(' ') || '';
+                contact = mockContacts.find(
+                    (c) => c.company === project.company && c.last === last && c.first === first
+                );
+            }
+        }
+        if (contact?.id) {
+            const label = name || `${contact.last} ${contact.first}`;
+            contactEl.innerHTML = `<a class="link" href="#contact-detail/${contact.id}">${label}</a>`;
+            contactEl.classList.add('link');
+        } else {
+            contactEl.textContent = name || '-';
+            contactEl.classList.remove('link');
+        }
+    }
     document.getElementById('project-competitor').textContent = project.competitor || '-';
     document.getElementById('project-sale-date').textContent = project.saleDate || '-';
     document.getElementById('project-lost-date').textContent = project.lostDate || '-';
