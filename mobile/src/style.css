@@ -16,8 +16,8 @@
     --nav-bg-2: #162038;
     --nav-active-bar: #67A0FF;
 
-    --bg: #ECEEF2;
-    --bg-page: #F4F6FA;
+    --bg: #1E50A2;
+    --bg-page: #1E50A2;
     --surface: #FFFFFF;
     --surface-2: #F7F8FB;
     --border: #E2E6EE;
@@ -563,9 +563,9 @@ body {
     z-index: 20;
     margin-top: 10px;
     padding: 0 14px 10px;
-    background: rgba(244, 246, 250, .86);
-    backdrop-filter: saturate(180%) blur(14px);
-    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    /* background: rgba(244, 246, 250, .86); */
+    /* backdrop-filter: saturate(180%) blur(14px); */
+    /* -webkit-backdrop-filter: saturate(180%) blur(14px); */
     display: flex;
     align-items: center;
     gap: 10px;
@@ -705,12 +705,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    color: var(--text-2);
+    color: #ffffff;
     font-size: 11px;
 }
 
 .list-meta .total b {
-    color: var(--text-1);
+    color: #ffffff;
     font-weight: 700;
 }
 
@@ -1547,7 +1547,7 @@ body {
     font-weight: 600;
     letter-spacing: .4px;
     text-transform: uppercase;
-    color: var(--text-3);
+    color: rgba(255, 255, 255, .95);
 }
 
 .home-menu {
@@ -1627,18 +1627,10 @@ body {
 
 .home-menu-title {
     display: block;
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 700;
     color: var(--text-1);
     line-height: 1.3;
-}
-
-.home-menu-desc {
-    display: block;
-    margin-top: 2px;
-    font-size: 10.5px;
-    color: var(--text-3);
-    line-height: 1.35;
 }
 
 .home-menu-arrow {
@@ -1671,7 +1663,7 @@ body {
     background:
         radial-gradient(900px 500px at 88% 110%, rgba(20, 72, 182, .10), transparent 60%),
         radial-gradient(700px 400px at 5% 0%, rgba(226, 93, 20, .06), transparent 60%),
-        linear-gradient(135deg, #E9EDF5 0%, #F4F6FA 60%, #EEF2F8 100%);
+        var(--bg-page);
 }
 
 .auth-card {
@@ -2351,6 +2343,25 @@ select.form-control {
 .page-shell--fab .page-inner {
     flex: 1 1 auto;
     padding-bottom: 8px;
+}
+
+.page-shell--fab .page-inner.detail-page {
+    padding-bottom: calc(var(--tabbar-h) + var(--safe-bottom) + 72px);
+}
+
+.activity-form-page .form-input:disabled {
+    opacity: 1;
+    color: var(--text-1);
+    background: var(--surface-2);
+    cursor: not-allowed;
+}
+
+.activity-form-page .form-field-locked .form-lock-note {
+    display: block;
+    margin-top: 4px;
+    font-size: 10.5px;
+    color: var(--text-3);
+    line-height: 1.35;
 }
 
 .page-list-with-action .activity-list-body {

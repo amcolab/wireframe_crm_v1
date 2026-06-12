@@ -65,6 +65,10 @@ export function init(id) {
     }
 
     renderCompanyRelatedLists(contact.company);
+
+    document.getElementById('btn-contact-create-activity')?.addEventListener('click', () => {
+        window.location.hash = `activity-create/from-contact/${id}`;
+    });
 }
 
 function renderCompanyRelatedLists(companyName) {

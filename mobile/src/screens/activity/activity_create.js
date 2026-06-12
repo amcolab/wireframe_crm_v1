@@ -3,6 +3,11 @@ import { mockActivities, mockCompanies, mockContacts, mockProjects } from '../..
 const ACTIVITY_TYPES = ['電話', '訪問', 'メール', 'WEB商談'];
 const DEFAULT_SALES_REP = '澤 貴彦';
 
+let lockedFromContact = false;
+let lockedCompanyId = '';
+let lockedContactLabel = '';
+let lockedCompany = null;
+
 const AUTO_FIELDS = {
     'activity-auto-company': (c) => c?.name || '—',
     'activity-auto-type': (c) => c?.type || '—',
@@ -47,7 +52,11 @@ function setText(id, value) {
 }
 
 function findCompanyById(id) {
-    return mockCompanies.find((c) => c.id === id);
+    if (!id) return null;
+    if (lockedFromContact && lockedCompanyId === id && lockedCompany) {
+        return lockedCompany;
+    }
+    return mockCompanies.find((c) => c.id === id) || null;
 }
 
 function findContactByLabel(companyName, label) {
@@ -56,6 +65,101 @@ function findContactByLabel(companyName, label) {
         const name = `${c.last} ${c.first}`.trim();
         return c.company === companyName && name === label;
     });
+}
+
+function findContactById(id) {
+    return mockContacts.find((c) => c.id === id) || null;
+}
+
+function setSelectLocked(select, locked) {
+    if (!select) return;
+    select.disabled = locked;
+    select.closest('.form-field')?.classList.toggle('form-field-locked', locked);
+}
+
+function setLockedFieldNote(fieldId, message) {
+    const field = document.getElementById(fieldId)?.closest('.form-field');
+    if (!field) return;
+
+    let note = field.querySelector('.form-lock-note');
+    if (!message) {
+        note?.remove();
+        return;
+    }
+
+    if (!note) {
+        note = document.createElement('span');
+        note.className = 'form-lock-note';
+        field.appendChild(note);
+    }
+    note.textContent = message;
+}
+
+function resolveCompanyForContact(contact) {
+    const found = mockCompanies.find((c) => c.name === contact.company);
+    if (found) return found;
+
+    return {
+        id: `contact-company-${contact.id}`,
+        name: contact.company,
+        tel: contact.tel || '—',
+        type: '—',
+        industry: '—',
+        scale: '—',
+        postal: '—',
+        pref: '—',
+        addr: '—'
+    };
+}
+
+function applyContactPrefill(contactId) {
+    const contact = findContactById(contactId);
+    if (!contact) return false;
+
+    const company = resolveCompanyForContact(contact);
+    if (!company?.id) return false;
+
+    lockedFromContact = true;
+    lockedCompanyId = company.id;
+    lockedContactLabel = `${contact.last} ${contact.first}`.trim();
+    lockedCompany = company;
+
+    populateCompanySelect(lockedCompanyId, company);
+    populateContactSelect(company.name);
+
+    if (!mockContacts.some((c) => c.company === company.name && `${c.last} ${c.first}`.trim() === lockedContactLabel)) {
+        const contactSelect = document.getElementById('activity-create-contact');
+        if (contactSelect) {
+            const opt = document.createElement('option');
+            opt.value = lockedContactLabel;
+            opt.textContent = lockedContactLabel;
+            contactSelect.appendChild(opt);
+        }
+    }
+
+    const contactSelect = document.getElementById('activity-create-contact');
+    if (contactSelect) contactSelect.value = lockedContactLabel;
+
+    setSelectLocked(document.getElementById('activity-create-company'), true);
+    setSelectLocked(contactSelect, true);
+    setLockedFieldNote('activity-create-company', '担当者詳細からのため変更できません');
+    setLockedFieldNote('activity-create-contact', '担当者詳細からのため変更できません');
+    updateAutoCompanySection(company);
+    populateProjectSelect(company.name);
+    updateContactDept();
+    updateProjectIdDisplay();
+    return true;
+}
+
+function releaseContactPrefillLock() {
+    lockedFromContact = false;
+    lockedCompanyId = '';
+    lockedContactLabel = '';
+    lockedCompany = null;
+    setSelectLocked(document.getElementById('activity-create-company'), false);
+    setSelectLocked(document.getElementById('activity-create-contact'), false);
+    setLockedFieldNote('activity-create-company', '');
+    setLockedFieldNote('activity-create-contact', '');
 }
 
 function calcDurationMinutes(start, end) {
@@ -106,12 +210,17 @@ function updateProjectIdDisplay() {
     setText('activity-auto-project-id', project?.id ? `PJ-${project.id}` : '—');
 }
 
-function populateCompanySelect(preselectedId) {
+function populateCompanySelect(preselectedId, extraCompany = null) {
     const select = document.getElementById('activity-create-company');
     if (!select) return;
 
+    const companies = getUniqueCompanies();
+    if (extraCompany && !companies.some((c) => c.id === extraCompany.id || c.name === extraCompany.name)) {
+        companies.push(extraCompany);
+    }
+
     select.innerHTML = '<option value="">選択してください</option>';
-    getUniqueCompanies().forEach((c) => {
+    companies.forEach((c) => {
         const opt = document.createElement('option');
         opt.value = c.id;
         opt.textContent = c.name;
@@ -119,7 +228,9 @@ function populateCompanySelect(preselectedId) {
     });
 
     if (preselectedId) select.value = preselectedId;
-    select.dispatchEvent(new Event('change'));
+    if (!lockedFromContact) {
+        select.dispatchEvent(new Event('change'));
+    }
 }
 
 function populateSalesRepSelect() {
@@ -258,7 +369,7 @@ function setActiveType(type) {
 
 function clearForm() {
     const companySelect = document.getElementById('activity-create-company');
-    if (companySelect) companySelect.value = '';
+    if (!lockedFromContact && companySelect) companySelect.value = '';
 
     const dateInput = document.getElementById('activity-create-date');
     if (dateInput) dateInput.value = todayIso();
@@ -282,14 +393,31 @@ function clearForm() {
         if (el) el.checked = false;
     });
 
-    populateContactSelect('');
-    populateProjectSelect('');
+    if (lockedFromContact) {
+        const company = findCompanyById(lockedCompanyId);
+        populateCompanySelect(lockedCompanyId);
+        populateContactSelect(company?.name);
+        const contactSelect = document.getElementById('activity-create-contact');
+        if (contactSelect) contactSelect.value = lockedContactLabel;
+        setSelectLocked(companySelect, true);
+        setSelectLocked(contactSelect, true);
+        updateAutoCompanySection(company);
+        updateContactDept();
+    } else {
+        populateContactSelect('');
+        populateProjectSelect('');
+        updateAutoCompanySection(null);
+        setText('activity-auto-dept', '—');
+    }
+
+    populateProjectSelect(lockedFromContact ? findCompanyById(lockedCompanyId)?.name : '');
     populateSalesRepSelect();
-    updateAutoCompanySection(null);
     setText('activity-auto-project-id', '—');
     setText('activity-auto-duration', '—');
-    setText('activity-auto-dept', '—');
     setText('activity-auto-id', '保存時に自動採番');
+
+    const startInput = document.getElementById('activity-create-start');
+    if (startInput) startInput.value = '09:00';
 }
 
 function registerActivity(data) {
@@ -319,12 +447,18 @@ function registerActivity(data) {
 }
 
 export function init(params = []) {
-    const prefillCompanyId = params[0]
-        || localStorage.getItem('prefill_activity_company_id')
-        || '';
+    releaseContactPrefillLock();
 
-    if (localStorage.getItem('prefill_activity_company_id')) {
-        localStorage.removeItem('prefill_activity_company_id');
+    const fromContactId = params[0] === 'from-contact' ? params[1] : '';
+    let prefillCompanyId = '';
+
+    if (fromContactId) {
+        prefillCompanyId = '';
+    } else if (params[0] && params[0] !== 'from-contact') {
+        prefillCompanyId = params[0];
+    } else {
+        prefillCompanyId = localStorage.getItem('prefill_activity_company_id') || '';
+        if (prefillCompanyId) localStorage.removeItem('prefill_activity_company_id');
     }
 
     const dateInput = document.getElementById('activity-create-date');
@@ -337,8 +471,13 @@ export function init(params = []) {
     populateSalesRepSelect();
     populateCompanySelect(prefillCompanyId);
 
+    if (fromContactId) {
+        applyContactPrefill(fromContactId);
+    }
+
     const companySelect = document.getElementById('activity-create-company');
     companySelect?.addEventListener('change', () => {
+        if (lockedFromContact) return;
         const company = findCompanyById(companySelect.value);
         updateAutoCompanySection(company);
         populateContactSelect(company?.name);
