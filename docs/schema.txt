@@ -1,0 +1,333 @@
+# This file is auto-generated from the current state of the database. Instead
+# of editing this file, please use the migrations feature of Active Record to
+# incrementally modify your database, and then regenerate this schema definition.
+#
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
+#
+# It's strongly recommended that you check this file into your version control system.
+
+ActiveRecord::Schema[8.1].define(version: 2026_06_10_093459) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "record_id", null: false
+    t.string "record_type", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.string "content_type"
+    t.datetime "created_at", null: false
+    t.string "filename", null: false
+    t.string "key", null: false
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "activities", force: :cascade do |t|
+    t.date "act_date"
+    t.string "act_type"
+    t.text "comment"
+    t.bigint "company_id", null: false
+    t.bigint "contact_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "duration"
+    t.time "end_time"
+    t.boolean "has_appointment", default: false, null: false
+    t.boolean "is_claim", default: false, null: false
+    t.boolean "is_follow_up_completed", default: false, null: false
+    t.string "motivation"
+    t.bigint "project_id"
+    t.string "project_name"
+    t.string "purpose"
+    t.time "start_time"
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["company_id"], name: "index_activities_on_company_id"
+    t.index ["contact_id"], name: "index_activities_on_contact_id"
+    t.index ["project_id"], name: "index_activities_on_project_id"
+    t.index ["tenant_id"], name: "index_activities_on_tenant_id"
+    t.index ["user_id"], name: "index_activities_on_user_id"
+  end
+
+  create_table "companies", force: :cascade do |t|
+    t.string "address"
+    t.decimal "capital", precision: 15, scale: 2
+    t.string "company_type"
+    t.string "corporate_num"
+    t.datetime "created_at", null: false
+    t.string "district"
+    t.integer "employee_count"
+    t.string "fax"
+    t.integer "fiscal_closing_month"
+    t.string "industry"
+    t.string "industry_type"
+    t.boolean "is_brochure_forbidden", default: false, null: false
+    t.boolean "is_tel_forbidden", default: false, null: false
+    t.string "name", null: false
+    t.text "notes"
+    t.string "post_code"
+    t.string "prefecture"
+    t.bigint "revenue"
+    t.string "scale_rank"
+    t.string "tel"
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tenant_id"], name: "index_companies_on_tenant_id"
+  end
+
+  create_table "contacts", force: :cascade do |t|
+    t.string "address"
+    t.boolean "brochure_forbidden", default: false, null: false
+    t.bigint "company_id", null: false
+    t.datetime "created_at", null: false
+    t.string "department"
+    t.string "email"
+    t.string "extension_number"
+    t.string "fax"
+    t.string "first_name", null: false
+    t.string "first_name_kana"
+    t.date "follow_date"
+    t.string "job_category"
+    t.string "job_rank"
+    t.string "job_title"
+    t.string "last_name", null: false
+    t.string "last_name_kana"
+    t.string "mobile_tel"
+    t.string "post_code"
+    t.text "remarks"
+    t.string "tel"
+    t.boolean "tel_caution", default: false, null: false
+    t.boolean "tel_forbidden", default: false, null: false
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["company_id"], name: "index_contacts_on_company_id"
+    t.index ["tenant_id"], name: "index_contacts_on_tenant_id"
+    t.index ["user_id"], name: "index_contacts_on_user_id"
+  end
+
+  create_table "custom_fields", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "customable_id", null: false
+    t.string "customable_type", null: false
+    t.bigint "mst_option_id"
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.string "value"
+    t.index ["customable_type", "customable_id"], name: "index_custom_fields_on_customable"
+    t.index ["mst_option_id"], name: "index_custom_fields_on_mst_option_id"
+    t.index ["tenant_id"], name: "index_custom_fields_on_tenant_id"
+  end
+
+  create_table "documents", force: :cascade do |t|
+    t.string "content_type", null: false
+    t.datetime "created_at", null: false
+    t.bigint "documentable_id", null: false
+    t.string "documentable_type", null: false
+    t.string "file_name", null: false
+    t.string "s3_key", null: false
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["documentable_type", "documentable_id"], name: "index_documents_on_documentable"
+    t.index ["s3_key"], name: "index_documents_on_s3_key", unique: true
+    t.index ["tenant_id"], name: "index_documents_on_tenant_id"
+    t.index ["user_id"], name: "index_documents_on_user_id"
+  end
+
+  create_table "jwt_denylist", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "exp", null: false
+    t.string "jti", null: false
+    t.datetime "updated_at", null: false
+    t.index ["jti"], name: "index_jwt_denylist_on_jti"
+  end
+
+  create_table "mst_options", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.boolean "is_active", default: true, null: false
+    t.string "name", null: false
+    t.string "option_type", null: false
+    t.integer "sort_order", default: 0, null: false
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tenant_id", "option_type", "name"], name: "index_mst_options_on_tenant_option_type_and_name", unique: true
+    t.index ["tenant_id", "option_type", "sort_order"], name: "index_mst_options_on_tenant_id_and_option_type_and_sort_order"
+    t.index ["tenant_id"], name: "index_mst_options_on_tenant_id"
+  end
+
+  create_table "project_stages", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.string "value"
+    t.index ["tenant_id"], name: "index_project_stages_on_tenant_id"
+  end
+
+  create_table "projects", force: :cascade do |t|
+    t.string "accuracy"
+    t.bigint "company_id", null: false
+    t.bigint "contact_id"
+    t.datetime "created_at", null: false
+    t.date "expected_closing_date"
+    t.string "name", null: false
+    t.text "notes"
+    t.date "sales_date"
+    t.string "status"
+    t.text "summary"
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["company_id"], name: "index_projects_on_company_id"
+    t.index ["contact_id"], name: "index_projects_on_contact_id"
+    t.index ["tenant_id"], name: "index_projects_on_tenant_id"
+    t.index ["user_id"], name: "index_projects_on_user_id"
+  end
+
+  create_table "refresh_tokens", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "revoked_at"
+    t.string "session_id", null: false
+    t.string "token_digest", null: false
+    t.bigint "tokenable_id", null: false
+    t.string "tokenable_type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["session_id"], name: "index_refresh_tokens_on_session_id", unique: true
+    t.index ["token_digest"], name: "index_refresh_tokens_on_token_digest", unique: true
+    t.index ["tokenable_type", "tokenable_id"], name: "index_refresh_tokens_on_tokenable"
+  end
+
+  create_table "role_permissions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.boolean "full_permission", default: false, null: false
+    t.json "permission_key", default: [], null: false
+    t.bigint "role_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["role_id"], name: "index_role_permissions_on_role_id"
+  end
+
+  create_table "roles", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.boolean "is_admin", default: false, null: false
+    t.boolean "is_deleted", default: false, null: false
+    t.string "name", null: false
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tenant_id"], name: "index_roles_on_tenant_id"
+  end
+
+  create_table "search_conditions", force: :cascade do |t|
+    t.string "condition_name", null: false
+    t.datetime "created_at", null: false
+    t.json "filter_params", default: {}, null: false
+    t.string "screen_type", null: false
+    t.boolean "share", default: false, null: false
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["tenant_id", "user_id", "screen_type"], name: "idx_on_tenant_id_user_id_screen_type_6f5e8def76"
+    t.index ["tenant_id"], name: "index_search_conditions_on_tenant_id"
+    t.index ["user_id"], name: "index_search_conditions_on_user_id"
+  end
+
+  create_table "system_admins", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "encrypted_password", null: false
+    t.string "login_code", null: false
+    t.datetime "updated_at", null: false
+    t.string "user_name", null: false
+    t.index ["login_code"], name: "index_system_admins_on_login_code", unique: true
+  end
+
+  create_table "tenants", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.boolean "is_active", default: true, null: false
+    t.string "login_code", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["login_code"], name: "index_tenants_on_login_code", unique: true
+  end
+
+  create_table "user_field_settings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "field_name", null: false
+    t.boolean "is_visible", default: true, null: false
+    t.integer "row_order", default: 0, null: false
+    t.string "target_model", null: false
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["tenant_id", "user_id", "target_model", "field_name"], name: "index_user_field_settings_on_tenant_user_model_field", unique: true
+    t.index ["tenant_id"], name: "index_user_field_settings_on_tenant_id"
+    t.index ["user_id"], name: "index_user_field_settings_on_user_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "encrypted_password", null: false
+    t.boolean "is_admin_default", default: false, null: false
+    t.boolean "is_deleted", default: false, null: false
+    t.string "login_id", null: false
+    t.bigint "role_id"
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.string "user_kana"
+    t.string "user_name", null: false
+    t.index ["role_id"], name: "index_users_on_role_id"
+    t.index ["tenant_id", "login_id"], name: "index_users_on_tenant_id_and_login_id", unique: true
+    t.index ["tenant_id"], name: "index_users_on_tenant_id"
+  end
+
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "activities", "companies"
+  add_foreign_key "activities", "contacts"
+  add_foreign_key "activities", "projects"
+  add_foreign_key "activities", "tenants"
+  add_foreign_key "activities", "users"
+  add_foreign_key "companies", "tenants"
+  add_foreign_key "contacts", "companies"
+  add_foreign_key "contacts", "tenants"
+  add_foreign_key "contacts", "users"
+  add_foreign_key "custom_fields", "mst_options"
+  add_foreign_key "custom_fields", "tenants"
+  add_foreign_key "documents", "tenants"
+  add_foreign_key "documents", "users"
+  add_foreign_key "mst_options", "tenants"
+  add_foreign_key "project_stages", "tenants"
+  add_foreign_key "projects", "companies"
+  add_foreign_key "projects", "contacts"
+  add_foreign_key "projects", "tenants"
+  add_foreign_key "projects", "users"
+  add_foreign_key "role_permissions", "roles"
+  add_foreign_key "roles", "tenants"
+  add_foreign_key "search_conditions", "tenants"
+  add_foreign_key "search_conditions", "users"
+  add_foreign_key "user_field_settings", "tenants"
+  add_foreign_key "user_field_settings", "users"
+  add_foreign_key "users", "roles"
+  add_foreign_key "users", "tenants"
+end
